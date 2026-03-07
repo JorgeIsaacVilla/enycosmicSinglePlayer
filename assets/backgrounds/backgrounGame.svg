@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="576" viewBox="0 0 256 144" shape-rendering="crispEdges">
+  <defs>
+    <style>
+      .bg { fill:#050515; }
+      .w  { fill:#ffffff; }
+      .b  { fill:#9bd7ff; }
+      .o  { fill:#ffd18a; }
+
+      /* Parpadeo suave (3 ritmos distintos para que no parpadeen todas igual) */
+      @keyframes tw1 { 0%,100%{opacity:.25} 50%{opacity:1} }
+      @keyframes tw2 { 0%,100%{opacity:.40} 50%{opacity:.95} }
+      @keyframes tw3 { 0%,100%{opacity:.15} 50%{opacity:.85} }
+
+      .tw1 { animation: tw1 2.6s ease-in-out infinite; }
+      .tw2 { animation: tw2 3.4s ease-in-out infinite; }
+      .tw3 { animation: tw3 4.2s ease-in-out infinite; }
+
+      /* Desfase para variar */
+      .d0 { animation-delay: 0s; }
+      .d1 { animation-delay: .4s; }
+      .d2 { animation-delay: .8s; }
+      .d3 { animation-delay: 1.2s; }
+      .d4 { animation-delay: 1.6s; }
+      .d5 { animation-delay: 2.0s; }
+    </style>
+
+    <!-- Estrella pixel 1x1 (2x2 en este SVG) -->
+    <g id="px">
+      <rect x="0" y="0" width="2" height="2" />
+    </g>
+
+    <!-- Estrella tipo cruz (6x6, centro brillante) -->
+    <g id="starPlus">
+      <rect x="0" y="2" width="6" height="2" class="b"/>
+      <rect x="2" y="0" width="2" height="6" class="b"/>
+      <rect x="2" y="2" width="2" height="2" class="w"/>
+    </g>
+  </defs>
+
+  <!-- Fondo -->
+  <rect x="0" y="0" width="256" height="144" class="bg"/>
+
+  <!-- Estrellas pequeñas (muchas) -->
+  <!-- Consejo: si quieres MÁS densidad, duplica este bloque y cambia coords -->
+  <g opacity="0.95">
+    <!-- blancas -->
+    <rect x="10" y="12" width="2" height="2" class="w tw3 d2"/>
+    <rect x="22" y="26" width="2" height="2" class="w tw2 d4"/>
+    <rect x="36" y="18" width="2" height="2" class="w tw1 d1"/>
+    <rect x="48" y="40" width="2" height="2" class="w tw3 d5"/>
+    <rect x="58" y="14" width="2" height="2" class="w tw2 d0"/>
+    <rect x="74" y="30" width="2" height="2" class="w tw1 d3"/>
+    <rect x="88" y="10" width="2" height="2" class="w tw3 d1"/>
+    <rect x="96" y="34" width="2" height="2" class="w tw2 d2"/>
+    <rect x="110" y="22" width="2" height="2" class="w tw1 d5"/>
+    <rect x="124" y="8" width="2" height="2" class="w tw3 d0"/>
+    <rect x="136" y="28" width="2" height="2" class="w tw2 d3"/>
+    <rect x="148" y="16" width="2" height="2" class="w tw1 d4"/>
+    <rect x="160" y="36" width="2" height="2" class="w tw3 d2"/>
+    <rect x="172" y="12" width="2" height="2" class="w tw2 d1"/>
+    <rect x="186" y="26" width="2" height="2" class="w tw1 d0"/>
+    <rect x="198" y="8" width="2" height="2" class="w tw3 d4"/>
+    <rect x="210" y="32" width="2" height="2" class="w tw2 d5"/>
+    <rect x="228" y="18" width="2" height="2" class="w tw1 d2"/>
+    <rect x="242" y="10" width="2" height="2" class="w tw3 d3"/>
+
+    <rect x="16" y="64" width="2" height="2" class="w tw2 d3"/>
+    <rect x="30" y="54" width="2" height="2" class="w tw1 d1"/>
+    <rect x="44" y="70" width="2" height="2" class="w tw3 d4"/>
+    <rect x="60" y="58" width="2" height="2" class="w tw2 d2"/>
+    <rect x="72" y="76" width="2" height="2" class="w tw1 d5"/>
+    <rect x="86" y="62" width="2" height="2" class="w tw3 d0"/>
+    <rect x="100" y="80" width="2" height="2" class="w tw2 d4"/>
+    <rect x="112" y="56" width="2" height="2" class="w tw1 d2"/>
+    <rect x="126" y="72" width="2" height="2" class="w tw3 d1"/>
+    <rect x="140" y="60" width="2" height="2" class="w tw2 d5"/>
+    <rect x="154" y="78" width="2" height="2" class="w tw1 d3"/>
+    <rect x="168" y="66" width="2" height="2" class="w tw3 d2"/>
+    <rect x="182" y="82" width="2" height="2" class="w tw2 d0"/>
+    <rect x="196" y="58" width="2" height="2" class="w tw1 d4"/>
+    <rect x="212" y="74" width="2" height="2" class="w tw3 d5"/>
+    <rect x="226" y="62" width="2" height="2" class="w tw2 d1"/>
+    <rect x="240" y="80" width="2" height="2" class="w tw1 d3"/>
+
+    <rect x="12" y="118" width="2" height="2" class="w tw3 d1"/>
+    <rect x="26" y="106" width="2" height="2" class="w tw2 d5"/>
+    <rect x="40" y="124" width="2" height="2" class="w tw1 d2"/>
+    <rect x="54" y="110" width="2" height="2" class="w tw3 d4"/>
+    <rect x="68" y="128" width="2" height="2" class="w tw2 d0"/>
+    <rect x="82" y="114" width="2" height="2" class="w tw1 d3"/>
+    <rect x="98" y="132" width="2" height="2" class="w tw3 d5"/>
+    <rect x="114" y="108" width="2" height="2" class="w tw2 d2"/>
+    <rect x="130" y="126" width="2" height="2" class="w tw1 d1"/>
+    <rect x="146" y="112" width="2" height="2" class="w tw3 d0"/>
+    <rect x="162" y="130" width="2" height="2" class="w tw2 d4"/>
+    <rect x="178" y="106" width="2" height="2" class="w tw1 d5"/>
+    <rect x="194" y="124" width="2" height="2" class="w tw3 d2"/>
+    <rect x="210" y="110" width="2" height="2" class="w tw2 d3"/>
+    <rect x="226" y="132" width="2" height="2" class="w tw1 d0"/>
+    <rect x="242" y="116" width="2" height="2" class="w tw3 d4"/>
+
+    <!-- azules (más frías) -->
+    <rect x="18" y="36" width="2" height="2" class="b tw2 d1"/>
+    <rect x="66" y="22" width="2" height="2" class="b tw3 d4"/>
+    <rect x="104" y="12" width="2" height="2" class="b tw1 d2"/>
+    <rect x="156" y="24" width="2" height="2" class="b tw2 d5"/>
+    <rect x="208" y="20" width="2" height="2" class="b tw3 d0"/>
+    <rect x="92" y="92" width="2" height="2" class="b tw1 d3"/>
+    <rect x="150" y="98" width="2" height="2" class="b tw2 d2"/>
+    <rect x="220" y="96" width="2" height="2" class="b tw3 d5"/>
+    <rect x="32" y="96" width="2" height="2" class="b tw1 d0"/>
+    <rect x="60" y="104" width="2" height="2" class="b tw2 d4"/>
+
+    <!-- cálidas (naranjas) -->
+    <rect x="40" y="30" width="2" height="2" class="o tw1 d4"/>
+    <rect x="132" y="40" width="2" height="2" class="o tw2 d2"/>
+    <rect x="188" y="44" width="2" height="2" class="o tw3 d1"/>
+    <rect x="116" y="96" width="2" height="2" class="o tw1 d5"/>
+    <rect x="206" y="122" width="2" height="2" class="o tw2 d0"/>
+  </g>
+
+  <!-- Estrellas grandes tipo cruz (parpadeo suave) -->
+  <g>
+    <g transform="translate(32 20) scale(1)" class="tw1 d0">
+      <use href="#starPlus"/>
+    </g>
+    <g transform="translate(210 28) scale(1)" class="tw2 d3">
+      <use href="#starPlus"/>
+    </g>
+    <g transform="translate(168 86) scale(1)" class="tw3 d1">
+      <use href="#starPlus"/>
+    </g>
+    <g transform="translate(52 94) scale(1)" class="tw2 d5">
+      <use href="#starPlus"/>
+    </g>
+    <g transform="translate(120 54) scale(1)" class="tw1 d2">
+      <use href="#starPlus"/>
+    </g>
+    <g transform="translate(232 110) scale(1)" class="tw3 d4">
+      <use href="#starPlus"/>
+    </g>
+  </g>
+
+  <!-- Un poco de “polvo estelar” (puntos muy tenues) -->
+  <g opacity="0.35">
+    <rect x="8" y="8" width="2" height="2" class="b"/>
+    <rect x="20" y="14" width="2" height="2" class="b"/>
+    <rect x="238" y="60" width="2" height="2" class="b"/>
+    <rect x="196" y="136" width="2" height="2" class="b"/>
+    <rect x="140" y="6" width="2" height="2" class="b"/>
+    <rect x="100" y="140" width="2" height="2" class="b"/>
+    <rect x="70" y="46" width="2" height="2" class="b"/>
+    <rect x="154" y="120" width="2" height="2" class="b"/>
+  </g>
+</svg>

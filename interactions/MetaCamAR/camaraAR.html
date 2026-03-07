@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>WebAR con AR.js + Three.js</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, sans-serif;
+    }
+    #info {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      z-index: 10;
+      font-size: 14px;
+    }
+    /* el video HTML no se ve en pantalla, solo se usa como textura */
+    #ar-video {
+      display: none;
+    }
+    
+    canvas, video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover; /* Para que la cámara llene todo sin bandas negras */
+    }
+  </style>
+</head>
+<body>
+  <div id="info">
+    Apunta la cámara a tu marcador para ver el video en AR.<br>
+    (Tóca la pantalla una vez si el video no arranca).
+  </div>
+
+  <!-- Video fuente (para la textura) -->
+  <video
+    id="ar-video"
+    src="./src/render.mp4"
+    loop
+    muted
+    playsinline
+    webkit-playsinline
+  ></video>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+  <!-- AR.js (versión Three.js) -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex.js"></script>
+
+  <script>
+    let scene, camera, renderer;
+    let arToolkitSource, arToolkitContext;
+    let markerRoot;
+    let video, videoTexture;
+
+    init();
+    animate();
+
+    function init() {
+      // Escena
+      scene = new THREE.Scene();
+
+      // Cámara
+      camera = new THREE.Camera();
+      scene.add(camera);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.domElement.style.position = "absolute";
+      renderer.domElement.style.top = "0";
+      renderer.domElement.style.left = "0";
+      document.body.appendChild(renderer.domElement);
+
+      // Fuente de video (webcam)
+      arToolkitSource = new THREEx.ArToolkitSource({
+        sourceType: "webcam"
+      });
+
+      function onResize() {
+        arToolkitSource.onResize();
+        arToolkitSource.copySizeTo(renderer.domElement);
+        if (arToolkitContext && arToolkitContext.arController !== null) {
+          arToolkitSource.copySizeTo(arToolkitContext.arController.canvas);
+        }
+      }
+
+      arToolkitSource.init(function () {
+        onResize();
+      });
+
+      window.addEventListener("resize", onResize);
+
+      // Contexto AR
+      arToolkitContext = new THREEx.ArToolkitContext({
+        cameraParametersUrl: "repo/camera_para.dat",
+        detectionMode: "mono"
+      });
+
+      arToolkitContext.init(function () {
+        camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+      });
+
+      // Grupo raíz del marcador
+      markerRoot = new THREE.Group();
+      scene.add(markerRoot);
+
+      // Control del marcador: aquí usamos TU patrón
+      new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+        type: "pattern",
+        patternUrl: "/src/markerQR.patt"
+        // para probar con Hiro, cambia esta línea por:
+        // patternUrl: "repo/patt.hiro"
+      });
+
+      // Luz suave (por si luego añades 3D)
+      const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+      scene.add(light);
+
+      // ---------- VIDEO COMO TEXTURA ----------
+      video = document.getElementById("ar-video");
+
+      // Para políticas de autoplay en móviles: reproducir al primer toque
+      document.body.addEventListener(
+        "click",
+        function () {
+          if (video.paused) {
+            video.play().catch(() => {});
+          }
+        },
+        { once: true }
+      );
+
+      videoTexture = new THREE.VideoTexture(video);
+      videoTexture.minFilter = THREE.LinearFilter;
+      videoTexture.magFilter = THREE.LinearFilter;
+      videoTexture.format = THREE.RGBFormat;
+
+      // Plano donde se verá el video (ajusta tamaño según tu gusto)
+      // 1.6 x 0.9 ~ proporción 16:9
+      const planeGeo = new THREE.PlaneGeometry(1.6, 0.9);
+      const planeMat = new THREE.MeshBasicMaterial({
+        map: videoTexture,
+        side: THREE.DoubleSide
+      });
+      const videoPlane = new THREE.Mesh(planeGeo, planeMat);
+      videoPlane.position.y = 0; // que “salga” sobre el marcador
+      videoPlane.rotation.x = -Math.PI / 2; // plano horizontal
+      markerRoot.add(videoPlane);
+    }
+
+    function update() {
+      if (arToolkitSource.ready !== false) {
+        arToolkitContext.update(arToolkitSource.domElement);
+
+        // Play / pause según visibilidad del marcador
+        if (markerRoot.visible) {
+          if (video.paused) {
+            video.play().catch(() => {});
+          }
+        } else {
+          if (!video.paused) {
+            video.pause();
+          }
+        }
+      }
+    }
+
+    function render() {
+      renderer.render(scene, camera);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      update();
+      render();
+    }
+
+      console.log("secureContext:", window.isSecureContext);
+  console.log("mediaDevices:", !!navigator.mediaDevices);
+  console.log("getUserMedia:", !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+
+  navigator.mediaDevices?.getUserMedia({ video: true })
+    .then((stream) => {
+      console.log("Cámara OK", stream);
+      stream.getTracks().forEach(track => track.stop());
+    })
+    .catch((err) => {
+      console.error("Error cámara:", err.name, err.message);
+    });
+  </script>
+</body>
+</html>

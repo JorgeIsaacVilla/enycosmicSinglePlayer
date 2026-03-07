@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Enycosmic Game Play</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <!-- sincronizar con base de datos
+      *Nombre de avatar: de wordpress a gamePlay
+      *IQ: de gamePlay a wordpress / wordpress a gamePlay
+      *Sprites: de gamePlay a wordpress / wordpress a gamePlay
+      *profesión: de gamePlay a wordpress
+      *cosmonedas: de gamePlay a wordpress / wordpress a gamePlay
+      *Vida del personaje: de gamePlay a wordpress / wordpress a gamePlay
+    -->
+   <!---->
+    <div class="box-buttons-items" style="display: none;">
+      <button id="misions"></button>
+      <button id="novedades"></button><!--Noticias de actualizaciones, insentivar a compartir, donaciones y compras-->
+      <button id="iq"></button>   <!--Acá se vera tu nivel IQ actual, y se verá el nivel IQ de otros usuarios ACTIVOS en una lista-->
+      <button id="inventario"></button>   <!--Máximo 3x3 / y distintos trajes que se adquiere en el juego-->
+      <button id="setting"></button>   <!--Volumen, terminos y condiciones, reglas de privacidad, Donaciones, soporte,  cambiar musica ambiente, devolver a estado de fabrica(Esto se guardará en localStorage), pantalla completa, tutorial del juego-->
+
+    </div>
+
+    <button id="metafon" style="display: none;"></button>   <!--Calculadora, camara de realidad ahumentada(Camara), juego de la culebrita(Sneak Game), meta-chat, BIN, cuaderno recordatorio, metamap-->
+
+    <canvas id="game"></canvas>
+
+    <div class="joystick" style="display: none;" id="joy" aria-label="Palanca táctil">
+      <div class="joy-base"></div>
+      <div class="joy-stick" id="joyStick"></div>
+    </div>
+  </div>
+
+<script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1750 @@
+<!-- pega este BLOQUE COMPLETO (HTML+CSS+JS) como tu metafon.html.
+     incluye: menú (home) + calculadora dinámica con innerHTML + switch/case + back al menú -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MetaFon - Arcade Retro</title>
+
+  <style>
+      @font-face{
+      font-family: "arcade";
+      src: url("../assets/font/RetroGaming.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root{
+      --bg: black;
+      --shell1:#0f2638;
+      --shell2:#0a1a29;
+
+      --screen1:#0a3b5a;
+      --screen2:#06324e;
+      --scan: rgba(255,255,255,.06);
+
+      --pix1:#e9f4ff;
+      --pix2:#b7d6f0;
+      --pix3:#74a8cc;
+      --pix4:#2b6f99;
+
+      --btn1:#e6f2ff;
+      --btn2:#b7d1e8;
+      --btn3:#7e9fb8;
+
+      --shadow: rgba(0,0,0,.45);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      padding: 0;
+    }
+
+    /* metafon + id metafon -> mf-device + id mfDevice */
+    .mf-device{
+      width: 300px;
+      height: 450px;
+      background: black;
+      border: 2px solid rgba(255,255,255,.12);
+
+      position:relative;
+      padding: 16px 14px 18px;
+      overflow:hidden;
+    }
+
+    .mf-device::before{
+      content:"";
+      position:absolute; inset:-40px;
+      background:
+        radial-gradient(circle at 12px 12px, rgba(255,255,255,.06) 2px, transparent 3px) 0 0 / 22px 22px,
+        radial-gradient(circle at 8px 8px, rgba(120,210,255,.05) 1px, transparent 2px) 0 0 / 14px 14px;
+      opacity:.45;
+      filter: blur(.2px);
+      pointer-events:none;
+    }
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 12px;
+      position:relative;
+      z-index:1;
+    }
+
+    .speaker{
+      flex:1;
+      height:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.22));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      position:relative;
+      overflow:hidden;
+    }
+    .speaker::after{
+      content:"";
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 2px, rgba(0,0,0,0) 2px 6px);
+      opacity:.35;
+    }
+
+    .camdot{
+      width:12px; height:12px;
+      background: radial-gradient(circle at 35% 35%, #dff6ff 0 22%, #2f7aa6 23% 55%, #0a2332 56% 100%);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 0 4px rgba(0,0,0,.12);
+    }
+
+    /* pantalla con scroll solo vertical */
+    .screen{
+      position:relative;
+      z-index:1;
+      height: 350px;
+      padding: 3px;
+      
+      border: 2px solid #00ffcc;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .screen::before{
+      content:"";
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(0deg, var(--scan) 0 1px, rgba(0,0,0,0) 1px 4px);
+      opacity:.45;
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+    .screen::after{
+      content:"";
+      position:absolute; inset:-40px;
+      background: radial-gradient(240px 160px at 50% 10%, rgba(120,210,255,.18), transparent 70%);
+      pointer-events:none;
+    }
+
+    /* scrollbar opcional (sutil) */
+    .screen::-webkit-scrollbar{ width: 8px; }
+    .screen::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.12);
+      border: 2px solid rgba(0,0,0,.20);
+    }
+    .screen::-webkit-scrollbar-track{ background: rgba(0,0,0,.10); }
+
+    .status{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+      font-size: 11px;
+      color: #d9f2ff;
+      opacity:.95;
+      text-shadow: 0 1px 0 rgba(0,0,0,.4);
+      position:relative;
+      z-index:1;
+      font-family: "arcade", "monospace";
+    }
+
+    .status .left{ display:flex; gap:8px; align-items:center; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 3px 7px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+
+      font-family: 'arcade';
+      color: white;
+    }
+
+    .signal{
+      width:14px; height:10px;
+      display:grid;
+      grid-auto-flow:column;
+      gap:2px;
+      align-items:end;
+    }
+    .signal i{
+      display:block;
+      width:2px;
+      background:#d7f2ff;
+      opacity:.9;
+      box-shadow: 0 1px 0 rgba(0,0,0,.35);
+    }
+    .signal i:nth-child(1){ height:3px; opacity:.55;}
+    .signal i:nth-child(2){ height:5px; opacity:.7;}
+    .signal i:nth-child(3){ height:7px; opacity:.85;}
+    .signal i:nth-child(4){ height:9px; }
+
+    .apps{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      padding-top: 2px;
+      padding-bottom: 6px;
+    }
+
+    .app{
+      appearance:none;
+      border:0;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 8px 6px 6px;
+      cursor:pointer;
+      transition: transform .08s ease, filter .08s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 10px rgba(0,0,0,.22);
+      display:grid;
+      place-items:center;
+      gap:6px;
+      min-height: 72px;
+      position:relative;
+      overflow:hidden;
+      font-family: "arcade", monospace;
+    }
+
+    .app:focus-visible{
+      outline: 2px solid rgba(120,210,255,.7);
+      outline-offset: 2px;
+    }
+    .app:hover{ filter: brightness(1.06); }
+    .app:active{ transform: translateY(1px) scale(.99); }
+
+    /* label -> mf-caption */
+    .mf-caption{
+      font-size: 10px;
+      color:#d7f2ff;
+      opacity:.95;
+      letter-spacing:.2px;
+      text-shadow: 0 1px 0 rgba(0,0,0,.45);
+      text-align:center;
+      line-height: 1.1;
+      padding: 0 2px;
+      font-family: "arcade", monospace;
+    }
+
+    .icon{
+      width: 28px;
+      height: 28px;
+      image-rendering: pixelated;
+      position:relative;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.4));
+    }
+
+    .pix{
+      width:3px; height:3px; background: transparent;
+      position:absolute; left: 2px; top: 2px;
+    }
+
+    /* Calculator */
+    .i-calc .pix{
+      background: var(--pix1);
+      box-shadow:
+        0 0 var(--pix1), 3px 0 var(--pix1), 6px 0 var(--pix1), 9px 0 var(--pix1), 12px 0 var(--pix1), 15px 0 var(--pix1), 18px 0 var(--pix1), 21px 0 var(--pix1),
+        0 3px var(--pix1), 21px 3px var(--pix1),
+        0 6px var(--pix1), 21px 6px var(--pix1),
+        0 9px var(--pix1), 21px 9px var(--pix1),
+        0 12px var(--pix1), 21px 12px var(--pix1),
+        0 15px var(--pix1), 21px 15px var(--pix1),
+        0 18px var(--pix1), 21px 18px var(--pix1),
+        0 21px var(--pix1), 3px 21px var(--pix1), 6px 21px var(--pix1), 9px 21px var(--pix1), 12px 21px var(--pix1), 15px 21px var(--pix1), 18px 21px var(--pix1), 21px 21px var(--pix1),
+        3px 3px var(--pix2), 6px 3px var(--pix2), 9px 3px var(--pix2), 12px 3px var(--pix2), 15px 3px var(--pix2), 18px 3px var(--pix2),
+        3px 6px var(--pix2), 6px 6px var(--pix2), 9px 6px var(--pix2), 12px 6px var(--pix2), 15px 6px var(--pix2), 18px 6px var(--pix2),
+        3px 12px var(--pix3), 6px 12px var(--pix3), 9px 12px var(--pix3),
+        3px 15px var(--pix3), 6px 15px var(--pix3), 9px 15px var(--pix3),
+        3px 18px var(--pix3), 6px 18px var(--pix3), 9px 18px var(--pix3),
+        12px 12px var(--pix3), 15px 12px var(--pix3), 18px 12px var(--pix3),
+        12px 15px var(--pix3), 15px 15px var(--pix3), 18px 15px var(--pix3),
+        12px 18px var(--pix3), 15px 18px var(--pix3), 18px 18px var(--pix3);
+    }
+
+    /* AR */
+    .i-ar .pix{
+      background: var(--pix1);
+      box-shadow:
+        6px 9px var(--pix2), 9px 9px var(--pix2), 12px 9px var(--pix2),
+        6px 12px var(--pix2), 9px 12px var(--pix2), 12px 12px var(--pix2),
+        6px 15px var(--pix2), 9px 15px var(--pix2), 12px 15px var(--pix2),
+        6px 6px var(--pix1), 9px 6px var(--pix1), 12px 6px var(--pix1),
+        15px 9px var(--pix1), 15px 12px var(--pix1), 15px 15px var(--pix1),
+        6px 18px var(--pix1), 9px 18px var(--pix1), 12px 18px var(--pix1), 15px 18px var(--pix1),
+        3px 3px var(--pix1),
+        3px 6px var(--pix3),
+        0 6px var(--pix1),
+        6px 3px var(--pix3),
+        6px 0 var(--pix1);
+    }
+
+    /* Snake */
+    .i-snake .pix{
+      background: var(--pix3);
+      box-shadow:
+        3px 6px var(--pix3), 6px 6px var(--pix3), 9px 6px var(--pix3),
+        9px 9px var(--pix3), 9px 12px var(--pix3),
+        6px 12px var(--pix3), 3px 12px var(--pix3),
+        3px 15px var(--pix3), 3px 18px var(--pix3),
+        6px 18px var(--pix3), 9px 18px var(--pix3),
+        12px 18px var(--pix2), 12px 15px var(--pix2),
+        15px 15px var(--pix2), 15px 18px var(--pix2),
+        15px 15px #062033;
+    }
+
+    /* Chat */
+    .i-chat .pix{
+      background: var(--pix2);
+      box-shadow:
+        3px 6px var(--pix2), 6px 6px var(--pix2), 9px 6px var(--pix2), 12px 6px var(--pix2), 15px 6px var(--pix2),
+        3px 9px var(--pix2), 6px 9px var(--pix2), 9px 9px var(--pix2), 12px 9px var(--pix2), 15px 9px var(--pix2),
+        3px 12px var(--pix2), 6px 12px var(--pix2), 9px 12px var(--pix2), 12px 12px var(--pix2), 15px 12px var(--pix2),
+        6px 15px var(--pix2), 9px 15px var(--pix2), 12px 15px var(--pix2),
+        6px 18px var(--pix2), 3px 18px var(--pix2),
+        6px 10px var(--pix1), 9px 10px var(--pix1), 12px 10px var(--pix1);
+    }
+
+    /* BIN */
+    .i-bin .pix{
+      background: var(--pix2);
+      box-shadow:
+        6px 3px var(--pix1), 9px 3px var(--pix1), 12px 3px var(--pix1),
+        3px 6px var(--pix1), 6px 6px var(--pix1), 9px 6px var(--pix1), 12px 6px var(--pix1), 15px 6px var(--pix1),
+        6px 9px var(--pix2), 9px 9px var(--pix2), 12px 9px var(--pix2),
+        6px 12px var(--pix2), 9px 12px var(--pix2), 12px 12px var(--pix2),
+        6px 15px var(--pix2), 9px 15px var(--pix2), 12px 15px var(--pix2),
+        6px 18px var(--pix1), 9px 18px var(--pix1), 12px 18px var(--pix1),
+        9px 10px var(--pix4), 9px 13px var(--pix4), 9px 16px var(--pix4);
+    }
+
+    /* Notes */
+    .i-notes .pix{
+      background: var(--pix2);
+      box-shadow:
+        6px 3px var(--pix2), 9px 3px var(--pix2), 12px 3px var(--pix2), 15px 3px var(--pix2),
+        6px 6px var(--pix2), 9px 6px var(--pix2), 12px 6px var(--pix2), 15px 6px var(--pix2),
+        6px 9px var(--pix2), 9px 9px var(--pix2), 12px 9px var(--pix2), 15px 9px var(--pix2),
+        6px 12px var(--pix2), 9px 12px var(--pix2), 12px 12px var(--pix2), 15px 12px var(--pix2),
+        6px 15px var(--pix2), 9px 15px var(--pix2), 12px 15px var(--pix2), 15px 15px var(--pix2),
+        6px 18px var(--pix2), 9px 18px var(--pix2), 12px 18px var(--pix2), 15px 18px var(--pix2),
+        3px 3px var(--pix1), 3px 6px var(--pix1), 3px 9px var(--pix1), 3px 12px var(--pix1), 3px 15px var(--pix1), 3px 18px var(--pix1),
+        9px 9px var(--pix1), 12px 12px var(--pix1), 9px 15px var(--pix1);
+    }
+
+    /* Map */
+    .i-map .pix{
+      background: var(--pix2);
+      box-shadow:
+        9px 3px var(--pix1),
+        6px 6px var(--pix2), 9px 6px var(--pix2), 12px 6px var(--pix2),
+        6px 9px var(--pix2), 9px 9px var(--pix1), 12px 9px var(--pix2),
+        6px 12px var(--pix2), 9px 12px var(--pix2), 12px 12px var(--pix2),
+        9px 15px var(--pix2),
+        9px 18px var(--pix3),
+        3px 15px var(--pix4), 3px 18px var(--pix4), 6px 15px var(--pix4), 6px 18px var(--pix4);
+    }
+
+    .keypad{
+      position:relative;
+      z-index:1;
+      margin-top: 12px;
+      height: 42%;
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap: 10px;
+    }
+
+    .navrow{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      align-items:center;
+      justify-items:center;
+      padding: 0 6px;
+    }
+
+    .pill{
+      width: 100%;
+      height: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 24%),
+        linear-gradient(180deg, var(--btn1), var(--btn2));
+      border: 1px solid rgba(0,0,0,.25);
+      box-shadow:
+        0 8px 18px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 -2px 0 rgba(0,0,0,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .pill::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(circle at 18% 30%, rgba(120,210,255,.25), transparent 55%);
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    .dpad{
+      width: 76px;
+      height: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 26%),
+        linear-gradient(180deg, var(--btn1), var(--btn2));
+      border: 1px solid rgba(0,0,0,.25);
+      box-shadow:
+        0 8px 18px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 -2px 0 rgba(0,0,0,.18);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .dpad::before{
+      content:"";
+      width: 34px;
+      height: 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.22), rgba(0,0,0,.06)),
+        linear-gradient(180deg, var(--btn2), var(--btn3));
+      border: 1px solid rgba(0,0,0,.25);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        inset 0 -2px 0 rgba(0,0,0,.15);
+    }
+    .dpad::after{
+      content:"";
+      position:absolute;
+      width: 44px; height: 6px;
+      background: rgba(0,0,0,.12);
+      box-shadow: 0 -12px 0 rgba(0,0,0,.12);
+      opacity:.8;
+    }
+
+    .keys{
+      padding: 6px 4px 0;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-content:start;
+    }
+
+    .key{
+      font-family: "arcade", monospace;
+      appearance:none;
+      border: 1px solid rgba(0,0,0,.26);
+      height: 25px;
+      cursor:pointer;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 28%),
+        linear-gradient(180deg, var(--btn1), var(--btn2));
+      box-shadow:
+        0 7px 16px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 -2px 0 rgba(0,0,0,.16);
+      transition: transform .06s ease, filter .06s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#0b2233;
+      font-size: 16px;
+      letter-spacing: 1px;
+      position:relative;
+      overflow:hidden;
+      user-select:none;
+    }
+
+    .key.small{ font-size: 12px; letter-spacing: .4px; }
+    .key:hover{ filter: brightness(1.04); }
+    .key:active{ transform: translateY(1px); }
+
+    .key::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(circle at 25% 28%, rgba(120,210,255,.18), transparent 60%);
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    .key span{
+      opacity:.9;
+      text-shadow: 0 1px 0 rgba(255,255,255,.25);
+    }
+
+    .popup{
+      position:absolute;
+      left: 12px; right: 12px;
+      top: 54px;
+      padding: 10px 10px;
+
+      background: black;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 1px 6px #00ffcc;
+      backdrop-filter: blur(4px);
+      display:none;
+      z-index:3;
+    }
+    .popup.show{ display:block; animation: pop .12s ease-out; }
+    @keyframes pop{
+      from{ transform: translateY(-4px); opacity:.2; }
+      to{ transform: translateY(0); opacity:1; }
+    }
+    .popup .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size: 12px;
+      color:#dbf5ff;
+    }
+    .popup .x{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      color:#dbf5ff;
+      padding: 6px 9px;
+      cursor:pointer;
+      font-size: 12px;
+      font-family: "arcade", monospace;
+    }
+    .popup .x:active{ transform: translateY(1px); }
+    /* calculadora */
+    .calc-wrap{
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:10px;
+      padding-bottom: 10px;
+    }
+
+    .calc-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .calc-back{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color:#dbf5ff;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-family: "arcade", monospace;
+      font-size: 11px;
+    }
+    .calc-back:active{ transform: translateY(1px); }
+
+    .calc-display{
+      width:100%;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color:#e9f4ff;
+      padding: 10px 10px;
+      font-family: "arcade", monospace;
+      font-size: 14px;
+      outline:none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .calc-pad{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .calc-btn{
+      appearance:none;
+      border: 1px solid rgba(0,0,0,.26);
+      height: 34px;
+      cursor:pointer;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 30%),
+        linear-gradient(180deg, var(--btn1), var(--btn2));
+      box-shadow:
+        0 6px 12px rgba(0,0,0,.26),
+        inset 0 1px 0 rgba(255,255,255,.40),
+        inset 0 -2px 0 rgba(0,0,0,.14);
+      font-family: "arcade", monospace;
+      font-size: 12px;
+      color:#0b2233;
+      user-select:none;
+      padding: 0 6px;
+      line-height: 1;
+    }
+    .calc-btn:active{ transform: translateY(1px); }
+
+    .calc-note{
+      font-size: 10px;
+      opacity:.85;
+      position:relative;
+      z-index:1;
+    }
+
+    /* === SNEAK GAME (culebrita) === */
+.sg-wrap{
+  position:relative;
+  z-index:1;
+  display:grid;
+  gap:8px;
+  padding-bottom: 10px;
+  font-family: "arcade", monospace;
+}
+
+.sg-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.sg-back{
+  appearance:none;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.22);
+  color:#dbf5ff;
+  padding: 8px 10px;
+  cursor:pointer;
+  font-family: "arcade", monospace;
+  font-size: 11px;
+}
+.sg-back:active{ transform: translateY(1px); }
+
+.sg-hud{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  font-size: 11px;
+}
+
+.sg-canvas{
+  width:100%;
+  height:auto;
+  display:block;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 1px 6px rgba(0,255,204,.25);
+  image-rendering: pixelated;
+  filter: blur(.8px) saturate(1.2);
+}
+
+.sg-msg{
+  position:absolute;
+  left: 10px;
+  right: 10px;
+  top: 118px;          /* ajusta si lo quieres más arriba/abajo */
+  z-index: 5;
+
+  border: 1px solid rgba(255,255,255,.14);
+  background: black;
+  box-shadow: 0 1px 10px rgba(0,255,204,.35);
+  padding: 10px 10px;
+  font-size: 11px;
+  line-height: 1.25;
+
+  display:none;        /* 👈 solo aparece al perder */
+}
+
+.sg-msg.is-show{
+  display:block;
+}
+
+.sg-msg .line{ display:block; margin-bottom:6px; color: #00ffcc;}
+.sg-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.sg-btn{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.22);
+  color:#dbf5ff;
+  padding: 8px 10px;
+  cursor:pointer;
+  font-size: 11px;
+  font-family: "arcade", monospace;
+}
+.sg-btn:active{ transform: translateY(1px); }
+
+/* === PEGA ESTO AL FINAL DE TU CSS (controles táctiles dentro del canvas) === */
+
+.sg-play{
+  position: relative;
+  z-index: 1;
+}
+
+.sg-pad{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  z-index: 4;
+  pointer-events:none; /* solo los botones capturan */
+}
+
+.sg-arrow{
+  pointer-events:auto;
+  position:absolute;
+  width: 44px;
+  height: 44px;
+  display:grid;
+  place-items:center;
+
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 1px 10px rgba(0,255,204,.25);
+  opacity: .55;
+
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sg-arrow:active{ opacity: .95; transform: translateY(1px); }
+
+.sg-arrow.up    { top: 6px; left: 50%; transform: translateX(-50%); }
+.sg-arrow.down  { bottom: 6px; left: 50%; transform: translateX(-50%); }
+.sg-arrow.left  { left: 6px; top: 50%; transform: translateY(-50%); }
+.sg-arrow.right { right: 6px; top: 50%; transform: translateY(-50%); }
+
+.sg-arrow i{
+  display:block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.35));
+}
+
+/* Triángulos (flechas) */
+.sg-arrow.up i{
+  border-width: 0 10px 14px 10px;
+  border-color: transparent transparent rgba(0,255,204,.9) transparent;
+}
+.sg-arrow.down i{
+  border-width: 14px 10px 0 10px;
+  border-color: rgba(0,255,204,.9) transparent transparent transparent;
+}
+.sg-arrow.left i{
+  border-width: 10px 14px 10px 0;
+  border-color: transparent rgba(0,255,204,.9) transparent transparent;
+}
+.sg-arrow.right i{
+  border-width: 10px 0 10px 14px;
+  border-color: transparent transparent transparent rgba(0,255,204,.9);
+}
+
+/*Meta chat*/
+.mc-frame{
+  width:100%;
+  max-height:350px;
+  border:0;
+}
+
+.mc-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+/*Cuaderno APP*/
+.nb-wrap{
+  width:100%;
+  max-height:350px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.nb-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.nb-input{
+  width: 65%;
+  height: 32px;
+  flex:1;
+  padding:6px;
+
+  font-size:11px;
+  font-family:"arcade", monospace;
+
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.12);
+  color:#bffff5;
+
+  outline:none;
+
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,.6),
+    0 0 6px rgba(0,255,204,.15);
+}
+
+.nb-input::placeholder{
+  color: rgba(180,255,240,.5);
+}
+
+.nb-input{
+  flex:1;
+  padding:4px;
+  font-size:11px;
+}
+
+.nb-add{
+  font-size:11px;
+  cursor:pointer;
+}
+
+.nb-list{
+  overflow-y:auto;
+  max-height:240px;
+  padding-right:4px;
+
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+
+  scroll-behavior:smooth;
+
+  /* Firefox */
+  scrollbar-width:thin;
+  scrollbar-color: rgba(0,255,204,.6) rgba(0,0,0,.2);
+}
+
+/* Chrome / Edge / Safari */
+.nb-list::-webkit-scrollbar{
+  width:6px;
+}
+
+.nb-list::-webkit-scrollbar-track{
+  background: rgba(0,0,0,.2);
+}
+
+.nb-list::-webkit-scrollbar-thumb{
+  background: rgba(0,255,204,.6);
+  border-radius:4px;
+}
+
+.nb-list::-webkit-scrollbar-thumb:hover{
+  background: rgba(0,255,204,.9);
+}
+
+.nb-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:10px;
+  background:rgba(0,0,0,.2);
+  padding:4px;
+
+  font-size: 'arcae';
+  color: #00ffcc;
+
+  border-bottom: #00ffcc 1px solid;
+}
+
+.nb-del{
+  cursor:pointer;
+  background:none;
+  border:none;
+  color:#ff7070;
+}
+
+.nb-text{
+  font-family: 'arcade';
+}
+  </style>
+</head>
+
+<body>
+  <div class="mf-stage">
+    <div class="mf-device" id="mfDevice">
+      <div class="top">
+        <div class="camdot" aria-hidden="true"></div>
+        <div class="speaker" aria-hidden="true"></div>
+        <div style="width:12px"></div>
+      </div>
+
+      <div class="screen" id="mfScreen" role="region" aria-label="Pantalla MetaFon">
+        <!-- todo lo de la pantalla se renderiza por JS con innerHTML -->
+      </div>
+
+      <div class="keypad" aria-label="Botones físicos retro">
+        <div class="navrow">
+          <div class="pill" aria-hidden="true"></div>
+          <div class="dpad" aria-hidden="true"></div>
+          <div class="pill" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script>
+
+
+  
+  const mfScreen = document.getElementById('mfScreen');
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function getClockText(){
+    const d = new Date();
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  }
+
+  function statusHTML(){
+    return `
+      <div class="status">
+        <div class="left">
+          <div class="badge">
+            <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>MF-11</span>
+          </div>
+          <div class="badge"><span id="clock">${getClockText()}</span></div>
+        </div>
+        <div class="badge">BAT ███</div>
+      </div>
+    `;
+  }
+
+  function homeHTML(){
+    return `
+      ${statusHTML()}
+      <div class="apps" aria-label="Aplicaciones disponibles">
+        <button class="app" type="button" data-app="Calculadora">
+          <div class="icon i-calc"><i class="pix"></i></div>
+          <div class="mf-caption">Calculadora</div>
+        </button>
+
+        <button class="app" type="button" data-app="Cámara AR">
+          <div class="icon i-ar"><i class="pix"></i></div>
+          <div class="mf-caption">Cámara AR</div>
+        </button>
+
+        <button class="app" type="button" data-app="Sneak Game">
+          <div class="icon i-snake"><i class="pix"></i></div>
+          <div class="mf-caption">Sneak Game</div>
+        </button>
+
+        <button class="app" type="button" data-app="Meta-Chat">
+          <div class="icon i-chat"><i class="pix"></i></div>
+          <div class="mf-caption">Meta-Chat</div>
+        </button>
+
+        <!--
+        <button class="app" type="button" data-app="BIN">
+          <div class="icon i-bin"><i class="pix"></i></div>
+          <div class="mf-caption">BIN</div>
+        </button>
+        -->
+
+        <button class="app" type="button" data-app="Cuaderno">
+          <div class="icon i-notes"><i class="pix"></i></div>
+          <div class="mf-caption">Cuaderno</div>
+        </button>
+
+        <button class="app" type="button" data-app="MetaMap">
+          <div class="icon i-map"><i class="pix"></i></div>
+          <div class="mf-caption">MetaMap</div>
+        </button>
+
+        <!--
+        <button class="app" type="button" data-app="Firmware">
+          <div class="icon i-calc" style="transform:scale(.92);opacity:.95;"><i class="pix"></i></div>
+          <div class="mf-caption">Firmware</div>
+        </button>
+      </div>
+      -->
+    `;
+  }
+
+  function calculatorHTML(){
+    return `
+      ${statusHTML()}
+
+      <div class="calc-wrap" aria-label="Calculadora">
+        <div class="calc-top">
+          <button class="calc-back" type="button" data-nav="home">Volver</button>
+          <div class="badge">CALC</div>
+        </div>
+
+        <input class="calc-display" id="calcDisplay" type="text" value="0" readonly />
+
+        <div class="calc-pad" id="calcPad">
+          <button class="calc-btn" type="button" data-calc="C">C</button>
+          <button class="calc-btn" type="button" data-calc="DEL">DEL</button>
+          <button class="calc-btn" type="button" data-calc="(">(</button>
+          <button class="calc-btn" type="button" data-calc=")">)</button>
+
+          <button class="calc-btn" type="button" data-calc="7">7</button>
+          <button class="calc-btn" type="button" data-calc="8">8</button>
+          <button class="calc-btn" type="button" data-calc="9">9</button>
+          <button class="calc-btn" type="button" data-calc="/">÷</button>
+
+          <button class="calc-btn" type="button" data-calc="4">4</button>
+          <button class="calc-btn" type="button" data-calc="5">5</button>
+          <button class="calc-btn" type="button" data-calc="6">6</button>
+          <button class="calc-btn" type="button" data-calc="*">×</button>
+
+          <button class="calc-btn" type="button" data-calc="1">1</button>
+          <button class="calc-btn" type="button" data-calc="2">2</button>
+          <button class="calc-btn" type="button" data-calc="3">3</button>
+          <button class="calc-btn" type="button" data-calc="-">−</button>
+
+          <button class="calc-btn" type="button" data-calc="0">0</button>
+          <button class="calc-btn" type="button" data-calc=".">.</button>
+          <button class="calc-btn" type="button" data-calc="=">=</button>
+          <button class="calc-btn" type="button" data-calc="+">+</button>
+
+          <button class="calc-btn" type="button" data-calc="sqrt">√</button>
+          <button class="calc-btn" type="button" data-calc="log10">log</button>
+          <button class="calc-btn" type="button" data-calc="sin">sin</button>
+          <button class="calc-btn" type="button" data-calc="cos">cos</button>
+        </div>
+
+        <div class="calc-note">
+          sin/cos en grados (deg). log = logaritmo base 10.
+        </div>
+      </div>
+    `;
+  }
+
+  function notebookHTML(){
+  return `
+    ${statusHTML()}
+
+    <div class="nb-wrap">
+
+      <div class="nb-top">
+        <button class="sg-back" type="button" data-nav="home">Volver</button>
+        <div class="badge">CUADERNO</div>
+      </div>
+
+      <div class="nb-inputrow">
+        <input id="nbInput" class="nb-input" placeholder="Escribe un descubrimiento..." />
+        <button id="nbAdd" class="sg-back">Agregar</button>
+      </div>
+
+      <div class="nb-list" id="nbList"></div>
+
+    </div>
+  `;
+}
+
+function snakeHTML(){
+  return `
+    ${statusHTML()}
+    <div class="sg-wrap" aria-label="Sneak Game">
+      <div class="sg-top">
+        <button class="sg-back" type="button" data-nav="home">Volver</button>
+        <div class="badge">SNEAK</div>
+      </div>
+
+      <div class="sg-hud">
+        <div class="badge">PUNTOS: <span id="sgScore">0</span></div>
+        <div class="badge">NIVEL: <span id="sgLevel">1</span></div>
+        <div class="badge">VEL: <span id="sgSpeed">1</span></div>
+      </div>
+
+      <div class="sg-play">
+        <canvas class="sg-canvas" id="sgCanvas" width="240" height="240"></canvas>
+
+        <div class="sg-pad" aria-hidden="false">
+          <button class="sg-arrow up" type="button" data-dir="up" aria-label="Arriba"><i></i></button>
+          <button class="sg-arrow down" type="button" data-dir="down" aria-label="Abajo"><i></i></button>
+          <button class="sg-arrow left" type="button" data-dir="left" aria-label="Izquierda"><i></i></button>
+          <button class="sg-arrow right" type="button" data-dir="right" aria-label="Derecha"><i></i></button>
+        </div>
+      </div>
+
+      <div class="sg-msg">
+        <span class="line">nivel maximo alcanzado. supera tu reto.</span>
+        <span class="line">nivel maximo: <span id="sgMaxLevel">1</span></span>
+        <span class="line">record puntos: <span id="sgBestScore">0</span></span>
+        <div class="sg-actions">
+          <button class="sg-btn" type="button" data-sg="restart">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function metaChatHTML(){
+  return `
+    ${statusHTML()}
+
+    <div class="mc-wrap">
+      <div class="mc-top">
+        <button class="calc-back " type="button" data-nav="home">Volver</button>
+        <div class="badge">META-CHAT</div>
+      </div>
+
+      <iframe 
+        class="mc-frame"
+        src="https://www.chateagratis.net/chat/109/sala/Buenos-Aires.php"
+        width="100%"
+        height="250"
+        frameborder="0"
+        loading="lazy">
+      </iframe>
+    </div>
+  `;
+}
+
+  let currentView = "home";
+
+  function renderScreen(view){
+    // cleanup por vista anterior
+    switch(currentView){
+      case "snake":
+        stopSnake();
+        break;
+    }
+
+    switch(view){
+      case "home":
+        mfScreen.innerHTML = homeHTML();
+        break;
+
+      case "calc":
+        mfScreen.innerHTML = calculatorHTML();
+        break;
+
+      case "snake":
+        mfScreen.innerHTML = snakeHTML();
+        initSnake();
+        break;
+
+      case "Cuaderno":
+          mfScreen.innerHTML = notebookHTML();
+          initNotebook();
+          break;
+
+      default:
+        mfScreen.innerHTML = homeHTML();
+        break;
+    }
+
+    currentView = view;
+  }
+
+  // reloj
+  function tick(){
+    const clockEl = document.getElementById('clock');
+    if(clockEl) clockEl.textContent = getClockText();
+  }
+
+  renderScreen("home");
+  tick();
+  setInterval(tick, 1000);
+
+  // ============ CALCULADORA ============
+  const calcState = { expr: "0" };
+
+  function getDisplay(){ return document.getElementById('calcDisplay'); }
+
+  function setExpr(next){
+    calcState.expr = next;
+    const d = getDisplay();
+    if(d) d.value = next;
+  }
+
+  function safeEvalExpression(expr){
+    const cleaned = expr.replace(/[^0-9+\-*/().]/g, "");
+    if(/[*]{2,}|[\/]{2,}/.test(cleaned)) throw new Error("expresión inválida");
+    // eslint-disable-next-line no-new-func
+    const fn = new Function(`return (${cleaned});`);
+    const r = fn();
+    if(!Number.isFinite(r)) throw new Error("resultado inválido");
+    return r;
+  }
+
+  function applyUnary(fnName){
+    const d = getDisplay();
+    if(!d) return;
+
+    let baseValue;
+    try{ baseValue = safeEvalExpression(calcState.expr); }
+    catch{ baseValue = Number(d.value); }
+
+    if(!Number.isFinite(baseValue)) baseValue = 0;
+
+    let result = baseValue;
+
+    switch(fnName){
+      case "sqrt":
+        if(baseValue < 0) throw new Error("√ de negativo");
+        result = Math.sqrt(baseValue);
+        break;
+
+      case "log10":
+        if(baseValue <= 0) throw new Error("log de <= 0");
+        result = Math.log10(baseValue);
+        break;
+
+      case "sin": {
+        const rad = (baseValue * Math.PI) / 180;
+        result = Math.sin(rad);
+        break;
+      }
+
+      case "cos": {
+        const rad = (baseValue * Math.PI) / 180;
+        result = Math.cos(rad);
+        break;
+      }
+    }
+
+    const pretty = Number.isFinite(result) ? String(+result.toFixed(12)) : "0";
+    setExpr(pretty);
+  }
+
+  // ============ SNAKE GAME ============
+  const SG = {
+    running:false,
+    raf:0,
+    last:0,
+    interval: 170,
+    baseInterval: 170,
+    minInterval: 60,
+    score:0,
+    level:1,
+    bestScore:0,
+    maxLevel:1,
+    dir:{x:1,y:0},
+    nextDir:{x:1,y:0},
+    grid:16,
+    cell:15,
+    snake:[],
+    apple:{x:3,y:3},
+    died:false,
+    keyHandler:null,
+    resizeHandler:null,
+    clickHandler:null
+  };
+
+  function sgLoadStats(){
+    SG.bestScore = Number(localStorage.getItem("mf_sg_bestScore") || "0");
+    SG.maxLevel  = Number(localStorage.getItem("mf_sg_maxLevel") || "1");
+  }
+
+  function sgSaveStats(){
+    localStorage.setItem("mf_sg_bestScore", String(SG.bestScore));
+    localStorage.setItem("mf_sg_maxLevel",  String(SG.maxLevel));
+  }
+
+  function sgRandCell(){
+    return { x: Math.floor(Math.random()*SG.grid), y: Math.floor(Math.random()*SG.grid) };
+  }
+
+  function sgAppleRespawn(){
+    let p = sgRandCell();
+    let guard = 0;
+    while(SG.snake.some(s=> s.x===p.x && s.y===p.y) && guard < 200){
+      p = sgRandCell();
+      guard++;
+    }
+    SG.apple = p;
+  }
+
+  function sgUpdateHUD(){
+    const s = document.getElementById("sgScore");
+    const l = document.getElementById("sgLevel");
+    const v = document.getElementById("sgSpeed");
+    const ml = document.getElementById("sgMaxLevel");
+    const bs = document.getElementById("sgBestScore");
+    if(s) s.textContent = String(SG.score);
+    if(l) l.textContent = String(SG.level);
+    if(v) v.textContent = String(Math.max(1, Math.round((SG.baseInterval - SG.interval)/10) + 1));
+    if(ml) ml.textContent = String(SG.maxLevel);
+    if(bs) bs.textContent = String(SG.bestScore);
+  }
+
+  function sgShowMsg(show){
+  const box = document.querySelector(".sg-msg");
+  if(!box) return;
+  box.classList.toggle("is-show", !!show);
+}
+
+function sgSyncMsgStats(){
+  const ml = document.getElementById("sgMaxLevel");
+  const bs = document.getElementById("sgBestScore");
+  if(ml) ml.textContent = String(SG.maxLevel);
+  if(bs) bs.textContent = String(SG.bestScore);
+}
+
+function sgSetDir(dir){
+  // evita reversa instantánea
+  switch(dir){
+    case "up":
+      if(SG.dir.y !== 1) SG.nextDir = {x:0,y:-1};
+      break;
+    case "down":
+      if(SG.dir.y !== -1) SG.nextDir = {x:0,y:1};
+      break;
+    case "left":
+      if(SG.dir.x !== 1) SG.nextDir = {x:-1,y:0};
+      break;
+    case "right":
+      if(SG.dir.x !== -1) SG.nextDir = {x:1,y:0};
+      break;
+  }
+}
+
+function sgSetSpeedByScore(){
+    const nextLevel = Math.floor(SG.score / 10) + 1;
+    SG.level = nextLevel;
+
+    const target = SG.baseInterval - ((SG.level - 1) * 12);
+    SG.interval = Math.max(SG.minInterval, target);
+
+    if(SG.level > SG.maxLevel){
+      SG.maxLevel = SG.level;
+      sgSaveStats();
+    }
+  }
+
+  function sgReset(){
+    SG.score = 0;
+    SG.level = 1;
+    SG.interval = SG.baseInterval;
+    SG.dir = {x:1,y:0};
+    SG.nextDir = {x:1,y:0};
+    SG.snake = [{x:8,y:8},{x:7,y:8},{x:6,y:8}];
+    SG.died = false;
+    sgAppleRespawn();
+    sgUpdateHUD();
+  }
+
+  sgShowMsg(false);
+
+  function sgMeasureCanvas(){
+    const c = document.getElementById("sgCanvas");
+    if(!c) return;
+
+    const maxW = mfScreen.clientWidth - 6;
+    const size = Math.max(180, Math.min(260, maxW));
+    c.width = size;
+    c.height = size;
+
+    SG.cell = Math.floor(size / SG.grid);
+  }
+
+  function sgDraw(){
+    const c = document.getElementById("sgCanvas");
+    if(!c) return;
+    const ctx = c.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle = "rgba(0,0,0,.25)";
+    ctx.fillRect(0,0,c.width,c.height);
+
+    ctx.fillStyle = "rgba(0,255,204,.04)";
+    for(let i=0;i<SG.grid;i++){
+      ctx.fillRect(i*SG.cell,0,1,c.height);
+      ctx.fillRect(0,i*SG.cell,c.width,1);
+    }
+
+    // apple glow
+    ctx.save();
+    ctx.shadowColor = "rgba(255,0,100,.55)";
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = "rgba(255,70,160,.95)";
+    ctx.fillRect(SG.apple.x*SG.cell+2, SG.apple.y*SG.cell+2, SG.cell-4, SG.cell-4);
+    ctx.restore();
+
+    // snake glow
+    ctx.save();
+    ctx.shadowColor = "rgba(0,255,204,.55)";
+    ctx.shadowBlur = 8;
+    for(let i=0;i<SG.snake.length;i++){
+      const p = SG.snake[i];
+      const isHead = (i===0);
+      ctx.fillStyle = isHead ? "rgba(170,255,240,.95)" : "rgba(0,255,204,.90)";
+      ctx.fillRect(p.x*SG.cell+2, p.y*SG.cell+2, SG.cell-4, SG.cell-4);
+    }
+    ctx.restore();
+
+    if(SG.died){
+      ctx.fillStyle = "rgba(0,0,0,.35)";
+      ctx.fillRect(0,0,c.width,c.height);
+    }
+  }
+
+
+function sgDie(){
+  SG.died = true;
+  SG.running = false;     // detiene loop sin borrar listeners
+  sgSyncMsgStats();       // actualiza max level / record
+  sgShowMsg(true);        // 👈 aparece solo cuando pierde
+  sgDraw();
+  sgUpdateHUD();
+}
+
+  function sgStep(){
+    const nd = SG.nextDir;
+    const d = SG.dir;
+    if(!(nd.x === -d.x && nd.y === -d.y)){
+      SG.dir = {x: nd.x, y: nd.y};
+    }
+
+    const head = {x: SG.snake[0].x + SG.dir.x, y: SG.snake[0].y + SG.dir.y};
+
+    if(head.x < 0 || head.y < 0 || head.x >= SG.grid || head.y >= SG.grid){
+      sgDie(); return;
+    }
+
+    if(SG.snake.some(s => s.x===head.x && s.y===head.y)){
+      sgDie(); return;
+    }
+
+    SG.snake.unshift(head);
+
+    if(head.x === SG.apple.x && head.y === SG.apple.y){
+      SG.score += 1;
+
+      if(SG.score > SG.bestScore){
+        SG.bestScore = SG.score;
+        sgSaveStats();
+      }
+
+      sgSetSpeedByScore();
+      sgAppleRespawn();
+    }else{
+      SG.snake.pop();
+    }
+
+    sgUpdateHUD();
+    sgDraw();
+  }
+
+  function snakeLoop(ts){
+    if(!SG.running) return;
+    if(!SG.last) SG.last = ts;
+    const dt = ts - SG.last;
+
+    if(dt >= SG.interval){
+      SG.last = ts;
+      if(!SG.died) sgStep();
+    }
+    SG.raf = requestAnimationFrame(snakeLoop);
+  }
+
+  function startSnake(){
+    if(SG.running) return;
+    SG.running = true;
+    SG.last = 0;
+    SG.raf = requestAnimationFrame(snakeLoop);
+  }
+
+  function stopSnake(){
+    SG.running = false;
+    if(SG.raf) cancelAnimationFrame(SG.raf);
+    SG.raf = 0;
+
+    if(SG.keyHandler){
+      window.removeEventListener("keydown", SG.keyHandler);
+      SG.keyHandler = null;
+    }
+    if(SG.resizeHandler){
+      window.removeEventListener("resize", SG.resizeHandler);
+      SG.resizeHandler = null;
+    }
+    if(SG.clickHandler){
+      mfScreen.removeEventListener("click", SG.clickHandler);
+      SG.clickHandler = null;
+    }
+  }
+
+//Mandar a ejecutar funciones en index
+  function sendToGame(action, payload = {}){
+    window.parent.postMessage({
+      source: "metafon",
+      action,
+      payload
+    }, window.location.origin);
+}
+
+function initNotebook(){
+
+  const input = document.getElementById("nbInput");
+  const list = document.getElementById("nbList");
+  const addBtn = document.getElementById("nbAdd");
+
+  let counter = 1;
+  const discoveries = [];
+
+  //Motor de cuaderno
+  function render(){
+    list.innerHTML = "";
+
+    discoveries.forEach((item,index)=>{
+
+      const row = document.createElement("div");
+      row.className = "nb-item";
+
+      row.innerHTML = `
+        <div class="nb-text">
+          #${item.id} / ${item.date} / ${item.text}
+        </div>
+        <button class="nb-del" data-index="${index}">✖</button>
+      `;
+
+      list.appendChild(row);
+    });
+
+    console.log("Descubrimientos:", discoveries);
+  }
+
+  function addItem(){
+
+    const text = input.value.trim();
+    if(!text) return;
+
+    const date = new Date().toLocaleDateString();
+
+    discoveries.push({
+      id: counter++,
+      date: date,
+      text: text
+    });
+
+    input.value = "";
+    render();
+  }
+
+  addBtn.addEventListener("click", addItem);
+
+  input.addEventListener("keypress",(e)=>{
+    if(e.key === "Enter") addItem();
+  });
+
+  list.addEventListener("click",(e)=>{
+
+    const del = e.target.closest(".nb-del");
+    if(!del) return;
+
+    const index = del.dataset.index;
+    discoveries.splice(index,1);
+
+    render();
+  });
+
+}
+
+function initSnake(){
+  sgLoadStats();
+  sgMeasureCanvas();
+  sgReset();
+  sgUpdateHUD();
+  sgDraw();
+
+  sgShowMsg(false);
+  sgSyncMsgStats();
+
+  SG.keyHandler = (e)=>{
+    const k = e.key;
+    switch(k){
+      case "ArrowUp":
+      case "w":
+      case "W":
+        SG.nextDir = {x:0,y:-1}; break;
+      case "ArrowDown":
+      case "s":
+      case "S":
+        SG.nextDir = {x:0,y:1}; break;
+      case "ArrowLeft":
+      case "a":
+      case "A":
+        SG.nextDir = {x:-1,y:0}; break;
+      case "ArrowRight":
+      case "d":
+      case "D":
+        SG.nextDir = {x:1,y:0}; break;
+      case "Enter":
+        if(SG.died){ sgReset(); sgShowMsg(false); startSnake(); }
+        break;
+    }
+  };
+  window.addEventListener("keydown", SG.keyHandler);
+
+  SG.resizeHandler = ()=>{
+    sgMeasureCanvas();
+    sgDraw();
+  };
+  window.addEventListener("resize", SG.resizeHandler);
+
+  SG.clickHandler = (ev)=>{
+    const b = ev.target.closest("[data-sg]");
+    if(!b) return;
+    const a = b.getAttribute("data-sg");
+    switch(a){
+      case "restart":
+        sgReset();
+        sgShowMsg(false);
+        startSnake();
+        break;
+    }
+  };
+  mfScreen.addEventListener("click", SG.clickHandler);
+SG.clickHandler = (ev)=>{
+  const b = ev.target.closest("[data-sg], [data-dir]");
+  if(!b) return;
+
+  // flechas overlay
+  const dir = b.getAttribute("data-dir");
+  if(dir){
+    sgSetDir(dir);
+    return;
+  }
+
+  // botones internos (reiniciar)
+  const a = b.getAttribute("data-sg");
+  switch(a){
+    case "restart":
+      sgReset();
+      sgShowMsg(false);
+      startSnake();
+      break;
+  }
+};
+mfScreen.addEventListener("click", SG.clickHandler);
+  startSnake();
+}
+
+  // ============ EVENTOS (delegación) ============
+  document.addEventListener('click', (e)=>{
+    const appBtn = e.target.closest('.app');
+    const navBtn = e.target.closest('[data-nav]');
+    const calcBtn = e.target.closest('[data-calc]');
+
+    // volver
+    if(navBtn){
+      const where = navBtn.getAttribute('data-nav');
+      switch(where){
+        case "home":
+          renderScreen("home");
+          break;
+        default:
+          renderScreen("home");
+          break;
+      }
+      return;
+    }
+
+    // apps
+    if(appBtn){
+      const appName = appBtn.getAttribute('data-app') || "";
+      switch(appName){
+        case "Calculadora":
+          renderScreen("calc");
+          setExpr("0");
+          break;
+
+        case "Sneak Game":
+          renderScreen("snake");
+          break;
+        
+        case "Meta-Chat":
+          mfScreen.innerHTML = metaChatHTML();
+          currentView = "metachat";
+          break;
+
+        case "Cuaderno":
+          mfScreen.innerHTML = notebookHTML();
+          initNotebook();
+          currentView = "notebook";
+        break;
+
+          case "Cámara AR":
+            sendToGame("openCameraAR");
+            break;
+
+          case "MetaMap":
+            sendToGame("openMetaMap");
+            break;
+
+        default:
+          mfScreen.scrollTop = 0;
+          mfScreen.insertAdjacentHTML(
+            "afterbegin",
+            `<div class="badge" style="margin-bottom:10px;position:relative;z-index:2;">${appName} (sin módulo)</div>`
+          );
+          break;
+      }
+      return;
+    }
+
+    // calculadora
+    if(calcBtn){
+      const k = calcBtn.getAttribute('data-calc');
+      const d = getDisplay();
+      if(!d) return;
+
+      switch(k){
+        case "C":
+          setExpr("0");
+          break;
+
+        case "DEL": {
+          const now = calcState.expr;
+          const next = now.length <= 1 ? "0" : now.slice(0, -1);
+          setExpr(next);
+          break;
+        }
+
+        case "=": {
+          try{
+            const r = safeEvalExpression(calcState.expr);
+            const pretty = String(+r.toFixed(12));
+            setExpr(pretty);
+          }catch{
+            setExpr("Error");
+            setTimeout(()=> setExpr("0"), 700);
+          }
+          break;
+        }
+
+        case "sqrt":
+        case "log10":
+        case "sin":
+        case "cos":
+          try{
+            applyUnary(k);
+          }catch{
+            setExpr("Error");
+            setTimeout(()=> setExpr("0"), 700);
+          }
+          break;
+
+        default: {
+          let now = calcState.expr;
+          if(now === "Error") now = "0";
+
+          if((k === "+" || k === "*" || k === "/") && (now === "0" || now === "")){
+            break;
+          }
+
+          if(now === "0" && /[0-9]/.test(k)){
+            setExpr(k);
+            break;
+          }
+
+          setExpr(now + k);
+          break;
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

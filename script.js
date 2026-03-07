@@ -1,0 +1,3333 @@
+// =======================================================================================
+// Variables Coordenadas de misiones 
+// =======================================================================================
+let coordenadasMisionsX = 0;
+let coordenadasMisionsY = 0;
+let coordenadasMisionState = false;
+
+
+// =======================================================================================
+// Variables a sincronizar con base de datos Wordpress (inicio)
+// =======================================================================================
+
+// =============================
+// IQ GLOBAL
+// =============================
+let IQuser = 3; //nivel IQ del jugador
+const maxIQ = 700; //Nivel maximo de IQ del juego
+
+// =============================
+// Datos avatar User
+// =============================
+  let username   = "jaisaac";
+  let avatar     = localStorage.getItem("avatar");
+  let profession = localStorage.getItem("profession");
+
+  let cosmonedas = 0; //0 Inicial el saldo se gurdará en la base de datos
+
+
+  // =============================
+// TOP 15 (estático MVP) manejo incial de forma manual
+// Solo nombre, avatarId, iq
+// =============================
+const TOP15_PLAYERS = [
+  { name: "AstraNova", avatarId: "f1", iq: 18 },
+  { name: "ProtaX", avatarId: "m6", iq: 15 },
+  { name: "LunaByte", avatarId: "f7", iq: 21 },
+  { name: "KairoZen", avatarId: "m3", iq: 31 },
+  { name: "NebuLyn", avatarId: "f9", iq: 34 },
+  { name: "OrionD", avatarId: "m1", iq: 9 },
+  { name: "VegaPulse", avatarId: "f1", iq: 9 },
+  { name: "MikaCore", avatarId: "f8", iq: 10 },
+  { name: "AriaFlux", avatarId: "f4", iq: 12 },
+  { name: "DarioQ", avatarId: "m2", iq: 4 },
+  { name: "CleoStar", avatarId: "f3", iq: 6 },
+  { name: "FreyaWave", avatarId: "f6", iq: 8 },
+  { name: "NovaRift", avatarId: "f9", iq: 3 },
+  { name: "KenzoLab", avatarId: "m3", iq: 5 },
+  { name: "ZaneVoid", avatarId: "m9", iq: 5 },
+];
+
+// =============================
+// NOVEDADES (MVP FRONTEND) anejo incial de forma manual
+// =============================
+const NOVEDADES = [
+  { tag: "Proximamente", text: "Nueva zona Sector -3 con puertas cifradas y niebla." },
+  { tag: "Actualizacion", text: "Optimización del joystick para reducir latencia en móviles." },
+  { tag: "Premios", text: "Premio semanal: 200 cosmonedas por completar 3 misiones." },
+  { tag: "Proximamente", text: "Sistema de inventario 3x3 con trajes y mejoras básicas." },
+  { tag: "Actualizacion", text: "Barra de vida mejorada con efectos y alertas de peligro." },
+  { tag: "Premios", text: "Logro: Explorador Alfa. Recompensa: insignia y 50 IQ." },
+  { tag: "Proximamente", text: "Metafon: acceso rápido a mapa, notas y calculadora." },
+  { tag: "Actualizacion", text: "Mejoras en carga de assets y transición al gameplay." },
+  { tag: "Proximamente", text: "Ranking de IQ en tiempo real para usuarios activos." },
+  { tag: "Premios", text: "Evento de bienvenida: 100 cosmonedas por crear profesión." },
+  { tag: "Actualizacion", text: "Correcciones visuales del canvas y bordes pixel perfect." },
+  { tag: "Proximamente", text: "Misiones diarias con rutas ocultas y secretos del mapa." },
+];
+
+// =======================================================================================
+// Variables a sincronizar con base de datos Wordpress (Fin)
+// =======================================================================================
+
+// ================================================
+// Función llamado de metafon.html a index.html (inicio)
+// ================================================
+//-------MetaCamAR (Inicio)
+function openCameraAR() {
+  console.log("Abrir Cámara AR en index.html");
+
+  if (document.getElementById("camera-ar-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "camera-ar-overlay";
+
+  overlay.innerHTML = `
+    <div class="camera-ar-header">
+      <h1>MetaCam AR</h1>
+      <button class="camera-ar-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <iframe 
+      class="camera-ar-frame"
+      src="./interactions/MetaCamAR/camaraAR.html"
+      title="Cámara AR"
+      allow="camera; microphone; fullscreen"
+    ></iframe>
+  `;
+
+  document.getElementById("wrap").appendChild(overlay);
+
+  const style = document.createElement("style");
+  style.textContent = `
+  #camera-ar-overlay{
+    position:absolute;
+    width:95%;
+    height:95%;
+    z-index:100;
+
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+
+    display:flex;
+    flex-direction:column;
+    border:2px solid #00ffcc;
+  }
+
+    .camera-ar-header{
+      height:40px;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      padding:6px;
+      background:black;
+      border-bottom:2px solid #00ffcc;
+    }
+
+  .camera-ar-header h1:{
+    color: #00ffcc;
+    }
+
+    .camera-ar-close{
+      width:32px;
+      height:28px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      cursor:pointer;
+    }
+
+    .camera-ar-close:active{
+      transform:translateY(1px);
+    }
+
+    .camera-ar-frame{
+      width:100%;
+      height:100vh;
+      border:none;
+      flex:1;
+    }
+  `;
+  document.head.appendChild(style);
+
+  function closeCameraAR() {
+    const el = document.getElementById("camera-ar-overlay");
+    if (el) el.remove();
+  }
+
+  const closeBtn = overlay.querySelector(".camera-ar-close");
+
+  closeBtn.addEventListener("click", closeCameraAR);
+
+  closeBtn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    closeCameraAR();
+  }, { passive:false });
+}
+
+
+//-----MetaMap (inicio)
+function openMetaMap() {
+  console.log("Abrir MetaMap en index.html");
+
+  // Evita abrir dos veces
+  if (document.getElementById("metamap-overlay")) return;
+
+  const MAP_SRC = "./assets/mapas/mapa1-5000x5000.svg";
+  const WORLD_W = 5000;
+  const WORLD_H = 5000;
+
+  // Toma posición actual del jugador si existe en window, si no usa fallback
+  const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
+  const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
+
+  // Inyectar estilos una sola vez
+  if (!document.getElementById("metamap-styles")) {
+    const style = document.createElement("style");
+    style.id = "metamap-styles";
+    style.textContent = `
+      #metamap-overlay{
+        position:absolute;
+        inset:0;
+        z-index:3000;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        pointer-events:auto;
+      }
+
+      #metamap-panel{
+        position:absolute;
+        width:320px;
+        height:320px;
+        background:black;
+        border:3px solid #00ffcc;
+        box-shadow:
+          0 0 0 2px #0b3d35,
+          0 0 0 4px #00ffcc,
+          0 10px 30px rgba(0,0,0,0.45);
+        color:#00ffcc;
+        font-family:"arcade","monospace";
+        image-rendering:pixelated;
+        overflow:hidden;
+        touch-action:none;
+      }
+
+      #metamap-header{
+        height:42px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:0 8px;
+        background:#111;
+        border-bottom:2px solid #00ffcc;
+      }
+
+      #metamap-title{
+        font-size:12px;
+        letter-spacing:1px;
+        text-transform:uppercase;
+      }
+
+      #metamap-header-right{
+        display:flex;
+        gap:6px;
+        align-items:center;
+      }
+
+      .metamap-btn{
+        width:28px;
+        height:28px;
+        background:black;
+        color:#00ffcc;
+        border:2px solid #00ffcc;
+        font-family:"arcade","monospace";
+        font-size:14px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:0;
+      }
+
+      .metamap-btn:active{
+        transform:translateY(1px);
+      }
+
+      #metamap-viewport{
+        position:relative;
+        width:100%;
+        height:calc(100% - 42px);
+        overflow:hidden;
+        background:black;
+        touch-action:none;
+        cursor:grab;
+      }
+
+      #metamap-viewport.dragging{
+        cursor:grabbing;
+      }
+
+      #metamap-canvas{
+        position:absolute;
+        left:0;
+        top:0;
+        image-rendering:pixelated;
+        transform-origin:top left;
+        will-change:transform;
+        user-select:none;
+        -webkit-user-drag:none;
+        pointer-events:none;
+      }
+
+      #metamap-player{
+        position:absolute;
+        width:18px;
+        height:18px;
+        pointer-events:none;
+        transform-origin:center center;
+      }
+
+      #metamap-player::before{
+        content:"";
+        position:absolute;
+        left:50%;
+        top:50%;
+        width:0;
+        height:0;
+        transform:translate(-50%, -60%);
+        border-left:8px solid transparent;
+        border-right:8px solid transparent;
+        border-bottom:14px solid #00ffcc;
+        filter:drop-shadow(0 0 2px rgba(0,255,204,0.6));
+      }
+
+      #metamap-player::after{
+        content:"";
+        position:absolute;
+        left:50%;
+        top:50%;
+        width:4px;
+        height:4px;
+        background:black;
+        transform:translate(-50%, -20%);
+      }
+
+      #metamap-mission{
+        position:absolute;
+        width:14px;
+        height:14px;
+        pointer-events:none;
+        display:none;
+        transform-origin:center center;
+      }
+
+      #metamap-mission::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:#ff2b2b;
+        border:2px solid black;
+        box-shadow:0 0 0 2px #ff2b2b;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const overlay = document.createElement("div");
+  overlay.id = "metamap-overlay";
+
+  const panel = document.createElement("div");
+  panel.id = "metamap-panel";
+
+  panel.innerHTML = `
+    <div id="metamap-header">
+      <div id="metamap-title">MetaMap</div>
+      <div id="metamap-header-right">
+        <button id="metamap-zoom-out" class="metamap-btn" type="button" aria-label="Alejar">-</button>
+        <button id="metamap-zoom-in" class="metamap-btn" type="button" aria-label="Acercar">+</button>
+        <button id="metamap-close" class="metamap-btn" type="button" aria-label="Cerrar">✕</button>
+      </div>
+    </div>
+    <div id="metamap-viewport">
+      <img id="metamap-canvas" src="${MAP_SRC}" alt="Mapa del mundo">
+      <div id="metamap-player"></div>
+    </div>
+  `;
+
+  overlay.appendChild(panel);
+  document.getElementById("wrap").appendChild(overlay);
+
+  const viewport = panel.querySelector("#metamap-viewport");
+  const mapEl = panel.querySelector("#metamap-canvas");
+  const playerEl = panel.querySelector("#metamap-player");
+  const missionEl = document.createElement("div");
+    missionEl.id = "metamap-mission";
+    viewport.appendChild(missionEl);
+  const closeBtn = panel.querySelector("#metamap-close");
+  const zoomInBtn = panel.querySelector("#metamap-zoom-in");
+  const zoomOutBtn = panel.querySelector("#metamap-zoom-out");
+
+  const state = {
+    zoom: 1,
+    minZoom: 1,
+    maxZoom: 4,
+    offsetX: 0,
+    offsetY: 0,
+    dragStartX: 0,
+    dragStartY: 0,
+    startOffsetX: 0,
+    startOffsetY: 0,
+    dragging: false,
+    pointerId: null,
+    mapBaseW: 0,
+    mapBaseH: 0,
+    playerX,
+    playerY
+  };
+
+  function closeMetaMap() {
+    overlay.remove();
+  }
+
+  function clampOffsets() {
+    const scaledW = state.mapBaseW * state.zoom;
+    const scaledH = state.mapBaseH * state.zoom;
+
+    const minX = Math.min(0, viewport.clientWidth - scaledW);
+    const minY = Math.min(0, viewport.clientHeight - scaledH);
+
+    state.offsetX = Math.min(0, Math.max(minX, state.offsetX));
+    state.offsetY = Math.min(0, Math.max(minY, state.offsetY));
+  }
+
+function getPlayerMarkerPos() {
+  const livePlayerX = (window.player && typeof window.player.x === "number") ? window.player.x : state.playerX;
+  const livePlayerY = (window.player && typeof window.player.y === "number") ? window.player.y : state.playerY;
+
+  const px = (livePlayerX / WORLD_W) * state.mapBaseW;
+  const py = (livePlayerY / WORLD_H) * state.mapBaseH;
+
+  return {
+    x: state.offsetX + (px * state.zoom),
+    y: state.offsetY + (py * state.zoom)
+  };
+}
+
+function getMissionMarkerPos() {
+  const mx = Math.max(0, Math.min(WORLD_W, Number(coordenadasMisionsX) || 0));
+  const my = Math.max(0, Math.min(WORLD_H, Number(coordenadasMisionsY) || 0));
+
+  const px = (mx / WORLD_W) * state.mapBaseW;
+  const py = (my / WORLD_H) * state.mapBaseH;
+
+  return {
+    x: state.offsetX + (px * state.zoom),
+    y: state.offsetY + (py * state.zoom)
+  };
+}
+
+  function render() {
+    mapEl.style.width = `${state.mapBaseW}px`;
+    mapEl.style.height = `${state.mapBaseH}px`;
+    mapEl.style.transform = `translate(${state.offsetX}px, ${state.offsetY}px) scale(${state.zoom})`;
+
+    const pos = getPlayerMarkerPos();
+    playerEl.style.transform = `translate(${pos.x - 9}px, ${pos.y - 9}px)`;
+
+      if (coordenadasMisionState) {
+      const missionPos = getMissionMarkerPos();
+      missionEl.style.display = "block";
+      missionEl.style.transform = `translate(${missionPos.x - 7}px, ${missionPos.y - 7}px)`;
+    } else {
+      missionEl.style.display = "none";
+    }
+  }
+
+  /*Mostrar u ocultar misiones 
+// OPCIONAL: función helper global para activar/desactivar misión
+function setMetaMapMission(x, y, state = true) {
+  coordenadasMisionsX = Number(x) || 0;
+  coordenadasMisionsY = Number(y) || 0;
+  coordenadasMisionState = !!state;
+}*/
+
+  function fitMapToViewport() {
+    const vw = viewport.clientWidth;
+    const vh = viewport.clientHeight;
+
+    const scaleX = vw / WORLD_W;
+    const scaleY = vh / WORLD_H;
+    const fitScale = Math.min(scaleX, scaleY);
+
+    state.mapBaseW = Math.floor(WORLD_W * fitScale);
+    state.mapBaseH = Math.floor(WORLD_H * fitScale);
+
+    state.minZoom = 1;
+    state.zoom = 1;
+
+    state.offsetX = Math.floor((vw - state.mapBaseW) / 2);
+    state.offsetY = Math.floor((vh - state.mapBaseH) / 2);
+
+    clampOffsets();
+    render();
+  }
+
+  function zoomAt(nextZoom) {
+    const oldZoom = state.zoom;
+    const newZoom = Math.max(state.minZoom, Math.min(state.maxZoom, nextZoom));
+    if (newZoom === oldZoom) return;
+
+    const cx = viewport.clientWidth / 2;
+    const cy = viewport.clientHeight / 2;
+
+    const worldX = (cx - state.offsetX) / oldZoom;
+    const worldY = (cy - state.offsetY) / oldZoom;
+
+    state.zoom = newZoom;
+    state.offsetX = cx - (worldX * state.zoom);
+    state.offsetY = cy - (worldY * state.zoom);
+
+    clampOffsets();
+    render();
+  }
+
+  function startDrag(e) {
+    if (e.target.closest("#metamap-header")) return;
+    state.dragging = true;
+    state.pointerId = e.pointerId;
+    state.dragStartX = e.clientX;
+    state.dragStartY = e.clientY;
+    state.startOffsetX = state.offsetX;
+    state.startOffsetY = state.offsetY;
+    viewport.classList.add("dragging");
+    viewport.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+
+  function moveDrag(e) {
+    if (!state.dragging || e.pointerId !== state.pointerId) return;
+
+    const dx = e.clientX - state.dragStartX;
+    const dy = e.clientY - state.dragStartY;
+
+    state.offsetX = state.startOffsetX + dx;
+    state.offsetY = state.startOffsetY + dy;
+
+    clampOffsets();
+    render();
+    e.preventDefault();
+  }
+
+  function endDrag(e) {
+    if (state.pointerId !== null && e.pointerId !== state.pointerId) return;
+    state.dragging = false;
+    state.pointerId = null;
+    viewport.classList.remove("dragging");
+  }
+
+  mapEl.addEventListener("load", fitMapToViewport);
+
+  if (mapEl.complete) {
+    fitMapToViewport();
+  }
+
+  closeBtn.addEventListener("click", closeMetaMap);
+  closeBtn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    closeMetaMap();
+  }, { passive: false });
+
+  zoomInBtn.addEventListener("click", () => zoomAt(state.zoom + 0.5));
+  zoomOutBtn.addEventListener("click", () => zoomAt(state.zoom - 0.5));
+
+  zoomInBtn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    zoomAt(state.zoom + 0.5);
+  }, { passive: false });
+
+  zoomOutBtn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    zoomAt(state.zoom - 0.5);
+  }, { passive: false });
+
+  viewport.addEventListener("pointerdown", startDrag, { passive: false });
+  viewport.addEventListener("pointermove", moveDrag, { passive: false });
+  viewport.addEventListener("pointerup", endDrag);
+  viewport.addEventListener("pointercancel", endDrag);
+  viewport.addEventListener("pointerleave", endDrag);
+
+  viewport.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    zoomAt(state.zoom + (e.deltaY < 0 ? 0.25 : -0.25));
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      closeMetaMap();
+    }
+  }, { passive: false });
+
+  window.addEventListener("keydown", function escHandler(e) {
+    if (e.key === "Escape") {
+      closeMetaMap();
+      window.removeEventListener("keydown", escHandler);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (!document.getElementById("metamap-overlay")) return;
+    fitMapToViewport();
+  });
+
+  function metaMapLoop() {
+  if (!document.getElementById("metamap-overlay")) return;
+  render();
+  requestAnimationFrame(metaMapLoop);
+}
+
+requestAnimationFrame(metaMapLoop);
+}
+//------ MetaMap (fin)
+
+
+window.addEventListener("message", (event) => {
+  const data = event.data;
+
+  if(!data || data.source !== "metafon") return;
+
+  switch(data.action){
+    case "openCameraAR":
+      openCameraAR();
+      break;
+
+    case "openMetaMap":
+      openMetaMap();
+      break;
+  }
+});
+// ================================================
+// Función llamado de metafon.html a index.html (fin)
+// ================================================
+
+const  boxButtonsITems = document.querySelector('.box-buttons-items');
+
+const missionsButton = document.getElementById('misions');
+const novedadesButton = document.getElementById('novedades');
+const iqButton = document.getElementById('iq');
+const inventarioButton = document.getElementById('inventario');
+const settingButton = document.getElementById('setting');
+
+const joy = document.getElementById("joy");
+const joyStick = document.getElementById("joyStick");
+
+/*
+missionsButton.addEventListener('click',function(){
+    console.log('panel de misiones abierto')
+});
+*/
+
+let checkingStep = "gender"; // "gender" | "avatar" | "profession"
+let selectedGender = null;   // "male" | "female"
+let selectedAvatar = null;   // objeto del array characters
+let hoveredAvatarIndex = 0;  // para preview
+
+let hoveredProfessionIndex = 0;      // para moverse con flechas
+let selectedProfession = null;       // objeto del array professions
+
+let professionIndex = 0;      // reemplaza hoveredProfessionIndex
+let professionScroll = 0;     // scroll vertical dentro del cuadro
+
+let gameMode = "checking"; // checking | error | playing -- Evalua si existe nombre de usuario, avatar y profesión.
+
+/*Función de validación cheking (Inicio) */
+
+
+let loadingProgress = 0;      // 0 → 1
+let loadingTarget = 0;        // progreso real
+
+function checkUserProfile() {
+
+  // 🔴 1. No tiene nombre de usuario
+  if (!username) {
+    gameMode = "error";
+    return;
+  }
+
+  // 🟡 2. No tiene avatar ni profesión
+  if (!avatar || !profession) {
+    console.log("Seleccionar avatar");
+    gameMode = "checking"; // aún no juega
+    return;
+  }
+
+  // 🟢 3. Tiene todo correcto
+  //console.log("Que comience el juego.");
+  gameMode = "playing";
+}
+/*Función de validación cheking (fin) */
+
+//-----------------------------------------------------------------------------
+//Función de interfaz de items (inicio)
+//-----------------------------------------------------------------------------
+
+//Función para inventario de cabesera
+// =============================
+// UI Interfas (DOM)
+// =============================
+let interfaceOpen = false;
+let interfasEl = null;
+
+const wrapEl = document.getElementById("wrap");
+
+// Títulos por sección
+const UI_TITLES = {
+  misions: "Misiones",
+  novedades: "Novedades",
+  iq: "Nivel IQ",
+  inventario: "Inventario",
+  setting: "Configuración",
+};
+
+// Helper: evita doble disparo (pointerdown + click)
+const UI_CLICK_LOCK_MS = 350;
+let uiLastOpenAt = 0;
+
+function shouldLockOpen() {
+  const now = performance.now();
+  if (now - uiLastOpenAt < UI_CLICK_LOCK_MS) return true;
+  uiLastOpenAt = now;
+  return false;
+}
+
+// Helper: bind seguro (desktop + móvil)
+function bindUIOpen(btn, type) {
+  if (!btn) return;
+
+  // Desktop (mouse)
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (shouldLockOpen()) return;
+    openInterfas(type);
+  });
+
+  // Touch / Pen (mejor respuesta en móvil)
+  btn.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      if (shouldLockOpen()) return;
+      openInterfas(type);
+    },
+    { passive: false }
+  );
+}
+
+function buildInterfas(type) {
+  const title = UI_TITLES[type] || "Panel";
+
+  const el = document.createElement("div");
+  el.id = "container-interfas";
+  el.className = "container-interfas";
+  el.dataset.panel = type;
+
+  let bodyHTML = "";
+
+  switch (type) {
+    case "novedades":
+      bodyHTML = buildNovedadesHTML(NOVEDADES);
+      break;
+
+    case "setting":
+      bodyHTML = buildSettingHTML();
+      break;
+
+    case "iq":
+      bodyHTML = buildIQPanelHTML();
+      break;
+
+    default:
+      bodyHTML = `
+        <div class="ui-chip">Panel: ${title}</div>
+        <div class="ui-content">
+          <div class="ui-text">
+            Aquí va tu UI real (listas, tabs, cards, etc.)
+          </div>
+          <div class="ui-box">
+            <div class="ui-box-title">Próximamente</div>
+            <div class="ui-box-text">
+              Este panel estará en estilo pixel y modular.
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+  }
+
+  el.innerHTML = `
+    <div class="ui-header">
+      <div class="ui-title">${title}</div>
+      <button class="ui-close" type="button" aria-label="Cerrar">X</button>
+    </div>
+
+    <div class="ui-body">
+      ${bodyHTML}
+    </div>
+  `;
+
+  // cerrar
+  const closeBtn = el.querySelector(".ui-close");
+
+  closeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeInterfas();
+  });
+
+  closeBtn.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      closeInterfas();
+    },
+    { passive: false }
+  );
+
+  el.addEventListener(
+    "pointerdown",
+    (e) => {
+      e.stopPropagation();
+    },
+    { passive: true }
+  );
+
+  return el;
+}
+
+function openInterfas(type) {
+  // Si ya está abierto, solo cambia contenido
+  if (interfaceOpen && interfasEl) {
+    interfasEl.dataset.panel = type;
+
+    const title = UI_TITLES[type] || "Panel";
+    const titleEl = interfasEl.querySelector(".ui-title");
+    const bodyEl = interfasEl.querySelector(".ui-body");
+
+    if (titleEl) titleEl.textContent = title;
+
+    if (bodyEl) {
+      let bodyHTML = "";
+
+      switch (type) {
+        case "novedades":
+          bodyHTML = buildNovedadesHTML(NOVEDADES);
+          break;
+
+        case "setting":
+          bodyHTML = buildSettingHTML();
+          break;
+
+        case "iq":
+          bodyHTML = buildIQPanelHTML();
+          break;
+
+        default:
+          bodyHTML = `
+            <div class="ui-chip">Panel: ${title}</div>
+            <div class="ui-content">
+              <div class="ui-text">
+                Aquí va tu UI real (listas, tabs, cards, etc.)
+              </div>
+              <div class="ui-box">
+                <div class="ui-box-title">Próximamente</div>
+                <div class="ui-box-text">
+                  Este panel estará en estilo pixel y modular.
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+      }
+
+      bodyEl.innerHTML = bodyHTML;
+    }
+
+    return;
+  }
+
+  interfaceOpen = true;
+  interfasEl = buildInterfas(type);
+  wrapEl.appendChild(interfasEl);
+}
+
+function closeInterfas() {
+  interfaceOpen = false;
+
+  if (interfasEl && interfasEl.parentNode) {
+    interfasEl.parentNode.removeChild(interfasEl);
+  }
+  interfasEl = null;
+}
+
+// Escape para cerrar
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && interfaceOpen) closeInterfas();
+});
+
+// Bind de botones
+bindUIOpen(missionsButton, "misions");
+bindUIOpen(novedadesButton, "novedades");
+bindUIOpen(iqButton, "iq");
+bindUIOpen(inventarioButton, "inventario");
+bindUIOpen(settingButton, "setting");
+
+//-----------------------------------------------------------------------------
+//Función de interfaz de items (fin)
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//lógica / Interfaz nivel IQ(inicio)
+//-----------------------------------------------------------------------------
+// =============================
+// NIVELES IQ HISTÓRICOS
+// =============================
+const IQ_LEVELS = [
+
+{
+  name: "Johann Wolfgang von Goethe",
+  history: "Escritor, poeta y científico alemán, conocido por su gran versatilidad intelectual.",
+  iq: 15
+},
+
+{
+  name: "Leonardo da Vinci",
+  history: "Artista, inventor y científico renacentista, símbolo del genio universal.",
+  iq: 20
+},
+
+{
+  name: "Isaac Newton",
+  history: "Físico y matemático inglés, clave en la ciencia moderna con sus leyes del movimiento.",
+  iq: 40
+},
+
+{
+  name: "Albert Einstein",
+  history: "Físico teórico alemán, conocido por la teoría de la relatividad.",
+  iq: 65
+},
+
+{
+  name: "Galileo Galilei",
+  history: "Astrónomo y físico italiano, importante en la revolución científica.",
+  iq: 75
+},
+
+{
+  name: "Nikola Tesla",
+  history: "Ingeniero e inventor serbio-americano, conocido por su trabajo con la corriente alterna.",
+  iq: 90
+},
+
+{
+  name: "Hypatia de Alejandría",
+  history: "Filósofa, matemática y astrónoma de la antigua Alejandría, famosa por su conocimiento.",
+  iq: 112
+},
+
+{
+  name: "William James Sidis",
+  history: "Niño prodigio con habilidades matemáticas y lingüísticas extraordinarias.",
+  iq: 135
+},
+
+{
+  name: "Immanuel Kant",
+  history: "Filósofo alemán, pionero en ética y epistemología, influyente en la filosofía moderna.",
+  iq: 168
+},
+
+{
+  name: "René Descartes",
+  history: "Filósofo y matemático francés, conocido como el padre de la filosofía moderna.",
+  iq: 180
+},
+
+{
+  name: "Terence Tao",
+  history: "Matemático australiano, conocido por sus contribuciones a diversas áreas de la matemática.",
+  iq: 190
+},
+
+{
+  name: "Christopher Hirata",
+  history: "Astrofísico y niño prodigio, conocido por sus contribuciones a la cosmología.",
+  iq: 200
+},
+
+{
+  name: "Ludwig Wittgenstein",
+  history: "Filósofo austríaco, destacado en la filosofía del lenguaje y de la mente.",
+  iq: 228
+},
+
+{
+  name: "Marilyn vos Savant",
+  history: "Escritora y columnista, registrada como la persona con el IQ más alto en el Libro Guinness.",
+  iq: 240
+},
+
+{
+  name: "John Stuart Mill",
+  history: "Filósofo y economista inglés, importante defensor del liberalismo y la ética utilitarista.",
+  iq: 250
+},
+
+{
+  name: "Rey Salomón",
+  history: "Reconocido en las escrituras por su sabiduría extraordinaria y 'divina'.",
+  iq: 700
+}
+
+];
+
+
+// Devuelve el genio correspondiente según IQ (comparativo por umbrales)
+function getGeniusByIQ(iqValue) {
+  const iq = Math.max(0, Math.min(maxIQ, Number(iqValue) || 0));
+
+  // Asegura orden por iq ascendente (por si luego lo editas)
+  const sorted = [...IQ_LEVELS].sort((a,b) => a.iq - b.iq);
+
+  let best = sorted[0];
+  for (const g of sorted) {
+    if (iq >= g.iq) best = g;
+  }
+  return best;
+}
+
+// Para mostrar una descripción corta (evita textos gigantes)
+function cutText(s, max = 140) {
+  const t = String(s ?? "");
+  return t.length > max ? (t.slice(0, max - 3) + "...") : t;
+}
+
+// Busca profesión por id (profession viene como id)
+function getProfessionInfo(profId) {
+  const p = professions.find(x => x.id === profId);
+  if (!p) return { name: "Sin profesión", description: "Aún no se ha seleccionado profesión." };
+  return { name: p.name, description: p.description };
+}
+
+// Toma avatar desde la VARIABLE avatar (spritesheet) y lo convierte a miniatura usando avatarId del user.
+// Nota: avatar (variable) es spritesheet; para UI necesitamos el "avatar" (miniatura)
+function getSelectedAvatarForUI() {
+  const avatarId = localStorage.getItem("avatarId"); // solo para mapear miniatura
+  const found = characters.find(c => c.id === avatarId);
+  if (found) return found;
+
+  // fallback
+  return characters[0];
+}
+
+// Render lista top 15 (con comparativo automático)
+function buildTop15HTML(list) {
+  const sorted = [...list].sort((a,b) => b.iq - a.iq).slice(0, 15);
+
+  const items = sorted.map(p => {
+    const av = characters.find(c => c.id === p.avatarId) || characters[0];
+    const genius = getGeniusByIQ(p.iq);
+
+    return `
+      <div class="ui-iq-top-item">
+        <img class="ui-iq-top-thumb" src="${av.avatar}" alt="${p.name}">
+        <div>
+          <p class="ui-iq-top-name">${p.name}</p>
+          <p class="ui-iq-top-meta">IQ ${p.iq} comparado con ${genius.name}</p>
+          <p class="ui-iq-top-history">${cutText(genius.history, 140)}</p>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="ui-iq-top-title">Top 15 jugadores con nivel IQ más alto</div>
+    <div class="ui-iq-top-list">${items}</div>
+  `;
+}
+
+// Render principal del panel IQ (tarjeta presentación + comparativo + top15)
+function buildIQPanelHTML() {
+  // Usa TUS variables (no localStorage directo)
+  const userName = username || "Jugador";
+  const userAvatarSprite = avatar; // se mantiene por compatibilidad, pero UI usa miniatura
+  const profId = profession;
+
+  const profInfo = getProfessionInfo(profId);
+  const avatarUI = getSelectedAvatarForUI(); // miniatura + profile
+
+  // Comparativo IQ actual del usuario
+  const genius = getGeniusByIQ(IQuser);
+
+  return `
+    <div class="ui-iq-root">
+
+      <div class="ui-iq-main-title">Nivel IQ del jugador</div>
+
+      <div class="ui-iq-card-row">
+
+        <!-- Tarjeta avatar / presentación -->
+        <div class="ui-iq-card ui-iq-avatar-box">
+          <img class="ui-iq-avatar-img" src="${avatarUI.avatar}" alt="${avatarUI.profile}">
+          <div class="ui-iq-avatar-name">${avatarUI.profile}</div>
+          <div class="ui-iq-userline">${userName}</div>
+        </div>
+
+        <!-- Tarjeta comparativo IQ + profesión -->
+        <div class="ui-iq-card">
+
+          <p class="ui-iq-section-title">Tu IQ actual</p>
+          <p class="ui-iq-strong">${IQuser} / ${maxIQ}</p>
+
+          <p class="ui-iq-section-title">Tu nivel IQ se compara al del genio</p>
+          <p class="ui-iq-strong">${genius.name}</p>
+          <p class="ui-iq-line">${genius.history}</p>
+
+          <div class="ui-iq-prof">
+            <p class="ui-iq-section-title">Profesión</p>
+            <p class="ui-iq-strong">${profInfo.name}</p>
+            <p class="ui-iq-line">${profInfo.description}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      ${buildTop15HTML(TOP15_PLAYERS)}
+
+    </div>
+  `;
+}
+//-----------------------------------------------------------------------------
+//lógica / Interfaz nivel IQ(fi)
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//lógica para las notificaciones (inicio)
+//-----------------------------------------------------------------------------
+
+// Máximo 64 caracteres
+function truncate64(s) {
+  const t = String(s ?? "");
+  return t.length > 64 ? (t.slice(0, 61) + "...") : t;
+}
+
+function buildNovedadesHTML(list) {
+  if (!list || list.length === 0) {
+    return `
+      <div class="ui-content">
+        <div class="ui-text">No hay notificaciones nuevas.</div>
+      </div>
+    `;
+  }
+
+  const items = list.map((n, i) => `
+    <li class="ui-news-item">
+      <div class="ui-news-thumb" aria-hidden="true"></div>
+      <div>
+        <p class="ui-news-text">${truncate64(n.text)}</p>
+        <span class="ui-news-tag">${n.tag}</span>
+      </div>
+    </li>
+  `).join("");
+
+  return `
+    <div class="ui-content">
+      <ul class="ui-news-list">
+        ${items}
+      </ul>
+    </div>
+  `;
+}
+
+// Badge: mostrar/ocultar + número
+function setNovedadesCount(count, { animate = false } = {}) {
+  const n = Math.max(0, Number(count) || 0);
+
+  if (!novedadesButton) return;
+
+  if (n <= 0) {
+    novedadesButton.classList.remove("has-badge", "badge-pop");
+    novedadesButton.removeAttribute("data-count");
+    return;
+  }
+
+  novedadesButton.setAttribute("data-count", String(n));
+  novedadesButton.classList.add("has-badge");
+
+  if (animate) {
+    novedadesButton.classList.add("badge-pop");
+    setTimeout(() => {
+      novedadesButton.classList.remove("badge-pop");
+    }, 1000);
+  }
+}
+
+// Badge inicial (12) + animación en primera carga
+(() => {
+  const count = NOVEDADES.length;
+
+  // animar una sola vez por sesión
+  const key = "eny_novedades_pop_shown";
+  const already = sessionStorage.getItem(key) === "1";
+
+  setNovedadesCount(count, { animate: !already });
+
+  if (!already && count > 0) {
+    sessionStorage.setItem(key, "1");
+  }
+})();
+//-----------------------------------------------------------------------------
+//lógica para las notificaciones (fin)
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//lógica Visual de Setting (inicio)
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// SETTINGS (MVP FRONTEND / listo para WP)
+//-----------------------------------------------------------------------------
+
+// Keys localStorage (solo settings)
+const LS_SETTINGS = {
+  volume: "eny_settings_volume",
+  ambientIndex: "eny_settings_ambient_index",
+};
+
+// URLs externas (se abren nueva pestaña)
+const SETTING_LINKS = {
+  terms: "https://example.com/terminos",
+  privacy: "https://example.com/privacidad",
+  donations: "https://example.com/donaciones",
+  support: "https://example.com/soporte",
+};
+
+// Música ambiente (por ahora YouTube; luego reemplazas por rutas locales)
+const AMBIENT_TRACKS = [
+  { name: "Ambiente 01", url: "https://www.youtube.com/watch?v=5qap5aO4i9A" },
+  { name: "Ambiente 02", url: "https://www.youtube.com/watch?v=DWcJFNfaw9c" },
+  { name: "Ambiente 03", url: "https://www.youtube.com/watch?v=hHW1oY26kxQ" },
+];
+
+// Tutorial (slides mock; tú luego cambias imágenes reales)
+const TUTORIAL_SLIDES = [
+  { img: "./assets/tutorial/slide1.png", text: "Bienvenido a Enycosmic. Usa el joystick para moverte." },
+  { img: "./assets/tutorial/slide2.png", text: "Explora el mapa. Encuentra secretos y rutas ocultas." },
+  { img: "./assets/tutorial/slide3.png", text: "Completa misiones para ganar cosmonedas e IQ." },
+  { img: "./assets/tutorial/slide4.png", text: "Abre paneles: IQ, inventario, novedades y settings." },
+];
+
+// Estado UI tutorial (solo memoria)
+let tutorialIndex = 0;
+
+// Helpers storage
+function getSettingVolume() {
+  const v = Number(localStorage.getItem(LS_SETTINGS.volume));
+  return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.8;
+}
+function setSettingVolume(v) {
+  const n = Math.max(0, Math.min(1, Number(v) || 0));
+  localStorage.setItem(LS_SETTINGS.volume, String(n));
+  return n;
+}
+
+function getAmbientIndex() {
+  const i = Number(localStorage.getItem(LS_SETTINGS.ambientIndex));
+  const safe = Number.isFinite(i) ? i : 0;
+  return Math.max(0, Math.min(AMBIENT_TRACKS.length - 1, safe));
+}
+function setAmbientIndex(i) {
+  const idx = Math.max(0, Math.min(AMBIENT_TRACKS.length - 1, Number(i) || 0));
+  localStorage.setItem(LS_SETTINGS.ambientIndex, String(idx));
+  return idx;
+}
+
+function factoryResetSettings() {
+  Object.values(LS_SETTINGS).forEach(k => localStorage.removeItem(k));
+  // aquí puedes agregar más keys de settings en el futuro
+}
+
+// Fullscreen (best effort)
+async function toggleFullscreen() {
+  const el = document.documentElement;
+
+  const isFs =
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement;
+
+  try {
+    if (!isFs) {
+      const req =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen ||
+        el.mozRequestFullScreen ||
+        el.msRequestFullscreen;
+
+      if (req) {
+        await req.call(el);
+      } else {
+        alert("Pantalla completa no disponible en este navegador.");
+      }
+    } else {
+      const exit =
+        document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen;
+
+      if (exit) {
+        await exit.call(document);
+      }
+    }
+  } catch (e) {
+    // iOS Safari puede limitar fullscreen real (depende versión)
+    console.warn("Fullscreen error:", e);
+    //alert("Pantalla completa limitada en este dispositivo/navegador.");
+  }
+}
+
+// Render Setting raíz
+function buildSettingHTML() {
+  const vol = getSettingVolume();
+  const ambientIdx = getAmbientIndex();
+  const ambient = AMBIENT_TRACKS[ambientIdx];
+
+  const ambientOptions = AMBIENT_TRACKS.map((t, i) =>
+    `<option value="${i}" ${i === ambientIdx ? "selected" : ""}>${t.name}</option>`
+  ).join("");
+
+  return `
+    <div class="ui-settings-root">
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Volumen</p>
+        <input class="ui-slider" type="range" min="0" max="1" step="0.01"
+          value="${vol}"
+          data-action="set-volume">
+        <p class="ui-small">Volumen actual: ${Math.round(vol * 100)}%</p>
+      </div>
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Enlaces</p>
+        <div class="ui-settings-row">
+          <button class="ui-btn" data-action="open-link" data-link="terms">Términos</button>
+          <button class="ui-btn" data-action="open-link" data-link="privacy">Privacidad</button>
+          <button class="ui-btn" data-action="open-link" data-link="donations">Donaciones</button>
+          <button class="ui-btn" data-action="open-link" data-link="support">Soporte</button>
+        </div>
+      </div>
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Música ambiente</p>
+        <div class="ui-settings-row">
+          <select class="ui-select" data-action="set-ambient">
+            ${ambientOptions}
+          </select>
+          <button class="ui-btn" data-action="open-ambient">Abrir pista</button>
+        </div>
+        <p class="ui-small">Seleccionada: ${ambient.name}</p>
+      </div>
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Sistema</p>
+        <div class="ui-settings-row">
+          <button class="ui-btn" data-action="fullscreen">Pantalla completa</button>
+          <button class="ui-btn" data-action="open-tutorial">Tutorial</button>
+          <button class="ui-btn ui-btn-danger" data-action="factory-reset">Estado de fábrica</button>
+        </div>
+        <p class="ui-small">Estado de fábrica borra solo settings guardados.</p>
+      </div>
+
+    </div>
+  `;
+}
+
+// Render Tutorial (mini-swiper)
+function buildTutorialHTML() {
+  const total = TUTORIAL_SLIDES.length;
+  tutorialIndex = Math.max(0, Math.min(total - 1, tutorialIndex));
+
+  const slide = TUTORIAL_SLIDES[tutorialIndex];
+
+  return `
+    <div class="ui-tutorial">
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Tutorial del juego</p>
+        <p class="ui-small">${tutorialIndex + 1}/${total}</p>
+      </div>
+
+      <div class="ui-tutorial-frame">
+        <img class="ui-tutorial-img" src="${slide.img}" alt="Tutorial ${tutorialIndex + 1}">
+        <p class="ui-tutorial-caption">${slide.text}</p>
+      </div>
+
+      <div class="ui-tutorial-controls">
+        <button class="ui-btn" data-action="tutorial-prev">Anterior</button>
+        <button class="ui-btn" data-action="tutorial-next">Siguiente</button>
+        <button class="ui-btn" data-action="back-to-settings">Volver</button>
+      </div>
+
+    </div>
+  `;
+}
+
+// Delegación de eventos dentro del panel (llamar 1 sola vez)
+let settingsDelegationReady = false;
+function initSettingsDelegation() {
+  // ✅ evita “Cannot access ... before initialization” aunque lo llames antes
+  if (window.__enySettingsDelegationReady) return;
+  window.__enySettingsDelegationReady = true;
+
+function handleActionEvent(e) {
+  const root = document.getElementById("container-interfas");
+  if (!root) return;
+
+  const el = e.target?.closest?.("[data-action]");
+  if (!el || !root.contains(el)) return;
+
+  const tag = (el.tagName || "").toLowerCase();
+  const action = el.dataset.action;
+
+  // 🔥 IMPORTANTE: NO llames preventDefault en inputs/selects
+  // (si no, el range no “arrastra” bien en PC y el select NO se despliega)
+  if (tag === "input" || tag === "select" || tag === "textarea") {
+    return;
+  }
+
+  console.log("[SETTING ACTION CLICK]", action);
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (action === "open-link") {
+    const key = el.dataset.link;
+    const url = SETTING_LINKS[key];
+    console.log("Abrir link:", key, url);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  if (action === "fullscreen") {
+    console.log("Activar pantalla completa");
+    toggleFullscreen();
+    return;
+  }
+
+  if (action === "open-tutorial") {
+    console.log("Abrir tutorial");
+    const bodyEl = root.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildTutorialHTML();
+    return;
+  }
+
+  if (action === "back-to-settings") {
+    console.log("Volver a settings");
+    const bodyEl = root.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+    return;
+  }
+
+  if (action === "tutorial-prev") {
+    console.log("Tutorial anterior");
+    tutorialIndex = Math.max(0, tutorialIndex - 1);
+    const bodyEl = root.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildTutorialHTML();
+    return;
+  }
+
+  if (action === "tutorial-next") {
+    console.log("Tutorial siguiente");
+    tutorialIndex = Math.min(TUTORIAL_SLIDES.length - 1, tutorialIndex + 1);
+    const bodyEl = root.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildTutorialHTML();
+    return;
+  }
+
+  if (action === "open-ambient") {
+    const idx = getAmbientIndex();
+    const url = AMBIENT_TRACKS[idx]?.url;
+    console.log("Abrir música ambiente:", idx, url);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  if (action === "factory-reset") {
+    console.log("Restablecer estado de fábrica");
+    factoryResetSettings();
+    tutorialIndex = 0;
+    const bodyEl = root.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+    return;
+  }
+}
+
+// ✅ para que el SELECT funcione perfecto
+document.addEventListener(
+  "change",
+  (e) => {
+    const root = document.getElementById("container-interfas");
+    if (!root) return;
+
+    const el = e.target;
+    if (!el || !root.contains(el)) return;
+
+    if (el.matches('[data-action="set-ambient"]')) {
+      console.log("Música ambiente (change):", el.value);
+      setAmbientIndex(el.value);
+      const bodyEl = root.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+    }
+  },
+  true
+);
+
+// --- INPUTS (volumen y selector de música) ---
+document.addEventListener(
+  "input",
+  (e) => {
+    const root = document.getElementById("container-interfas");
+    if (!root) return;
+
+    const el = e.target;
+    if (!el || !root.contains(el)) return;
+
+    if (el.matches('[data-action="set-volume"]')) {
+      console.log("Volumen cambiado:", el.value);
+      setSettingVolume(el.value);
+
+      const info = root.querySelector(".ui-small");
+      if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
+      return;
+    }
+
+    if (el.matches('[data-action="set-ambient"]')) {
+      console.log("Música ambiente seleccionada:", el.value);
+      setAmbientIndex(el.value);
+
+      const bodyEl = root.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+      return;
+    }
+  },
+  true
+);
+
+  // ✅ CAPTURE: funciona aunque tengas preventDefault en #wrap
+  document.addEventListener("pointerdown", handleActionEvent, true);
+
+  // ✅ fallback desktop
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (e.detail === 0) return; // evita doble disparo
+      handleActionEvent(e);
+    },
+    true
+  );
+
+  // ✅ UN SOLO listener input (tu código tenía 2 duplicados)
+  document.addEventListener(
+    "input",
+    (e) => {
+      const root = document.getElementById("container-interfas");
+      if (!root) return;
+
+      const el = e.target;
+      if (!el || !root.contains(el)) return;
+
+      if (el.matches('[data-action="set-volume"]')) {
+        setSettingVolume(el.value);
+        const info = root.querySelector(".ui-small");
+        if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
+        return;
+      }
+
+      if (el.matches('[data-action="set-ambient"]')) {
+        setAmbientIndex(el.value);
+        const bodyEl = root.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+        return;
+      }
+    },
+    true
+  );
+}
+
+// ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
+initSettingsDelegation();
+//-----------------------------------------------------------------------------
+//lógica Visual de Setting (fin)
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//Puntos de vida (inicio)
+//-----------------------------------------------------------------------------
+let pdv = 100;
+const PDV_MAX = 100;
+const CORAZON_SRC = "./assets/panelOptions/corazon.svg";
+let corazonImg = null;
+
+
+
+function drawLifeBar(ctx, canvas) {
+
+  const barWidth = 18;
+  const barHeight = 140;
+
+  const marginLeft = 12;
+
+  const barX = marginLeft;
+  const barY = (canvas.height / 2) - (barHeight / 2);
+
+  const fillHeight = (pdv / PDV_MAX) * barHeight;
+
+  ctx.save();
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.imageSmoothingEnabled = false;
+
+  // Fondo barra
+  ctx.fillStyle = "#222";
+  ctx.fillRect(barX, barY, barWidth, barHeight);
+
+  // Vida
+  ctx.fillStyle = "#00ffcc";
+  ctx.fillRect(
+    barX,
+    barY + (barHeight - fillHeight),
+    barWidth,
+    fillHeight
+  );
+
+  // Borde
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+  // Corazón
+  if (corazonImg) {
+
+    const heartSize = 32;
+
+    const heartX = barX + (barWidth / 2) - (heartSize / 2);
+    const heartY = barY + barHeight + 10;
+
+    ctx.drawImage(
+      corazonImg,
+      heartX,
+      heartY,
+      heartSize,
+      heartSize
+    );
+  }
+
+  ctx.restore();
+}
+
+//-----------------------------------------------------------------------------
+//Puntos de vida (fin)
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+//metafon (inicio)
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// METAFON PANEL (iframe HTML externo) ✅ cierra en táctil (solución robusta)
+//-----------------------------------------------------------------------------
+
+let metafonOpen = false;
+let metafonEl = null;
+
+const metafonButton = document.getElementById("metafon");
+const wrapContainer = document.getElementById("wrap");
+
+// ✅ AJUSTA ESTA RUTA
+const METAFON_SRC = "./interactions/metafon.html";
+
+// ---- Scroll lock SOLO cuando el panel está abierto ----
+function preventScrollWhenMetafonOpen(e) {
+  if (!metafonOpen) return;
+  e.preventDefault();
+}
+
+function enableMetafonScrollLock() {
+  window.addEventListener("wheel", preventScrollWhenMetafonOpen, { passive: false });
+  window.addEventListener("touchmove", preventScrollWhenMetafonOpen, { passive: false });
+}
+function disableMetafonScrollLock() {
+  window.removeEventListener("wheel", preventScrollWhenMetafonOpen, { passive: false });
+  window.removeEventListener("touchmove", preventScrollWhenMetafonOpen, { passive: false });
+}
+
+// ---- Build panel ----
+function buildMetafonPanel() {
+  const el = document.createElement("div");
+  el.id = "metafon-container";
+  el.className = "metafon-container";
+
+  el.innerHTML = `
+    <div class="metafon-header">
+      <div class="metafon-title">Metafon</div>
+      <button class="metafon-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+
+    <iframe class="metafon-body" src="${METAFON_SRC}" title="Metafon"></iframe>
+  `;
+
+  return el;
+}
+
+function openMetafon() {
+  if (metafonOpen) return;
+
+  metafonOpen = true;
+  metafonEl = buildMetafonPanel();
+  wrapContainer.appendChild(metafonEl);
+
+  enableMetafonScrollLock();
+}
+
+function closeMetafon() {
+  metafonOpen = false;
+  disableMetafonScrollLock();
+
+  if (metafonEl && metafonEl.parentNode) {
+    metafonEl.parentNode.removeChild(metafonEl);
+  }
+  metafonEl = null;
+}
+
+// ---- Abrir con pointerdown (mejor en móvil) ----
+function onOpenMetafon(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  openMetafon();
+}
+
+metafonButton?.addEventListener("pointerdown", onOpenMetafon, { passive: false });
+metafonButton?.addEventListener("click", onOpenMetafon);
+
+// ---- ✅ Cierre ultra robusto: delegación + CAPTURE (funciona aunque haya preventDefault arriba) ----
+function tryCloseFromEvent(e) {
+  const btn = e.target?.closest?.(".metafon-close");
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  closeMetafon();
+}
+
+// En capture para que no lo bloquee nada
+document.addEventListener("pointerdown", tryCloseFromEvent, true);
+document.addEventListener("touchstart", tryCloseFromEvent, { capture: true, passive: false });
+document.addEventListener("click", tryCloseFromEvent, true);
+
+// Escape para cerrar
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && metafonOpen) closeMetafon();
+});
+
+//-----------------------------------------------------------------------------
+// METAFON PANEL (fin)
+//-----------------------------------------------------------------------------
+
+/*Anular clic sostenido en dispositivos moviles (inicio)*/
+
+/*Arreglo de avatares (Inicio) */
+const characters = [
+
+  // ===== 👨 HOMBRES =====
+  {
+    id: "m1",
+    profile: "Alex",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre1.png",
+    sprites: "./assets/avatares/hombre1.png"
+  },
+  {
+    id: "m2",
+    profile: "Dario",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre2.png",
+    sprites: "./assets/avatares/hombre2.png"
+  },
+  {
+    id: "m3",
+    profile: "Kenzo",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre3.png",
+    sprites: "./assets/avatares/hombre3.png"
+  },
+  {
+    id: "m4",
+    profile: "Luca",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre4.png",
+    sprites: "./assets/avatares/hombre4.png"
+  },
+  {
+    id: "m5",
+    profile: "Noah",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre5.png",
+    sprites: "./assets/avatares/hombre5.png"
+  },
+  {
+    id: "m6",
+    profile: "Ryu",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre6.png",
+    sprites: "./assets/avatares/hombre6.png"
+  },
+  {
+    id: "m7",
+    profile: "Tomas",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre7.png",
+    sprites: "./assets/avatares/hombre7.png"
+  },
+  {
+    id: "m8",
+    profile: "Victor",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre8.png",
+    sprites: "./assets/avatares/hombre8.png"
+  },
+  {
+    id: "m9",
+    profile: "Zane",
+    gender: "male",
+    avatar: "./assets/avatares/men/hombre9.png",
+    sprites: "./assets/avatares/hombre9.png"
+  },
+
+
+  // ===== 👩 MUJERES =====
+  {
+    id: "f1",
+    profile: "Aria",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer1.png",
+    sprites: "./assets/avatares/mujer1.png"
+  },
+  {
+    id: "f2",
+    profile: "Bella",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer2.png",
+    sprites: "./assets/avatares/mujer2.png"
+  },
+  {
+    id: "f3",
+    profile: "Cleo",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer3.png",
+    sprites: "./assets/avatares/mujer3.png"
+  },
+  {
+    id: "f4",
+    profile: "Diana",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer4.png",
+    sprites: "./assets/avatares/mujer4.png"
+  },
+  {
+    id: "f5",
+    profile: "Elena",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer5.png",
+    sprites: "./assets/avatares/mujer5.png"
+  },
+  {
+    id: "f6",
+    profile: "Freya",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer6.png",
+    sprites: "./assets/avatares/mujer6.png"
+  },
+  {
+    id: "f7",
+    profile: "Iris",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer7.png",
+    sprites: "./assets/avatares/mujer7.png"
+  },
+  {
+    id: "f8",
+    profile: "Mika",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer8.png",
+    sprites: "./assets/avatares/mujer8.png"
+  },
+  {
+    id: "f9",
+    profile: "Nova",
+    gender: "female",
+    avatar: "./assets/avatares/women/mujer9.png",
+    sprites: "./assets/avatares/mujer9.png"
+  }
+];
+/*Arreglo de avatares (Fin) */
+
+//función para precargar imágenes de avatares
+function preloadAvatars(characters) {
+  return Promise.all(
+    characters.map(ch => new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => { ch.img = img; resolve(); };
+      img.onerror = () => { 
+        console.warn("No cargó avatar:", ch.avatar);
+        ch.img = null; 
+        resolve(); 
+      };
+      img.src = ch.avatar;
+    }))
+  );
+}
+
+/*Profesiones (Inicio) */
+const professions = [
+  {
+    id: "warrior",
+    name: "Guerrero",
+    description: "Especialista en combate cuerpo a cuerpo. Alta resistencia y fuerza física."
+  },
+  {
+    id: "engineer",
+    name: "Ingeniero",
+    description: "Experto en tecnología y mecanismos. Puede reparar y mejorar dispositivos."
+  },
+  {
+    id: "scientist",
+    name: "Científico",
+    description: "Analiza el entorno y descubre secretos ocultos. Alta inteligencia."
+  },
+  {
+    id: "medic",
+    name: "Médico",
+    description: "Capaz de curar y asistir a otros. Fundamental para la supervivencia."
+  },
+  {
+    id: "explorer",
+    name: "Explorador",
+    description: "Ágil y observador. Se mueve rápido y detecta rutas ocultas."
+  }
+];
+/*Profesiones (fin) */
+
+/*Función para que el texto no salga del cuadro en la selección de profesiones (inicio) */
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width <= maxWidth) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+/*Función para que el texto no salga del cuadro en la selección de profesiones (fin) */
+
+
+
+(() => {
+  // 1) Evita menú contextual (long-press) en móviles
+  document.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  }, { passive: false });
+
+  // 2) Evita selección/arrastre típico por long-press (imágenes/texto)
+  ["selectstart", "dragstart"].forEach(evt => {
+    document.addEventListener(evt, (e) => e.preventDefault(), { passive: false });
+  });
+
+  // 3) Bloquea gestos SOLO en el canvas / zona de juego, PERO NO en UI
+  const blockZone = document.querySelector("#wrap") || document.body;
+
+  function isUIInteractiveTarget(t) {
+    if (!t || !t.closest) return false;
+
+    // Todo lo que NO debe bloquearse (botones/paneles/iframes/inputs)
+    return !!t.closest(
+      "#container-interfas," +
+      "#metafon-container," +
+      ".box-buttons-items," +
+      "button, a, input, select, textarea, label," +
+      "iframe," +
+      "[data-action]"
+    );
+  }
+
+  function shouldBlock(e) {
+    // Si estás tocando UI, NO bloquees.
+    if (isUIInteractiveTarget(e.target)) return false;
+
+    // Si el panel está abierto o metafon está abierto, NO bloquees (para que funcione tocar dentro)
+    if (typeof interfaceOpen !== "undefined" && interfaceOpen) return false;
+    if (typeof metafonOpen !== "undefined" && metafonOpen) return false;
+
+    // Bloquea solo si el gesto nace dentro del wrap (zona juego)
+    return true;
+  }
+
+  blockZone.addEventListener("touchstart", (e) => {
+    if (!shouldBlock(e)) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  blockZone.addEventListener("touchmove", (e) => {
+    if (!shouldBlock(e)) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  blockZone.addEventListener("touchend", (e) => {
+    if (!shouldBlock(e)) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  // 4) iOS Safari: callout + selección
+  blockZone.style.webkitTouchCallout = "none";
+  blockZone.style.webkitUserSelect = "none";
+})();
+
+
+const LOGO_SRC = "./assets/src/logo.png";
+let logoImg = null;
+
+
+/*-----------------------Saldo Cosmonedas (Inicio)------------------------------------*/
+const COSMONEDA_SRC = "./assets/src/cosmoneda.svg";
+let cosmonedaImg = null;
+
+//Previoo de cosmonedas
+function recibirCosmonedas(amount) {
+  cosmonedas += amount;       // actualización visual inmediata
+  enviarCosmonedasAlServidor(amount);
+}
+
+
+/*Función para mandar cosmonedas al servidor */
+function enviarCosmonedasAlServidor(amount) {
+  fetch(ajaxurl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      action: "guardar_cosmonedas",
+      amount: amount
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      cosmonedas = data.balance; // 🔥 aquí sincronizas con el valor REAL
+    }
+  });
+}
+/*-----------------------Saldo Cosmonedas (Fin)------------------------------------*/
+
+(() => {
+  
+  const ASSETS = {
+    map: "./assets/mapas/mapa1-5000x5000.svg", //mapa
+    hero: null, //Personaje
+    shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
+  };
+
+  // Contenedor único y estable (NO se recrea)
+const images = {
+  map: null,
+  hero: null,
+  shadow: null,
+};
+
+// Para evitar cargar 2 veces
+let gameAssetsLoaded = false;
+let gameAssetsLoading = false;
+
+// Devuelve la ruta del héroe final (localStorage o default)
+function getHeroSrc() {
+  const ls = localStorage.getItem("avatar");
+  return (ls && ls !== "null" && ls !== "undefined" && ls.trim() !== "")
+    ? ls
+    : "./assets/avatares/default.png";
+}
+
+// Carga real del juego (solo cuando toca)
+async function loadGameAssets() {
+
+  if (gameAssetsLoaded || gameAssetsLoading) return;
+
+        joy.style.display = "none";
+        boxButtonsITems.style.display = "none";
+        metafonButton.style.display = "none";
+
+  gameAssetsLoading = true;
+  loadingProgress = 0;
+  loadingTarget = 0;
+
+  try {
+    const heroSrc = getHeroSrc();
+
+    const assetsToLoad = [
+      ASSETS.map,
+      heroSrc,
+      ASSETS.shadow,
+      LOGO_SRC,
+      COSMONEDA_SRC
+    ];
+
+    const total = assetsToLoad.length;
+    let loaded = 0;
+
+    function loadWithProgress(src) {
+      return loadImage(src).then(img => {
+        loaded++;
+        loadingTarget = loaded / total;
+        return img;
+      });
+    }
+
+    const mapImg     = await loadWithProgress(ASSETS.map);
+    const heroImg    = await loadWithProgress(heroSrc);
+    const shadowImg  = await loadWithProgress(ASSETS.shadow);
+    const loadedLogo = await loadWithProgress(LOGO_SRC);
+    const loadedCoin = await loadWithProgress(COSMONEDA_SRC);
+    const loadedHeart = await loadWithProgress(CORAZON_SRC);
+
+    corazonImg = loadedHeart;
+
+    images.map = mapImg;
+    images.hero = heroImg;
+    images.shadow = shadowImg;
+    logoImg = loadedLogo;
+    cosmonedaImg = loadedCoin;
+
+    gameAssetsLoaded = true;
+
+  } catch (err) {
+    console.error("Error cargando assets:", err);
+    gameMode = "error";
+  } finally {
+    gameAssetsLoading = false;
+  }
+}
+
+  // Resolución lógica (SIEMPRE igual) camara
+  const CAMERA_ZOOM = 1; // 1 = normal, 0.5 = más lejos, 0.25 = mucho más lejos
+  const LOGICAL_W = 160;
+  const LOGICAL_H = 144;
+/* resolución perfecta para celulares menores de 400px de resolución
+    const LOGICAL_W = 160;
+    const LOGICAL_H = 300;*/
+/* Resolución perfecto para tablets PC y laptos
+  const LOGICAL_W = 160;
+  const LOGICAL_H = 144;
+*/
+const camera = { x: 0, y: 0, w: LOGICAL_W, h: LOGICAL_H };
+
+  //dimenciones del mapa
+const WORLD_W = 5000;
+const WORLD_H = 5000;
+
+  // Personaje (2x2 tiles => 32x32)
+  const HERO_W = 64;
+  const HERO_H = 64;
+
+  //tamaño visual dentro del canvas
+  const HERO_DRAW_W = 64;  // tamaño visual del avatar en canva
+  const HERO_DRAW_H = 64;
+
+  const canvas = document.getElementById("game");
+  const wrap = document.getElementById("wrap");
+  const ctx = canvas.getContext("2d");
+  
+
+  // Scroll con rueda (desktop)
+canvas.addEventListener("wheel", (e) => {
+  if (gameMode !== "checking" || checkingStep !== "profession") return;
+
+  e.preventDefault();
+  professionScroll += (e.deltaY > 0 ? 8 : -8);
+}, { passive: false });
+
+// Scroll con touch (móvil)
+let touchStartY = null;
+canvas.addEventListener("pointerdown", (e) => {
+  if (gameMode !== "checking" || checkingStep !== "profession") return;
+  touchStartY = e.clientY;
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (gameMode !== "checking" || checkingStep !== "profession") return;
+  if (touchStartY === null) return;
+
+  const dy = e.clientY - touchStartY;
+  touchStartY = e.clientY;
+  professionScroll -= dy / scale; // se siente natural
+});
+
+canvas.addEventListener("pointerup", () => { touchStartY = null; });
+canvas.addEventListener("pointercancel", () => { touchStartY = null; });
+
+  // IMPORTANTE: sin suavizado
+  ctx.imageSmoothingEnabled = false;
+
+  let scale = 1;
+
+  /*Función para formato responsivo del canvas*/
+
+  let gameState = null;
+  //let lastGameState = null;
+
+function setGameState(next) {
+  if (gameState === next) return;
+  gameState = next;
+  resizeFullscreen(); // solo cuando cambia
+}
+
+
+function resizeFullscreen() {
+  const rect = wrap.getBoundingClientRect();
+
+  switch (gameState) {
+
+    case "gender":
+      canvas.width = 340;
+      canvas.height = 200;
+      canvas.style.width = "340px";
+      canvas.style.height = "200px";
+
+      joy.style.display = "none";
+      boxButtonsITems.style.display = "none";
+
+      metafonButton.style.display = "none";
+      
+      break;
+
+    case "avatar":
+      canvas.width = 340;
+      canvas.height = 620;
+      canvas.style.width = "340px";
+      canvas.style.height = "620px";
+      break;
+
+    case "profession":
+      canvas.width = 340;
+      canvas.height = 400;
+      canvas.style.width = "340px";
+      canvas.style.height = "400px";
+      break;
+
+    case "gamePlay":
+    default:
+
+        joy.style.display = "block";
+        boxButtonsITems.style.display = "flex";
+        metafonButton.style.display = "block";
+
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+      break;
+  }
+
+  camera.w = canvas.width;
+  camera.h = canvas.height;
+
+  ctx.imageSmoothingEnabled = false;
+}
+
+window.addEventListener("resize", resizeFullscreen);
+resizeFullscreen();
+
+  const loadImage = (src) => new Promise((res, rej) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => res(img);
+    img.onerror = rej;
+    img.src = src;
+  });
+
+  // Input
+  const held = [];
+  const dirs = {
+    up:    {x: 0, y:-1},
+    down:  {x: 0, y: 1},
+    left:  {x:-1, y: 0},
+    right: {x: 1, y: 0},
+  };
+
+  const keyToDir = {
+    ArrowUp:"up", ArrowDown:"down", ArrowLeft:"left", ArrowRight:"right",
+    w:"up", s:"down", a:"left", d:"right",
+    W:"up", S:"down", A:"left", D:"right",
+  };
+
+  window.addEventListener("keydown", (e) => {
+    const dir = keyToDir[e.key];
+    if (!dir) return;
+    if (!held.includes(dir)) held.unshift(dir);
+    e.preventDefault();
+  });
+
+  window.addEventListener("keyup", (e) => {
+    const dir = keyToDir[e.key];
+    if (!dir) return;
+    const i = held.indexOf(dir);
+    if (i !== -1) held.splice(i, 1);
+    e.preventDefault();
+  });
+
+  // Dpad
+  let pressed = false;
+ 
+  const clearHeld = () => { held.length = 0; };
+
+  window.addEventListener("pointerup", () => { pressed = false; clearHeld(); });
+
+  // Estado
+  const player = {
+    x: 3200, y: 1024, speed: 3, //datos Avatar: Coordenadas - Velocidad
+    facing: "down", walking: false,
+    frame: 0, frameTimer: 0, frameDurationMs: 150,
+  };
+
+window.player = player;
+
+  
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  const rowForFacing = (facing) => {
+  const ROW = {
+    down: 0,
+    left: 1,
+    right: 2,
+    up: 3,
+  };
+  return ROW[facing] ?? 0;
+};
+
+  function update(dtMs) {
+
+    //pdv = Math.max(0, pdv - dtMs * 0.001); // prueba: baja 1 PDV por segundo
+    const dir = held[0];
+    player.walking = !!dir;
+
+    if (dir) {
+      player.facing = dir;
+      const d = dirs[dir];
+      const delta = dtMs / 8; // velicidad del avatar. entre menor sea el numero, más rapido camina
+      player.x += d.x * player.speed * delta;
+      player.y += d.y * player.speed * delta;
+    }
+
+    // límites del mundo completo (5000x5000)
+    const leftLimit = 0;
+    const topLimit = 0;
+    const rightLimit = WORLD_W - HERO_W;   // o HERO_DRAW_W si ese es el tamaño real que ocupa
+    const bottomLimit = WORLD_H - HERO_H;
+
+    player.x = clamp(player.x, leftLimit, rightLimit);
+    player.y = clamp(player.y, topLimit, bottomLimit);
+
+    camera.x = player.x + HERO_W/2 - camera.w/2;
+    camera.y = player.y + HERO_H/2 - camera.h/2;
+
+    camera.x = clamp(camera.x, 0, WORLD_W - camera.w);
+    camera.y = clamp(camera.y, 0, WORLD_H - camera.h);
+
+    if (player.walking) {
+      player.frameTimer += dtMs;
+      while (player.frameTimer >= player.frameDurationMs) {
+        player.frameTimer -= player.frameDurationMs;
+        player.frame = (player.frame + 1) % 4;
+      }
+    } else {
+      player.frame = 0;
+      player.frameTimer = 0;
+    }
+  }
+
+  /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
+// =============================
+// Joystick móvil (usa el mismo held[] que update)
+// =============================
+let joyActive = false;
+let joyPointerId = null;
+let joyCenterX = 0;
+let joyCenterY = 0;
+
+const JOY_RADIUS = 36;      // qué tanto se mueve la palanca
+const JOY_DEADZONE = 10;    // zona muerta para no temblar
+
+function setHeldDir(dir) {
+  held.length = 0;
+  if (dir) held.push(dir);
+}
+
+function resetJoy() {
+  joyActive = false;
+  joyPointerId = null;
+  joyStick.style.transform = "translate(0px, 0px)";
+  setHeldDir(null);
+}
+
+function joyDirFromVector(dx, dy) {
+  // deadzone
+  if (Math.hypot(dx, dy) < JOY_DEADZONE) return null;
+
+  // elegimos la dirección dominante
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx > 0 ? "right" : "left";
+  } else {
+    return dy > 0 ? "down" : "up";
+  }
+}
+
+joy.addEventListener("pointerdown", (e) => {
+  // opcional: solo cuando ya está jugando
+  if (gameMode !== "playing") return;
+
+  joyActive = true;
+  joyPointerId = e.pointerId;
+  joy.setPointerCapture(e.pointerId);
+
+  const rect = joy.getBoundingClientRect();
+  joyCenterX = rect.left + rect.width / 2;
+  joyCenterY = rect.top + rect.height / 2;
+
+  e.preventDefault();
+});
+
+joy.addEventListener("pointermove", (e) => {
+  if (!joyActive || e.pointerId !== joyPointerId) return;
+
+  const dx0 = e.clientX - joyCenterX;
+  const dy0 = e.clientY - joyCenterY;
+
+  // clamp al radio
+  const dist = Math.hypot(dx0, dy0);
+  const scaleClamp = dist > JOY_RADIUS ? (JOY_RADIUS / dist) : 1;
+
+  const dx = dx0 * scaleClamp;
+  const dy = dy0 * scaleClamp;
+
+  joyStick.style.transform = `translate(${dx}px, ${dy}px)`;
+
+  const dir = joyDirFromVector(dx0, dy0);
+  setHeldDir(dir);
+
+  e.preventDefault();
+});
+
+joy.addEventListener("pointerup", (e) => {
+  if (e.pointerId !== joyPointerId) return;
+  resetJoy();
+  e.preventDefault();
+});
+
+joy.addEventListener("pointercancel", (e) => {
+  if (e.pointerId !== joyPointerId) return;
+  resetJoy();
+  e.preventDefault();
+});
+
+// seguridad: si suelta fuera del joystick
+window.addEventListener("pointerup", () => {
+  if (joyActive) resetJoy();
+});
+/*----------------------------lógica jostic control para movile(fin)-------------------------------------- */
+
+canvas.addEventListener("pointerdown", handleCanvasClick);
+
+async function handleCanvasClick(e) {
+  // Solo respondemos clicks cuando estamos en selección
+  if (gameMode !== "checking") return;
+
+  // Coordenadas del click dentro del canvas
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = (e.clientX - rect.left) / scale;
+  const mouseY = (e.clientY - rect.top) / scale;
+
+  // ===== 1) CLICK en vista GÉNERO =====
+  if (checkingStep === "gender") {
+    const maleHit =
+      mouseX >= selectorMaleX && mouseX <= selectorMaleX + formWitchSelectorMale &&
+      mouseY >= selectorMaleY - 20 && mouseY <= selectorMaleY + formHeightSelectorMale;
+
+    const femaleHit =
+      mouseX >= selectorFemaleX && mouseX <= selectorFemaleX + formWitchSelectorFemale &&
+      mouseY >= selectorFemaleY - 20 && mouseY <= selectorFemaleY + formHeightSelectorFemale;
+
+    if (maleHit) {
+      selectedGender = "male";
+      checkingStep = "avatar";
+      return;
+    }
+
+    if (femaleHit) {
+      selectedGender = "female";
+      checkingStep = "avatar";
+      return;
+    }
+
+    return;
+  }
+
+  // ===== 2) CLICK en vista AVATAR =====
+  if (checkingStep === "avatar" && selectedGender) {
+    const filtered = characters.filter(c => c.gender === selectedGender);
+
+    const layout = getAvatarGridLayout(filtered.length);
+    const { startX, startY, cell, gap, cols } = layout;
+
+    // 1) Selección de miniaturas
+    for (let i = 0; i < filtered.length; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+
+      const x = startX + col * (cell + gap);
+      const y = startY + row * (cell + gap);
+
+      const hit =
+        mouseX >= x && mouseX <= x + cell &&
+        mouseY >= y && mouseY <= y + cell;
+
+      if (hit) {
+        hoveredAvatarIndex = i;
+        selectedAvatar = filtered[i];
+        return;
+      }
+    }
+
+    // 2) Botón volver (avatar) — EXACTO como en draw()
+    ctx.font = fontSiseGender + "px monospace";
+    const textWidth = ctx.measureText(backText).width;
+
+    const ratioX = backPosX - backPaddingX;
+    const ratioY = backPosY - fontSiseGender - backPaddingY;
+    const ratioW = textWidth + backPaddingX * 2;
+    const ratioH = fontSiseGender + backPaddingY * 2;
+
+    const clickedBack =
+      mouseX >= ratioX && mouseX <= ratioX + ratioW &&
+      mouseY >= ratioY && mouseY <= ratioY + ratioH;
+
+    if (clickedBack) {
+      checkingStep = "gender";
+      selectedGender = null;
+      selectedAvatar = null;
+      hoveredAvatarIndex = 0;
+      return;
+    }
+
+    // 3) Botón CONTINUAR (avatar) — mismas coordenadas que en draw()
+    if (selectedAvatar) {
+      const btnX = LOGICAL_W - continueBtnW - continueMarginRight;
+      const btnY = LOGICAL_H - continueBtnH - continueMarginBottom;
+
+      const clickedContinue =
+        mouseX >= btnX && mouseX <= btnX + continueBtnW &&
+        mouseY >= btnY && mouseY <= btnY + continueBtnH;
+
+      if (clickedContinue) {
+        localStorage.setItem("avatar", selectedAvatar.sprites);
+        localStorage.setItem("avatarId", selectedAvatar.id);
+        localStorage.setItem("gender", selectedAvatar.gender);
+
+        avatar = localStorage.getItem("avatar");
+        checkingStep = "profession";
+        professionScroll = 0;
+        return;
+      }
+    }
+
+    return;
+  }
+
+  // ===== 3) CLICK en vista PROFESIÓN =====
+  if (checkingStep === "profession") {
+    // Flechas + caja: UNA sola fuente
+    const ui = getProfessionUI();
+    const { btnSize, leftX, leftY, rightX, rightY } = ui;
+
+    const clickedLeft =
+      mouseX >= leftX && mouseX <= leftX + btnSize &&
+      mouseY >= leftY && mouseY <= leftY + btnSize;
+
+    const clickedRight =
+      mouseX >= rightX && mouseX <= rightX + btnSize &&
+      mouseY >= rightY && mouseY <= rightY + btnSize;
+
+    if (clickedLeft) {
+      professionIndex = (professionIndex - 1 + professions.length) % professions.length;
+      professionScroll = 0;
+      return;
+    }
+
+    if (clickedRight) {
+      professionIndex = (professionIndex + 1) % professions.length;
+      professionScroll = 0;
+      return;
+    }
+
+    // Botón volver (profesiones) — idealmente igual a draw()
+    // Nota: en draw() usas measureText (real). Aquí hacemos lo mismo.
+    ctx.font = `${PROF_BACK_FONT_SIZE}px ${PROF_BACK_FONT_FAMILY}`;
+    const backTextX = PROF_BACK_X;
+    const backTextY = LOGICAL_H - PROF_BACK_Y_OFFSET;
+
+    const backTextW = ctx.measureText(PROF_BACK_TEXT).width;
+    const backTextH = PROF_BACK_FONT_SIZE;
+
+    const backHitX = backTextX - PROF_BACK_PAD_X;
+    const backHitY = (backTextY - backTextH) - PROF_BACK_PAD_Y;
+    const backHitW = backTextW + PROF_BACK_PAD_X * 2;
+    const backHitH = backTextH + PROF_BACK_PAD_Y * 2;
+
+    const clickedBack =
+      mouseX >= backHitX && mouseX <= backHitX + backHitW &&
+      mouseY >= backHitY && mouseY <= backHitY + backHitH;
+
+    if (clickedBack) {
+      checkingStep = "avatar";
+      professionScroll = 0;
+      return;
+    }
+
+    // Botón CONTINUAR (profesiones) — usa hitbox exacto guardado desde draw()
+    const hb = window.__profContinueHit;
+
+    const continueW = PROF_CONT_W;
+    const continueH = PROF_CONT_H;
+
+    const continueX = PROF_CONT_CENTERED
+      ? Math.floor((LOGICAL_W - continueW) / 2)
+      : PROF_CONT_X;
+
+    const continueY = LOGICAL_H - continueH - PROF_CONT_BOTTOM_MARGIN;
+
+    const hit = hb ?? { x: continueX, y: continueY, w: continueW, h: continueH };
+
+    const clickedContinue =
+      mouseX >= hit.x && mouseX <= hit.x + hit.w &&
+      mouseY >= hit.y && mouseY <= hit.y + hit.h;
+
+    if (clickedContinue) {
+      const current = professions[professionIndex];
+      localStorage.setItem("profession", current.id);
+
+      profession = localStorage.getItem("profession");
+      avatar = localStorage.getItem("avatar");
+
+      await loadGameAssets();
+
+      if (images.map && images.hero && images.shadow) {
+        gameMode = "playing";
+      }
+      return;
+    }
+
+    return;
+  }
+}
+
+
+/*Lógica selector de genero. mover valor para mover y visualizar el texto con el ratio del clic (Inicio) */
+const fontSiseGender = 28; //tamaño de letra selector de genero
+/*Constante posicionamiento selector genero hombre */
+const selectorMaleX = 40; 
+const selectorMaleY = 90;
+const lenzCaracter = "♂ Hombre"; // ancho aproximado del texto
+
+const formWitchSelectorMale = lenzCaracter.length * (fontSiseGender * 0.6); // ancho aproximado del texto (ajustado por el tamaño de fuente)
+const formHeightSelectorMale = fontSiseGender * 1.2; // altura aproximada del texto
+
+/*Constante posicionamiento selector genero mujer */
+const selectorFemaleX = 40;
+const selectorFemaleY = 140;
+const lenzCaracterFemale = "♀ Mujer"; // ancho aproximado del texto
+
+const formWitchSelectorFemale = lenzCaracterFemale.length * (fontSiseGender * 0.6); // ancho aproximado del texto (ajustado por el tamaño de fuente)
+const formHeightSelectorFemale = fontSiseGender * 1.2; // altura aproximada del texto
+
+/*Lógica selector de genero. mover valor para mover y visualizar el texto con el ratio del clic (fin) */
+
+
+
+/*Lógica boton volver en selector de avatar para mover el boton y su ratio de click (inicio) */
+// ===== UI: Botón Volver (global) =====
+/* ===== BOTÓN VOLVER CONFIG ===== */
+
+const backText = "← Volver";   // texto
+
+const backPosX = 100;           // 🔥 mueve horizontal
+const backPosY = 350;          // 🔥 mueve vertical (baseline del texto)
+
+const backPaddingX = 10;       // espacio lateral del ratio
+const backPaddingY = 8;        // espacio arriba/abajo del ratio
+/*Lógica boton volver en selector de avatar para mover el boton y su ratio de click (inicio) */
+
+
+/*Lógica boton Continuar en selector de avatares pra mover el boton y su ratio de clic (inicio) */
+// ===== BOTÓN CONTINUAR (AVATAR) =====
+const fontSizeContinue = 28;          // tamaño del texto del botón (como lo usas en fillText)
+const continueText = "Continuar";
+
+const continuePaddingX = 10;          // padding interno horizontal del botón
+const continuePaddingY = 4;           // padding interno vertical del botón
+
+const continueMarginRight = -110;       // separación al borde derecho
+const continueMarginBottom = -400;       // separación al borde inferior
+
+// Medidas aproximadas del texto (si quieres exacto, luego lo medimos con ctx.measureText)
+const continueTextW = continueText.length * (fontSizeContinue * 0.6);
+const continueTextH = fontSizeContinue * 1.2;
+
+// Medidas del botón (calculadas)
+const continueBtnW = Math.ceil(continueTextW + continuePaddingX * 2);
+const continueBtnH = Math.ceil(continueTextH + continuePaddingY * 2);
+/*Lógica boton Continuar en selector de avatares pra mover el boton y su ratio de clic (fin) */
+
+
+
+//---Boton volver
+// ===== UI BOTÓN VOLVER (profesiones) =====
+const PROF_BACK_TEXT = "← Volver";
+const PROF_BACK_FONT_SIZE = 28;          // tamaño del texto en px
+const PROF_BACK_FONT_FAMILY = "monospace";
+const PROF_BACK_X = 10;                 // posición X del texto
+const PROF_BACK_Y_OFFSET = -200;          // distancia desde abajo (en px)
+const PROF_BACK_PAD_X = 10;             // padding horizontal del hitbox
+const PROF_BACK_PAD_Y = 8;              // padding vertical del hitbox
+const PROF_BACK_SHOW_HITBOX = true;     // ponlo false cuando ya no lo quieras ver
+
+//--Boton continuar
+// ===== UI BOTÓN CONTINUAR (profesiones) =====
+const PROF_CONT_TEXT = "Continuar";
+const PROF_CONT_FONT_SIZE = 28;          // tamaño del texto dentro del botón
+const PROF_CONT_FONT_FAMILY = "monospace";
+const PROF_CONT_W = 160;                 // ancho del botón
+const PROF_CONT_H = 32;                 // alto del botón
+const PROF_CONT_BOTTOM_MARGIN = -210;      // separación desde abajo
+const PROF_CONT_CENTERED = false;        // centrado automático
+const PROF_CONT_X = 160;                  // si PROF_CONT_CENTERED=false, usa este X
+const PROF_CONT_SHOW_HITBOX = true;     // debug ratio rojo
+
+/*Función para calcular la grilla para matriz de avatares responsivo (Inicio) */
+function getAvatarGridLayout(count) {
+  const startX = 10;
+  const startY = 25;
+  const gap = 4;
+
+  // Reserva espacio a la derecha para preview (48) + margen
+  const previewW = 48;
+  const rightPad = 12;
+  const reservedRight = previewW + rightPad + 10;
+
+  // Ancho disponible para la grilla
+  const gridW = (LOGICAL_W - startX - reservedRight);
+
+  // Máximo tamaño por celda
+  const maxCell = 55;
+
+  // Cuántas columnas caben si cada celda fuera de 50
+  let cols = Math.floor((gridW + gap) / (maxCell + gap));
+  cols = Math.max(1, cols);
+
+  // Tamaño real de la celda para ocupar el ancho (sin pasarse de 50)
+  let cell = Math.floor((gridW - (cols - 1) * gap) / cols);
+  cell = Math.min(maxCell, cell);
+
+  // Filas necesarias (wrap tipo flex)
+  const rows = Math.ceil(count / cols);
+
+  return { startX, startY, gap, cell, cols, rows, gridW };
+}
+/*Función para calcular la grilla para matriz de avatares responsivo (Fin) */
+
+
+/*Variables de Botones laterales para selector de profesión (Inicio) */
+// ===== UI PROFESION: CAJA + FLECHAS (FUENTE ÚNICA) =====
+// ===== CONFIGURACIÓN CAJA PROFESIÓN + FLECHAS =====
+// Todo lo que muevas aquí afecta dibujo Y clic automáticamente
+const PROF_BOX = {
+
+  x: 12,        // Posición horizontal (desde la izquierda del canvas)
+  y: 80,        // Posición vertical (desde la parte superior del canvas)
+
+  w: 300,       // Ancho total del cuadro donde aparece la profesión
+  h: 200,       // Alto total del cuadro
+
+  btnSize: 24,  // Tamaño (ancho y alto) de los botones laterales ◀ ▶
+
+  btnPad: 16,   // Separación entre:
+                 // - flechas y borde del cuadro
+                 // - flechas y parte inferior del cuadro
+                 // Mientras mayor sea, más se alejan del borde
+
+};
+
+function getProfessionUI() {
+  const boxX = PROF_BOX.x;
+  const boxY = PROF_BOX.y;
+  const boxW = PROF_BOX.w;
+  const boxH = PROF_BOX.h;
+
+  const btnSize = PROF_BOX.btnSize;
+  const leftX  = boxX + PROF_BOX.btnPad;
+  const leftY  = boxY + boxH + PROF_BOX.btnPad;
+  const rightX = boxX + boxW - btnSize - PROF_BOX.btnPad;
+  const rightY = leftY;
+
+  return {
+    boxX, boxY, boxW, boxH,
+    btnSize, leftX, leftY, rightX, rightY
+  };
+}
+
+/*Variables de Botones laterales para selector de profesión (fin) */
+
+
+
+// =======================================================================================
+// Lógica de pintura en canvas (inicio)
+// =======================================================================================
+
+function draw(images) {
+  // reset
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 🔴 MODO ERROR
+  if (gameMode === "error") {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+    ctx.fillStyle = "red";
+    ctx.font = "28px monospace";
+    ctx.fillText("!Error de protocolo 1004", 10, 60);
+    ctx.fillText("No se encuentra nombre de usuario", 10, 90);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return;
+  }
+
+  // 🟡 MODO CHECKING
+  if (gameMode === "checking") {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+    ctx.fillStyle = "white";
+    ctx.font = fontSiseGender + "px monospace";
+
+    // ===== 1️⃣ Selección de género =====
+    if (checkingStep === "gender") {
+      setGameState("gender");
+      ctx.fillText("Seleccionar genero", 30, 40);
+      ctx.fillText(lenzCaracter, selectorMaleX, selectorMaleY);
+      ctx.fillText(lenzCaracterFemale, selectorFemaleX, selectorFemaleY);
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      return;
+    }
+
+    // ===== 2️⃣ Selección de avatar =====
+    if (checkingStep === "avatar" && selectedGender) {
+      setGameState("avatar");
+      const filtered = characters.filter(c => c.gender === selectedGender);
+
+      ctx.fillText("Elige tu avatar", 85, 40);
+
+      const layout = getAvatarGridLayout(filtered.length);
+      const { startX, startY, cell, gap, cols } = layout;
+
+      for (let i = 0; i < filtered.length; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+
+        const x = startX + col * (cell + gap);
+        const y = startY + row * (cell + gap);
+
+        ctx.strokeStyle = (i === hoveredAvatarIndex) ? "yellow" : "white";
+        ctx.strokeRect(x, y, cell, cell);
+
+        const avatarImg = filtered[i].img;
+        if (avatarImg) {
+          const pad = Math.max(2, Math.floor(cell * 0.08));
+          ctx.drawImage(avatarImg, x + pad, y + pad, cell - pad * 2, cell - pad * 2);
+        } else {
+          ctx.fillStyle = "white";
+          ctx.fillText("?", x + Math.floor(cell / 2) - 3, y + Math.floor(cell / 2) + 3);
+        }
+      }
+
+      // Preview grande
+      const previewX = 100;
+      const previewY = 80;
+      const previewSize = 200;
+
+      ctx.strokeStyle = "white";
+      ctx.strokeRect(previewX, previewY, previewSize, previewSize);
+
+      const current = filtered[hoveredAvatarIndex];
+
+      if (current && current.img) {
+        const pad = 3;
+        ctx.drawImage(
+          current.img,
+          previewX + pad,
+          previewY + pad,
+          previewSize - pad * 2,
+          previewSize - pad * 2
+        );
+      }
+
+      // Nombre debajo del preview
+      if (current) {
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(username || "Jugador", previewX + previewSize / 2, previewY + previewSize + 28);
+        ctx.textAlign = "start";
+      }
+
+      // Botón volver (avatar)
+      ctx.font = fontSiseGender + "px monospace";
+      ctx.fillStyle = "white";
+      ctx.fillText(backText, backPosX, backPosY);
+
+      // hitbox (debug) volver avatar
+      const textWidth = ctx.measureText(backText).width;
+      const ratioX = backPosX - backPaddingX;
+      const ratioY = backPosY - fontSiseGender - backPaddingY;
+      const ratioW = textWidth + backPaddingX * 2;
+      const ratioH = fontSiseGender + backPaddingY * 2;
+
+      ctx.save();
+      ctx.fillStyle = "transparent";
+      ctx.fillRect(ratioX, ratioY, ratioW, ratioH);
+      ctx.restore();
+
+      // Botón continuar (avatar)
+      if (selectedAvatar) {
+        const btnX = LOGICAL_W - continueBtnW - continueMarginRight;
+        const btnY = LOGICAL_H - continueBtnH - continueMarginBottom;
+
+        // debug hitbox
+        ctx.save();
+        ctx.fillStyle = "rgba(255,0,0,0.5)";
+        ctx.fillRect(btnX, btnY, continueBtnW, continueBtnH);
+        ctx.restore();
+
+        // botón
+        ctx.fillStyle = "white";
+        ctx.fillRect(btnX, btnY, continueBtnW, continueBtnH);
+
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(btnX + 0.5, btnY + 0.5, continueBtnW - 1, continueBtnH - 1);
+
+        // texto
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.font = `${fontSizeContinue}px monospace`;
+        ctx.fillText(continueText, btnX + continueBtnW / 2, btnY + Math.floor(continueBtnH * 0.72));
+        ctx.textAlign = "start";
+      }
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      return;
+    }
+
+    // ===== 3️⃣ Selección de profesión (slider) =====
+    if (checkingStep === "profession") {
+      setGameState("profession");
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+      ctx.fillStyle = "white";
+      ctx.font = "28px monospace";
+      ctx.fillText("Elige tu profesion", 10, 30);
+
+      const current = professions[professionIndex];
+
+      // ✅ Caja + flechas desde UNA sola fuente (getProfessionUI)
+      const ui = getProfessionUI();
+      const { boxX, boxY, boxW, boxH, btnSize, leftX, leftY, rightX, rightY } = ui;
+
+      // Caja principal
+      ctx.strokeStyle = "white";
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+      // Flechas
+      ctx.fillStyle = "white";
+      ctx.fillRect(leftX, leftY, btnSize, btnSize);
+      ctx.fillRect(rightX, rightY, btnSize, btnSize);
+
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("◀", leftX + btnSize / 2, leftY + 22);
+      ctx.fillText("▶", rightX + btnSize / 2, rightY + 22);
+
+      // Indicador centro
+      ctx.fillStyle = "white";
+      ctx.fillText(`${professionIndex + 1}/${professions.length}`, boxX + boxW / 2, leftY + 12);
+      ctx.textAlign = "start";
+
+      // Contenido dentro del cuadro (clip + scroll)
+      const pad = 8;
+      const contentX = boxX + pad;
+      const contentY = boxY + pad;
+      const contentW = boxW - pad * 2;
+      const contentH = boxH - pad * 2;
+
+      // título
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.fillText(current.name, boxX + boxW / 2, contentY - 20);
+      ctx.textAlign = "start";
+
+      // clip
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(contentX, contentY, contentW, contentH - 14);
+      ctx.clip();
+
+      ctx.fillStyle = "white";
+      ctx.font = "24px monospace";
+
+      const lines = wrapText(ctx, current.description, contentW);
+      const lineH = 32;
+
+      const totalH = lines.length * lineH;
+      const maxScroll = Math.max(0, totalH - (contentH - 14));
+      professionScroll = clamp(professionScroll, 0, maxScroll);
+
+      let y = (contentY + 18) - professionScroll;
+      for (const line of lines) {
+        ctx.fillText(line, contentX, y);
+        y += lineH;
+      }
+
+      ctx.restore();
+
+      // ===== Botón volver (profesiones) =====
+      ctx.save();
+
+      ctx.font = `${PROF_BACK_FONT_SIZE}px ${PROF_BACK_FONT_FAMILY}`;
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+
+      const backTextX = PROF_BACK_X;
+      const backTextY = LOGICAL_H - PROF_BACK_Y_OFFSET;
+
+      const backTextW = ctx.measureText(PROF_BACK_TEXT).width;
+      const backTextH = PROF_BACK_FONT_SIZE;
+
+      const backHitX = backTextX - PROF_BACK_PAD_X;
+      const backHitY = (backTextY - backTextH) - PROF_BACK_PAD_Y;
+      const backHitW = backTextW + PROF_BACK_PAD_X * 2;
+      const backHitH = backTextH + PROF_BACK_PAD_Y * 2;
+
+      if (PROF_BACK_SHOW_HITBOX) {
+        ctx.fillStyle = "transparent";
+        ctx.fillRect(backHitX, backHitY, backHitW, backHitH);
+      }
+
+      ctx.fillStyle = "white";
+      ctx.fillText(PROF_BACK_TEXT, backTextX, backTextY);
+
+      ctx.restore();
+
+      // ===== Botón CONTINUAR (profesiones) =====
+      ctx.save();
+
+      const continueW = PROF_CONT_W;
+      const continueH = PROF_CONT_H;
+
+      const continueX = PROF_CONT_CENTERED
+        ? Math.floor((LOGICAL_W - continueW) / 2)
+        : PROF_CONT_X;
+
+      const continueY = LOGICAL_H - continueH - PROF_CONT_BOTTOM_MARGIN;
+
+      if (PROF_CONT_SHOW_HITBOX) {
+        //ctx.fillStyle = "rgba(255,0,0,0.5)";
+        ctx.fillRect(continueX, continueY, continueW, continueH);
+      }
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(continueX, continueY, continueW, continueH);
+
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(continueX + 0.5, continueY + 0.5, continueW - 1, continueH - 1);
+
+      ctx.fillStyle = "black";
+      ctx.font = `${PROF_CONT_FONT_SIZE}px ${PROF_CONT_FONT_FAMILY}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(PROF_CONT_TEXT, continueX + continueW / 2, continueY + continueH / 2);
+
+      ctx.restore();
+
+      // guarda hitbox exacto para el click
+      window.__profContinueHit = { x: continueX, y: continueY, w: continueW, h: continueH };
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      return;
+    }
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return;
+  }
+
+  // 🟢 MODO PLAYING
+  if (gameMode === "playing") {
+    setGameState("gamePlay");
+if (!gameAssetsLoaded) {
+
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Animación suave de barra
+  loadingProgress += (loadingTarget - loadingProgress) * 0.08;
+
+
+// 🔵 LOGO CENTRADO ARRIBA DE LA BARRA
+if (logoImg) {
+
+  const logoMaxWidth = 220;  // puedes ajustar tamaño aquí
+  const logoRatio = logoImg.height / logoImg.width;
+
+  const logoW = logoMaxWidth;
+  const logoH = logoW * logoRatio;
+
+  const logoX = (canvas.width - logoW) / 2;
+
+  // La barra está en:
+
+  const barY = canvas.height / 2 + 40;
+
+  // Colocamos el logo arriba de la barra
+  const logoY = barY - logoH - 40;
+
+  ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+}
+  // 🔵 BARRA DE CARGA
+  const barWidth = 300;
+  const barHeight = 18;
+
+  const barX = (canvas.width - barWidth) / 2;
+  const barY = canvas.height / 2 + 40;
+
+  // Fondo barra
+  ctx.fillStyle = "#222";
+  ctx.fillRect(barX, barY, barWidth, barHeight);
+
+  // Progreso
+  ctx.shadowColor = "#00ffcc";
+  ctx.shadowBlur = 3; //Brillo del juego
+  ctx.fillStyle = "#00ffcc";
+  ctx.fillRect(barX, barY, barWidth * loadingProgress, barHeight);
+
+  // Borde
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+  // Texto %
+  ctx.fillStyle = "white";
+  ctx.font = "16px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    Math.floor(loadingProgress * 100) + "%",
+    canvas.width / 2,
+    barY + barHeight + 25
+  );
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  return;
+}
+
+    const viewW = canvas.width / CAMERA_ZOOM;
+    const viewH = canvas.height / CAMERA_ZOOM;
+
+    const heroCenterX = player.x + HERO_DRAW_W / 2;
+    const heroCenterY = player.y + HERO_DRAW_H / 2;
+
+    const camCenterX = clamp(heroCenterX, viewW / 2, WORLD_W - viewW / 2);
+    const camCenterY = clamp(heroCenterY, viewH / 2, WORLD_H - viewH / 2);
+
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
+    ctx.translate(-camCenterX, -camCenterY);
+
+    ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
+    ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
+
+    const row = rowForFacing(player.facing);
+    const sx = player.frame * HERO_W;
+    const sy = row * HERO_H;
+
+    ctx.drawImage(
+      images.hero,
+      sx, sy, HERO_W, HERO_H,
+      player.x, player.y,
+      HERO_DRAW_W, HERO_DRAW_H
+    );
+
+    ctx.restore();
+
+    /*Sistema de muestreo de coordenadas en el mapá(inicio) */
+    ctx.save();
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+    ctx.fillStyle = "transparent";
+    ctx.fillRect(4, 4, 110, 18);
+
+    ctx.fillStyle = "lime";
+    ctx.font = "18px arcade";
+    ctx.textAlign = "start";
+    ctx.fillText(`X:${Math.floor(player.x)} Y:${Math.floor(player.y)}`, 24, 34); // posición de coordenadas en canvas
+
+    ctx.restore();
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  /* lógica cosmoneda (Inicio+)*/
+// =============================
+// 💰 HUD Cosmonedas (icono + valor)
+// =============================
+if (cosmonedaImg) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  const size = 32;
+  const margin = 12;
+  const spacing = 8;
+
+  ctx.font = "18px arcade";
+  ctx.textBaseline = "middle";
+
+  const valueText = String(cosmonedas);
+  const textWidth = ctx.measureText(valueText).width;
+
+  // Ancho total del bloque (icono + espacio + texto)
+  const totalWidth = size + spacing + textWidth;
+
+  // Posición inicial del bloque completo
+  const startX = canvas.width - totalWidth - margin;
+  const centerY = margin + size / 2;
+
+  // Dibujar icono primero
+  ctx.drawImage(cosmonedaImg, startX, margin, size, size);
+
+  // Dibujar número después del icono
+  ctx.fillStyle = "yellow";
+  ctx.textAlign = "left";
+  ctx.fillText(valueText, startX + size + spacing, centerY);
+
+  ctx.restore();
+}
+/* lógica cosmoneda (Fin+)*/
+
+drawLifeBar(ctx, canvas, pdv, PDV_MAX);//Lógica de vida
+    return;
+    /*Sistema de muestreo de coordenadas en el mapá(fin) */
+    
+  }
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+}
+
+// =======================================================================================
+// Lógica de pintura en canvas (fin)
+// =======================================================================================
+
+function start() {
+  let last = performance.now();
+  function loop(now) {
+    const dt = now - last;
+    last = now;
+    update(dt);
+    draw(images); // images está en el mismo scope
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// solo precarga miniaturas (para selección)
+preloadAvatars(characters)
+  .catch(err => console.error("Error precargando avatares:", err));
+
+// decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)
+checkUserProfile();
+
+// arranca el loop
+start();
+
+// si al recargar ya tiene perfil completo, carga assets de una vez
+if (gameMode === "playing") {
+  loadGameAssets().then(() => {
+    
+    // si quieres, puedes revalidar aquí
+    // (no es obligatorio, el draw ya se actualizará en el siguiente frame)
+  });
+}
+})();
+
+
+//--------------------------------------------------------------
+/*--------Resetear datios de juego para pruebas (Inicio)
+//--------------------------------------------------------------
+function resetPlayerProfile() {
+ localStorage.removeItem("avatar");
+  localStorage.removeItem("avatarId");
+  localStorage.removeItem("gender");
+  localStorage.removeItem("profession");
+
+  // Si usas más claves en el futuro, agrégalas aquí
+
+  console.log("Datos del jugador eliminados.");
+
+  // Resetear variables en memoria (opcional pero recomendado)
+  selectedGender = null;
+  selectedAvatar = null;
+  selectedProfession = null;
+  hoveredAvatarIndex = 0;
+  hoveredProfessionIndex = 0;
+
+  checkingStep = "gender";
+  gameMode = "checking";
+}
+
+resetPlayerProfile() */
