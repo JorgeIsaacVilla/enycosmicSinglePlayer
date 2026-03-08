@@ -1617,16 +1617,6 @@ function buildSettingHTML() {
       </div>
 
       <div class="ui-settings-section">
-        <p class="ui-settings-title">Enlaces</p>
-        <div class="ui-settings-row">
-          <button class="ui-btn" data-action="open-link" data-link="terms">Términos</button>
-          <button class="ui-btn" data-action="open-link" data-link="privacy">Privacidad</button>
-          <button class="ui-btn" data-action="open-link" data-link="donations">Donaciones</button>
-          <button class="ui-btn" data-action="open-link" data-link="support">Soporte</button>
-        </div>
-      </div>
-
-      <div class="ui-settings-section">
         <p class="ui-settings-title">Música ambiente</p>
         <div class="ui-settings-row">
           <select class="ui-select" data-action="set-ambient">
@@ -1645,6 +1635,16 @@ function buildSettingHTML() {
           <button class="ui-btn ui-btn-danger" data-action="factory-reset">Estado de fábrica</button>
         </div>
         <p class="ui-small">Estado de fábrica borra solo settings guardados.</p>
+      </div>
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Enlaces</p>
+        <div class="ui-settings-row">
+          <button class="ui-btn" data-action="open-link" data-link="terms">Términos</button>
+          <button class="ui-btn" data-action="open-link" data-link="privacy">Privacidad</button>
+          <button class="ui-btn" data-action="open-link" data-link="donations">Donaciones</button>
+          <button class="ui-btn" data-action="open-link" data-link="support">Soporte</button>
+        </div>
       </div>
 
     </div>
