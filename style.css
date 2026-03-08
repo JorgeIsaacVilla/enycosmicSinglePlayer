@@ -12,7 +12,7 @@
 
 /* Evita arrastre de imágenes/elementos */
 #wrap img,
-#wrap canvas {
+#wrap #game {
   -webkit-user-drag: none;
 }
 
@@ -169,7 +169,7 @@ body{
 }
 
 /* IMPORTANTE: NO estirar canvas */
-canvas{
+#game{
   display:block;
   background:transparent;
   outline:2px solid rgba(255,255,255,.9);
