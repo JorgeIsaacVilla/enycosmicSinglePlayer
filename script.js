@@ -89,7 +89,7 @@ function openCameraAR() {
     </div>
     <iframe 
       class="camera-ar-frame"
-      src="./interactions/MetaCamAR/camaraAR.html"
+      src="./interactions/MetaCamAR/index.html"
       title="Cámara AR"
       allow="camera; microphone; fullscreen"
     ></iframe>
