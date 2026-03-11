@@ -149,7 +149,7 @@
       "id": "escudo_de_hierro",
       "nombre_item": "Escudo De Hierro",
       "tipo_item": "arma",
-      "imagen": "./assets/items/escudoHierro.svg",
+      "imagen": "./assets/items/EscudoHierro.svg",
       "agotable": false,
       "cantidad_de_usos": null,
       "cuanto_quita_de_vida_al_enemigo": 0,
