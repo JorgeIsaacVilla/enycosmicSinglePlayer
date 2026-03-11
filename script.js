@@ -2160,8 +2160,8 @@ document.addEventListener(
   );
 }
 
-// AGREGA este bloque una sola vez, por ejemplo debajo de initSettingsDelegation();
-
+// Funciones adicionales para escichar el mause arrba de los items (inicio)
+/*
 document.addEventListener("mouseover", (e) => {
   const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
   if (!slotEl) return;
@@ -2190,6 +2190,8 @@ document.addEventListener("mouseout", (e) => {
 
   closeInventarioPopup();
 }, true);
+*/
+// Funciones adicionales para escichar el mause arrba de los items (Fin)
 
 document.addEventListener("click", (e) => {
   const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
@@ -4069,6 +4071,8 @@ function limpiarSlotsDeCombinacionUsados(resultado) {
     }
   }
 }
+
+
 
 function intentarCrearItemFinal() {
   if (!combinacionResultado) return;
