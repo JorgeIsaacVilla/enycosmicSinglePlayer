@@ -1758,14 +1758,19 @@ const equipHTML = (window.equipSlots || [null, null]).map((item, i) => {
   `;
 }
 
-function devolverItemDesdeEquipado(equipIndex) {
-  const item = window.equipSlots?.[equipIndex];
+function devolverItemDesdeEquipado(slotIndex) {
+  const item = window.equipSlots?.[slotIndex];
   if (!item) return;
 
   const agregado = window.agregarItemAlInventario({
-    ...item,
     id: item.id ?? item.item_id,
     item_id: item.item_id ?? item.id,
+    nombre_item: item.nombre_item,
+    imagen: item.imagen,
+    tipo_item: item.tipo ?? item.tipo_item ?? "",
+    agotable: item.agotable === true,
+    usos: item.usos ?? null,
+    usos_maximos: item.usos_maximos ?? null,
     cantidad: 1
   });
 
@@ -1774,8 +1779,7 @@ function devolverItemDesdeEquipado(equipIndex) {
     return;
   }
 
-  window.equipSlots[equipIndex] = null;
-  closeInventarioPopup();
+  window.equipSlots[slotIndex] = null;
 
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
@@ -3732,7 +3736,7 @@ let hoveredItem = null;
 
 
 
-/*// 🔧 Items de prueba para el inventario*/
+/*// 🔧 Items de prueba para el inventario
 window.inventarioUser.push(
   {
     id: "bateria",
@@ -3749,10 +3753,10 @@ window.inventarioUser.push(
   {
     id: "cable",
     nombre_item: "cable",
-    imagen: "./assets/items/cable.png",
+    imagen: "./assets/items/cable.svg",
     cantidad: 2
   },
-);
+);*/
 
 async function cargarItemsJSON(){
 
@@ -3840,42 +3844,54 @@ function agregarItemAlInventario(nuevoItem) {
 
   if (!nuevoItem) return false;
 
-  let cantidadPendiente = Number(nuevoItem.cantidad) || 1;
+  const nuevoId = nuevoItem.id ?? nuevoItem.item_id;
+  const nuevoEsAgotable = nuevoItem.agotable === true;
+  const nuevoUsos = nuevoItem.usos ?? nuevoItem.cantidad_de_usos ?? null;
+  const nuevoUsosMaximos = nuevoItem.usos_maximos ?? nuevoItem.cantidad_de_usos ?? null;
 
-  // 1. Primero intenta apilar en stacks existentes
   for (const slot of window.inventarioUser) {
     if (!slot) continue;
-    if (slot.id !== nuevoItem.id) continue;
 
-    if (!slot.cantidad) slot.cantidad = 1;
+    const slotId = slot.id ?? slot.item_id;
+    const slotEsAgotable = slot.agotable === true;
+    const slotUsos = slot.usos ?? slot.cantidad_de_usos ?? null;
+    const slotUsosMaximos = slot.usos_maximos ?? slot.cantidad_de_usos ?? null;
 
-    const espacioDisponible = MAX_STACK - slot.cantidad;
-    if (espacioDisponible <= 0) continue;
+    const mismoItem = slotId === nuevoId;
 
-    const aMover = Math.min(espacioDisponible, cantidadPendiente);
-    slot.cantidad += aMover;
-    cantidadPendiente -= aMover;
+    // Si es agotable, solo acumula si además tienen exactamente el mismo estado de uso
+    const mismoEstadoDeUso = (
+      !nuevoEsAgotable ||
+      (
+        slotEsAgotable === nuevoEsAgotable &&
+        slotUsos === nuevoUsos &&
+        slotUsosMaximos === nuevoUsosMaximos
+      )
+    );
 
-    if (cantidadPendiente <= 0) {
-      return true;
+    if (mismoItem && mismoEstadoDeUso) {
+      if (!slot.cantidad) slot.cantidad = 1;
+
+      if (slot.cantidad < MAX_STACK) {
+        slot.cantidad += nuevoItem.cantidad || 1;
+        return true;
+      }
     }
   }
 
-  // 2. Luego crea nuevos slots si aún queda cantidad
-  while (cantidadPendiente > 0) {
-    if (window.inventarioUser.length >= MAX_SLOTS) {
-      return false;
-    }
-
-    const aMover = Math.min(MAX_STACK, cantidadPendiente);
-
-    window.inventarioUser.push({
-      ...nuevoItem,
-      cantidad: aMover
-    });
-
-    cantidadPendiente -= aMover;
+  if (window.inventarioUser.length >= MAX_SLOTS) {
+    return false;
   }
+
+  window.inventarioUser.push({
+    ...nuevoItem,
+    id: nuevoId,
+    item_id: nuevoItem.item_id ?? nuevoId,
+    cantidad: nuevoItem.cantidad || 1,
+    agotable: nuevoEsAgotable,
+    usos: nuevoUsos,
+    usos_maximos: nuevoUsosMaximos
+  });
 
   return true;
 }
