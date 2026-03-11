@@ -4544,25 +4544,25 @@ if (logoImg) {
     ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
     ctx.translate(-camCenterX, -camCenterY);
 
-    ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
-    ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
+ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
 
-    const row = rowForFacing(player.facing);
-    const sx = player.frame * HERO_W;
-    const sy = row * HERO_H;
-
-    ctx.drawImage(
-      images.hero,
-      sx, sy, HERO_W, HERO_H,
-      player.x, player.y,
-      HERO_DRAW_W, HERO_DRAW_H
-    );
-    
-
-// Dibujar items (inicio)
+// Dibujar items primero
 pruebaDeItems();
 drawItems(ctx);
-// Dibujar items (fin)
+
+// Dibujar avatar después, para que quede por encima
+ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
+
+const row = rowForFacing(player.facing);
+const sx = player.frame * HERO_W;
+const sy = row * HERO_H;
+
+ctx.drawImage(
+  images.hero,
+  sx, sy, HERO_W, HERO_H,
+  player.x, player.y,
+  HERO_DRAW_W, HERO_DRAW_H
+);
 
     ctx.restore();
 
@@ -4791,10 +4791,9 @@ function resetPlayerProfile() {
 
 resetPlayerProfile() */
 
-
-
 //------Prueba de items-----
 //Prueba de escudo:
+/* 
 function pruebaQuitarUsoEscudo() {
   if (!window.equipSlots) return;
 
@@ -4815,3 +4814,117 @@ function pruebaQuitarUsoEscudo() {
 
   console.log("Usos restantes del escudo:", escudo.usos);
 }
+
+function pruebaUsarCorazon() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "corazon");
+
+  if (!item) {
+    console.log("No hay Corazon equipado");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes del Corazon:", item.usos);
+}
+
+function pruebaUsarAntorcha() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "antorcha_de_fuego");
+
+  if (!item) {
+    console.log("No hay Antorcha equipada");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes de la Antorcha:", item.usos);
+}
+
+function pruebaUsarPistolaLazer() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "pistola_lazer");
+
+  if (!item) {
+    console.log("No hay Pistola Lazer equipada");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes de la Pistola:", item.usos);
+}
+
+function pruebaUsarEspadaMadera() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "espada_de_madera");
+
+  if (!item) {
+    console.log("No hay Espada de madera equipada");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes de la Espada de madera:", item.usos);
+}
+
+function pruebaUsarBumerang() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "bumerang");
+
+  if (!item) {
+    console.log("No hay Bumerang equipado");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes del Bumerang:", item.usos);
+}
+
+function pruebaUsarPico() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "pico_escabador");
+
+  if (!item) {
+    console.log("No hay Pico equipado");
+    return;
+  }
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes del Pico:", item.usos);
+}
+
+function pruebaUsarEscudoHierro() {
+  if (!window.equipSlots) return;
+
+  const item = window.equipSlots.find(i => i && i.id === "escudo_de_hierro");
+
+  if (!item) {
+    console.log("No hay Escudo de hierro equipado");
+    return;
+  }
+
+  item.usos -= 3;
+
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes del Escudo de hierro:", item.usos);
+}
+  */
