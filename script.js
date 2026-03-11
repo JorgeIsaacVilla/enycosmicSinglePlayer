@@ -5,7 +5,6 @@ let coordenadasMisionsX = 0;
 let coordenadasMisionsY = 0;
 let coordenadasMisionState = false;
 
-
 // =======================================================================================
 // Variables a sincronizar con base de datos Wordpress (inicio)
 // =======================================================================================
@@ -69,6 +68,11 @@ const NOVEDADES = [
 // =======================================================================================
 // Variables a sincronizar con base de datos Wordpress (Fin)
 // =======================================================================================
+
+//Combinaciones de inventario
+let combinacionSlots = [null, null, null, null];
+let combinacionResultado = null;
+window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/equipo Sincronizar con base de datos wordpress
 
 // ================================================
 // Función llamado de metafon.html a index.html (inicio)
@@ -1036,6 +1040,10 @@ function buildInterfas(type) {
       bodyHTML = buildSettingHTML();
       break;
 
+    case "inventario":
+      bodyHTML = buildInventarioHTML();
+      break;
+
     case "iq":
       bodyHTML = buildIQPanelHTML();
       break;
@@ -1119,6 +1127,10 @@ function openInterfas(type) {
 
         case "setting":
           bodyHTML = buildSettingHTML();
+          break;
+
+        case "inventario":
+          bodyHTML = buildInventarioHTML();
           break;
 
         case "iq":
@@ -1382,7 +1394,8 @@ function buildIQPanelHTML() {
         <div class="ui-iq-card">
 
           <p class="ui-iq-section-title">Tu IQ actual</p>
-          <p class="ui-iq-strong">${IQuser} / ${maxIQ}</p>
+          <p class="ui-iq-strong">${IQuser} / 250</p>
+          <!--<p class="ui-iq-strong">${IQuser} / ${maxIQ}</p>-->
 
           <p class="ui-iq-section-title">Tu nivel IQ se compara al del genio</p>
           <p class="ui-iq-strong">${genius.name}</p>
@@ -1651,6 +1664,270 @@ function buildSettingHTML() {
   `;
 }
 
+//Render Inventario
+function buildInventarioHTML() {
+  const avatarId = localStorage.getItem("avatarId");
+  const avatarSeleccionado = characters.find(c => c.id === avatarId) || characters[0];
+  const avatarSrc = avatarSeleccionado?.avatar || "";
+  const avatarName = username || "Jugador";
+
+  const slotsInventario = Array.from({ length: 16 }, (_, i) => {
+    const item = window.inventarioUser[i];
+
+    if (item) {
+      return `
+        <div class="ui-inv-slot has-item" data-slot="${i}" data-slot-index="${i}">
+          <img class="ui-inv-item-img" src="${item.imagen}" alt="${item.nombre_item}">
+          <span class="ui-inv-item-count">${item.cantidad || 1}</span>
+        </div>
+      `;
+    }
+
+    return `<div class="ui-inv-slot" data-slot="${i}" data-slot-index="${i}"></div>`;
+  }).join("");
+
+  const slotsCombinar = combinacionSlots.map((item, i) => {
+    if (item) {
+      return `
+        <div class="ui-inv-combine-slot has-item" data-combine-slot="${i}">
+          <img class="ui-inv-item-img" src="${item.imagen}" alt="${item.nombre_item}">
+          <span class="ui-inv-item-count">${item.cantidad || 1}</span>
+        </div>
+      `;
+    }
+
+    return `<div class="ui-inv-combine-slot" data-combine-slot="${i}"></div>`;
+  }).join("");
+
+  const resultadoHTML = combinacionResultado
+    ? `
+      <img class="ui-inv-item-img" src="${combinacionResultado.imagen}" alt="${combinacionResultado.nombre_item}">
+      <span class="ui-inv-result-label">${combinacionResultado.nombre_item}</span>
+    `
+    : `<span class="ui-inv-result-label">Crear ITEM</span>`;
+
+const equipHTML = (window.equipSlots || [null, null]).map((item, i) => {
+  if (item) {
+    return `
+      <div class="ui-inv-equip-slot has-item" data-equip-slot="${i}">
+        <img class="ui-inv-item-img" src="${item.imagen}" alt="${item.nombre_item}">
+        <span class="ui-inv-item-count">${item.agotable ? (item.usos_restantes ?? item.usos ?? 1) : 1}</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="ui-inv-equip-slot" data-equip-slot="${i}">
+      <span class="ui-inv-equip-label">Slot ${i + 1}</span>
+    </div>
+  `;
+}).join("");
+
+  return `
+    <div class="ui-inv-root">
+
+      <div class="ui-inv-top">
+        <div class="ui-inv-avatar-panel">
+          <div class="ui-inv-avatar-circle">
+            <img class="ui-inv-avatar-img" src="${avatarSrc}" alt="${avatarName}">
+          </div>
+        </div>
+
+        <div class="ui-inv-top-right">
+          ${equipHTML}
+        </div>
+      </div>
+
+      <div class="ui-inv-grid-wrap">
+        <div class="ui-inv-grid">
+          ${slotsInventario}
+        </div>
+      </div>
+
+      <div class="ui-inv-combine-wrap">
+        <div class="ui-inv-combine-left">
+          ${slotsCombinar}
+        </div>
+
+        <div class="ui-inv-combine-result ${combinacionResultado ? "has-item" : ""}">
+          ${resultadoHTML}
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+function devolverItemDesdeEquipado(equipIndex) {
+  const item = window.equipSlots?.[equipIndex];
+  if (!item) return;
+
+  const agregado = window.agregarItemAlInventario({
+    ...item,
+    id: item.id ?? item.item_id,
+    item_id: item.item_id ?? item.id,
+    cantidad: 1
+  });
+
+  if (!agregado) {
+    console.log("Inventario lleno, no se puede devolver el item equipado");
+    return;
+  }
+
+  window.equipSlots[equipIndex] = null;
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+window.devolverItemDesdeEquipado = devolverItemDesdeEquipado;
+
+function equiparItemDelInventario(slotIndex) {
+  const item = window.inventarioUser?.[slotIndex];
+  if (!item) return;
+
+  const tipoRaw =
+    item.tipo_item ??
+    item.tipo ??
+    item.categoria ??
+    item.category ??
+    item.clase ??
+    item.kind ??
+    item.uso ??
+    "";
+
+  const tipo = String(tipoRaw).trim().toLowerCase();
+
+  const esEquipable =
+    tipo === "arma" ||
+    tipo === "equipo" ||
+    tipo === "consumible";
+
+  console.log("Intentando equipar:", item);
+  console.log("Tipo detectado:", tipo);
+
+  if (!esEquipable) {
+    console.log("Este item no se puede equipar");
+    closeInventarioPopup();
+    return;
+  }
+
+  window.equipSlots = window.equipSlots || [null, null];
+
+  const slotLibre = window.equipSlots.findIndex(slot => slot === null);
+  if (slotLibre === -1) {
+    console.log("No hay espacio en los slots de equipo");
+    closeInventarioPopup();
+    return;
+  }
+
+  const agotable = item.agotable === true;
+  const usosBase = Number(
+    item.usos_restantes ??
+    item.usos ??
+    item.cantidad_de_usos ??
+    item.cantidad_usos ??
+    1
+  ) || 1;
+
+  window.equipSlots[slotLibre] = {
+    id: item.id ?? item.item_id,
+    item_id: item.item_id ?? item.id,
+    nombre_item: item.nombre_item ?? item.nombre ?? "Item",
+    imagen: item.imagen ?? item.image ?? "",
+    tipo: tipo,
+    agotable: agotable,
+    usos: usosBase,
+    usos_restantes: usosBase,
+    usos_maximos: Number(item.usos_maximos ?? item.cantidad_de_usos ?? item.cantidad_usos ?? usosBase) || usosBase,
+    cantidad: 1
+  };
+
+  if ((item.cantidad || 1) > 1) {
+    item.cantidad -= 1;
+  } else {
+    window.inventarioUser.splice(slotIndex, 1);
+  }
+
+  window.inventarioUser = window.inventarioUser.filter(Boolean);
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+function closeInventarioPopup() {
+  const oldPopup = document.querySelector(".ui-inv-popup");
+  if (oldPopup) oldPopup.remove();
+
+  document
+    .querySelectorAll("#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']")
+    .forEach(el => delete el.dataset.popupOpen);
+}
+
+function openInventarioPopup(slotEl, item) {
+  if (!slotEl || !item) return;
+
+  closeInventarioPopup();
+
+  const panel = document.getElementById("container-interfas");
+  if (!panel) return;
+
+  const bodyEl = panel.querySelector(".ui-body");
+  if (!bodyEl) return;
+
+  const popup = document.createElement("div");
+  popup.className = "ui-inv-popup";
+  popup.innerHTML = `
+    <div class="ui-inv-popup-title">${item.nombre_item}</div>
+    <div class="ui-inv-popup-actions">
+      <button class="ui-inv-popup-btn" type="button" data-inv-action="destruir">Destruir</button>
+      <button class="ui-inv-popup-btn" type="button" data-inv-action="equipar">Equipar</button>
+      <button class="ui-inv-popup-btn" type="button" data-inv-action="combinar">Combinar</button>
+    </div>
+  `;
+
+  bodyEl.appendChild(popup);
+
+  const bodyRect = bodyEl.getBoundingClientRect();
+  const slotRect = slotEl.getBoundingClientRect();
+
+  let left = (slotRect.left - bodyRect.left) + bodyEl.scrollLeft + (slotRect.width / 2);
+  let top = (slotRect.top - bodyRect.top) + bodyEl.scrollTop - 10;
+
+  popup.style.left = `${left}px`;
+  popup.style.top = `${top}px`;
+
+  const popupRect = popup.getBoundingClientRect();
+  const bodyWidth = bodyEl.clientWidth;
+
+  let popupLeft = left - (popupRect.width / 2);
+  const minLeft = 8;
+  const maxLeft = bodyWidth - popupRect.width - 8;
+
+  popupLeft = Math.max(minLeft, Math.min(maxLeft, popupLeft));
+
+  popup.style.left = `${popupLeft}px`;
+  popup.style.top = `${top}px`;
+
+  slotEl.dataset.popupOpen = "1";
+}
+
+function getInventarioSlotItem(slotEl) {
+  if (!slotEl) return null;
+
+  const index = Number(slotEl.dataset.slotIndex);
+  if (!Number.isInteger(index)) return null;
+
+  return window.inventarioUser[index] || null;
+}
+
 // Render Tutorial (mini-swiper)
 function buildTutorialHTML() {
   const total = TUTORIAL_SLIDES.length;
@@ -1862,6 +2139,132 @@ document.addEventListener(
     true
   );
 }
+
+// AGREGA este bloque una sola vez, por ejemplo debajo de initSettingsDelegation();
+
+document.addEventListener("mouseover", (e) => {
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (!slotEl) return;
+
+  const item = getInventarioSlotItem(slotEl);
+  if (!item) return;
+
+  openInventarioPopup(slotEl, item);
+}, true);
+
+document.addEventListener("mouseout", (e) => {
+  const fromSlot = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (!fromSlot) return;
+
+  const nextEl = e.relatedTarget;
+
+  if (
+    nextEl &&
+    (
+      nextEl.closest?.(".ui-inv-popup") ||
+      nextEl.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item")
+    )
+  ) {
+    return;
+  }
+
+  closeInventarioPopup();
+}, true);
+
+document.addEventListener("click", (e) => {
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+
+  if (slotEl) {
+    const item = getInventarioSlotItem(slotEl);
+    if (!item) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    openInventarioPopup(slotEl, item);
+    return;
+  }
+
+  const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
+  if (actionBtn) {
+    const accion = actionBtn.dataset.invAction || "";
+    const activeSlotEl = document.querySelector(
+      "#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']"
+    );
+    const slotIndex = Number(activeSlotEl?.dataset.slotIndex);
+
+    if (!Number.isInteger(slotIndex)) {
+      closeInventarioPopup();
+      return;
+    }
+
+    if (accion === "destruir") {
+      window.destruirItemDelInventario(slotIndex);
+      return;
+    }
+
+    if (accion === "combinar") {
+      window.agregarItemACombinacionDesdeInventario(slotIndex);
+      return;
+    }
+
+    if (accion === "equipar") {
+      equiparItemDelInventario(slotIndex);
+      return;
+    }
+
+    return;
+  }
+
+  const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
+  if (equipSlotEl) {
+    const equipIndex = Number(equipSlotEl.dataset.equipSlot);
+
+    if (Number.isInteger(equipIndex)) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.devolverItemDesdeEquipado(equipIndex);
+      return;
+    }
+  }
+
+  const combineSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item");
+  if (combineSlotEl) {
+    const combineIndex = Number(combineSlotEl.dataset.combineSlot);
+
+    if (Number.isInteger(combineIndex)) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.devolverItemDesdeCombinacion(combineIndex);
+      return;
+    }
+  }
+
+  const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
+  if (resultEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.intentarCrearItemFinal();
+    return;
+  }
+
+  if (!e.target.closest?.(".ui-inv-popup")) {
+    closeInventarioPopup();
+  }
+}, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (!slotEl) return;
+
+  const item = getInventarioSlotItem(slotEl);
+  if (!item) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  openInventarioPopup(slotEl, item);
+}, { capture: true, passive: false });
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
 initSettingsDelegation();
@@ -2342,6 +2745,113 @@ function enviarCosmonedasAlServidor(amount) {
 }
 /*-----------------------Saldo Cosmonedas (Fin)------------------------------------*/
 
+function showCombinacionEstadoModal(tipo) {
+  const oldModal = document.getElementById("ui-combine-status-modal");
+  if (oldModal) oldModal.remove();
+
+  const mensaje =
+    tipo === "ok"
+      ? "Combinación exitosa"
+      : "Combinación de ITEMS fallido";
+
+  const modal = document.createElement("div");
+  modal.id = "ui-combine-status-modal";
+  modal.innerHTML = `
+    <div class="ui-combine-status-backdrop"></div>
+    <div class="ui-combine-status-box">
+      <div class="ui-combine-status-title">${mensaje}</div>
+      <button class="ui-combine-status-btn" type="button">Aceptar</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const btn = modal.querySelector(".ui-combine-status-btn");
+
+  function closeModal() {
+    modal.remove();
+  }
+
+  btn.addEventListener("click", closeModal);
+
+  btn.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      closeModal();
+    },
+    { passive: false }
+  );
+}
+
+function usarItemEquipadoDesdeHUD(slotIndex) {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  switch (item.id) {
+    case "corazon":
+      console.log("El usuario usará este item: corazon");
+      break;
+
+    case "antorcha_de_fuego":
+      console.log("El usuario usará este item: antorcha de fuego");
+      break;
+
+    case "pistola_lazer":
+      console.log("El usuario usará este item: pistola lazer");
+      break;
+
+    case "espada_de_madera":
+      console.log("El usuario usará este item: espada de madera");
+      break;
+
+    case "escudo_de_madera":
+      console.log("El usuario usará este item: escudo de madera");
+      break;
+
+    case "bumerang":
+      console.log("El usuario usará este item: bumerang");
+      break;
+
+    case "pico_escabador":
+      console.log("El usuario usará este item: pico escabador");
+      break;
+
+    case "patines":
+      console.log("El usuario usará este item: patines");
+      break;
+
+    case "espada_de_hierro":
+      console.log("El usuario usará este item: espada de hierro");
+      break;
+
+    case "escudo_de_hierro":
+      console.log("El usuario usará este item: escudo de hierro");
+      break;
+
+    case "bateria":
+      console.log("El usuario usará este item: bateria");
+      break;
+
+    case "rueda":
+      console.log("El usuario usará este item: rueda");
+      break;
+
+    case "cable":
+      console.log("El usuario usará este item: cable");
+      break;
+
+    case "cuero":
+      console.log("El usuario usará este item: cuero");
+      break;
+
+    default:
+      console.log("El usuario usará este item:", item.nombre_item || item.id);
+      break;
+  }
+}
+
 (() => {
   
   const ASSETS = {
@@ -2467,6 +2977,30 @@ canvas.addEventListener("wheel", (e) => {
   professionScroll += (e.deltaY > 0 ? 8 : -8);
 }, { passive: false });
 
+canvas.addEventListener("pointerdown", (e) => {
+  if (gameMode !== "playing") return;
+
+  const rect = canvas.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const clickY = e.clientY - rect.top;
+
+  const hitboxes = window.hudEquipHitboxes || [];
+
+  for (const hb of hitboxes) {
+    if (
+      clickX >= hb.x &&
+      clickX <= hb.x + hb.w &&
+      clickY >= hb.y &&
+      clickY <= hb.y + hb.h
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      usarItemEquipadoDesdeHUD(hb.slotIndex);
+      return;
+    }
+  }
+}, { passive: false });
+
 // Scroll con touch (móvil)
 let touchStartY = null;
 canvas.addEventListener("pointerdown", (e) => {
@@ -2482,6 +3016,84 @@ canvas.addEventListener("pointermove", (e) => {
   touchStartY = e.clientY;
   professionScroll -= dy / scale; // se siente natural
 });
+
+function getItemAtCanvasPosition(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+
+  const worldX = (clientX - rect.left) / scale + camera.x;
+  const worldY = (clientY - rect.top) / scale + camera.y;
+
+  for (const item of items) {
+    if (
+      worldX >= item.x &&
+      worldX <= item.x + item.size &&
+      worldY >= item.y &&
+      worldY <= item.y + item.size
+    ) {
+      return item;
+    }
+  }
+
+  return null;
+}
+
+function tomarItemSeleccionado(itemTomado) {
+  if (!itemTomado) return;
+
+  const agregado = agregarItemAlInventario(itemTomado);
+
+  if (!agregado) {
+    console.log("Inventario lleno");
+    return;
+  }
+
+  console.log("El usuario tomó el ITEM:", itemTomado.nombre_item);
+
+  items = items.filter(i => i !== itemTomado);
+
+  if (hoveredItem === itemTomado) {
+    hoveredItem = null;
+  }
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+// Mouse hover en desktop
+canvas.addEventListener("mousemove", (e) => {
+  if (gameMode !== "playing") return;
+  hoveredItem = getItemAtCanvasPosition(e.clientX, e.clientY);
+});
+
+// Salir del canvas limpia hover
+canvas.addEventListener("mouseleave", () => {
+  hoveredItem = null;
+});
+
+// Click mouse desktop
+canvas.addEventListener("click", (e) => {
+  if (gameMode !== "playing") return;
+
+  const itemTomado = getItemAtCanvasPosition(e.clientX, e.clientY);
+  if (!itemTomado) return;
+
+  tomarItemSeleccionado(itemTomado);
+});
+
+// Touch / móvil
+canvas.addEventListener("pointerdown", (e) => {
+  if (gameMode !== "playing") return;
+  if (e.pointerType === "mouse") return;
+
+  const itemTomado = getItemAtCanvasPosition(e.clientX, e.clientY);
+  if (!itemTomado) return;
+
+  e.preventDefault();
+  hoveredItem = itemTomado;
+  tomarItemSeleccionado(itemTomado);
+}, { passive: false });
 
 canvas.addEventListener("pointerup", () => { touchStartY = null; });
 canvas.addEventListener("pointercancel", () => { touchStartY = null; });
@@ -3107,13 +3719,423 @@ function getProfessionUI() {
 
 /*Variables de Botones laterales para selector de profesión (fin) */
 
+// =======================================================================================
+// Lógica de items/consumibles/armas (inicio)
+// =======================================================================================
+let itemsData = [];
+let items = [];// Prueba de items
 
+window.inventarioUser = []; //Sincronizar con base de datos wordpress
+
+
+let hoveredItem = null;
+
+
+
+/*// 🔧 Items de prueba para el inventario*/
+window.inventarioUser.push(
+  {
+    id: "bateria",
+    nombre_item: "bateria",
+    imagen: "./assets/items/bateria.svg",
+    cantidad: 1
+  },
+  {
+    id: "palo_de_madera",
+    nombre_item: "palo de madera",
+    imagen: "./assets/items/paloMadera.svg",
+    cantidad: 1
+  },
+  {
+    id: "cable",
+    nombre_item: "cable",
+    imagen: "./assets/items/cable.png",
+    cantidad: 2
+  },
+);
+
+async function cargarItemsJSON(){
+
+  const res = await fetch("./npc-itemsJSON/items.json");
+  const data = await res.json();
+
+  itemsData = data.items;
+
+}
+
+function pruebaDeItems(){
+
+  if(items.length > 0 || itemsData.length === 0) return;
+
+  const radius = 300;
+
+  for(let i=0;i<10;i++){
+
+    const randomItem = itemsData[Math.floor(Math.random()*itemsData.length)];
+
+const img = new Image();
+img.onload = () => {};
+img.onerror = () => {
+  console.warn("No cargó la imagen del item:", randomItem.imagen);
+};
+img.src = randomItem.imagen;
+
+    const offsetX = (Math.random() - 0.5) * radius;
+    const offsetY = (Math.random() - 0.5) * radius;
+
+    items.push({
+      ...randomItem,
+      x: player.x + offsetX,
+      y: player.y + offsetY,
+      img: img,
+      size: 32
+    });
+
+  }
+
+}
+
+
+
+//función para dibujar items
+
+function drawItems(ctx){
+
+  for(const item of items){
+
+    const imgOk =
+      item.img &&
+      item.img.complete &&
+      item.img.naturalWidth > 0 &&
+      item.img.naturalHeight > 0;
+
+    if(imgOk){
+      ctx.drawImage(item.img, item.x, item.y, item.size, item.size);
+    } else {
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(item.x, item.y, item.size, item.size);
+    }
+
+    if(item === hoveredItem){
+
+      const label = item.nombre_item || item.id || "item";
+
+      ctx.fillStyle = "transparent"; //Color de barra de letras de items tirados en el suelo
+      ctx.fillRect(item.x - 4, item.y - 20, 120, 16);
+
+      ctx.fillStyle = "white";
+      ctx.font = "12px arcade";
+      ctx.textAlign = "left";
+      ctx.fillText(label, item.x, item.y - 8);
+
+    }
+
+  }
+
+}
+function agregarItemAlInventario(nuevoItem) {
+  const MAX_SLOTS = 16;
+  const MAX_STACK = 25;
+
+  if (!nuevoItem) return false;
+
+  let cantidadPendiente = Number(nuevoItem.cantidad) || 1;
+
+  // 1. Primero intenta apilar en stacks existentes
+  for (const slot of window.inventarioUser) {
+    if (!slot) continue;
+    if (slot.id !== nuevoItem.id) continue;
+
+    if (!slot.cantidad) slot.cantidad = 1;
+
+    const espacioDisponible = MAX_STACK - slot.cantidad;
+    if (espacioDisponible <= 0) continue;
+
+    const aMover = Math.min(espacioDisponible, cantidadPendiente);
+    slot.cantidad += aMover;
+    cantidadPendiente -= aMover;
+
+    if (cantidadPendiente <= 0) {
+      return true;
+    }
+  }
+
+  // 2. Luego crea nuevos slots si aún queda cantidad
+  while (cantidadPendiente > 0) {
+    if (window.inventarioUser.length >= MAX_SLOTS) {
+      return false;
+    }
+
+    const aMover = Math.min(MAX_STACK, cantidadPendiente);
+
+    window.inventarioUser.push({
+      ...nuevoItem,
+      cantidad: aMover
+    });
+
+    cantidadPendiente -= aMover;
+  }
+
+  return true;
+}
+
+window.agregarItemAlInventario = agregarItemAlInventario;
+
+function normalizarInventario() {
+  window.inventarioUser = window.inventarioUser.filter(Boolean);
+}
+
+function destruirItemDelInventario(slotIndex) {
+  const item = window.inventarioUser[slotIndex];
+  if (!item) return;
+
+  window.inventarioUser.splice(slotIndex, 1);
+  normalizarInventario();
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+
+function agregarItemACombinacionDesdeInventario(slotIndex) {
+  const item = window.inventarioUser[slotIndex];
+  if (!item) return;
+
+  const slotMismoItem = combinacionSlots.findIndex(
+    s =>
+      s &&
+      s.id === item.id &&
+      (s.usos ?? s.usos_restantes ?? null) === (item.usos ?? item.usos_restantes ?? null) &&
+      (s.usos_maximos ?? null) === (item.usos_maximos ?? null)
+  );
+
+  if (slotMismoItem !== -1) {
+    combinacionSlots[slotMismoItem].cantidad =
+      (combinacionSlots[slotMismoItem].cantidad || 1) + 1;
+  } else {
+    const slotLibre = combinacionSlots.findIndex(s => s === null);
+    if (slotLibre === -1) {
+      console.log("No hay espacio en la zona de combinación");
+      return;
+    }
+
+    combinacionSlots[slotLibre] = {
+      ...item,
+      cantidad: 1
+    };
+  }
+
+  if ((item.cantidad || 1) > 1) {
+    item.cantidad -= 1;
+  } else {
+    window.inventarioUser.splice(slotIndex, 1);
+  }
+
+  normalizarInventario();
+  evaluarCombinacion();
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) {
+      bodyEl.innerHTML = buildInventarioHTML();
+
+      const combineSection = bodyEl.querySelector(".ui-inv-combine-wrap");
+      if (combineSection) {
+        combineSection.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+      }
+    }
+  }
+}
+
+function devolverItemDesdeCombinacion(slotIndex) {
+  const item = combinacionSlots[slotIndex];
+  if (!item) return;
+
+  const itemADevolver = {
+    ...item
+  };
+
+  delete itemADevolver._hudImg;
+
+  const agregado = agregarItemAlInventario(itemADevolver);
+
+  if (!agregado) {
+    console.log("Inventario lleno, no se puede devolver el item");
+    return;
+  }
+
+  combinacionSlots[slotIndex] = null;
+  evaluarCombinacion();
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+window.devolverItemDesdeCombinacion = devolverItemDesdeCombinacion;
+
+window.destruirItemDelInventario = destruirItemDelInventario;
+window.agregarItemACombinacionDesdeInventario = agregarItemACombinacionDesdeInventario;
+
+function contarMaterialesEnCombinacion() {
+  const conteo = {};
+
+  for (const slot of combinacionSlots) {
+    if (!slot) continue;
+    conteo[slot.id] = (conteo[slot.id] || 0) + (slot.cantidad || 1);
+  }
+
+  return conteo;
+}
+
+function mostrarPopupCreacion(mensaje) {
+  const panel = document.getElementById("container-interfas");
+  if (!panel) return;
+
+  const bodyEl = panel.querySelector(".ui-body");
+  if (!bodyEl) return;
+
+  const oldMsg = bodyEl.querySelector(".ui-inv-craft-popup");
+  if (oldMsg) oldMsg.remove();
+
+  const popup = document.createElement("div");
+  popup.className = "ui-inv-craft-popup";
+  popup.textContent = mensaje;
+
+  bodyEl.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 1800);
+}
+
+function limpiarSlotsDeCombinacionUsados(resultado) {
+  if (!resultado || !Array.isArray(resultado.materiales_requeridos_para_crear)) return;
+
+  for (const mat of resultado.materiales_requeridos_para_crear) {
+    let faltan = mat.cantidad || 0;
+
+    for (let i = 0; i < combinacionSlots.length; i++) {
+      const slot = combinacionSlots[i];
+      if (!slot) continue;
+      if (slot.id !== mat.item_id) continue;
+      if (faltan <= 0) break;
+
+      combinacionSlots[i] = null;
+      faltan--;
+    }
+  }
+}
+
+function intentarCrearItemFinal() {
+  if (!combinacionResultado) return;
+
+  const exito = Math.random() < 0.5;
+  const resultadoActual = combinacionResultado;
+
+  if (exito) {
+    limpiarSlotsDeCombinacionUsados(resultadoActual);
+
+const agregado = agregarItemAlInventario({
+  ...itemEquipado,
+  cantidad: 1,
+  usos: itemEquipado.usos,
+  usos_maximos: itemEquipado.usos_maximos,
+  agotable: itemEquipado.agotable === true
+});
+
+    if (!agregado) {
+      showCombinacionEstadoModal("fail");
+      evaluarCombinacion();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+      return;
+    }
+
+    combinacionResultado = null;
+    evaluarCombinacion();
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    showCombinacionEstadoModal("ok");
+  } else {
+    limpiarSlotsDeCombinacionUsados(resultadoActual);
+    combinacionResultado = null;
+    evaluarCombinacion();
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    showCombinacionEstadoModal("fail");
+  }
+}
+
+window.intentarCrearItemFinal = intentarCrearItemFinal;
+
+function evaluarCombinacion() {
+  combinacionResultado = null;
+
+  const conteo = contarMaterialesEnCombinacion();
+
+  for (const item of itemsData) {
+    if (!item.creable) continue;
+    if (!Array.isArray(item.materiales_requeridos_para_crear)) continue;
+    if (item.materiales_requeridos_para_crear.length === 0) continue;
+
+    let cumple = true;
+
+    for (const mat of item.materiales_requeridos_para_crear) {
+      const cantidadActual = conteo[mat.item_id] || 0;
+      if (cantidadActual < mat.cantidad) {
+        cumple = false;
+        break;
+      }
+    }
+
+    if (cumple) {
+      combinacionResultado = item;
+      return;
+    }
+  }
+}
+
+cargarItemsJSON();
+
+// =======================================================================================
+// Lógica de items/consumibles/armas (fin)
+// =======================================================================================
 
 // =======================================================================================
 // Lógica de pintura en canvas (inicio)
 // =======================================================================================
 
 function draw(images) {
+  // =============================
+// ✨ Brillo global del juego
+// =============================
+ctx.shadowColor = "#00ffcc";
+ctx.shadowBlur = 3;
+
   // reset
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -3445,7 +4467,6 @@ if (logoImg) {
 
   // Progreso
   ctx.shadowColor = "#00ffcc";
-  ctx.shadowBlur = 3; //Brillo del juego
   ctx.fillStyle = "#00ffcc";
   ctx.fillRect(barX, barY, barWidth * loadingProgress, barHeight);
 
@@ -3494,6 +4515,12 @@ if (logoImg) {
       player.x, player.y,
       HERO_DRAW_W, HERO_DRAW_H
     );
+    
+
+// Dibujar items (inicio)
+pruebaDeItems();
+drawItems(ctx);
+// Dibujar items (fin)
 
     ctx.restore();
 
@@ -3551,6 +4578,106 @@ if (cosmonedaImg) {
 /* lógica cosmoneda (Fin+)*/
 
 drawLifeBar(ctx, canvas, pdv, PDV_MAX);//Lógica de vida
+
+// =============================
+// ⚔️ HUD Equipamiento (inicio)
+// =============================
+if (window.equipSlots && window.equipSlots.length) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+
+  const barWidth = 18;
+  const barHeight = 140;
+  const marginLeft = 12;
+
+  const barX = marginLeft;
+  const barY = (canvas.height / 2) - (barHeight / 2);
+
+  const slotSize = 42; // más grande para dedo
+  const slotGap = 10;
+
+  const startX = barX;
+  const totalHudHeight = (slotSize * window.equipSlots.length) + (slotGap * (window.equipSlots.length - 1));
+  const startY = barY - totalHudHeight - 14;
+
+  window.hudEquipHitboxes = [];
+
+  window.equipSlots.forEach((item, i) => {
+    const x = startX;
+    const y = startY + i * (slotSize + slotGap);
+
+    window.hudEquipHitboxes.push({
+      slotIndex: i,
+      x,
+      y,
+      w: slotSize,
+      h: slotSize
+    });
+
+    // fondo del slot
+    ctx.fillStyle = "#111";
+    ctx.fillRect(x, y, slotSize, slotSize);
+
+    ctx.strokeStyle = "#00ffcc";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, slotSize, slotSize);
+
+    if (!item) return;
+
+    if (!item._hudImg) {
+      item._hudImg = new Image();
+      item._hudImg.src = item.imagen;
+    }
+
+    if (item._hudImg.complete && item._hudImg.naturalWidth > 0) {
+      ctx.drawImage(item._hudImg, x + 3, y + 3, slotSize - 6, slotSize - 6);
+    }
+
+    const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
+    const usosMaximos = item.usos_maximos ?? usosActuales;
+    const esAgotable = item.agotable === true;
+
+    if (esAgotable && usosMaximos > 0) {
+      const barraX = x + 2;
+      const barraY = y - 7;
+      const barraW = slotSize - 4;
+      const barraH = 5;
+      const progreso = Math.max(0, Math.min(1, usosActuales / usosMaximos));
+
+      // fondo barra
+      ctx.fillStyle = "#222";
+      ctx.fillRect(barraX, barraY, barraW, barraH);
+
+      // progreso
+      ctx.fillStyle = "#00ffcc";
+      ctx.fillRect(barraX, barraY, barraW * progreso, barraH);
+
+      // borde
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(barraX, barraY, barraW, barraH);
+    }
+
+    // contador
+    ctx.fillStyle = "black";
+    ctx.fillRect(x + slotSize - 18, y + slotSize - 14, 16, 12);
+
+    ctx.fillStyle = "white";
+    ctx.font = "10px arcade";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(usosActuales), x + slotSize - 10, y + slotSize - 8);
+  });
+
+  ctx.restore();
+} else {
+  window.hudEquipHitboxes = [];
+}
+// =============================
+// ⚔️ HUD Equipamiento (fin)
+// =============================
+
     return;
     /*Sistema de muestreo de coordenadas en el mapá(fin) */
     
@@ -3596,7 +4723,6 @@ if (gameMode === "playing") {
 }
 })();
 
-
 //--------------------------------------------------------------
 /*--------Resetear datios de juego para pruebas (Inicio)
 //--------------------------------------------------------------
@@ -3622,3 +4748,28 @@ function resetPlayerProfile() {
 }
 
 resetPlayerProfile() */
+
+
+
+//------Prueba de items-----
+//Prueba de escudo:
+function pruebaQuitarUsoEscudo() {
+  if (!window.equipSlots) return;
+
+  const escudo = window.equipSlots.find(item =>
+    item && item.id === "escudo_de_madera"
+  );
+
+  if (!escudo) {
+    console.log("No hay escudo equipado");
+    return;
+  }
+
+  escudo.usos -= 3;
+
+  if (escudo.usos < 0) {
+    escudo.usos = 0;
+  }
+
+  console.log("Usos restantes del escudo:", escudo.usos);
+}

@@ -1,0 +1,385 @@
+{
+  "items": [
+    {
+      "id": "corazon",
+      "nombre_item": "Corazon",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/corazon.svg",
+      "agotable": true,
+      "cantidad_de_usos": 1,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "limon", "cantidad": 1 },
+        { "item_id": "sal", "cantidad": 1 },
+        { "item_id": "baso_de_agua", "cantidad": 1 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "antorcha_de_fuego",
+      "nombre_item": "Antorcha De Fuego",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/antorcha.svg",
+      "agotable": true,
+      "cantidad_de_usos": 1,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "bateria", "cantidad": 1 },
+        { "item_id": "palo_de_madera", "cantidad": 1 },
+        { "item_id": "cable", "cantidad": 2 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "pistola_lazer",
+      "nombre_item": "Pistola Lazer",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/pistolaLazer.svg",
+      "agotable": true,
+      "cantidad_de_usos": 25,
+      "cuanto_quita_de_vida_al_enemigo": null,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "diodo_lazer", "cantidad": 1 },
+        { "item_id": "bateria", "cantidad": 1 },
+        { "item_id": "cable", "cantidad": 2 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "espada_de_madera",
+      "nombre_item": "Espada De Madera",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/espadaMadera.svg",
+      "agotable": true,
+      "cantidad_de_usos": 25,
+      "cuanto_quita_de_vida_al_enemigo": 8,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "madera", "cantidad": 3 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "escudo_de_madera",
+      "nombre_item": "Escudo De Madera",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/escudoMadera.svg",
+      "agotable": true,
+      "cantidad_de_usos": 25,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "madera", "cantidad": 5 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "bumerang",
+      "nombre_item": "Bumerang",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/bumerang.svg",
+      "agotable": true,
+      "cantidad_de_usos": 15,
+      "cuanto_quita_de_vida_al_enemigo": null,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "madera", "cantidad": 2 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "pico_escabador",
+      "nombre_item": "Pico Escabador",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/picoEscabador.svg",
+      "agotable": true,
+      "cantidad_de_usos": 15,
+      "cuanto_quita_de_vida_al_enemigo": 12,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "madera", "cantidad": 1 },
+        { "item_id": "hierro", "cantidad": 1 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "patines",
+      "nombre_item": "Patines",
+      "tipo_item": "equipo",
+      "imagen": "./assets/items/patines.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "balinera", "cantidad": 2 },
+        { "item_id": "cuero", "cantidad": 2 },
+        { "item_id": "rueda", "cantidad": 2 },
+        { "item_id": "madera", "cantidad": 2 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "espada_de_hierro",
+      "nombre_item": "Espada De Hierro",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/espadaHierro.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": null,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "hierro", "cantidad": 50 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "escudo_de_hierro",
+      "nombre_item": "Escudo De Hierro",
+      "tipo_item": "arma",
+      "imagen": "./assets/items/escudoHierro.svg",
+      "agotable": true,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "hierro", "cantidad": 70 }
+      ],
+      "combinable": false
+    },
+    {
+      "id": "baso_de_agua",
+      "nombre_item": "Baso De Agua",
+      "tipo_item": "item",
+      "imagen": "./assets/items/basoAgua.svg",
+      "agotable": true,
+      "cantidad_de_usos": 1,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "baso", "cantidad": 1 },
+        { "item_id": "agua", "cantidad": 1 }
+      ],
+      "combinable": true
+    },
+    {
+      "id": "bateria",
+      "nombre_item": "Bateria",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/bateria.svg",
+      "agotable": true,
+      "cantidad_de_usos": 1,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "limon", "cantidad": 1 },
+        { "item_id": "hierro", "cantidad": 1 },
+        { "item_id": "cobre", "cantidad": 1 }
+      ],
+      "combinable": true
+    },
+    {
+      "id": "rueda",
+      "nombre_item": "Rueda",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/rueda.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "plastico", "cantidad": 1 }
+      ],
+      "combinable": true
+    },
+    {
+      "id": "cable",
+      "nombre_item": "Cable",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/cable.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "cobre", "cantidad": 3 }
+      ],
+      "combinable": true
+    },
+    {
+      "id": "cuero",
+      "nombre_item": "Cuero",
+      "tipo_item": "consumible",
+      "imagen": "./assets/items/cuero.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "diodo_lazer",
+      "nombre_item": "Diodo Lazer",
+      "tipo_item": "item especial",
+      "imagen": "./assets/items/diodoLazer.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "limon",
+      "nombre_item": "Limon",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/limon.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "sal",
+      "nombre_item": "Sal",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/sal.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "baso",
+      "nombre_item": "Baso",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/baso.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "agua",
+      "nombre_item": "Agua",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/agua.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "palo_de_madera",
+      "nombre_item": "Palo De Madera",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/paloMadera.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        { "item_id": "madera", "cantidad": 1 }
+      ],
+      "combinable": true
+    },
+    {
+      "id": "madera",
+      "nombre_item": "Madera",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/madera.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "hierro",
+      "nombre_item": "Hierro",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/hierro.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "cobre",
+      "nombre_item": "Cobre",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/cobre.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "plastico",
+      "nombre_item": "Plastico",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/plastico.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    },
+    {
+      "id": "balinera",
+      "nombre_item": "Balinera",
+      "tipo_item": "material_base",
+      "imagen": "./assets/items/balinera.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true
+    }
+  ]
+}

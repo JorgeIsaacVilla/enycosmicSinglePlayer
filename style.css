@@ -304,6 +304,10 @@ body{
       rgba(0, 0, 0, 0) 2px,
       rgba(0, 0, 0, 0) 6px
     );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* =========================
@@ -766,4 +770,357 @@ body{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
+}
+
+/*Inventario*/
+/* =========================
+   INVENTARIO PANEL
+   ========================= */
+
+.ui-inv-root{
+      display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  gap:12px;
+  color:#00ffcc;
+  font-family:"arcade","monospace";
+}
+
+.ui-inv-top{
+  display:grid;
+  grid-template-columns: 96px 1fr;
+  gap:12px;
+  align-items:start;
+}
+
+.ui-inv-avatar-panel{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+.ui-inv-avatar-circle{
+  margin-top: 8px;
+  width:65px;
+  height:65px;
+  border:3px solid #00ffcc;
+  background: rgba(0,255,204,.06);
+  border-radius:50%;
+  overflow:hidden;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ui-inv-avatar-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  image-rendering: pixelated;
+  display:block;
+}
+
+.ui-inv-top-right{
+  margin-top: 8px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 130px;
+}
+
+.ui-inv-equip-slot{
+  width: 50px;
+  height: 50px;
+  border:2px solid rgba(0,255,204,.7);
+  background: rgba(0,255,204,.06);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6px;
+  
+}
+
+.ui-inv-equip-label{
+  font-size:10px;
+  line-height:1.2;
+  text-transform:uppercase;
+}
+
+.ui-inv-grid-wrap{
+  border:2px solid rgba(0,255,204,.65);
+  background: rgba(0,0,0,.45);
+  padding:8px;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  width: 270px;
+  height: 180px;
+  overflow-y: scroll;
+}
+
+.ui-inv-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:6px;
+}
+
+.ui-inv-slot{
+  aspect-ratio: 1 / 1;
+  border:2px solid #00ffcc;
+  background: rgba(0,255,204,.05);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  width: 50px;
+  height: 50px;
+}
+
+.ui-inv-slot.has-item{
+  background: rgba(0,255,204,.12);
+}
+
+.ui-inv-item-img{
+  width:80%;
+  height:80%;
+  object-fit:contain;
+  image-rendering: pixelated;
+  display:block;
+  /*background-color: red;*/
+}
+
+.ui-inv-combine-wrap{
+  display:grid;
+  grid-template-columns: 1fr 72px;
+  gap:10px;
+  align-items:stretch;
+}
+
+.ui-inv-combine-left{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:6px;
+}
+
+.ui-inv-combine-slot{
+  aspect-ratio: 1 / 1;
+  width: 40px;
+  height: 40px;
+  border:2px solid #00ffcc;
+  background: rgba(0,255,204,.05);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ui-inv-combine-result{
+  border:2px solid #00ffcc;
+  background: rgba(0,255,204,.08);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6px;
+  width: 30px;
+}
+
+.ui-inv-result-label{
+  font-size:10px;
+  line-height:1.2;
+  text-transform:uppercase;
+}
+.ui-inv-slot{
+  position: relative;
+}
+
+.ui-inv-item-count{
+  position:absolute;
+  right:2px;
+  bottom:2px;
+  min-width:18px;
+  height:18px;
+  padding:0 4px;
+  border:1px solid #00ffcc;
+  background:black;
+  color:#00ffcc;
+  font-family:"arcade","monospace";
+  font-size:10px;
+  line-height:18px;
+  text-align:center;
+  box-sizing:border-box;
+}
+
+/* AGREGA al final de tu style.css */
+
+.ui-inv-popup{
+  position:absolute;
+  transform: translateY(-10%);
+  min-width: 150px;
+  max-width: 220px;
+  padding:8px;
+  border:2px solid #00ffcc;
+  background:black;
+  color:#00ffcc;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.35),
+    0 6px 14px rgba(0,0,0,.45);
+  z-index:30;
+  image-rendering:pixelated;
+}
+
+.ui-inv-popup-title{
+  font-size:11px;
+  line-height:1.2;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  word-break:break-word;
+}
+
+.ui-inv-popup-actions{
+  display:grid;
+  gap:6px;
+}
+
+.ui-inv-popup-btn{
+  width:100%;
+  background:black;
+  color:#00ffcc;
+  border:2px solid #00ffcc;
+  font-family:"arcade","monospace";
+  font-size:10px;
+  padding:6px 4px;
+  cursor:pointer;
+  text-transform:uppercase;
+}
+
+.ui-inv-popup-btn:active{
+  transform: translateY(1px);
+}
+
+.ui-inv-slot,
+.ui-inv-combine-slot,
+.ui-inv-combine-result{
+  position: relative;
+}
+
+.ui-inv-item-count{
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 10px;
+  color: #00ffcc;
+  background: rgba(0,0,0,.85);
+  border: 1px solid #00ffcc;
+  padding: 1px 4px;
+  line-height: 1;
+}
+
+.ui-inv-combine-result.has-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-inv-combine-result.has-item{
+  cursor:pointer;
+}
+
+.ui-inv-craft-popup{
+  position:absolute;
+  left:50%;
+  top:20px;
+  transform:translateX(-50%);
+  z-index:40;
+  min-width:180px;
+  max-width:240px;
+  padding:10px 14px;
+  background:#000;
+  color:#00ffcc;
+  border:2px solid #00ffcc;
+  text-align:center;
+  font-family:"arcade","monospace";
+  font-size:12px;
+  box-shadow:0 0 0 2px #0b3d35;
+  pointer-events:none;
+}
+
+#ui-combine-status-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ui-combine-status-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.72);
+}
+
+.ui-combine-status-box{
+  position:relative;
+  z-index:2;
+  width:min(300px, 86vw);
+  min-height:140px;
+  padding:20px 16px;
+  background:#000;
+  border:3px solid #00ffcc;
+  box-shadow:
+    0 0 0 2px #0b3d35,
+    0 0 0 4px #00ffcc,
+    0 10px 30px rgba(0,0,0,0.45);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  text-align:center;
+  image-rendering:pixelated;
+}
+
+.ui-combine-status-title{
+  color:#00ffcc;
+  font-family:"arcade","monospace";
+  font-size:14px;
+  line-height:1.5;
+  text-transform:uppercase;
+}
+
+.ui-combine-status-btn{
+  min-width:120px;
+  min-height:42px;
+  padding:8px 14px;
+  border:2px solid #00ffcc;
+  background:#000;
+  color:#00ffcc;
+  font-family:"arcade","monospace";
+  font-size:12px;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.ui-combine-status-btn:active{
+  transform:translateY(1px);
+}
+
+.ui-inv-equip-slot.has-item{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ui-inv-equip-slot .ui-inv-item-img{
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
