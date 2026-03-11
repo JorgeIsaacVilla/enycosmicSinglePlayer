@@ -1762,6 +1762,21 @@ function devolverItemDesdeEquipado(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
 
+  const usosActuales = item.usos ?? 0;
+  const desapareceAlAgotarse = item.desaparece_al_agotarse === true;
+  const esAgotable = item.agotable === true;
+
+  // Si ya se agotó y debe desaparecer, se elimina por completo
+  if (esAgotable && usosActuales <= 0 && desapareceAlAgotarse) {
+    window.equipSlots[slotIndex] = null;
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+    return;
+  }
+
   const agregado = window.agregarItemAlInventario({
     id: item.id ?? item.item_id,
     item_id: item.item_id ?? item.id,
@@ -1769,6 +1784,7 @@ function devolverItemDesdeEquipado(slotIndex) {
     imagen: item.imagen,
     tipo_item: item.tipo ?? item.tipo_item ?? "",
     agotable: item.agotable === true,
+    desaparece_al_agotarse: item.desaparece_al_agotarse === true,
     usos: item.usos ?? null,
     usos_maximos: item.usos_maximos ?? null,
     cantidad: 1
@@ -1837,18 +1853,18 @@ function equiparItemDelInventario(slotIndex) {
     1
   ) || 1;
 
-  window.equipSlots[slotLibre] = {
-    id: item.id ?? item.item_id,
-    item_id: item.item_id ?? item.id,
-    nombre_item: item.nombre_item ?? item.nombre ?? "Item",
-    imagen: item.imagen ?? item.image ?? "",
-    tipo: tipo,
-    agotable: agotable,
-    usos: usosBase,
-    usos_restantes: usosBase,
-    usos_maximos: Number(item.usos_maximos ?? item.cantidad_de_usos ?? item.cantidad_usos ?? usosBase) || usosBase,
-    cantidad: 1
-  };
+window.equipSlots[slotLibre] = {
+  id: item.id ?? item.item_id,
+  item_id: item.item_id ?? item.id,
+  nombre_item: item.nombre_item ?? item.nombre ?? "Item",
+  imagen: item.imagen ?? item.image ?? "",
+  tipo: tipo,
+  agotable: item.agotable === true,
+  desaparece_al_agotarse: item.desaparece_al_agotarse === true,
+  usos: item.usos ?? item.cantidad_de_usos ?? item.cantidad ?? 1,
+  usos_maximos: item.cantidad_de_usos ?? item.cantidad_usos ?? item.usos ?? 1,
+  cantidad: 1
+};
 
   if ((item.cantidad || 1) > 1) {
     item.cantidad -= 1;
@@ -3883,15 +3899,16 @@ function agregarItemAlInventario(nuevoItem) {
     return false;
   }
 
-  window.inventarioUser.push({
-    ...nuevoItem,
-    id: nuevoId,
-    item_id: nuevoItem.item_id ?? nuevoId,
-    cantidad: nuevoItem.cantidad || 1,
-    agotable: nuevoEsAgotable,
-    usos: nuevoUsos,
-    usos_maximos: nuevoUsosMaximos
-  });
+window.inventarioUser.push({
+  ...nuevoItem,
+  id: nuevoId,
+  item_id: nuevoItem.item_id ?? nuevoId,
+  cantidad: nuevoItem.cantidad || 1,
+  agotable: nuevoEsAgotable,
+  desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
+  usos: nuevoUsos,
+  usos_maximos: nuevoUsosMaximos
+});
 
   return true;
 }

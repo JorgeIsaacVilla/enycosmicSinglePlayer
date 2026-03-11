@@ -108,7 +108,7 @@
       "creable": true,
       "materiales_requeridos_para_crear": [
         { "item_id": "madera", "cantidad": 1 },
-        { "item_id": "hierro", "cantidad": 1 }
+        { "item_id": "hierro", "cantidad": 2 }
       ],
       "combinable": false
     },
@@ -141,7 +141,7 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "hierro", "cantidad": 50 }
+        { "item_id": "hierro", "cantidad": 180 }
       ],
       "combinable": false
     },
@@ -156,7 +156,7 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "hierro", "cantidad": 70 }
+        { "item_id": "hierro", "cantidad": 200 }
       ],
       "combinable": false
     },
