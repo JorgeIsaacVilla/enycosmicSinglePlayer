@@ -3752,27 +3752,27 @@ let hoveredItem = null;
 
 
 
-/*// 🔧 Items de prueba para el inventario
+/*// 🔧 Items de prueba para el inventario*/
 window.inventarioUser.push(
   {
     id: "bateria",
     nombre_item: "bateria",
     imagen: "./assets/items/bateria.svg",
-    cantidad: 1
+    cantidad: 10
   },
   {
     id: "palo_de_madera",
     nombre_item: "palo de madera",
     imagen: "./assets/items/paloMadera.svg",
-    cantidad: 1
+    cantidad: 10
   },
   {
     id: "cable",
     nombre_item: "cable",
     imagen: "./assets/items/cable.svg",
-    cantidad: 2
+    cantidad: 20
   },
-);*/
+);
 
 async function cargarItemsJSON(){
 
@@ -4073,18 +4073,23 @@ function limpiarSlotsDeCombinacionUsados(resultado) {
 function intentarCrearItemFinal() {
   if (!combinacionResultado) return;
 
-  const exito = Math.random() < 0.5;
+  const probabilidad =
+  IQuser >= 700
+    ? 1
+    : (0.4 + (Math.min(IQuser, 250) / 10) / 100);
+
+const exito = Math.random() < probabilidad;
   const resultadoActual = combinacionResultado;
 
   if (exito) {
     limpiarSlotsDeCombinacionUsados(resultadoActual);
 
 const agregado = agregarItemAlInventario({
-  ...itemEquipado,
+  ...resultadoActual,
   cantidad: 1,
-  usos: itemEquipado.usos,
-  usos_maximos: itemEquipado.usos_maximos,
-  agotable: itemEquipado.agotable === true
+  usos: resultadoActual.cantidad_de_usos ?? null,
+  usos_maximos: resultadoActual.cantidad_de_usos ?? null,
+  agotable: resultadoActual.agotable === true
 });
 
     if (!agregado) {
