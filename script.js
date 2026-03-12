@@ -2721,23 +2721,19 @@ function wrapText(ctx, text, maxWidth) {
   // 3) Bloquea gestos SOLO en el canvas / zona de juego, PERO NO en UI
   const blockZone = document.querySelector("#wrap") || document.body;
 
-  function isUIInteractiveTarget(t) {
-    
-    if (!t || !t.closest) return false;
+function isUIInteractiveTarget(t) {
+  if (!t || !t.closest) return false;
 
-    // Todo lo que NO debe bloquearse (botones/paneles/iframes/inputs)
-    return !!t.closest(
-      "#container-interfas," +
-      "#metafon-container," +
-      ".box-buttons-items," +
-      "button, a, input, select, textarea, label," +
-      "iframe," +
-      "[data-action]" + 
-          "#npc-dialog-overlay," 
-      
-    );
-    
-  }
+  return !!t.closest(
+    "#container-interfas," +
+    "#metafon-container," +
+    "#npc-dialog-overlay," +
+    ".box-buttons-items," +
+    "button, a, input, select, textarea, label," +
+    "iframe," +
+    "[data-action]"
+  );
+}
 
   function shouldBlock(e) {
     // Si estás tocando UI, NO bloquees.
@@ -3147,6 +3143,10 @@ canvas.addEventListener("click", (e) => {
 canvas.addEventListener("pointerdown", (e) => {
   if (gameMode !== "playing") return;
   if (e.pointerType === "mouse") return;
+  if (npcDialogOpen) return;
+
+  const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
+  if (npc) return;
 
   const itemTomado = getItemAtCanvasPosition(e.clientX, e.clientY);
   if (!itemTomado) return;
@@ -3383,7 +3383,7 @@ function drawNPCs(ctx) {
       ctx.textAlign = "center";
 
       ctx.fillText(
-        "!",
+        "?",
         npc.x + npc.w / 2,
         npc.y - 10
       );
@@ -3503,12 +3503,14 @@ function ensureNPCDialogStyles() {
         radial-gradient(circle at center, rgba(0,255,204,.12), rgba(0,0,0,0) 65%);
     }
 
-#npc-dialog-portrait{
-  width:96px;
-  height:120px;
-  image-rendering:pixelated;
-  object-fit:contain;
-  display:block;
+#npc-dialog-portrait {
+    width: 96px;
+    height: 120px;
+    image-rendering: pixelated;
+    object-fit: contain;
+    display: block;
+    zoom: 2.4;
+    padding-top: 8px;
 }
 
     #npc-dialog-footer{
@@ -3536,7 +3538,7 @@ function ensureNPCDialogStyles() {
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:6px;
+      gap:3px;
       flex-wrap:wrap;
     }
 
@@ -3999,7 +4001,6 @@ window.addEventListener("pointerup", () => {
 
 canvas.addEventListener("pointerdown", (e) => {
   if (gameMode !== "playing") return;
-  if (e.pointerType !== "mouse") return;
   if (npcDialogOpen) return;
 
   const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
@@ -4008,7 +4009,7 @@ canvas.addEventListener("pointerdown", (e) => {
   e.preventDefault();
   e.stopPropagation();
   openNPCDialog(npc);
-}, { passive: false });
+}, { capture: true, passive: false });
 
 canvas.addEventListener("click", (e) => {
   if (gameMode !== "playing") return;
