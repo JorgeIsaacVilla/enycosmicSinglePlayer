@@ -16,74 +16,68 @@
         "misionesRequeridas": [],
         "itemsRequeridos": []
       },
-      "npcs": [
-        {
-          "id": "npc001",
-          "nombre": "Dr. Axiom",
-          "rol": "inicio",
-          "imagen": "./assets/npcs/dr-axiom.png",
-          "posicion": {
-            "x": 320,
-            "y": 540
-          },
-          "dialogos": {
-            "inicio": [
-              "Bienvenido, viajero.",
-              "Necesito que hables con otros dos aliados para comprender la situación."
-            ],
-            "en_progreso": [
-              "Sigue buscando a los demás NPC."
-            ],
-            "completado": [
-              "Bien hecho. Ya tienes la información básica."
-            ]
-          }
-        },
-        {
-          "id": "npc002",
-          "nombre": "Lira",
-          "rol": "informante",
-          "imagen": "./assets/npcs/lira.png",
-          "posicion": {
-            "x": 780,
-            "y": 910
-          },
-          "dialogos": {
-            "inicio": [
-              "He detectado energía inusual en esta zona.",
-              "Debes continuar tu investigación."
-            ],
-            "en_progreso": [
-              "Todavía necesitas completar la ronda de contactos."
-            ],
-            "completado": [
-              "Ya conoces lo esencial."
-            ]
-          }
-        },
-        {
-          "id": "npc003",
-          "nombre": "Orbek",
-          "rol": "cierre_informativo",
-          "imagen": "./assets/npcs/orbek.png",
-          "posicion": {
-            "x": 1180,
-            "y": 1260
-          },
-          "dialogos": {
-            "inicio": [
-              "Tu llegada no fue casualidad.",
-              "Hay algo importante aguardando en el sistema."
-            ],
-            "en_progreso": [
-              "Completa tu conversación con todos."
-            ],
-            "completado": [
-              "La red de contacto ha sido activada."
-            ]
-          }
-        }
-      ],
+"npcs": [
+{
+"id": "npc001",
+"nombre": "Dr. Axiom",
+"rol": "inicio",
+"imagen": "./assets/avatares/npc/Dr_Axiom.png",
+"posicion": { "x": 320, "y": 540 },
+"conversation_default": "Todavía no tengo instrucciones para ti.",
+"dialogos": {
+"inicio": [
+"Bienvenido, viajero.",
+"Necesito que hables con otros dos aliados para comprender la situación."
+],
+"en_progreso": [
+"Sigue buscando a los demás NPC."
+],
+"completado": [
+"Bien hecho. Ya tienes la información básica."
+]
+}
+},
+{
+"id": "npc002",
+"nombre": "Lira",
+"rol": "informante",
+"imagen": "./assets/avatares/npc/Lira.png",
+"posicion": { "x": 780, "y": 910 },
+"conversation_default": "Estoy analizando esta zona, vuelve más tarde.",
+"dialogos": {
+"inicio": [
+"He detectado energía inusual en esta zona.",
+"Debes continuar tu investigación."
+],
+"en_progreso": [
+"Todavía necesitas completar la ronda de contactos."
+],
+"completado": [
+"Ya conoces lo esencial."
+]
+}
+},
+{
+"id": "npc003",
+"nombre": "Orbek",
+"rol": "cierre_informativo",
+"imagen": "./assets/avatares/npc/Orbek.png",
+"posicion": { "x": 1180, "y": 1260 },
+"conversation_default": "No interfieras en los protocolos del sistema.",
+"dialogos": {
+"inicio": [
+"Tu llegada no fue casualidad.",
+"Hay algo importante aguardando en el sistema."
+],
+"en_progreso": [
+"Completa tu conversación con todos."
+],
+"completado": [
+"La red de contacto ha sido activada."
+]
+}
+}
+],
       "pasos": [
         {
           "step": 1,
@@ -96,7 +90,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc001",
-            "imagen": "./assets/npcs/dr-axiom.png",
+            "imagen": "./assets/avatares/npc/Dr_Axiom.png",
             "posicion": {
               "x": 320,
               "y": 540
@@ -124,7 +118,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc002",
-            "imagen": "./assets/npcs/lira.png",
+            "imagen": "./assets/avatares/npc/Lira.png",
             "posicion": {
               "x": 780,
               "y": 910
@@ -148,7 +142,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc003",
-            "imagen": "./assets/npcs/orbek.png",
+            "imagen": "./assets/avatares/npc/Orbek.png",
             "posicion": {
               "x": 1180,
               "y": 1260
@@ -164,16 +158,6 @@
         "codigoSecreto": null
       }
     },
-
-
-
-
-
-
-
-
-
-
     {
       "id": "m2",
       "nombre": "Intercambio de energía",
@@ -192,72 +176,66 @@
         ],
         "itemsRequeridos": []
       },
-      "npcs": [
-        {
-          "id": "npc004",
-          "nombre": "Kael",
-          "rol": "inicio",
-          "imagen": "./assets/npcs/kael.png",
-          "posicion": {
-            "x": 1450,
-            "y": 920
-          },
-          "dialogos": {
-            "inicio": [
-              "Necesito estabilizar un circuito antiguo.",
-              "Primero demuestra tu capacidad con un reto."
-            ],
-            "en_progreso": [
-              "Aún no has reunido todo lo necesario."
-            ],
-            "completado": [
-              "Buen trabajo. El intercambio fue exitoso."
-            ]
-          }
-        },
-        {
-          "id": "npc005",
-          "nombre": "Sena",
-          "rol": "intercambio",
-          "imagen": "./assets/npcs/sena.png",
-          "posicion": {
-            "x": 1700,
-            "y": 1180
-          },
-          "dialogos": {
-            "inicio": [
-              "Si traes los materiales, podré ayudarte."
-            ],
-            "en_progreso": [
-              "Todavía no tienes los recursos completos."
-            ],
-            "completado": [
-              "Aquí tienes el objeto especial prometido."
-            ]
-          }
-        },
-        {
-          "id": "npc006",
-          "nombre": "Tarek",
-          "rol": "cierre",
-          "imagen": "./assets/npcs/tarek.png",
-          "posicion": {
-            "x": 1980,
-            "y": 1360
-          },
-          "dialogos": {
-            "inicio": [
-              "Supervisa cada fase del circuito antes de volver."
-            ],
-            "en_progreso": [
-              "El protocolo aún no concluye."
-            ],
-            "completado": [
-              "La energía secundaria volvió a fluir."
-            ]
-          }
-        }
-      ],
+"npcs": [
+{
+"id": "npc004",
+"nombre": "Kael",
+"rol": "inicio",
+"imagen": "./assets/avatares/npc/Kael.png",
+"posicion": { "x": 1450, "y": 920 },
+"conversation_default": "Estoy ocupado calibrando este circuito.",
+"dialogos": {
+"inicio": [
+"Necesito estabilizar un circuito antiguo.",
+"Primero demuestra tu capacidad con un reto."
+],
+"en_progreso": [
+"Aún no has reunido todo lo necesario."
+],
+"completado": [
+"Buen trabajo. El intercambio fue exitoso."
+]
+}
+},
+{
+"id": "npc005",
+"nombre": "Sena",
+"rol": "intercambio",
+"imagen": "./assets/avatares/npc/Sena.png",
+"posicion": { "x": 1700, "y": 1180 },
+"conversation_default": "Si traes materiales útiles, tal vez pueda ayudarte.",
+"dialogos": {
+"inicio": [
+"Si traes los materiales, podré ayudarte."
+],
+"en_progreso": [
+"Todavía no tienes los recursos completos."
+],
+"completado": [
+"Aquí tienes el objeto especial prometido."
+]
+}
+},
+{
+"id": "npc006",
+"nombre": "Tarek",
+"rol": "cierre",
+"imagen": "./assets/avatares/npc/Tarek.png",
+"posicion": { "x": 1980, "y": 1360 },
+"conversation_default": "El sistema aún está bajo supervisión.",
+"dialogos": {
+"inicio": [
+"Supervisa cada fase del circuito antes de volver."
+],
+"en_progreso": [
+"El protocolo aún no concluye."
+],
+"completado": [
+"La energía secundaria volvió a fluir."
+]
+}
+}
+],
       "pasos": [
         {
           "step": 1,
@@ -270,7 +248,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc004",
-            "imagen": "./assets/npcs/kael.png",
+            "imagen": "./assets/avatares/npc/Kael.png",
             "posicion": {
               "x": 1450,
               "y": 920
@@ -289,7 +267,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "reto_estabilidad_01",
-            "imagen": "./assets/objetos/reto-estabilidad-01.png",
+            "imagen": "./assets/items/bateria.svg",
             "posicion": {
               "x": 1560,
               "y": 980
@@ -308,7 +286,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc005",
-            "imagen": "./assets/npcs/sena.png",
+            "imagen": "./assets/avatares/npc/Sena.png",
             "posicion": {
               "x": 1700,
               "y": 1180
@@ -336,7 +314,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "materiales_circuito_01",
-            "imagen": "./assets/objetos/materiales-circuito-01.png",
+            "imagen": "./assets/items/cable.svg",
             "posicion": {
               "x": 1820,
               "y": 1290
@@ -365,7 +343,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc005",
-            "imagen": "./assets/npcs/sena.png",
+            "imagen": "./assets/avatares/npc/Sena.png",
             "posicion": {
               "x": 1700,
               "y": 1180
@@ -384,7 +362,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc006",
-            "imagen": "./assets/npcs/tarek.png",
+            "imagen": "./assets/avatares/npc/Tarek.png",
             "posicion": {
               "x": 1980,
               "y": 1360
@@ -403,7 +381,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "reto_nucleo_auxiliar_01",
-            "imagen": "./assets/objetos/nucleo-auxiliar-01.png",
+            "imagen": "./assets/items/corazon.svg",
             "posicion": {
               "x": 2100,
               "y": 1415
@@ -422,7 +400,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc004",
-            "imagen": "./assets/npcs/kael.png",
+            "imagen": "./assets/avatares/npc/Kael.png",
             "posicion": {
               "x": 1450,
               "y": 920
@@ -447,15 +425,6 @@
         "codigoSecreto": null
       }
     },
-
-
-
-
-
-
-
-
-
     {
       "id": "m3",
       "nombre": "La ruta del código oculto",
@@ -475,71 +444,65 @@
         ],
         "itemsRequeridos": []
       },
-      "npcs": [
-        {
-          "id": "npc007",
-          "nombre": "Maese Ion",
-          "rol": "inicio",
-          "imagen": "./assets/npcs/maese-ion.png",
-          "posicion": {
-            "x": 2240,
-            "y": 1490
-          },
-          "dialogos": {
-            "inicio": [
-              "Tu siguiente misión exige precisión y memoria."
-            ],
-            "en_progreso": [
-              "La cadena aún no ha sido completada."
-            ],
-            "completado": [
-              "Has recorrido todo el circuito."
-            ]
-          }
-        },
-        {
-          "id": "npc008",
-          "nombre": "Vera",
-          "rol": "contacto",
-          "imagen": "./assets/npcs/vera.png",
-          "posicion": {
-            "x": 2390,
-            "y": 1600
-          },
-          "dialogos": {
-            "inicio": [
-              "Tengo parte del patrón que buscas."
-            ],
-            "en_progreso": [
-              "Todavía debes cerrar la secuencia."
-            ],
-            "completado": [
-              "Mi parte ya ha sido entregada."
-            ]
-          }
-        },
-        {
-          "id": "npc009",
-          "nombre": "Solis",
-          "rol": "cierre",
-          "imagen": "./assets/npcs/solis.png",
-          "posicion": {
-            "x": 2580,
-            "y": 1720
-          },
-          "dialogos": {
-            "inicio": [
-              "La última parte depende de tu ingenio."
-            ],
-            "en_progreso": [
-              "Debes demostrar tu nivel."
-            ],
-            "completado": [
-              "La secuencia ha sido confirmada."
-            ]
-          }
-        }
-      ],
+"npcs": [
+{
+"id": "npc007",
+"nombre": "Maese Ion",
+"rol": "inicio",
+"imagen": "./assets/avatares/npc/Maese_Ion.png",
+"posicion": { "x": 2240, "y": 1490 },
+"conversation_default": "La mente debe estar preparada antes de actuar.",
+"dialogos": {
+"inicio": [
+"Tu siguiente misión exige precisión y memoria."
+],
+"en_progreso": [
+"La cadena aún no ha sido completada."
+],
+"completado": [
+"Has recorrido todo el circuito."
+]
+}
+},
+{
+"id": "npc008",
+"nombre": "Vera",
+"rol": "contacto",
+"imagen": "./assets/avatares/npc/Vera.png",
+"posicion": { "x": 2390, "y": 1600 },
+"conversation_default": "Aún no es momento de revelar información.",
+"dialogos": {
+"inicio": [
+"Tengo parte del patrón que buscas."
+],
+"en_progreso": [
+"Todavía debes cerrar la secuencia."
+],
+"completado": [
+"Mi parte ya ha sido entregada."
+]
+}
+},
+{
+"id": "npc009",
+"nombre": "Solis",
+"rol": "cierre",
+"imagen": "./assets/avatares/npc/Solis.png",
+"posicion": { "x": 2580, "y": 1720 },
+"conversation_default": "El conocimiento solo se entrega a quien lo merece.",
+"dialogos": {
+"inicio": [
+"La última parte depende de tu ingenio."
+],
+"en_progreso": [
+"Debes demostrar tu nivel."
+],
+"completado": [
+"La secuencia ha sido confirmada."
+]
+}
+}
+],
       "pasos": [
         {
           "step": 1,
@@ -552,7 +515,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc007",
-            "imagen": "./assets/npcs/maese-ion.png",
+            "imagen": "./assets/avatares/npc/Maese_Ion.png",
             "posicion": {
               "x": 2240,
               "y": 1490
@@ -571,7 +534,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc008",
-            "imagen": "./assets/npcs/vera.png",
+            "imagen": "./assets/avatares/npc/Vera.png",
             "posicion": {
               "x": 2390,
               "y": 1600
@@ -590,7 +553,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "reto_codificacion_01",
-            "imagen": "./assets/objetos/reto-codificacion-01.png",
+            "imagen": "./assets/items/diodoLazer.svg",
             "posicion": {
               "x": 2460,
               "y": 1660
@@ -609,7 +572,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc009",
-            "imagen": "./assets/npcs/solis.png",
+            "imagen": "./assets/avatares/npc/Solis.png",
             "posicion": {
               "x": 2580,
               "y": 1720
@@ -628,7 +591,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc007",
-            "imagen": "./assets/npcs/maese-ion.png",
+            "imagen": "./assets/avatares/npc/Maese_Ion.png",
             "posicion": {
               "x": 2240,
               "y": 1490

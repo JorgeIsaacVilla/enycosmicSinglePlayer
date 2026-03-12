@@ -3282,7 +3282,122 @@ resizeFullscreen();
 
 window.player = player;
 
-  
+let npcs = []; // arreglo donde se almacenan los NPC
+
+async function cargarNPCsDesdeMisiones() {
+
+  const response = await fetch("./npc-itemsJSON/missions.json");
+  const data = await response.json();
+
+  const lista = [];
+
+  data.missions.forEach(mision => {
+
+    mision.npcs.forEach(npc => {
+
+      lista.push({
+        id: npc.id,
+        nombre: npc.nombre,
+        x: npc.posicion.x,
+        y: npc.posicion.y,
+        w: 64,
+        h: 64,
+        imageSrc: npc.imagen,
+        img: null,
+        missionStarter: npc.rol && npc.rol.toLowerCase() === "inicio"
+      });
+
+    });
+
+  });
+
+  return lista;
+}
+//===========================================
+/*Dibujar NPC (inicio) */
+//===========================================
+
+
+function preloadNPCs(list) {
+  return Promise.all(
+    list.map(npc => new Promise((resolve) => {
+
+      const img = new Image();
+
+      img.onload = () => {
+        npc.img = img;
+        resolve();
+      };
+
+      img.onerror = () => {
+        console.warn("NPC no cargó:", npc.imageSrc);
+        resolve();
+      };
+
+      img.src = npc.imageSrc;
+
+    }))
+  );
+}
+
+function drawNPCs(ctx) {
+  for (const npc of npcs) {
+    const imgOk =
+      npc.img &&
+      npc.img.complete &&
+      npc.img.naturalWidth > 0 &&
+      npc.img.naturalHeight > 0;
+
+    if (imgOk) {
+      ctx.drawImage(
+        npc.img,
+        0, 0, 64, 64,
+        npc.x, npc.y,
+        npc.w, npc.h
+      );
+    } else {
+      ctx.strokeStyle = "yellow";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(npc.x, npc.y, npc.w, npc.h);
+
+      ctx.fillStyle = "white";
+      ctx.font = "10px arcade";
+      ctx.textAlign = "center";
+      ctx.fillText("NPC", npc.x + npc.w / 2, npc.y - 6);
+      ctx.textAlign = "start";
+    }
+
+    if (npc.missionStarter) {
+      ctx.fillStyle = "yellow";
+      ctx.font = "20px arcade";
+      ctx.textAlign = "center";
+
+      ctx.fillText(
+        "!",
+        npc.x + npc.w / 2,
+        npc.y - 10
+      );
+
+      ctx.textAlign = "start";
+    }
+    
+    // nombre del NPC debajo del avatar
+    ctx.fillStyle = "white";
+    ctx.font = "12px arcade";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+      npc.nombre,
+      npc.x + npc.w / 2,
+      npc.y + npc.h + 14
+    );
+
+    ctx.textAlign = "start";
+  }
+}
+//===========================================
+/*Dibujar NPC (fin) */
+//===========================================
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
   const rowForFacing = (facing) => {
@@ -4581,7 +4696,10 @@ if (logoImg) {
 
 ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
 
-// Dibujar items primero
+// Dibujar NPCs
+drawNPCs(ctx);
+
+// Dibujar items
 pruebaDeItems();
 drawItems(ctx);
 
@@ -4781,8 +4899,22 @@ function start() {
 }
 
 // solo precarga miniaturas (para selección)
+// solo precarga miniaturas (para selección)
 preloadAvatars(characters)
   .catch(err => console.error("Error precargando avatares:", err));
+
+  async function initNPCs(){
+
+  npcs = await cargarNPCsDesdeMisiones();
+
+  await preloadNPCs(npcs);
+
+}
+
+initNPCs();
+
+preloadNPCs(npcs)
+  .catch(err => console.error("Error precargando NPCs:", err));
 
 // decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)
 checkUserProfile();
