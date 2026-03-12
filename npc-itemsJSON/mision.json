@@ -1,0 +1,653 @@
+{
+  "missions": [
+    {
+      "id": "m1",
+      "nombre": "Ecos del primer contacto",
+      "tipo": "principal",
+      "clasificacion": "inicio",
+      "descripcion": "Habla con tres NPC para recopilar información inicial sobre el sistema Enycosmic.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 0,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc001",
+          "nombre": "Dr. Axiom",
+          "rol": "inicio",
+          "imagen": "./assets/npcs/dr-axiom.png",
+          "posicion": {
+            "x": 320,
+            "y": 540
+          },
+          "dialogos": {
+            "inicio": [
+              "Bienvenido, viajero.",
+              "Necesito que hables con otros dos aliados para comprender la situación."
+            ],
+            "en_progreso": [
+              "Sigue buscando a los demás NPC."
+            ],
+            "completado": [
+              "Bien hecho. Ya tienes la información básica."
+            ]
+          }
+        },
+        {
+          "id": "npc002",
+          "nombre": "Lira",
+          "rol": "informante",
+          "imagen": "./assets/npcs/lira.png",
+          "posicion": {
+            "x": 780,
+            "y": 910
+          },
+          "dialogos": {
+            "inicio": [
+              "He detectado energía inusual en esta zona.",
+              "Debes continuar tu investigación."
+            ],
+            "en_progreso": [
+              "Todavía necesitas completar la ronda de contactos."
+            ],
+            "completado": [
+              "Ya conoces lo esencial."
+            ]
+          }
+        },
+        {
+          "id": "npc003",
+          "nombre": "Orbek",
+          "rol": "cierre_informativo",
+          "imagen": "./assets/npcs/orbek.png",
+          "posicion": {
+            "x": 1180,
+            "y": 1260
+          },
+          "dialogos": {
+            "inicio": [
+              "Tu llegada no fue casualidad.",
+              "Hay algo importante aguardando en el sistema."
+            ],
+            "en_progreso": [
+              "Completa tu conversación con todos."
+            ],
+            "completado": [
+              "La red de contacto ha sido activada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m1s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc001",
+          "titulo": "Habla con Dr. Axiom",
+          "descripcion": "Recibe las primeras instrucciones.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc001",
+            "imagen": "./assets/npcs/dr-axiom.png",
+            "posicion": {
+              "x": 320,
+              "y": 540
+            }
+          },
+          "otorgaItems": [
+            {
+              "id": "limon",
+              "cantidad": 1
+            },
+            {
+              "id": "sal",
+              "cantidad": 1
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "id": "m1s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc002",
+          "titulo": "Habla con Lira",
+          "descripcion": "Consulta el origen de la anomalía.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc002",
+            "imagen": "./assets/npcs/lira.png",
+            "posicion": {
+              "x": 780,
+              "y": 910
+            }
+          },
+          "otorgaItems": [
+            {
+              "id": "baso_de_agua",
+              "cantidad": 1
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "id": "m1s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc003",
+          "titulo": "Habla con Orbek",
+          "descripcion": "Completa la red de información.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc003",
+            "imagen": "./assets/npcs/orbek.png",
+            "posicion": {
+              "x": 1180,
+              "y": 1260
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 6,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+
+
+
+
+
+
+
+
+
+
+    {
+      "id": "m2",
+      "nombre": "Intercambio de energía",
+      "tipo": "secundaria",
+      "clasificacion": "recoleccion",
+      "descripcion": "Completa un reto, recolecta materiales y entrégalos para reactivar un circuito auxiliar.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 5,
+        "misionesRequeridas": [
+          "m1"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc004",
+          "nombre": "Kael",
+          "rol": "inicio",
+          "imagen": "./assets/npcs/kael.png",
+          "posicion": {
+            "x": 1450,
+            "y": 920
+          },
+          "dialogos": {
+            "inicio": [
+              "Necesito estabilizar un circuito antiguo.",
+              "Primero demuestra tu capacidad con un reto."
+            ],
+            "en_progreso": [
+              "Aún no has reunido todo lo necesario."
+            ],
+            "completado": [
+              "Buen trabajo. El intercambio fue exitoso."
+            ]
+          }
+        },
+        {
+          "id": "npc005",
+          "nombre": "Sena",
+          "rol": "intercambio",
+          "imagen": "./assets/npcs/sena.png",
+          "posicion": {
+            "x": 1700,
+            "y": 1180
+          },
+          "dialogos": {
+            "inicio": [
+              "Si traes los materiales, podré ayudarte."
+            ],
+            "en_progreso": [
+              "Todavía no tienes los recursos completos."
+            ],
+            "completado": [
+              "Aquí tienes el objeto especial prometido."
+            ]
+          }
+        },
+        {
+          "id": "npc006",
+          "nombre": "Tarek",
+          "rol": "cierre",
+          "imagen": "./assets/npcs/tarek.png",
+          "posicion": {
+            "x": 1980,
+            "y": 1360
+          },
+          "dialogos": {
+            "inicio": [
+              "Supervisa cada fase del circuito antes de volver."
+            ],
+            "en_progreso": [
+              "El protocolo aún no concluye."
+            ],
+            "completado": [
+              "La energía secundaria volvió a fluir."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m2s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc004",
+          "titulo": "Habla con Kael",
+          "descripcion": "Recibe la misión de estabilización.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc004",
+            "imagen": "./assets/npcs/kael.png",
+            "posicion": {
+              "x": 1450,
+              "y": 920
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m2s2",
+          "tipo": "completar_reto",
+          "titulo": "Completa el reto de estabilidad",
+          "descripcion": "Supera la prueba técnica inicial.",
+          "retoId": "reto_estabilidad_01",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "reto_estabilidad_01",
+            "imagen": "./assets/objetos/reto-estabilidad-01.png",
+            "posicion": {
+              "x": 1560,
+              "y": 980
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m2s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc005",
+          "titulo": "Habla con Sena",
+          "descripcion": "Consulta los materiales que debes reunir.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc005",
+            "imagen": "./assets/npcs/sena.png",
+            "posicion": {
+              "x": 1700,
+              "y": 1180
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m2s4",
+          "tipo": "recolectar_items",
+          "titulo": "Recolecta los materiales",
+          "descripcion": "Reúne los componentes pedidos.",
+          "objetivosItems": [
+            {
+              "id": "cable",
+              "cantidad": 3
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "materiales_circuito_01",
+            "imagen": "./assets/objetos/materiales-circuito-01.png",
+            "posicion": {
+              "x": 1820,
+              "y": 1290
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 5,
+          "id": "m2s5",
+          "tipo": "hablar_npc_entrega",
+          "npcId": "npc005",
+          "titulo": "Entrega los materiales a Sena",
+          "descripcion": "Completa el intercambio y permite el ensamblaje del circuito.",
+          "entregaItems": [
+            {
+              "id": "cable",
+              "cantidad": 3
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc005",
+            "imagen": "./assets/npcs/sena.png",
+            "posicion": {
+              "x": 1700,
+              "y": 1180
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 6,
+          "id": "m2s6",
+          "tipo": "hablar_npc",
+          "npcId": "npc006",
+          "titulo": "Habla con Tarek",
+          "descripcion": "Activa la supervisión del circuito reparado.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc006",
+            "imagen": "./assets/npcs/tarek.png",
+            "posicion": {
+              "x": 1980,
+              "y": 1360
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 7,
+          "id": "m2s7",
+          "tipo": "completar_reto",
+          "titulo": "Reinicia el núcleo auxiliar",
+          "descripcion": "Ejecuta la activación final del circuito.",
+          "retoId": "reto_nucleo_auxiliar_01",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "reto_nucleo_auxiliar_01",
+            "imagen": "./assets/objetos/nucleo-auxiliar-01.png",
+            "posicion": {
+              "x": 2100,
+              "y": 1415
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 8,
+          "id": "m2s8",
+          "tipo": "hablar_npc",
+          "npcId": "npc004",
+          "titulo": "Regresa con Kael",
+          "descripcion": "Informa que el circuito ya fue restablecido.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc004",
+            "imagen": "./assets/npcs/kael.png",
+            "posicion": {
+              "x": 1450,
+              "y": 920
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 12,
+        "cosmonedas": 15,
+        "items": [
+          {
+            "id": "corazon",
+            "cantidad": 1
+          },
+          {
+            "id": "cable",
+            "cantidad": 2
+          }
+        ],
+        "codigoSecreto": null
+      }
+    },
+
+
+
+
+
+
+
+
+
+    {
+      "id": "m3",
+      "nombre": "La ruta del código oculto",
+      "tipo": "principal",
+      "clasificacion": "cadena_npc",
+      "descripcion": "Recorre una breve cadena de contactos, supera una prueba y asegura un fragmento clave del sistema.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 10,
+        "misionesRequeridas": [
+          "m1",
+          "m2"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc007",
+          "nombre": "Maese Ion",
+          "rol": "inicio",
+          "imagen": "./assets/npcs/maese-ion.png",
+          "posicion": {
+            "x": 2240,
+            "y": 1490
+          },
+          "dialogos": {
+            "inicio": [
+              "Tu siguiente misión exige precisión y memoria."
+            ],
+            "en_progreso": [
+              "La cadena aún no ha sido completada."
+            ],
+            "completado": [
+              "Has recorrido todo el circuito."
+            ]
+          }
+        },
+        {
+          "id": "npc008",
+          "nombre": "Vera",
+          "rol": "contacto",
+          "imagen": "./assets/npcs/vera.png",
+          "posicion": {
+            "x": 2390,
+            "y": 1600
+          },
+          "dialogos": {
+            "inicio": [
+              "Tengo parte del patrón que buscas."
+            ],
+            "en_progreso": [
+              "Todavía debes cerrar la secuencia."
+            ],
+            "completado": [
+              "Mi parte ya ha sido entregada."
+            ]
+          }
+        },
+        {
+          "id": "npc009",
+          "nombre": "Solis",
+          "rol": "cierre",
+          "imagen": "./assets/npcs/solis.png",
+          "posicion": {
+            "x": 2580,
+            "y": 1720
+          },
+          "dialogos": {
+            "inicio": [
+              "La última parte depende de tu ingenio."
+            ],
+            "en_progreso": [
+              "Debes demostrar tu nivel."
+            ],
+            "completado": [
+              "La secuencia ha sido confirmada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m3s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc007",
+          "titulo": "Habla con Maese Ion",
+          "descripcion": "Recibe la misión principal.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc007",
+            "imagen": "./assets/npcs/maese-ion.png",
+            "posicion": {
+              "x": 2240,
+              "y": 1490
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m3s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc008",
+          "titulo": "Habla con Vera",
+          "descripcion": "Obtén la primera pista del patrón oculto.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc008",
+            "imagen": "./assets/npcs/vera.png",
+            "posicion": {
+              "x": 2390,
+              "y": 1600
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m3s3",
+          "tipo": "completar_reto",
+          "titulo": "Completa el reto de codificación",
+          "descripcion": "Resuelve la secuencia lógica del panel.",
+          "retoId": "reto_codificacion_01",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "reto_codificacion_01",
+            "imagen": "./assets/objetos/reto-codificacion-01.png",
+            "posicion": {
+              "x": 2460,
+              "y": 1660
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m3s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc009",
+          "titulo": "Habla con Solis",
+          "descripcion": "Entrega la información obtenida y desbloquea la fase final.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc009",
+            "imagen": "./assets/npcs/solis.png",
+            "posicion": {
+              "x": 2580,
+              "y": 1720
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 5,
+          "id": "m3s5",
+          "tipo": "hablar_npc",
+          "npcId": "npc007",
+          "titulo": "Regresa con Maese Ion",
+          "descripcion": "Informa del avance acumulado y cierra la ruta.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc007",
+            "imagen": "./assets/npcs/maese-ion.png",
+            "posicion": {
+              "x": 2240,
+              "y": 1490
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 10,
+        "cosmonedas": 0,
+        "items": [
+          {
+            "id": "bateria",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    }
+  ]
+}

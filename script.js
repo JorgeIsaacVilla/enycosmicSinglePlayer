@@ -1,3 +1,39 @@
+  /*
+  Slogan: El nivel te lo quedas tu.
+  
+  -> Corrección de los local Storage para sincronización de base de datos a wordpress
+  -> Creación de estados de mapa y sincronización con base de datos de wordpress. para que el usuario al salir del juego, y vuelva a entrar, aparesca en el mismo sitio en el que quedó
+  -> Creación de estados de misiones y de items de mapa, y sincronización a bases de datos. todos los items se renuevan cada 24 horas, y las misiones cada 3 día
+  
+  //-------------------Fases de desarrollo Etapa 5.-----------
+  1.	Integración de NPC para sistema de misiones 
+
+  2.	Integración de enemigos 
+
+    2.1.	percepción del enemigo al usuario 
+    2.2.	Ataques del enemigo y afectación a sistema de vida usuario 
+    2.3.	respuesta ataque y defensa de usuario a enemigo 
+
+  3.	Integración de NPC ambiente (Caminando y hablando lanzando pistas por el mapa.
+
+  4.	sistemas visuales y de bloques de colisión (No interactivo) para delimitación de área
+
+    4.1.	colisión de usuario 
+    4.2.	Colisión de enemigos 
+    4.3.	colisión de npc deambulantes 
+    4.4.	colisión de disparo
+
+  5.	sistemas colacionables y cliqueables (Interactivo) 
+
+  6.	Estados de mapa 
+
+  7.	desarrollo de nuevo índex. para empezar el juego 
+
+  8.	reorganización de carpetas y recursos 
+
+  9.	Prueba inicial sincronización con WordPress solo con mapa 1
+  */
+
 // =======================================================================================
 // Variables Coordenadas de misiones 
 // =======================================================================================
@@ -23,7 +59,6 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let profession = localStorage.getItem("profession");
 
   let cosmonedas = 0; //0 Inicial el saldo se gurdará en la base de datos
-
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -3754,7 +3789,7 @@ let hoveredItem = null;
 
 
 
-/*// 🔧 Items de prueba para el inventario*/
+/*// 🔧 Items de prueba para el inventario
 window.inventarioUser.push(
   {
     id: "bateria",
@@ -3774,7 +3809,7 @@ window.inventarioUser.push(
     imagen: "./assets/items/cable.svg",
     cantidad: 20
   },
-);
+);*/
 
 async function cargarItemsJSON(){
 
