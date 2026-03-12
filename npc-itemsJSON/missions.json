@@ -23,7 +23,7 @@
 "rol": "inicio",
 "imagen": "./assets/avatares/npc/Dr_Axiom.png",
 "posicion": { "x": 320, "y": 540 },
-"conversation_default": "Todavía no tengo instrucciones para ti.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Bienvenido, viajero.",
@@ -43,7 +43,7 @@
 "rol": "informante",
 "imagen": "./assets/avatares/npc/Lira.png",
 "posicion": { "x": 780, "y": 910 },
-"conversation_default": "Estoy analizando esta zona, vuelve más tarde.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "He detectado energía inusual en esta zona.",
@@ -63,7 +63,7 @@
 "rol": "cierre_informativo",
 "imagen": "./assets/avatares/npc/Orbek.png",
 "posicion": { "x": 1180, "y": 1260 },
-"conversation_default": "No interfieras en los protocolos del sistema.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Tu llegada no fue casualidad.",
@@ -183,7 +183,7 @@
 "rol": "inicio",
 "imagen": "./assets/avatares/npc/Kael.png",
 "posicion": { "x": 1450, "y": 920 },
-"conversation_default": "Estoy ocupado calibrando este circuito.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Necesito estabilizar un circuito antiguo.",
@@ -203,7 +203,7 @@
 "rol": "intercambio",
 "imagen": "./assets/avatares/npc/Sena.png",
 "posicion": { "x": 1700, "y": 1180 },
-"conversation_default": "Si traes materiales útiles, tal vez pueda ayudarte.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Si traes los materiales, podré ayudarte."
@@ -222,7 +222,7 @@
 "rol": "cierre",
 "imagen": "./assets/avatares/npc/Tarek.png",
 "posicion": { "x": 1980, "y": 1360 },
-"conversation_default": "El sistema aún está bajo supervisión.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Supervisa cada fase del circuito antes de volver."
@@ -451,7 +451,7 @@
 "rol": "inicio",
 "imagen": "./assets/avatares/npc/Maese_Ion.png",
 "posicion": { "x": 2240, "y": 1490 },
-"conversation_default": "La mente debe estar preparada antes de actuar.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Tu siguiente misión exige precisión y memoria."
@@ -470,7 +470,7 @@
 "rol": "contacto",
 "imagen": "./assets/avatares/npc/Vera.png",
 "posicion": { "x": 2390, "y": 1600 },
-"conversation_default": "Aún no es momento de revelar información.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "Tengo parte del patrón que buscas."
@@ -489,7 +489,7 @@
 "rol": "cierre",
 "imagen": "./assets/avatares/npc/Solis.png",
 "posicion": { "x": 2580, "y": 1720 },
-"conversation_default": "El conocimiento solo se entrega a quien lo merece.",
+"conversation_default": "combersación por defecto",
 "dialogos": {
 "inicio": [
 "La última parte depende de tu ingenio."

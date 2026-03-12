@@ -2722,6 +2722,7 @@ function wrapText(ctx, text, maxWidth) {
   const blockZone = document.querySelector("#wrap") || document.body;
 
   function isUIInteractiveTarget(t) {
+    
     if (!t || !t.closest) return false;
 
     // Todo lo que NO debe bloquearse (botones/paneles/iframes/inputs)
@@ -2731,8 +2732,11 @@ function wrapText(ctx, text, maxWidth) {
       ".box-buttons-items," +
       "button, a, input, select, textarea, label," +
       "iframe," +
-      "[data-action]"
+      "[data-action]" + 
+          "#npc-dialog-overlay," 
+      
     );
+    
   }
 
   function shouldBlock(e) {
@@ -3266,6 +3270,12 @@ resizeFullscreen();
     e.preventDefault();
   });
 
+  window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && npcDialogOpen) {
+    closeNPCDialog();
+  }
+});
+
   // Dpad
   let pressed = false;
  
@@ -3285,33 +3295,33 @@ window.player = player;
 let npcs = []; // arreglo donde se almacenan los NPC
 
 async function cargarNPCsDesdeMisiones() {
-
   const response = await fetch("./npc-itemsJSON/missions.json");
   const data = await response.json();
 
-  const lista = [];
+  window.missionsData = data;
+
+  const mapaNPCs = new Map();
 
   data.missions.forEach(mision => {
-
-    mision.npcs.forEach(npc => {
-
-      lista.push({
-        id: npc.id,
-        nombre: npc.nombre,
-        x: npc.posicion.x,
-        y: npc.posicion.y,
-        w: 64,
-        h: 64,
-        imageSrc: npc.imagen,
-        img: null,
-        missionStarter: npc.rol && npc.rol.toLowerCase() === "inicio"
-      });
-
+    (mision.npcs || []).forEach(npc => {
+      if (!mapaNPCs.has(npc.id)) {
+        mapaNPCs.set(npc.id, {
+          id: npc.id,
+          nombre: npc.nombre,
+          x: npc.posicion.x,
+          y: npc.posicion.y,
+          w: 64,
+          h: 64,
+          imageSrc: npc.imagen,
+          img: null,
+          missionStarter: npc.rol && npc.rol.toLowerCase() === "inicio",
+          conversation_default: npc.conversation_default || "..."
+        });
+      }
     });
-
   });
 
-  return lista;
+  return Array.from(mapaNPCs.values());
 }
 //===========================================
 /*Dibujar NPC (inicio) */
@@ -3395,6 +3405,447 @@ function drawNPCs(ctx) {
     ctx.textAlign = "start";
   }
 }
+
+// =======================================================
+// SISTEMA DE CONVERSACIÓN NPC CON MANIPULACIÓN DEL DOM (inicio)
+// =======================================================
+
+let npcDialogOpen = false;
+let npcDialogEl = null;
+let npcDialogState = {
+  npc: null,
+  mode: "default", // default | mission_start | mission_progress
+  lines: [],
+  lineIndex: 0
+};
+
+function ensureNPCDialogStyles() {
+  if (document.getElementById("npc-dialog-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "npc-dialog-styles";
+  style.textContent = `
+    #npc-dialog-overlay{
+      position:absolute;
+      inset:0;
+      z-index:4000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:auto;
+    }
+
+    #npc-dialog-panel{
+      width:320px;
+      height:320px;
+      background:black;
+      color:#00ffcc;
+      border:3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 10px 30px rgba(0,0,0,0.45);
+      font-family:"arcade","monospace";
+      image-rendering:pixelated;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    #npc-dialog-header{
+      height:42px;
+      min-height:42px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 8px;
+      background:#111;
+      border-bottom:2px solid #00ffcc;
+    }
+
+    #npc-dialog-title{
+      font-size:12px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:240px;
+    }
+
+    #npc-dialog-close{
+      width:30px;
+      height:30px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      font-size:14px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+    }
+
+    #npc-dialog-close:active{
+      transform:translateY(1px);
+    }
+
+    #npc-dialog-portrait-wrap{
+      flex:1;
+      min-height:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+      background:
+        radial-gradient(circle at center, rgba(0,255,204,.12), rgba(0,0,0,0) 65%);
+    }
+
+#npc-dialog-portrait{
+  width:96px;
+  height:120px;
+  image-rendering:pixelated;
+  object-fit:contain;
+  display:block;
+}
+
+    #npc-dialog-footer{
+      height:80px;
+      min-height:80px;
+      border-top:2px solid rgba(0,255,204,.35);
+      padding:8px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:8px;
+      background:black;
+    }
+
+    #npc-dialog-line{
+      margin:0;
+      font-size:11px;
+      line-height:1.35;
+      min-height:28px;
+      color:#00ffcc;
+      overflow:hidden;
+    }
+
+    #npc-dialog-actions{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .npc-dialog-btn{
+      min-width:74px;
+      height:28px;
+      padding:0 8px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      font-size:10px;
+      cursor:pointer;
+      text-transform:uppercase;
+    }
+
+    .npc-dialog-btn:active{
+      transform:translateY(1px);
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function createNPCDialogDOM() {
+  if (document.getElementById("npc-dialog-overlay")) return document.getElementById("npc-dialog-overlay");
+
+  ensureNPCDialogStyles();
+
+  const overlay = document.createElement("div");
+  overlay.id = "npc-dialog-overlay";
+
+  const panel = document.createElement("div");
+  panel.id = "npc-dialog-panel";
+
+  const header = document.createElement("div");
+  header.id = "npc-dialog-header";
+
+  const title = document.createElement("div");
+  title.id = "npc-dialog-title";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.id = "npc-dialog-close";
+  closeBtn.type = "button";
+  closeBtn.textContent = "X";
+
+  const portraitWrap = document.createElement("div");
+  portraitWrap.id = "npc-dialog-portrait-wrap";
+
+  const portrait = document.createElement("img");
+  portrait.id = "npc-dialog-portrait";
+  portrait.alt = "NPC";
+
+  const footer = document.createElement("div");
+  footer.id = "npc-dialog-footer";
+
+  const line = document.createElement("p");
+  line.id = "npc-dialog-line";
+
+  const actions = document.createElement("div");
+  actions.id = "npc-dialog-actions";
+
+  header.appendChild(title);
+  header.appendChild(closeBtn);
+
+  portraitWrap.appendChild(portrait);
+
+  footer.appendChild(line);
+  footer.appendChild(actions);
+
+  panel.appendChild(header);
+  panel.appendChild(portraitWrap);
+  panel.appendChild(footer);
+
+  overlay.appendChild(panel);
+  wrapEl.appendChild(overlay);
+
+  closeBtn.addEventListener("click", closeNPCDialog);
+  closeBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    closeNPCDialog();
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      closeNPCDialog();
+    }
+  }, { passive: false });
+
+  return overlay;
+}
+
+function closeNPCDialog() {
+  npcDialogOpen = false;
+  npcDialogState = {
+    npc: null,
+    mode: "default",
+    lines: [],
+    lineIndex: 0
+  };
+
+  if (npcDialogEl && npcDialogEl.parentNode) {
+    npcDialogEl.parentNode.removeChild(npcDialogEl);
+  }
+
+  npcDialogEl = null;
+}
+
+function getMissionContextForNPC(npcId) {
+  if (!window.missionsData || !Array.isArray(window.missionsData.missions)) {
+    const npcLocal = npcs.find(n => n.id === npcId);
+    return {
+      type: "default",
+      lines: [npcLocal?.conversation_default || "..."]
+    };
+  }
+
+  for (const mission of window.missionsData.missions) {
+    const npcMission = Array.isArray(mission.npcs)
+      ? mission.npcs.find(n => n.id === npcId)
+      : null;
+
+    if (!npcMission) continue;
+
+    const firstStep = Array.isArray(mission.pasos) ? mission.pasos[0] : null;
+    const isMissionStarter = !!(firstStep && firstStep.npcId === npcId);
+
+    // SOLO los NPC que inician misión entran como mission_start
+    if (isMissionStarter) {
+      return {
+        type: "mission_start",
+        lines: npcMission.dialogos?.inicio?.length
+          ? npcMission.dialogos.inicio
+          : [npcMission.conversation_default || "..."],
+        missionId: mission.id
+      };
+    }
+
+    // Todos los demás, por ahora, hablan con conversación por defecto
+    return {
+      type: "default",
+      lines: [npcMission.conversation_default || "..."],
+      missionId: mission.id
+    };
+  }
+
+  const npcLocal = npcs.find(n => n.id === npcId);
+  return {
+    type: "default",
+    lines: [npcLocal?.conversation_default || "..."]
+  };
+}
+
+function buildNPCDialogButtons() {
+  const actionsEl = npcDialogEl.querySelector("#npc-dialog-actions");
+  actionsEl.innerHTML = "";
+
+  const total = npcDialogState.lines.length;
+  const idx = npcDialogState.lineIndex;
+  const atFirst = idx <= 0;
+  const atLast = idx >= total - 1;
+
+  function makeBtn(text, onClick) {
+    const btn = document.createElement("button");
+    btn.className = "npc-dialog-btn";
+    btn.type = "button";
+    btn.textContent = text;
+    btn.addEventListener("click", onClick);
+    btn.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      onClick();
+    }, { passive: false });
+    return btn;
+  }
+
+  if (npcDialogState.mode === "default") {
+    actionsEl.appendChild(makeBtn("Cerrar", closeNPCDialog));
+    return;
+  }
+
+  if (!atLast) {
+    if (!atFirst) {
+      actionsEl.appendChild(makeBtn("Anterior", () => {
+        npcDialogState.lineIndex--;
+        renderNPCDialog();
+      }));
+    }
+
+    actionsEl.appendChild(makeBtn("Siguiente", () => {
+      npcDialogState.lineIndex++;
+      renderNPCDialog();
+    }));
+    return;
+  }
+
+  if (npcDialogState.mode === "mission_start") {
+    actionsEl.appendChild(makeBtn("Anterior", () => {
+      if (npcDialogState.lineIndex > 0) {
+        npcDialogState.lineIndex--;
+        renderNPCDialog();
+      }
+    }));
+
+    actionsEl.appendChild(makeBtn("No aceptar", closeNPCDialog));
+
+    actionsEl.appendChild(makeBtn("Aceptar misión", () => {
+      console.log("Aceptar misión:", npcDialogState.npc?.id);
+      closeNPCDialog();
+    }));
+    return;
+  }
+
+  if (npcDialogState.mode === "mission_progress") {
+    actionsEl.appendChild(makeBtn("Anterior", () => {
+      if (npcDialogState.lineIndex > 0) {
+        npcDialogState.lineIndex--;
+        renderNPCDialog();
+      }
+    }));
+
+    actionsEl.appendChild(makeBtn("Continuar misión", () => {
+      console.log("Continuar misión con NPC:", npcDialogState.npc?.id);
+      closeNPCDialog();
+    }));
+  }
+}
+
+function renderNPCDialog() {
+  if (!npcDialogEl || !npcDialogState.npc) return;
+
+  const titleEl = npcDialogEl.querySelector("#npc-dialog-title");
+  const portraitEl = npcDialogEl.querySelector("#npc-dialog-portrait");
+  const lineEl = npcDialogEl.querySelector("#npc-dialog-line");
+
+  titleEl.textContent = npcDialogState.npc.nombre || "NPC";
+  const npcImg = npcDialogState.npc?.img;
+
+if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
+  const frameW = 64;
+  const frameH = 64;
+
+  const tempCanvas = document.createElement("canvas");
+  tempCanvas.width = 96;
+  tempCanvas.height = 120;
+
+  const tctx = tempCanvas.getContext("2d");
+  tctx.imageSmoothingEnabled = false;
+
+  tctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+  tctx.drawImage(
+    npcImg,
+    0, 0, frameW, frameH,
+    0, 0, 96, 96
+  );
+
+  portraitEl.src = tempCanvas.toDataURL("image/png");
+} else {
+  portraitEl.src = npcDialogState.npc.imageSrc || "";
+}
+
+  lineEl.textContent = npcDialogState.lines[npcDialogState.lineIndex] || "...";
+
+  buildNPCDialogButtons();
+}
+
+function openNPCDialog(npc) {
+  if (!npc) return;
+
+  const context = getMissionContextForNPC(npc.id);
+
+  npcDialogState = {
+    npc,
+    mode: context.type,
+    lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
+    lineIndex: 0
+  };
+
+  npcDialogEl = createNPCDialogDOM();
+  npcDialogOpen = true;
+  renderNPCDialog();
+}
+
+function getNPCAtCanvasPosition(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+
+  const worldX = (clientX - rect.left) / scale + camera.x;
+  const worldY = (clientY - rect.top) / scale + camera.y;
+
+  for (let i = npcs.length - 1; i >= 0; i--) {
+    const npc = npcs[i];
+    if (
+      worldX >= npc.x &&
+      worldX <= npc.x + npc.w &&
+      worldY >= npc.y &&
+      worldY <= npc.y + npc.h
+    ) {
+      return npc;
+    }
+  }
+
+  return null;
+}
+
+// =======================================================
+// SISTEMA DE CONVERSACIÓN NPC CON MANIPULACIÓN DEL DOM (fin)
+// =======================================================
 //===========================================
 /*Dibujar NPC (fin) */
 //===========================================
@@ -3540,6 +3991,36 @@ window.addEventListener("pointerup", () => {
   if (joyActive) resetJoy();
 });
 /*----------------------------lógica jostic control para movile(fin)-------------------------------------- */
+
+
+// =======================================================
+/*Lógica de eventos del canvas */
+// =======================================================
+
+canvas.addEventListener("pointerdown", (e) => {
+  if (gameMode !== "playing") return;
+  if (e.pointerType !== "mouse") return;
+  if (npcDialogOpen) return;
+
+  const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
+  if (!npc) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  openNPCDialog(npc);
+}, { passive: false });
+
+canvas.addEventListener("click", (e) => {
+  if (gameMode !== "playing") return;
+  if (npcDialogOpen) return;
+
+  const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
+  if (!npc) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  openNPCDialog(npc);
+}, true);
 
 canvas.addEventListener("pointerdown", handleCanvasClick);
 
