@@ -4288,6 +4288,7 @@ function evaluarCombinacion() {
   combinacionResultado = null;
 
   const conteo = contarMaterialesEnCombinacion();
+  const recetasValidas = [];
 
   for (const item of itemsData) {
     if (!item.creable) continue;
@@ -4305,10 +4306,39 @@ function evaluarCombinacion() {
     }
 
     if (cumple) {
-      combinacionResultado = item;
-      return;
+      const totalMateriales = item.materiales_requeridos_para_crear.reduce(
+        (acc, mat) => acc + (mat.cantidad || 0),
+        0
+      );
+
+      const tiposMateriales = item.materiales_requeridos_para_crear.length;
+
+      recetasValidas.push({
+        item,
+        totalMateriales,
+        tiposMateriales
+      });
     }
   }
+
+  if (recetasValidas.length === 0) {
+    combinacionResultado = null;
+    return;
+  }
+
+  recetasValidas.sort((a, b) => {
+    if (b.totalMateriales !== a.totalMateriales) {
+      return b.totalMateriales - a.totalMateriales;
+    }
+
+    if (b.tiposMateriales !== a.tiposMateriales) {
+      return b.tiposMateriales - a.tiposMateriales;
+    }
+
+    return 0;
+  });
+
+  combinacionResultado = recetasValidas[0].item;
 }
 
 cargarItemsJSON();
