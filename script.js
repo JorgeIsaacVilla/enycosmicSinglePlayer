@@ -1083,22 +1083,26 @@ function buildInterfas(type) {
       bodyHTML = buildIQPanelHTML();
       break;
 
-    default:
-      bodyHTML = `
-        <div class="ui-chip">Panel: ${title}</div>
-        <div class="ui-content">
-          <div class="ui-text">
-            Aquí va tu UI real (listas, tabs, cards, etc.)
-          </div>
-          <div class="ui-box">
-            <div class="ui-box-title">Próximamente</div>
-            <div class="ui-box-text">
-              Este panel estará en estilo pixel y modular.
-            </div>
-          </div>
+case "misions":
+  bodyHTML = window.buildMissionsHTML();
+  break;
+
+default:
+  bodyHTML = `
+    <div class="ui-chip">Panel: ${title}</div>
+    <div class="ui-content">
+      <div class="ui-text">
+        Aquí va tu UI real (listas, tabs, cards, etc.)
+      </div>
+      <div class="ui-box">
+        <div class="ui-box-title">Próximamente</div>
+        <div class="ui-box-text">
+          Este panel estará en estilo pixel y modular.
         </div>
-      `;
-      break;
+      </div>
+    </div>
+  `;
+  break;
   }
 
   el.innerHTML = `
@@ -1155,40 +1159,44 @@ function openInterfas(type) {
     if (bodyEl) {
       let bodyHTML = "";
 
-      switch (type) {
-        case "novedades":
-          bodyHTML = buildNovedadesHTML(NOVEDADES);
-          break;
+switch (type) {
+case "misions":
+  bodyHTML = window.buildMissionsHTML();
+  break;
 
-        case "setting":
-          bodyHTML = buildSettingHTML();
-          break;
+  case "novedades":
+    bodyHTML = buildNovedadesHTML(NOVEDADES);
+    break;
 
-        case "inventario":
-          bodyHTML = buildInventarioHTML();
-          break;
+  case "setting":
+    bodyHTML = buildSettingHTML();
+    break;
 
-        case "iq":
-          bodyHTML = buildIQPanelHTML();
-          break;
+  case "inventario":
+    bodyHTML = buildInventarioHTML();
+    break;
 
-        default:
-          bodyHTML = `
-            <div class="ui-chip">Panel: ${title}</div>
-            <div class="ui-content">
-              <div class="ui-text">
-                Aquí va tu UI real (listas, tabs, cards, etc.)
-              </div>
-              <div class="ui-box">
-                <div class="ui-box-title">Próximamente</div>
-                <div class="ui-box-text">
-                  Este panel estará en estilo pixel y modular.
-                </div>
-              </div>
-            </div>
-          `;
-          break;
-      }
+  case "iq":
+    bodyHTML = buildIQPanelHTML();
+    break;
+
+  default:
+    bodyHTML = `
+      <div class="ui-chip">Panel: ${title}</div>
+      <div class="ui-content">
+        <div class="ui-text">
+          Aquí va tu UI real (listas, tabs, cards, etc.)
+        </div>
+        <div class="ui-box">
+          <div class="ui-box-title">Próximamente</div>
+          <div class="ui-box-text">
+            Este panel estará en estilo pixel y modular.
+          </div>
+        </div>
+      </div>
+    `;
+    break;
+}
 
       bodyEl.innerHTML = bodyHTML;
     }
@@ -3146,7 +3154,14 @@ canvas.addEventListener("pointerdown", (e) => {
   if (npcDialogOpen) return;
 
   const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
-  if (npc) return;
+  if (npc) {
+    if (isPlayerNearNPC(npc)) {
+      e.preventDefault();
+      e.stopPropagation();
+      openNPCDialog(npc);
+    }
+    return;
+  }
 
   const itemTomado = getItemAtCanvasPosition(e.clientX, e.clientY);
   if (!itemTomado) return;
@@ -3322,6 +3337,331 @@ async function cargarNPCsDesdeMisiones() {
   });
 
   return Array.from(mapaNPCs.values());
+}
+
+// =======================================================
+// ESTADO Y LÓGICA DE MISIONES
+// =======================================================
+
+//Estado de misiones
+window.missionSystem = {
+  acceptedMissionIds: [],
+  activeMissionId: null,
+  activeStepIndexByMission: {},
+  completedMissionIds: [],
+  revealedStepIndexes: {},
+  completedSteps: {}
+};
+
+function getMissionById(missionId) {
+  return window.missionsData?.missions?.find(m => m.id === missionId) || null;
+}
+
+function isMissionCompleted(missionId) {
+  return window.missionSystem.completedMissionIds.includes(missionId);
+}
+
+function isMissionAccepted(missionId) {
+  return window.missionSystem.acceptedMissionIds.includes(missionId);
+}
+
+function setActiveMission(missionId) {
+  if (!isMissionAccepted(missionId)) return;
+
+  window.missionSystem.activeMissionId = missionId;
+
+  const mission = getMissionById(missionId);
+  if (!mission) {
+    refreshMissionPanelIfOpen();
+    return;
+  }
+
+  let stepIndex = window.missionSystem.activeStepIndexByMission[missionId];
+
+  if (typeof stepIndex !== "number") {
+    stepIndex = 0;
+    window.missionSystem.activeStepIndexByMission[missionId] = 0;
+  }
+
+  const currentStep = mission.pasos?.[stepIndex] || null;
+
+  if (currentStep?.verificador?.posicion) {
+    coordenadasMisionsX = Number(currentStep.verificador.posicion.x) || 0;
+    coordenadasMisionsY = Number(currentStep.verificador.posicion.y) || 0;
+    coordenadasMisionState = true;
+  } else {
+    coordenadasMisionState = false;
+  }
+
+  refreshMissionPanelIfOpen();
+}
+
+
+function getActiveMission() {
+  return getMissionById(window.missionSystem.activeMissionId);
+}
+
+function getCurrentMissionStep() {
+  const mission = getActiveMission();
+  if (!mission) return null;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id];
+  return mission.pasos?.[stepIndex] || null;
+}
+
+
+
+
+
+
+function isMissionAvailable(mission) {
+  if (!mission) return false;
+
+  // Solo validar condiciones básicas
+  const iqRequired = mission.condiciones?.nivelIQMinimo || 0;
+  if (IQuser < iqRequired) return false;
+
+  const itemsRequired = mission.condiciones?.itemsRequeridos || [];
+
+  if (itemsRequired.length) {
+    for (const item of itemsRequired) {
+      if (!inventario[item.id] || inventario[item.id] < item.cantidad) {
+        return false;
+      }
+    }
+  }
+
+  // IMPORTANTE:
+  // Ya NO bloqueamos por misiones requeridas
+  // para permitir aceptar todas las misiones.
+
+  return true;
+}
+/*
+
+function isMissionAvailable(mission) {
+  if (!mission) return false;
+
+  if ((Number(IQuser) || 0) < (Number(mission.condiciones?.nivelIQMinimo) || 0)) {
+    return false;
+  }
+
+  const req = mission.condiciones?.misionesRequeridas || [];
+  return req.every(id => isMissionCompleted(id));
+}
+
+*/
+
+
+
+
+
+function revealMissionStep(missionId, stepIndex) {
+  if (!window.missionSystem.revealedStepIndexes[missionId]) {
+    window.missionSystem.revealedStepIndexes[missionId] = [];
+  }
+
+  if (!window.missionSystem.revealedStepIndexes[missionId].includes(stepIndex)) {
+    window.missionSystem.revealedStepIndexes[missionId].push(stepIndex);
+    window.missionSystem.revealedStepIndexes[missionId].sort((a, b) => a - b);
+  }
+}
+
+function markMissionStepCompleted(missionId, stepIndex) {
+  if (!window.missionSystem.completedSteps[missionId]) {
+    window.missionSystem.completedSteps[missionId] = [];
+  }
+
+  if (!window.missionSystem.completedSteps[missionId].includes(stepIndex)) {
+    window.missionSystem.completedSteps[missionId].push(stepIndex);
+    window.missionSystem.completedSteps[missionId].sort((a, b) => a - b);
+  }
+}
+
+function giveMissionItems(items = []) {
+  if (!Array.isArray(items)) return;
+
+  for (const item of items) {
+    if (!item?.id || !item?.cantidad) continue;
+
+    const dataItem = itemsData.find(x => x.id === item.id);
+    if (!dataItem) continue;
+
+    agregarItemAlInventario({
+      ...dataItem,
+      cantidad: item.cantidad,
+      usos: dataItem.cantidad_de_usos ?? null,
+      usos_maximos: dataItem.cantidad_de_usos ?? null,
+      agotable: dataItem.agotable === true
+    });
+  }
+}
+
+function acceptMission(missionId) {
+  const mission = getMissionById(missionId);
+  if (!mission) return;
+
+  if (!window.missionSystem.acceptedMissionIds.includes(missionId)) {
+    window.missionSystem.acceptedMissionIds.push(missionId);
+  }
+
+  if (typeof window.missionSystem.activeStepIndexByMission[missionId] !== "number") {
+    window.missionSystem.activeStepIndexByMission[missionId] = 0;
+    revealMissionStep(missionId, 0);
+  }
+
+  const firstStep = mission.pasos?.[0];
+  const firstStepAlreadyCompleted =
+    (window.missionSystem.completedSteps[missionId] || []).includes(0);
+
+  if (
+    firstStep &&
+    firstStep.tipo === "hablar_npc" &&
+    firstStep.npcId === mission.pasos?.[0]?.npcId &&
+    !firstStepAlreadyCompleted
+  ) {
+    if (Array.isArray(firstStep.otorgaItems) && firstStep.otorgaItems.length) {
+      giveMissionItems(firstStep.otorgaItems);
+    }
+
+    markMissionStepCompleted(missionId, 0);
+
+    if ((mission.pasos?.length || 0) > 1) {
+      window.missionSystem.activeStepIndexByMission[missionId] = 1;
+      revealMissionStep(missionId, 1);
+    }
+  }
+
+  setActiveMission(missionId);
+  closeNPCDialog();
+}
+
+function continueActiveMissionFromNPC(npcId) {
+  const mission = getActiveMission();
+  if (!mission) return false;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id];
+  const step = mission.pasos?.[stepIndex];
+  if (!step) return false;
+
+  const isNPCStep =
+    step.tipo === "hablar_npc" ||
+    step.tipo === "hablar_npc_entrega";
+
+  if (!isNPCStep) return false;
+  if (step.npcId !== npcId) return false;
+
+  if (Array.isArray(step.otorgaItems) && step.otorgaItems.length) {
+    giveMissionItems(step.otorgaItems);
+  }
+
+  markMissionStepCompleted(mission.id, stepIndex);
+
+  const nextIndex = stepIndex + 1;
+
+  if (nextIndex < mission.pasos.length) {
+    window.missionSystem.activeStepIndexByMission[mission.id] = nextIndex;
+    revealMissionStep(mission.id, nextIndex);
+    refreshMissionPanelIfOpen();
+    closeNPCDialog();
+    return true;
+  }
+
+  return false;
+}
+
+function finalizeActiveMissionFromNPC(npcId) {
+  const mission = getActiveMission();
+  if (!mission) return false;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id];
+  const step = mission.pasos?.[stepIndex];
+  if (!step) return false;
+
+  const isNPCStep =
+    step.tipo === "hablar_npc" ||
+    step.tipo === "hablar_npc_entrega";
+
+  if (!isNPCStep) return false;
+  if (step.npcId !== npcId) return false;
+  if (stepIndex !== mission.pasos.length - 1) return false;
+
+  if (Array.isArray(step.otorgaItems) && step.otorgaItems.length) {
+    giveMissionItems(step.otorgaItems);
+  }
+
+  markMissionStepCompleted(mission.id, stepIndex);
+
+  IQuser += Number(mission.recompensas?.iq || 0);
+  cosmonedas += Number(mission.recompensas?.cosmonedas || 0);
+  giveMissionItems(mission.recompensas?.items || []);
+
+  if (!window.missionSystem.completedMissionIds.includes(mission.id)) {
+    window.missionSystem.completedMissionIds.push(mission.id);
+  }
+
+  delete window.missionSystem.activeStepIndexByMission[mission.id];
+
+  const nextActiveMission = window.missionSystem.acceptedMissionIds.find(
+    (id) => !isMissionCompleted(id)
+  ) || null;
+
+  window.missionSystem.activeMissionId = nextActiveMission;
+
+  refreshMissionPanelIfOpen();
+  closeNPCDialog();
+  showMissionRewardPopup(mission);
+
+  return true;
+}
+
+function getMissionStarterNPCId(mission) {
+  return mission?.pasos?.[0]?.npcId || null;
+}
+
+function getCurrentNPCMissionRole(npcId) {
+  const activeMission = getActiveMission();
+
+  // Si el NPC pertenece al paso actual de la misión seleccionada
+  if (activeMission) {
+    const currentStepIndex = window.missionSystem.activeStepIndexByMission[activeMission.id];
+    const currentStep = activeMission.pasos?.[currentStepIndex];
+
+    if (
+      currentStep &&
+      (currentStep.tipo === "hablar_npc" || currentStep.tipo === "hablar_npc_entrega") &&
+      currentStep.npcId === npcId
+    ) {
+      const isLast = currentStepIndex === activeMission.pasos.length - 1;
+
+      return {
+        type: isLast ? "mission_finish" : "mission_progress",
+        mission: activeMission
+      };
+    }
+  }
+
+  // Si el NPC inicia una misión que todavía NO ha sido aceptada
+  const starterMission = window.missionsData?.missions?.find((mission) => {
+    if (!mission) return false;
+    if (!isMissionAvailable(mission)) return false;
+    if (isMissionAccepted(mission.id)) return false;
+
+    const starterId = mission.pasos?.[0]?.npcId;
+    return starterId === npcId;
+  });
+
+  if (starterMission) {
+    return {
+      type: "mission_start",
+      mission: starterMission
+    };
+  }
+
+  return {
+    type: "default",
+    mission: null
+  };
 }
 //===========================================
 /*Dibujar NPC (inicio) */
@@ -3562,6 +3902,383 @@ function ensureNPCDialogStyles() {
   document.head.appendChild(style);
 }
 
+function ensureMissionUIStyles() {
+  if (document.getElementById("mission-reward-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "mission-reward-styles";
+style.textContent = `
+  .ui-missions-root{
+    display:grid;
+    gap:10px;
+    color:#00ffcc;
+    font-family:"arcade","monospace";
+  }
+
+  .ui-mission-card{
+    border:1px solid #00ffcc;
+    background:rgba(0,255,204,.06);
+    box-shadow:0 0 0 2px rgba(0,0,0,.35);
+    padding:10px;
+    display:grid;
+    gap:8px;
+    cursor:pointer;
+  }
+
+  .ui-mission-title{
+    margin:0;
+    font-size:12px;
+    text-transform:uppercase;
+  }
+
+  .ui-mission-title-active{
+    color:yellow;
+  }
+
+  .ui-mission-step{
+    margin:0;
+    font-size:18px;
+    line-height:1.35;
+  }
+
+  .ui-mission-step-box{
+    border:1px solid rgba(0,255,204,.35);
+    padding:8px;
+    display:grid;
+    gap:6px;
+    background:rgba(0,0,0,.25);
+  }
+
+  .ui-mission-step-done{
+    opacity:.9;
+  }
+
+  .ui-mission-coords{
+    margin:0;
+    font-size:10px;
+    color:#fff;
+    opacity:.9;
+  }
+
+  .ui-mission-done{
+    color:#fff799;
+  }
+
+  .ui-mission-card-completed{
+    opacity:.9;
+  }
+
+  #mission-reward-overlay{
+    position:absolute;
+    inset:0;
+    z-index:4500;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #mission-reward-box{
+    width:320px;
+    min-height:320px;
+    background:black;
+    color:#00ffcc;
+    border:3px solid #00ffcc;
+    box-shadow:
+      0 0 0 2px #0b3d35,
+      0 0 0 4px #00ffcc,
+      0 10px 30px rgba(0,0,0,0.45);
+    font-family:"arcade","monospace";
+    image-rendering:pixelated;
+    padding:14px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    justify-content:space-between;
+    text-align:center;
+  }
+
+  .mission-reward-title{
+    font-size:13px;
+    line-height:1.5;
+    text-transform:uppercase;
+  }
+
+  .mission-reward-line{
+    font-size:11px;
+    line-height:1.5;
+  }
+
+  .mission-reward-items-title{
+    font-size:11px;
+    text-transform:uppercase;
+  }
+
+  .mission-reward-items{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .mission-reward-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    width:56px;
+  }
+
+  .mission-reward-item img{
+    width:32px;
+    height:32px;
+    object-fit:contain;
+    image-rendering:pixelated;
+    display:block;
+  }
+
+  .mission-reward-item span{
+    font-size:9px;
+    line-height:1.2;
+  }
+
+  .mission-reward-btn{
+    min-width:140px;
+    height:32px;
+    margin:0 auto;
+    background:black;
+    color:#00ffcc;
+    border:2px solid #00ffcc;
+    font-family:"arcade","monospace";
+    font-size:10px;
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+`;
+  document.head.appendChild(style);
+}
+
+function buildMissionsHTML() {
+  const acceptedIds = window.missionSystem.acceptedMissionIds || [];
+  const completedIds = window.missionSystem.completedMissionIds || [];
+  const activeMissionId = window.missionSystem.activeMissionId || null;
+
+  const missions = acceptedIds
+    .map(id => getMissionById(id))
+    .filter(Boolean);
+
+  if (!missions.length) {
+    return `
+      <div class="ui-missions-root">
+        <div class="ui-mission-card">
+          <p class="ui-mission-title">No hay misiones aceptadas</p>
+          <p class="ui-mission-step">Acepta una misión hablando con un NPC iniciador.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  const pendingMissions = missions.filter(m => !completedIds.includes(m.id));
+  const doneMissions = missions.filter(m => completedIds.includes(m.id));
+  const orderedMissions = [...pendingMissions, ...doneMissions];
+
+  const html = orderedMissions.map((mission) => {
+    const revealed = window.missionSystem.revealedStepIndexes[mission.id] || [];
+    const completedSteps = window.missionSystem.completedSteps[mission.id] || [];
+    const isCompleted = completedIds.includes(mission.id);
+    const isActive = activeMissionId === mission.id;
+
+    const missionTitle = mission.tipo === "principal"
+      ? `➜ ${mission.nombre}`
+      : `→ ${mission.nombre}`;
+
+    const titleClass = isActive
+      ? "ui-mission-title ui-mission-title-active"
+      : "ui-mission-title";
+
+    const stepsHTML = (isActive && !isCompleted)
+      ? revealed.map((stepIndex) => {
+          const step = mission.pasos?.[stepIndex];
+          if (!step) return "";
+
+          const done = completedSteps.includes(stepIndex);
+          const x = step.verificador?.posicion?.x ?? "-";
+          const y = step.verificador?.posicion?.y ?? "-";
+
+          return `
+            <div class="ui-mission-step-box ${done ? "ui-mission-step-done" : ""}">
+              <p class="ui-mission-step">${done ? "✔ " : ""}${step.titulo}</p>
+              <p class="ui-mission-step">${step.descripcion}</p>
+              <p class="ui-mission-coords">X: ${x} | Y: ${y}</p>
+            </div>
+          `;
+        }).join("")
+      : "";
+
+    return `
+      <div class="ui-mission-card ${isCompleted ? "ui-mission-card-completed" : ""}" data-mission-select="${mission.id}">
+        <p class="${titleClass}">
+          ${isCompleted ? "✔ " : ""}${missionTitle}
+        </p>
+        ${stepsHTML}
+      </div>
+    `;
+  }).join("");
+
+  return `<div class="ui-missions-root">${html}</div>`;
+}
+
+window.buildMissionsHTML = buildMissionsHTML;
+
+window.buildMissionsHTML = buildMissionsHTML;
+
+function showMissionRewardPopup(mission) {
+  if (!mission) return;
+
+  ensureMissionUIStyles();
+
+  const old = document.getElementById("mission-reward-overlay");
+  if (old) old.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "mission-reward-overlay";
+
+  const box = document.createElement("div");
+  box.id = "mission-reward-box";
+
+  const rewardItems = mission.recompensas?.items || [];
+
+  const itemsHTML = rewardItems.length
+    ? `
+      <div class="mission-reward-items-title">Los siguientes items</div>
+      <div class="mission-reward-items">
+        ${rewardItems.map(item => {
+          const dataItem = itemsData.find(x => x.id === item.id);
+          const img = dataItem?.imagen || "";
+          return `
+            <div class="mission-reward-item">
+              <img src="${img}" alt="${item.id}">
+              <span>x${item.cantidad}</span>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `
+    : "";
+
+  box.innerHTML = `
+    <div class="mission-reward-title">
+      Has completado la misión<br>${mission.nombre}
+    </div>
+
+    <div class="mission-reward-line">
+      Has ganado ${Number(mission.recompensas?.iq || 0)} de IQ
+    </div>
+
+    <div class="mission-reward-line">
+      ${Number(mission.recompensas?.cosmonedas || 0)} de cosmonedas
+    </div>
+
+    ${itemsHTML}
+
+    <button class="mission-reward-btn" type="button">Aceptar recompensa</button>
+  `;
+
+  overlay.appendChild(box);
+  wrapEl.appendChild(overlay);
+
+  const btn = box.querySelector(".mission-reward-btn");
+
+  function closeRewardPopup() {
+    overlay.remove();
+  }
+
+  btn.addEventListener("click", closeRewardPopup);
+  btn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    closeRewardPopup();
+  }, { passive: false });
+}
+
+function refreshMissionPanelIfOpen() {
+  if (!interfaceOpen || !interfasEl) return;
+  if (interfasEl.dataset.panel !== "misions") return;
+
+  const bodyEl = interfasEl.querySelector(".ui-body");
+  if (!bodyEl) return;
+
+  bodyEl.innerHTML = buildMissionsHTML();
+}
+
+document.addEventListener("click", (e) => {
+  const missionCard = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
+  if (!missionCard) return;
+
+  const missionId = missionCard.dataset.missionSelect;
+  if (!missionId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  setActiveMission(missionId);
+}, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const missionCard = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
+  if (!missionCard) return;
+
+  const missionId = missionCard.dataset.missionSelect;
+  if (!missionId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  setActiveMission(missionId);
+}, { capture: true, passive: false });
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const missionCard = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
+  if (!missionCard) return;
+
+  const missionId = missionCard.dataset.missionSelect;
+  if (!missionId) return;
+  if (isMissionCompleted(missionId)) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  setActiveMission(missionId);
+}, { capture: true, passive: false });
+
+document.addEventListener("click", (e) => {
+  const card = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
+  if (!card) return;
+
+  const missionId = card.dataset.missionSelect;
+  if (!missionId) return;
+  if (isMissionCompleted(missionId)) return;
+
+  setActiveMission(missionId);
+}, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const card = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
+  if (!card) return;
+
+  const missionId = card.dataset.missionSelect;
+  if (!missionId) return;
+  if (isMissionCompleted(missionId)) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  setActiveMission(missionId);
+}, { capture: true, passive: false });
+
 function createNPCDialogDOM() {
   if (document.getElementById("npc-dialog-overlay")) return document.getElementById("npc-dialog-overlay");
 
@@ -3649,48 +4366,65 @@ function closeNPCDialog() {
 }
 
 function getMissionContextForNPC(npcId) {
+
+  const npcLocal = npcs.find(n => n.id === npcId);
+
+  // seguridad si no hay misiones cargadas
   if (!window.missionsData || !Array.isArray(window.missionsData.missions)) {
-    const npcLocal = npcs.find(n => n.id === npcId);
     return {
       type: "default",
-      lines: [npcLocal?.conversation_default || "..."]
+      lines: [npcLocal?.conversation_default || "..."],
+      missionId: null
     };
   }
 
   for (const mission of window.missionsData.missions) {
+
+    // verificar si el NPC pertenece a esta misión
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
       : null;
 
     if (!npcMission) continue;
 
-    const firstStep = Array.isArray(mission.pasos) ? mission.pasos[0] : null;
-    const isMissionStarter = !!(firstStep && firstStep.npcId === npcId);
+    // verificar si este NPC es el que inicia la misión
+    const starterNpcId = mission.pasos?.[0]?.npcId;
 
-    // SOLO los NPC que inician misión entran como mission_start
-    if (isMissionStarter) {
+    if (starterNpcId === npcId) {
+
+      // si la misión aún no ha sido aceptada → mostrar diálogo de inicio
+      if (!isMissionAccepted(mission.id)) {
+
+        return {
+          type: "mission_start",
+          lines: npcMission.dialogos?.inicio?.length
+            ? npcMission.dialogos.inicio
+            : [npcMission.conversation_default || "..."],
+          missionId: mission.id
+        };
+
+      }
+
+      // si la misión ya fue aceptada → conversación normal de progreso
       return {
-        type: "mission_start",
-        lines: npcMission.dialogos?.inicio?.length
-          ? npcMission.dialogos.inicio
+        type: "mission_progress",
+        lines: npcMission.dialogos?.en_progreso?.length
+          ? npcMission.dialogos.en_progreso
           : [npcMission.conversation_default || "..."],
         missionId: mission.id
       };
+
     }
 
-    // Todos los demás, por ahora, hablan con conversación por defecto
-    return {
-      type: "default",
-      lines: [npcMission.conversation_default || "..."],
-      missionId: mission.id
-    };
   }
 
-  const npcLocal = npcs.find(n => n.id === npcId);
+  // si el NPC no inicia ninguna misión
   return {
     type: "default",
-    lines: [npcLocal?.conversation_default || "..."]
+    lines: [npcLocal?.conversation_default || "..."],
+    missionId: null
   };
+
 }
 
 function buildNPCDialogButtons() {
@@ -3707,12 +4441,14 @@ function buildNPCDialogButtons() {
     btn.className = "npc-dialog-btn";
     btn.type = "button";
     btn.textContent = text;
+
     btn.addEventListener("click", onClick);
     btn.addEventListener("pointerdown", (e) => {
       if (e.pointerType === "mouse") return;
       e.preventDefault();
       onClick();
     }, { passive: false });
+
     return btn;
   }
 
@@ -3737,33 +4473,45 @@ function buildNPCDialogButtons() {
   }
 
   if (npcDialogState.mode === "mission_start") {
-    actionsEl.appendChild(makeBtn("Anterior", () => {
-      if (npcDialogState.lineIndex > 0) {
+    if (!atFirst) {
+      actionsEl.appendChild(makeBtn("Anterior", () => {
         npcDialogState.lineIndex--;
         renderNPCDialog();
-      }
-    }));
+      }));
+    }
 
     actionsEl.appendChild(makeBtn("No aceptar", closeNPCDialog));
 
     actionsEl.appendChild(makeBtn("Aceptar misión", () => {
-      console.log("Aceptar misión:", npcDialogState.npc?.id);
-      closeNPCDialog();
+      acceptMission(npcDialogState.missionId);
     }));
     return;
   }
 
   if (npcDialogState.mode === "mission_progress") {
-    actionsEl.appendChild(makeBtn("Anterior", () => {
-      if (npcDialogState.lineIndex > 0) {
+    if (!atFirst) {
+      actionsEl.appendChild(makeBtn("Anterior", () => {
         npcDialogState.lineIndex--;
         renderNPCDialog();
-      }
-    }));
+      }));
+    }
 
     actionsEl.appendChild(makeBtn("Continuar misión", () => {
-      console.log("Continuar misión con NPC:", npcDialogState.npc?.id);
-      closeNPCDialog();
+      continueActiveMissionFromNPC(npcDialogState.npc.id);
+    }));
+    return;
+  }
+
+  if (npcDialogState.mode === "mission_finish") {
+    if (!atFirst) {
+      actionsEl.appendChild(makeBtn("Anterior", () => {
+        npcDialogState.lineIndex--;
+        renderNPCDialog();
+      }));
+    }
+
+    actionsEl.appendChild(makeBtn("Finalizar misión", () => {
+      finalizeActiveMissionFromNPC(npcDialogState.npc.id);
     }));
   }
 }
@@ -3812,12 +4560,13 @@ function openNPCDialog(npc) {
 
   const context = getMissionContextForNPC(npc.id);
 
-  npcDialogState = {
-    npc,
-    mode: context.type,
-    lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
-    lineIndex: 0
-  };
+npcDialogState = {
+  npc,
+  mode: context.type,
+  lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
+  lineIndex: 0,
+  missionId: context.missionId || null
+};
 
   npcDialogEl = createNPCDialogDOM();
   npcDialogOpen = true;
@@ -3843,6 +4592,21 @@ function getNPCAtCanvasPosition(clientX, clientY) {
   }
 
   return null;
+}
+
+function isPlayerNearNPC(npc, maxDistance = 110) {
+  if (!npc || !player) return false;
+
+  const playerCenterX = player.x + (HERO_DRAW_W / 2);
+  const playerCenterY = player.y + (HERO_DRAW_H / 2);
+
+  const npcCenterX = npc.x + (npc.w / 2);
+  const npcCenterY = npc.y + (npc.h / 2);
+
+  const dx = playerCenterX - npcCenterX;
+  const dy = playerCenterY - npcCenterY;
+
+  return Math.hypot(dx, dy) <= maxDistance;
 }
 
 // =======================================================
@@ -4005,6 +4769,7 @@ canvas.addEventListener("pointerdown", (e) => {
 
   const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
   if (!npc) return;
+  if (!isPlayerNearNPC(npc)) return;
 
   e.preventDefault();
   e.stopPropagation();
@@ -4017,6 +4782,7 @@ canvas.addEventListener("click", (e) => {
 
   const npc = getNPCAtCanvasPosition(e.clientX, e.clientY);
   if (!npc) return;
+  if (!isPlayerNearNPC(npc)) return;
 
   e.preventDefault();
   e.stopPropagation();
@@ -5424,9 +6190,6 @@ preloadAvatars(characters)
 }
 
 initNPCs();
-
-preloadNPCs(npcs)
-  .catch(err => console.error("Error precargando NPCs:", err));
 
 // decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)
 checkUserProfile();
