@@ -4116,6 +4116,8 @@ style.textContent = `
 }
 
 function buildMissionsHTML() {
+  ensureMissionUIStyles();
+
   const acceptedIds = window.missionSystem.acceptedMissionIds || [];
   const completedIds = window.missionSystem.completedMissionIds || [];
   const activeMissionId = window.missionSystem.activeMissionId || null;
@@ -4432,56 +4434,78 @@ function getMissionContextForNPC(npcId) {
     };
   }
 
-  // 1. PRIORIDAD TOTAL:
-  // si el NPC pertenece al paso activo de alguna misión aceptada/seleccionada,
-  // debe mostrar el diálogo de esa misión y NO el default
-  for (const missionId of (window.missionSystem.acceptedMissionIds || [])) {
-    const mission = getMissionById(missionId);
-    if (!mission) continue;
-
-    const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
-    const currentStep = mission.pasos?.[stepIndex];
-    if (!currentStep) continue;
-
-    const isNpcStep =
-      currentStep.tipo === "hablar_npc" ||
-      currentStep.tipo === "hablar_npc_entrega";
-
-    if (!isNpcStep) continue;
-    if (currentStep.npcId !== npcId) continue;
-
+  // 1. prioridad: revisar misiones aceptadas/completadas donde el NPC participa
+  for (const mission of window.missionsData.missions) {
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
       : null;
 
     if (!npcMission) continue;
 
-    const isLastStep = stepIndex === mission.pasos.length - 1;
+    const missionAccepted = isMissionAccepted(mission.id);
+    const missionCompleted = isMissionCompleted(mission.id);
 
-    return {
-      type: isLastStep ? "mission_finish" : "mission_progress",
-      lines: isLastStep
-        ? (
-            npcMission.dialogos?.completado?.length
-              ? npcMission.dialogos.completado
-              : npcMission.dialogos?.en_progreso?.length
-                ? npcMission.dialogos.en_progreso
-                : npcMission.dialogos?.inicio?.length
-                  ? npcMission.dialogos.inicio
-                  : [npcMission.conversation_default || "..."]
-          )
-        : (
-            npcMission.dialogos?.en_progreso?.length
-              ? npcMission.dialogos.en_progreso
-              : npcMission.dialogos?.inicio?.length
-                ? npcMission.dialogos.inicio
-                : [npcMission.conversation_default || "..."]
-          ),
-      missionId: mission.id
-    };
+    const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id] ?? 0;
+    const currentStep = mission.pasos?.[stepIndex] || null;
+
+    const isCurrentNpcStep =
+      currentStep &&
+      (
+        currentStep.tipo === "hablar_npc" ||
+        currentStep.tipo === "hablar_npc_entrega"
+      ) &&
+      currentStep.npcId === npcId;
+
+    // misión ya completada → diálogo completado
+    if (missionCompleted) {
+      return {
+        type: "mission_completed",
+        lines: npcMission.dialogos?.completado?.length
+          ? npcMission.dialogos.completado
+          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
+        missionId: mission.id
+      };
+    }
+
+    // misión aceptada y este NPC hace parte de esa misión
+    if (missionAccepted) {
+      // si además es el NPC del paso actual
+      if (isCurrentNpcStep) {
+        const isLastStep = stepIndex === mission.pasos.length - 1;
+
+        return {
+          type: isLastStep ? "mission_finish" : "mission_progress",
+          lines: isLastStep
+            ? (
+                npcMission.dialogos?.completado?.length
+                  ? npcMission.dialogos.completado
+                  : npcMission.dialogos?.en_progreso?.length
+                    ? npcMission.dialogos.en_progreso
+                    : [npcMission.conversation_default || npcLocal?.conversation_default || "..."]
+              )
+            : (
+                npcMission.dialogos?.en_progreso?.length
+                  ? npcMission.dialogos.en_progreso
+                  : npcMission.dialogos?.inicio?.length
+                    ? npcMission.dialogos.inicio
+                    : [npcMission.conversation_default || npcLocal?.conversation_default || "..."]
+              ),
+          missionId: mission.id
+        };
+      }
+
+      // si no es el paso actual pero sí hace parte de una misión aceptada
+      return {
+        type: "mission_progress",
+        lines: npcMission.dialogos?.en_progreso?.length
+          ? npcMission.dialogos.en_progreso
+          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
+        missionId: mission.id
+      };
+    }
   }
 
-  // 2. si no es paso activo, revisar si este NPC abre una misión no aceptada
+  // 2. si no está aceptada ninguna, revisar si este NPC inicia una misión disponible
   for (const mission of window.missionsData.missions) {
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
@@ -4491,18 +4515,18 @@ function getMissionContextForNPC(npcId) {
 
     const starterNpcId = mission.pasos?.[0]?.npcId;
 
-    if (starterNpcId === npcId && !isMissionAccepted(mission.id)) {
+    if (starterNpcId === npcId && !isMissionAccepted(mission.id) && !isMissionCompleted(mission.id)) {
       return {
         type: "mission_start",
         lines: npcMission.dialogos?.inicio?.length
           ? npcMission.dialogos.inicio
-          : [npcMission.conversation_default || "..."],
+          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
         missionId: mission.id
       };
     }
   }
 
-  // 3. si no hace parte del paso activo ni abre misión nueva, usar default
+  // 3. si no pertenece a ninguna misión relevante → default
   return {
     type: "default",
     lines: [npcLocal?.conversation_default || "..."],
@@ -4677,7 +4701,8 @@ function getNPCAtCanvasPosition(clientX, clientY) {
   return null;
 }
 
-function isPlayerNearNPC(npc, maxDistance = 110) {
+//maxDistance = es la distancia maxima para que el NPC te vea y pueda asignar misiones
+function isPlayerNearNPC(npc, maxDistance = 220) {
   if (!npc || !player) return false;
 
   const playerCenterX = player.x + (HERO_DRAW_W / 2);
@@ -6260,7 +6285,6 @@ function start() {
 }
 
 // solo precarga miniaturas (para selección)
-// solo precarga miniaturas (para selección)
 preloadAvatars(characters)
   .catch(err => console.error("Error precargando avatares:", err));
 
@@ -6278,6 +6302,7 @@ initNPCs();
 checkUserProfile();
 
 // arranca el loop
+//ensureMissionUIStyles();
 start();
 
 // si al recargar ya tiene perfil completo, carga assets de una vez
