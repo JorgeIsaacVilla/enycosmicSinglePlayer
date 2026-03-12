@@ -3365,6 +3365,16 @@ function isMissionAccepted(missionId) {
   return window.missionSystem.acceptedMissionIds.includes(missionId);
 }
 
+
+
+
+
+
+
+
+
+
+/*
 function setActiveMission(missionId) {
   if (!isMissionAccepted(missionId)) return;
 
@@ -3392,9 +3402,55 @@ function setActiveMission(missionId) {
   } else {
     coordenadasMisionState = false;
   }
+ console.log("Misión seleccionada:", missionId, mission?.nombre);
+  refreshMissionPanelIfOpen();
+}
+*/
+function setActiveMission(missionId) {
+  if (!isMissionAccepted(missionId)) return;
+
+  window.missionSystem.activeMissionId = missionId;
+
+  const mission = getMissionById(missionId);
+  if (!mission) return;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+
+  const currentStep = mission.pasos?.[stepIndex] || null;
+  const nextStep = mission.pasos?.[stepIndex + 1] || null;
+
+  console.log("MISIÓN ACTIVA", {
+    id: missionId,
+    nombre: mission.nombre,
+    pasoActual: {
+      index: stepIndex,
+      titulo: currentStep?.titulo || null
+    },
+    siguientePaso: nextStep
+      ? {
+          index: stepIndex + 1,
+          titulo: nextStep.titulo
+        }
+      : "No hay más pasos (misión finalizada)"
+  });
 
   refreshMissionPanelIfOpen();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function getActiveMission() {
@@ -4366,10 +4422,8 @@ function closeNPCDialog() {
 }
 
 function getMissionContextForNPC(npcId) {
-
   const npcLocal = npcs.find(n => n.id === npcId);
 
-  // seguridad si no hay misiones cargadas
   if (!window.missionsData || !Array.isArray(window.missionsData.missions)) {
     return {
       type: "default",
@@ -4378,53 +4432,82 @@ function getMissionContextForNPC(npcId) {
     };
   }
 
-  for (const mission of window.missionsData.missions) {
+  // 1. PRIORIDAD TOTAL:
+  // si el NPC pertenece al paso activo de alguna misión aceptada/seleccionada,
+  // debe mostrar el diálogo de esa misión y NO el default
+  for (const missionId of (window.missionSystem.acceptedMissionIds || [])) {
+    const mission = getMissionById(missionId);
+    if (!mission) continue;
 
-    // verificar si el NPC pertenece a esta misión
+    const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+    const currentStep = mission.pasos?.[stepIndex];
+    if (!currentStep) continue;
+
+    const isNpcStep =
+      currentStep.tipo === "hablar_npc" ||
+      currentStep.tipo === "hablar_npc_entrega";
+
+    if (!isNpcStep) continue;
+    if (currentStep.npcId !== npcId) continue;
+
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
       : null;
 
     if (!npcMission) continue;
 
-    // verificar si este NPC es el que inicia la misión
+    const isLastStep = stepIndex === mission.pasos.length - 1;
+
+    return {
+      type: isLastStep ? "mission_finish" : "mission_progress",
+      lines: isLastStep
+        ? (
+            npcMission.dialogos?.completado?.length
+              ? npcMission.dialogos.completado
+              : npcMission.dialogos?.en_progreso?.length
+                ? npcMission.dialogos.en_progreso
+                : npcMission.dialogos?.inicio?.length
+                  ? npcMission.dialogos.inicio
+                  : [npcMission.conversation_default || "..."]
+          )
+        : (
+            npcMission.dialogos?.en_progreso?.length
+              ? npcMission.dialogos.en_progreso
+              : npcMission.dialogos?.inicio?.length
+                ? npcMission.dialogos.inicio
+                : [npcMission.conversation_default || "..."]
+          ),
+      missionId: mission.id
+    };
+  }
+
+  // 2. si no es paso activo, revisar si este NPC abre una misión no aceptada
+  for (const mission of window.missionsData.missions) {
+    const npcMission = Array.isArray(mission.npcs)
+      ? mission.npcs.find(n => n.id === npcId)
+      : null;
+
+    if (!npcMission) continue;
+
     const starterNpcId = mission.pasos?.[0]?.npcId;
 
-    if (starterNpcId === npcId) {
-
-      // si la misión aún no ha sido aceptada → mostrar diálogo de inicio
-      if (!isMissionAccepted(mission.id)) {
-
-        return {
-          type: "mission_start",
-          lines: npcMission.dialogos?.inicio?.length
-            ? npcMission.dialogos.inicio
-            : [npcMission.conversation_default || "..."],
-          missionId: mission.id
-        };
-
-      }
-
-      // si la misión ya fue aceptada → conversación normal de progreso
+    if (starterNpcId === npcId && !isMissionAccepted(mission.id)) {
       return {
-        type: "mission_progress",
-        lines: npcMission.dialogos?.en_progreso?.length
-          ? npcMission.dialogos.en_progreso
+        type: "mission_start",
+        lines: npcMission.dialogos?.inicio?.length
+          ? npcMission.dialogos.inicio
           : [npcMission.conversation_default || "..."],
         missionId: mission.id
       };
-
     }
-
   }
 
-  // si el NPC no inicia ninguna misión
+  // 3. si no hace parte del paso activo ni abre misión nueva, usar default
   return {
     type: "default",
     lines: [npcLocal?.conversation_default || "..."],
     missionId: null
   };
-
 }
 
 function buildNPCDialogButtons() {
