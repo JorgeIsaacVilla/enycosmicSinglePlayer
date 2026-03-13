@@ -476,7 +476,7 @@ function render() {
 
   if (missionPos) {
     missionEl.style.display = "block";
-    missionEl.style.transform = `translate(${missionPos.x - 10}px, ${missionPos.y - 10}px)`;
+    missionEl.style.transform = `translate(${missionPos.x - 10}px, ${missionPos.y - 10}px) rotate(90deg)`;
   } else {
     missionEl.style.display = "none";
   }
