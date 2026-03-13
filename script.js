@@ -3114,11 +3114,18 @@ function tomarItemSeleccionado(itemTomado) {
 
   console.log("El usuario tomó el ITEM:", itemTomado.nombre_item);
 
+  
+
   items = items.filter(i => i !== itemTomado);
 
   if (hoveredItem === itemTomado) {
     hoveredItem = null;
   }
+
+  const activeMissionId = window.missionSystem.activeMissionId;
+if (activeMissionId) {
+  validarPasoRecolectarItems(activeMissionId);
+}
 
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
@@ -3592,9 +3599,102 @@ function acceptMission(missionId) {
   closeNPCDialog();
 }
 
+function contarItemEnInventario(itemId) {
+  let total = 0;
+
+  for (const item of (window.inventarioUser || [])) {
+    if (!item) continue;
+
+    const id = item.id ?? item.item_id;
+    if (id !== itemId) continue;
+
+    total += Number(item.cantidad || 1);
+  }
+
+  return total;
+}
+
+function validarPasoRecolectarItems(missionId) {
+  const mission = getMissionById(missionId);
+  if (!mission) return false;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+  const step = mission.pasos?.[stepIndex];
+  if (!step) return false;
+
+  if (step.tipo !== "recolectar_items") return false;
+
+  const objetivos = step.objetivosItems || [];
+
+  for (const objetivo of objetivos) {
+    const cantidadActual = contarItemEnInventario(objetivo.id);
+    const cantidadNecesaria = Number(objetivo.cantidad || 0);
+
+    if (cantidadActual < cantidadNecesaria) {
+      return false;
+    }
+  }
+
+  markMissionStepCompleted(missionId, stepIndex);
+
+  const nextIndex = stepIndex + 1;
+
+  if (nextIndex < mission.pasos.length) {
+    window.missionSystem.activeStepIndexByMission[missionId] = nextIndex;
+    revealMissionStep(missionId, nextIndex);
+
+    const nextStep = mission.pasos[nextIndex];
+    if (nextStep?.verificador?.posicion) {
+      coordenadasMisionsX = Number(nextStep.verificador.posicion.x) || 0;
+      coordenadasMisionsY = Number(nextStep.verificador.posicion.y) || 0;
+      coordenadasMisionState = true;
+    } else {
+      coordenadasMisionState = false;
+    }
+
+    refreshMissionPanelIfOpen();
+  }
+
+  console.log("Paso de recolección completado:", {
+    missionId,
+    stepId: step.id,
+    siguientePaso: mission.pasos?.[nextIndex]?.id || null
+  });
+
+  console.log("VALIDANDO RECOLECCIÓN", {
+  missionId,
+  stepId: step.id,
+  objetivos: objetivos.map(obj => ({
+    id: obj.id,
+    requiere: obj.cantidad,
+    tiene: contarItemEnInventario(obj.id)
+  }))
+});
+
+  return true;
+}
+
 function continueActiveMissionFromNPC(npcId) {
   const mission = getActiveMission();
+
+  const missionId = mission.id;
+const stepIndexPrev = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+const stepPrev = mission.pasos?.[stepIndexPrev];
+
+if (stepPrev?.tipo === "recolectar_items" && missionStepRecolectadoOK(missionId)) {
+  markMissionStepCompleted(missionId, stepIndexPrev);
+
+  const nextIndex = stepIndexPrev + 1;
+  if (nextIndex < mission.pasos.length) {
+    window.missionSystem.activeStepIndexByMission[missionId] = nextIndex;
+    revealMissionStep(missionId, nextIndex);
+    refreshMissionPanelIfOpen();
+  }
+}
+
   if (!mission) return false;
+
+  validarPasoRecolectarItems(mission.id);
 
   const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id];
   const step = mission.pasos?.[stepIndex];
@@ -3634,12 +3734,22 @@ function finalizeActiveMissionFromNPC(npcId) {
   const step = mission.pasos?.[stepIndex];
   if (!step) return false;
 
-  const isNPCStep =
-    step.tipo === "hablar_npc" ||
-    step.tipo === "hablar_npc_entrega";
+const isNPCStep =
+  step.tipo === "hablar_npc" ||
+  step.tipo === "hablar_npc_entrega";
 
-  if (!isNPCStep) return false;
-  if (step.npcId !== npcId) return false;
+if (!isNPCStep) return false;
+if (step.npcId !== npcId) return false;
+
+if (step.tipo === "hablar_npc_entrega" && Array.isArray(step.entregaItems)) {
+  for (const req of step.entregaItems) {
+    if (contarItemEnInventario(req.id) < Number(req.cantidad || 0)) {
+      console.log("Faltan items para entregar:", req.id);
+      return false;
+    }
+  }
+}
+
   if (stepIndex !== mission.pasos.length - 1) return false;
 
   if (Array.isArray(step.otorgaItems) && step.otorgaItems.length) {
@@ -3673,6 +3783,14 @@ function finalizeActiveMissionFromNPC(npcId) {
 
 function getMissionStarterNPCId(mission) {
   return mission?.pasos?.[0]?.npcId || null;
+}
+
+function tieneItemsRequeridos(listaItems = []) {
+  return listaItems.every(req => {
+    const tiene = contarItemEnInventario(req.id);
+    const necesita = Number(req.cantidad || 0);
+    return tiene >= necesita;
+  });
 }
 
 function getCurrentNPCMissionRole(npcId) {
@@ -4423,6 +4541,38 @@ function closeNPCDialog() {
   npcDialogEl = null;
 }
 
+function missionStepRecolectadoOK(missionId) {
+  const mission = getMissionById(missionId);
+  if (!mission) return false;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+  const step = mission.pasos?.[stepIndex];
+  if (!step) return false;
+
+  if (step.tipo !== "recolectar_items") return false;
+
+  const objetivos = step.objetivosItems || [];
+
+  const validado = objetivos.every(obj => {
+    const tiene = contarItemEnInventario(obj.id);
+    const requiere = Number(obj.cantidad || 0);
+    return tiene >= requiere;
+  });
+
+  console.log("VALIDANDO RECOLECCIÓN", {
+    missionId,
+    stepId: step.id,
+    objetivos: objetivos.map(obj => ({
+      id: obj.id,
+      requiere: obj.cantidad,
+      tiene: contarItemEnInventario(obj.id)
+    })),
+    validado
+  });
+
+  return validado;
+}
+
 function getMissionContextForNPC(npcId) {
   const npcLocal = npcs.find(n => n.id === npcId);
 
@@ -4434,90 +4584,145 @@ function getMissionContextForNPC(npcId) {
     };
   }
 
-  for (const mission of window.missionsData.missions) {
+  const missionId = window.missionSystem.activeMissionId;
+  const mission = missionId ? getMissionById(missionId) : null;
+
+  if (mission) {
+    const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
+    const currentStep = mission.pasos?.[stepIndex];
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
       : null;
 
-    if (!npcMission) continue;
+    console.log("NPC CONTEXT", {
+      npcId,
+      missionId,
+      stepIndex,
+      currentStepId: currentStep?.id || null,
+      currentStepTipo: currentStep?.tipo || null,
+      currentStepNpcId: currentStep?.npcId || null
+    });
 
-    const missionAccepted = isMissionAccepted(mission.id);
-    const missionCompleted = isMissionCompleted(mission.id);
+    if (currentStep?.tipo === "recolectar_items") {
+      const recolectadoOK = missionStepRecolectadoOK(missionId);
 
-    const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id] ?? 0;
-    const currentStep = mission.pasos?.[stepIndex] || null;
+      if (recolectadoOK) {
+        markMissionStepCompleted(missionId, stepIndex);
 
-    const isCurrentNpcStep =
-      currentStep &&
-      (
-        currentStep.tipo === "hablar_npc" ||
-        currentStep.tipo === "hablar_npc_entrega"
-      ) &&
-      currentStep.npcId === npcId;
+        const nextIndex = stepIndex + 1;
+        if (nextIndex < mission.pasos.length) {
+          window.missionSystem.activeStepIndexByMission[missionId] = nextIndex;
+          revealMissionStep(missionId, nextIndex);
+          refreshMissionPanelIfOpen();
+        }
 
-    if (missionCompleted) {
-      return {
-        type: "mission_completed",
-        lines: npcMission.dialogos?.completado?.length
-          ? npcMission.dialogos.completado
-          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
-        missionId: mission.id
-      };
+        const nextStep = mission.pasos?.[nextIndex];
+        const nextNpcMission = Array.isArray(mission.npcs)
+          ? mission.npcs.find(n => n.id === nextStep?.npcId)
+          : null;
+
+        if (nextStep && nextStep.npcId === npcId && nextNpcMission) {
+          return {
+            type: nextIndex === mission.pasos.length - 1 ? "mission_finish" : "mission_progress",
+            lines: nextNpcMission.dialogos?.en_progreso?.length
+              ? nextNpcMission.dialogos.en_progreso
+              : nextNpcMission.dialogos?.inicio?.length
+                ? nextNpcMission.dialogos.inicio
+                : [nextNpcMission.conversation_default || "..."],
+            missionId
+          };
+        }
+      }
     }
 
-    if (missionAccepted) {
-      // ESTE ES EL NPC EXACTO DEL PASO ACTUAL
-      if (isCurrentNpcStep) {
-        const isLastStep = stepIndex === mission.pasos.length - 1;
+    if (currentStep) {
+      const currentNpcMission = Array.isArray(mission.npcs)
+        ? mission.npcs.find(n => n.id === npcId)
+        : null;
 
+      const isCurrentNpcStep =
+        (
+          currentStep.tipo === "hablar_npc" ||
+          currentStep.tipo === "hablar_npc_entrega"
+        ) &&
+        currentStep.npcId === npcId;
+
+if (isCurrentNpcStep && currentNpcMission) {
+  const isLastStep = stepIndex === mission.pasos.length - 1;
+
+  let dialogLines = [];
+
+  if (currentStep.tipo === "hablar_npc_entrega") {
+    const entregaCompleta = tieneItemsRequeridos(currentStep.entregaItems || []);
+
+    dialogLines = entregaCompleta
+      ? (
+          currentNpcMission.dialogos?.completado?.length
+            ? currentNpcMission.dialogos.completado
+            : currentNpcMission.dialogos?.inicio?.length
+              ? currentNpcMission.dialogos.inicio
+              : [currentNpcMission.conversation_default || "..."]
+        )
+      : (
+          currentNpcMission.dialogos?.en_progreso?.length
+            ? currentNpcMission.dialogos.en_progreso
+            : currentNpcMission.dialogos?.inicio?.length
+              ? currentNpcMission.dialogos.inicio
+              : [currentNpcMission.conversation_default || "..."]
+        );
+  } else {
+    dialogLines = isLastStep
+      ? (
+          currentNpcMission.dialogos?.completado?.length
+            ? currentNpcMission.dialogos.completado
+            : currentNpcMission.dialogos?.en_progreso?.length
+              ? currentNpcMission.dialogos.en_progreso
+              : [currentNpcMission.conversation_default || "..."]
+        )
+      : (
+          currentNpcMission.dialogos?.en_progreso?.length
+            ? currentNpcMission.dialogos.en_progreso
+            : currentNpcMission.dialogos?.inicio?.length
+              ? currentNpcMission.dialogos.inicio
+              : [currentNpcMission.conversation_default || "..."]
+        );
+  }
+
+  return {
+    type: isLastStep ? "mission_finish" : "mission_progress",
+    lines: dialogLines,
+    missionId
+  };
+}
+
+      if (currentNpcMission) {
         return {
-          type: isLastStep ? "mission_finish" : "mission_progress",
-          lines: isLastStep
-            ? (
-                npcMission.dialogos?.completado?.length
-                  ? npcMission.dialogos.completado
-                  : npcMission.dialogos?.en_progreso?.length
-                    ? npcMission.dialogos.en_progreso
-                    : [npcMission.conversation_default || npcLocal?.conversation_default || "..."]
-              )
-            : (
-                npcMission.dialogos?.en_progreso?.length
-                  ? npcMission.dialogos.en_progreso
-                  : npcMission.dialogos?.inicio?.length
-                    ? npcMission.dialogos.inicio
-                    : [npcMission.conversation_default || npcLocal?.conversation_default || "..."]
-              ),
-          missionId: mission.id
+          type: "mission_locked_progress",
+          lines: currentNpcMission.dialogos?.en_progreso?.length
+            ? currentNpcMission.dialogos.en_progreso
+            : [currentNpcMission.conversation_default || "..."],
+          missionId
         };
       }
-
-      // PERTENECE A LA MISIÓN, PERO NO ES EL NPC DEL PASO ACTUAL
-      return {
-        type: "mission_locked_progress",
-        lines: npcMission.dialogos?.en_progreso?.length
-          ? npcMission.dialogos.en_progreso
-          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
-        missionId: mission.id
-      };
     }
   }
 
-  for (const mission of window.missionsData.missions) {
-    const npcMission = Array.isArray(mission.npcs)
-      ? mission.npcs.find(n => n.id === npcId)
+  for (const missionLoop of window.missionsData.missions) {
+    const npcMission = Array.isArray(missionLoop.npcs)
+      ? missionLoop.npcs.find(n => n.id === npcId)
       : null;
 
     if (!npcMission) continue;
 
-    const starterNpcId = mission.pasos?.[0]?.npcId;
+    const starterNpcId = missionLoop.pasos?.[0]?.npcId;
 
-    if (starterNpcId === npcId && !isMissionAccepted(mission.id) && !isMissionCompleted(mission.id)) {
+    if (starterNpcId === npcId && !isMissionAccepted(missionLoop.id) && !isMissionCompleted(missionLoop.id)) {
       return {
         type: "mission_start",
         lines: npcMission.dialogos?.inicio?.length
           ? npcMission.dialogos.inicio
           : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
-        missionId: mission.id
+        missionId: missionLoop.id
       };
     }
   }
@@ -4669,15 +4874,20 @@ if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
 function openNPCDialog(npc) {
   if (!npc) return;
 
+  const activeMissionId = window.missionSystem.activeMissionId;
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+
   const context = getMissionContextForNPC(npc.id);
 
-npcDialogState = {
-  npc,
-  mode: context.type,
-  lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
-  lineIndex: 0,
-  missionId: context.missionId || null
-};
+  npcDialogState = {
+    npc,
+    mode: context.type,
+    lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
+    lineIndex: 0,
+    missionId: context.missionId || null
+  };
 
   npcDialogEl = createNPCDialogDOM();
   npcDialogOpen = true;
@@ -6347,7 +6557,7 @@ resetPlayerProfile() */
 
 //------Prueba de items-----
 //Prueba de escudo:
-/* 
+/*   */
 function pruebaQuitarUsoEscudo() {
   if (!window.equipSlots) return;
 
@@ -6481,4 +6691,3 @@ function pruebaUsarEscudoHierro() {
 
   console.log("Usos restantes del Escudo de hierro:", item.usos);
 }
-  */

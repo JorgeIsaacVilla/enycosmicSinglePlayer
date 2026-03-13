@@ -236,179 +236,51 @@
 }
 }
 ],
-      "pasos": [
-        {
-          "step": 1,
-          "id": "m2s1",
-          "tipo": "hablar_npc",
-          "npcId": "npc004",
-          "titulo": "Habla con Kael",
-          "descripcion": "Recibe la misión de estabilización.",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc004",
-            "imagen": "./assets/avatares/npc/Kael.png",
-            "posicion": {
-              "x": 1450,
-              "y": 920
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 2,
-          "id": "m2s2",
-          "tipo": "completar_reto",
-          "titulo": "Completa el reto de estabilidad",
-          "descripcion": "Supera la prueba técnica inicial.",
-          "retoId": "reto_estabilidad_01",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "objeto",
-            "objetivoId": "reto_estabilidad_01",
-            "imagen": "./assets/items/bateria.svg",
-            "posicion": {
-              "x": 1560,
-              "y": 980
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 3,
-          "id": "m2s3",
-          "tipo": "hablar_npc",
-          "npcId": "npc005",
-          "titulo": "Habla con Sena",
-          "descripcion": "Consulta los materiales que debes reunir.",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc005",
-            "imagen": "./assets/avatares/npc/Sena.png",
-            "posicion": {
-              "x": 1700,
-              "y": 1180
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 4,
-          "id": "m2s4",
-          "tipo": "recolectar_items",
-          "titulo": "Recolecta los materiales",
-          "descripcion": "Reúne los componentes pedidos.",
-          "objetivosItems": [
-            {
-              "id": "cable",
-              "cantidad": 3
-            },
-            {
-              "id": "bateria",
-              "cantidad": 1
-            }
-          ],
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "objeto",
-            "objetivoId": "materiales_circuito_01",
-            "imagen": "./assets/items/cable.svg",
-            "posicion": {
-              "x": 1820,
-              "y": 1290
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 5,
-          "id": "m2s5",
-          "tipo": "hablar_npc_entrega",
-          "npcId": "npc005",
-          "titulo": "Entrega los materiales a Sena",
-          "descripcion": "Completa el intercambio y permite el ensamblaje del circuito.",
-          "entregaItems": [
-            {
-              "id": "cable",
-              "cantidad": 3
-            },
-            {
-              "id": "bateria",
-              "cantidad": 1
-            }
-          ],
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc005",
-            "imagen": "./assets/avatares/npc/Sena.png",
-            "posicion": {
-              "x": 1700,
-              "y": 1180
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 6,
-          "id": "m2s6",
-          "tipo": "hablar_npc",
-          "npcId": "npc006",
-          "titulo": "Habla con Tarek",
-          "descripcion": "Activa la supervisión del circuito reparado.",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc006",
-            "imagen": "./assets/avatares/npc/Tarek.png",
-            "posicion": {
-              "x": 1980,
-              "y": 1360
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 7,
-          "id": "m2s7",
-          "tipo": "completar_reto",
-          "titulo": "Reinicia el núcleo auxiliar",
-          "descripcion": "Ejecuta la activación final del circuito.",
-          "retoId": "reto_nucleo_auxiliar_01",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "objeto",
-            "objetivoId": "reto_nucleo_auxiliar_01",
-            "imagen": "./assets/items/corazon.svg",
-            "posicion": {
-              "x": 2100,
-              "y": 1415
-            }
-          },
-          "otorgaItems": []
-        },
-        {
-          "step": 8,
-          "id": "m2s8",
-          "tipo": "hablar_npc",
-          "npcId": "npc004",
-          "titulo": "Regresa con Kael",
-          "descripcion": "Informa que el circuito ya fue restablecido.",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc004",
-            "imagen": "./assets/avatares/npc/Kael.png",
-            "posicion": {
-              "x": 1450,
-              "y": 920
-            }
-          },
-          "otorgaItems": []
-        }
-      ],
+"pasos": [
+{
+"step": 1,
+"id": "m2s1",
+"tipo": "hablar_npc",
+"npcId": "npc004",
+"titulo": "Habla con Kael",
+"descripcion": "Kael necesita materiales para estabilizar un circuito.",
+"estadoInicial": false
+},
+{
+"step": 2,
+"id": "m2s2",
+"tipo": "recolectar_items",
+"titulo": "Recolecta los materiales",
+"descripcion": "Reúne 1 cables y 1 batería.",
+"objetivosItems": [
+{ "id": "cable", "cantidad": 1 },
+{ "id": "bateria", "cantidad": 1 }
+],
+"estadoInicial": false
+},
+{
+"step": 3,
+"id": "m2s3",
+"tipo": "hablar_npc_entrega",
+"npcId": "npc005",
+"titulo": "Entrega los materiales a Sena",
+"descripcion": "Sena ensamblará el circuito.",
+"entregaItems": [
+{ "id": "cable", "cantidad": 1 },
+{ "id": "bateria", "cantidad": 1 }
+],
+"estadoInicial": false
+},
+{
+"step": 4,
+"id": "m2s4",
+"tipo": "hablar_npc",
+"npcId": "npc004",
+"titulo": "Regresa con Kael",
+"descripcion": "Informa que el circuito ya fue estabilizado.",
+"estadoInicial": false
+}
+],
       "recompensas": {
         "iq": 12,
         "cosmonedas": 15,
