@@ -4755,6 +4755,7 @@ function missionStepRecolectadoOK(missionId) {
 }
 
 function getMissionContextForNPC(npcId) {
+
   const npcLocal = npcs.find(n => n.id === npcId);
 
   if (!window.missionsData || !Array.isArray(window.missionsData.missions)) {
@@ -4769,8 +4770,10 @@ function getMissionContextForNPC(npcId) {
   const mission = missionId ? getMissionById(missionId) : null;
 
   if (mission) {
+
     const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
     const currentStep = mission.pasos?.[stepIndex];
+
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
       : null;
@@ -4784,39 +4787,60 @@ function getMissionContextForNPC(npcId) {
       currentStepNpcId: currentStep?.npcId || null
     });
 
+    /* ---------------------------------------------
+       VALIDACIÓN PASOS DE RECOLECCIÓN
+    --------------------------------------------- */
+
     if (currentStep?.tipo === "recolectar_items") {
+
       const recolectadoOK = missionStepRecolectadoOK(missionId);
 
       if (recolectadoOK) {
+
         markMissionStepCompleted(missionId, stepIndex);
 
         const nextIndex = stepIndex + 1;
+
         if (nextIndex < mission.pasos.length) {
+
           window.missionSystem.activeStepIndexByMission[missionId] = nextIndex;
+
           revealMissionStep(missionId, nextIndex);
+
           refreshMissionPanelIfOpen();
         }
 
         const nextStep = mission.pasos?.[nextIndex];
+
         const nextNpcMission = Array.isArray(mission.npcs)
           ? mission.npcs.find(n => n.id === nextStep?.npcId)
           : null;
 
         if (nextStep && nextStep.npcId === npcId && nextNpcMission) {
+
           return {
             type: nextIndex === mission.pasos.length - 1 ? "mission_finish" : "mission_progress",
-            lines: nextNpcMission.dialogos?.en_progreso?.length
-              ? nextNpcMission.dialogos.en_progreso
-              : nextNpcMission.dialogos?.inicio?.length
+            lines:
+              nextNpcMission.dialogos?.en_progreso?.length
+                ? nextNpcMission.dialogos.en_progreso
+                : nextNpcMission.dialogos?.inicio?.length
                 ? nextNpcMission.dialogos.inicio
                 : [nextNpcMission.conversation_default || "..."],
             missionId
           };
+
         }
+
       }
+
     }
 
+    /* ---------------------------------------------
+       VALIDACIÓN PASOS DE HABLAR CON NPC
+    --------------------------------------------- */
+
     if (currentStep) {
+
       const currentNpcMission = Array.isArray(mission.npcs)
         ? mission.npcs.find(n => n.id === npcId)
         : null;
@@ -4828,67 +4852,87 @@ function getMissionContextForNPC(npcId) {
         ) &&
         currentStep.npcId === npcId;
 
-if (isCurrentNpcStep && currentNpcMission) {
-  const isLastStep = stepIndex === mission.pasos.length - 1;
+      if (isCurrentNpcStep && currentNpcMission) {
 
-  let dialogLines = [];
+        const isLastStep = stepIndex === mission.pasos.length - 1;
 
-  if (currentStep.tipo === "hablar_npc_entrega") {
-    const entregaCompleta = tieneItemsRequeridos(currentStep.entregaItems || []);
+        let dialogLines = [];
 
-    dialogLines = entregaCompleta
-      ? (
-          currentNpcMission.dialogos?.completado?.length
-            ? currentNpcMission.dialogos.completado
-            : currentNpcMission.dialogos?.inicio?.length
-              ? currentNpcMission.dialogos.inicio
-              : [currentNpcMission.conversation_default || "..."]
-        )
-      : (
-          currentNpcMission.dialogos?.en_progreso?.length
-            ? currentNpcMission.dialogos.en_progreso
-            : currentNpcMission.dialogos?.inicio?.length
-              ? currentNpcMission.dialogos.inicio
-              : [currentNpcMission.conversation_default || "..."]
-        );
-  } else {
-    dialogLines = isLastStep
-      ? (
-          currentNpcMission.dialogos?.completado?.length
-            ? currentNpcMission.dialogos.completado
-            : currentNpcMission.dialogos?.en_progreso?.length
-              ? currentNpcMission.dialogos.en_progreso
-              : [currentNpcMission.conversation_default || "..."]
-        )
-      : (
-          currentNpcMission.dialogos?.en_progreso?.length
-            ? currentNpcMission.dialogos.en_progreso
-            : currentNpcMission.dialogos?.inicio?.length
-              ? currentNpcMission.dialogos.inicio
-              : [currentNpcMission.conversation_default || "..."]
-        );
-  }
+        if (currentStep.tipo === "hablar_npc_entrega") {
 
-  return {
-    type: isLastStep ? "mission_finish" : "mission_progress",
-    lines: dialogLines,
-    missionId
-  };
-}
+          const entregaCompleta = tieneItemsRequeridos(currentStep.entregaItems || []);
 
-      if (currentNpcMission) {
+          dialogLines = entregaCompleta
+            ? (
+                currentNpcMission.dialogos?.completado?.length
+                  ? currentNpcMission.dialogos.completado
+                  : currentNpcMission.dialogos?.inicio?.length
+                  ? currentNpcMission.dialogos.inicio
+                  : [currentNpcMission.conversation_default || "..."]
+              )
+            : (
+                currentNpcMission.dialogos?.en_progreso?.length
+                  ? currentNpcMission.dialogos.en_progreso
+                  : currentNpcMission.dialogos?.inicio?.length
+                  ? currentNpcMission.dialogos.inicio
+                  : [currentNpcMission.conversation_default || "..."]
+              );
+
+        } else {
+
+          dialogLines = isLastStep
+            ? (
+                currentNpcMission.dialogos?.completado?.length
+                  ? currentNpcMission.dialogos.completado
+                  : currentNpcMission.dialogos?.en_progreso?.length
+                  ? currentNpcMission.dialogos.en_progreso
+                  : [currentNpcMission.conversation_default || "..."]
+              )
+            : (
+                currentNpcMission.dialogos?.en_progreso?.length
+                  ? currentNpcMission.dialogos.en_progreso
+                  : currentNpcMission.dialogos?.inicio?.length
+                  ? currentNpcMission.dialogos.inicio
+                  : [currentNpcMission.conversation_default || "..."]
+              );
+
+        }
+
         return {
-          type: "mission_locked_progress",
-          lines: currentNpcMission.dialogos?.en_progreso?.length
-            ? currentNpcMission.dialogos.en_progreso
-            : [currentNpcMission.conversation_default || "..."],
+          type: isLastStep ? "mission_finish" : "mission_progress",
+          lines: dialogLines,
           missionId
         };
+
       }
+
+      /* ---------------------------------------------
+         NPC pertenece a misión pero no es su paso
+      --------------------------------------------- */
+
+      if (npcMission) {
+
+        return {
+          type: "mission_locked_progress",
+          lines:
+            npcMission.dialogos?.en_progreso?.length
+              ? npcMission.dialogos.en_progreso
+              : [npcMission.conversation_default || "..."],
+          missionId
+        };
+
+      }
+
     }
+
   }
 
+  /* ---------------------------------------------
+     NPC QUE INICIA UNA MISIÓN
+  --------------------------------------------- */
+
   for (const missionLoop of window.missionsData.missions) {
+
     const npcMission = Array.isArray(missionLoop.npcs)
       ? missionLoop.npcs.find(n => n.id === npcId)
       : null;
@@ -4897,22 +4941,35 @@ if (isCurrentNpcStep && currentNpcMission) {
 
     const starterNpcId = missionLoop.pasos?.[0]?.npcId;
 
-    if (starterNpcId === npcId && !isMissionAccepted(missionLoop.id) && !isMissionCompleted(missionLoop.id)) {
+    if (
+      starterNpcId === npcId &&
+      !isMissionAccepted(missionLoop.id) &&
+      !isMissionCompleted(missionLoop.id)
+    ) {
+
       return {
         type: "mission_start",
-        lines: npcMission.dialogos?.inicio?.length
-          ? npcMission.dialogos.inicio
-          : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
+        lines:
+          npcMission.dialogos?.inicio?.length
+            ? npcMission.dialogos.inicio
+            : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
         missionId: missionLoop.id
       };
+
     }
+
   }
+
+  /* ---------------------------------------------
+     DIÁLOGO POR DEFECTO
+  --------------------------------------------- */
 
   return {
     type: "default",
     lines: [npcLocal?.conversation_default || "..."],
     missionId: null
   };
+
 }
 
 function buildNPCDialogButtons() {

@@ -60,6 +60,14 @@ NOTA: Las clasificaciones aún no han sido desarrolladas ni utilizadas en el alg
  - diaria //--> programar que se puedan reiniciar cada 1 día
  - especiales //--> Programar que se puedan reiniciar cada 7 días
 
+
+ Sugerencia de desarrollo:
+ --> maximo hasta 3 NPC por misiónes
+ --> cantidad de misiones tipo 3 por mapa; 1 sola misión
+ --> En las misiones tipo 3 Encerrar al 3er sujeto en un espacio de tal manera que el usuario pueda hablar una sola vez con el, ya que no se ha corregido el bug de seleccionar la combersación correspondiente en ese punto. 
+
+
+
 //-----------------------------------------------------------
 ACTUALMENTE TENEMOS 3 FORMATOS DE MISIONES:
 //-----------------------------------------------------------
@@ -384,12 +392,197 @@ Esta plantilla está habilitada con la funció de validación de inventario para
     },
 
 
-
 //-----------------------------------------
 fORMATO 3: CONVERSACIONAL - LLAMAMIENTO DE FUNCIONES
 //-----------------------------------------
 
-
+ {
+      "id": "m3",
+      "nombre": "La ruta del código oculto",
+      "tipo": "principal",
+      "clasificacion": "diaria",
+      "descripcion": "Recorre una breve cadena de contactos, supera una prueba y asegura un fragmento clave del sistema.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 10,
+        "misionesRequeridas": [
+          "m1",
+          "m2"
+        ],
+        "itemsRequeridos": []
+      },
+"npcs": [
+{
+"id": "npc007",
+"nombre": "Maese Ion",
+"rol": "inicio",
+"imagen": "./assets/avatares/npc/Maese_Ion.png",
+"posicion": { "x": 2240, "y": 1490 },
+"conversation_default": "combersación por defecto",
+"dialogos": {
+"inicio": [
+"Tu siguiente misión exige precisión y memoria."
+],
+"en_progreso": [
+"La cadena aún no ha sido completada."
+],
+"completado": [
+"Has recorrido todo el circuito."
+]
+}
+},
+{
+"id": "npc008",
+"nombre": "Vera",
+"rol": "contacto",
+"imagen": "./assets/avatares/npc/Vera.png",
+"posicion": { "x": 2390, "y": 1600 },
+"conversation_default": "combersación por defecto",
+"dialogos": {
+"inicio": [
+"Tengo parte del patrón que buscas."
+],
+"en_progreso": [
+"Todavía debes cerrar la secuencia."
+],
+"completado": [
+"Mi parte ya ha sido entregada."
+]
+}
+},
+{
+"id": "npc009",
+"nombre": "Solis",
+"rol": "cierre",
+"imagen": "./assets/avatares/npc/Solis.png",
+"posicion": { "x": 2580, "y": 1720 },
+"conversation_default": "combersación por defecto",
+"dialogos": {
+"inicio": [
+"La última parte depende de tu ingenio."
+],
+"en_progreso": [
+"Debes demostrar tu nivel."
+],
+"completado": [
+"La secuencia ha sido confirmada."
+]
+}
+}
+],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m3s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc007",
+          "titulo": "Habla con Maese Ion",
+          "descripcion": "Recibe la misión principal.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc007",
+            "imagen": "./assets/avatares/npc/Maese_Ion.png",
+            "posicion": {
+              "x": 2240,
+              "y": 1490
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m3s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc008",
+          "titulo": "Habla con Vera",
+          "descripcion": "Obtén la primera pista del patrón oculto.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc008",
+            "imagen": "./assets/avatares/npc/Vera.png",
+            "posicion": {
+              "x": 2390,
+              "y": 1600
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m3s3",
+          "tipo": "completar_reto",
+          "titulo": "Completa el reto de codificación",
+          "descripcion": "Resuelve la secuencia lógica del panel.",
+          "retoId": "reto_codificacion_01",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "reto_codificacion_01",
+            "imagen": "./assets/items/diodoLazer.svg",
+            "posicion": {
+              "x": 2460,
+              "y": 1660
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m3s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc009",
+          "titulo": "Habla con Solis",
+          "descripcion": "Entrega la información obtenida y desbloquea la fase final.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc009",
+            "imagen": "./assets/avatares/npc/Solis.png",
+            "posicion": {
+              "x": 2580,
+              "y": 1720
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 5,
+          "id": "m3s5",
+          "tipo": "hablar_npc",
+          "npcId": "npc007",
+          "titulo": "Regresa con Maese Ion",
+          "descripcion": "Informa del avance acumulado y cierra la ruta.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc007",
+            "imagen": "./assets/avatares/npc/Maese_Ion.png",
+            "posicion": {
+              "x": 2240,
+              "y": 1490
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 10,
+        "cosmonedas": 0,
+        "items": [
+          {
+            "id": "bateria",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    }
 
 
 
