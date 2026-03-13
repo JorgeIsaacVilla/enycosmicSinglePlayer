@@ -4434,7 +4434,6 @@ function getMissionContextForNPC(npcId) {
     };
   }
 
-  // 1. prioridad: revisar misiones aceptadas/completadas donde el NPC participa
   for (const mission of window.missionsData.missions) {
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
@@ -4456,7 +4455,6 @@ function getMissionContextForNPC(npcId) {
       ) &&
       currentStep.npcId === npcId;
 
-    // misión ya completada → diálogo completado
     if (missionCompleted) {
       return {
         type: "mission_completed",
@@ -4467,9 +4465,8 @@ function getMissionContextForNPC(npcId) {
       };
     }
 
-    // misión aceptada y este NPC hace parte de esa misión
     if (missionAccepted) {
-      // si además es el NPC del paso actual
+      // ESTE ES EL NPC EXACTO DEL PASO ACTUAL
       if (isCurrentNpcStep) {
         const isLastStep = stepIndex === mission.pasos.length - 1;
 
@@ -4494,9 +4491,9 @@ function getMissionContextForNPC(npcId) {
         };
       }
 
-      // si no es el paso actual pero sí hace parte de una misión aceptada
+      // PERTENECE A LA MISIÓN, PERO NO ES EL NPC DEL PASO ACTUAL
       return {
-        type: "mission_progress",
+        type: "mission_locked_progress",
         lines: npcMission.dialogos?.en_progreso?.length
           ? npcMission.dialogos.en_progreso
           : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
@@ -4505,7 +4502,6 @@ function getMissionContextForNPC(npcId) {
     }
   }
 
-  // 2. si no está aceptada ninguna, revisar si este NPC inicia una misión disponible
   for (const mission of window.missionsData.missions) {
     const npcMission = Array.isArray(mission.npcs)
       ? mission.npcs.find(n => n.id === npcId)
@@ -4526,7 +4522,6 @@ function getMissionContextForNPC(npcId) {
     }
   }
 
-  // 3. si no pertenece a ninguna misión relevante → default
   return {
     type: "default",
     lines: [npcLocal?.conversation_default || "..."],
@@ -4578,6 +4573,10 @@ function buildNPCDialogButtons() {
     }));
     return;
   }
+  if (npcDialogState.mode === "mission_locked_progress") {
+  actionsEl.appendChild(makeBtn("Cerrar", closeNPCDialog));
+  return;
+}
 
   if (npcDialogState.mode === "mission_start") {
     if (!atFirst) {
@@ -4595,19 +4594,24 @@ function buildNPCDialogButtons() {
     return;
   }
 
-  if (npcDialogState.mode === "mission_progress") {
-    if (!atFirst) {
-      actionsEl.appendChild(makeBtn("Anterior", () => {
-        npcDialogState.lineIndex--;
-        renderNPCDialog();
-      }));
-    }
-
-    actionsEl.appendChild(makeBtn("Continuar misión", () => {
-      continueActiveMissionFromNPC(npcDialogState.npc.id);
+if (npcDialogState.mode === "mission_progress") {
+  if (!atFirst) {
+    actionsEl.appendChild(makeBtn("Anterior", () => {
+      npcDialogState.lineIndex--;
+      renderNPCDialog();
     }));
-    return;
   }
+
+  actionsEl.appendChild(makeBtn("Continuar misión", () => {
+    const ok = continueActiveMissionFromNPC(npcDialogState.npc.id);
+
+    if (!ok) {
+      console.log("No se pudo continuar la misión con este NPC:", npcDialogState.npc.id);
+      closeNPCDialog();
+    }
+  }));
+  return;
+}
 
   if (npcDialogState.mode === "mission_finish") {
     if (!atFirst) {
