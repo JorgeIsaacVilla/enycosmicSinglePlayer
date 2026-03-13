@@ -4754,9 +4754,34 @@ function missionStepRecolectadoOK(missionId) {
   return validado;
 }
 
+
+//----------Función para determinar la linea de comversación del NPC según el estado de la misión 
 function getMissionContextForNPC(npcId) {
 
   const npcLocal = npcs.find(n => n.id === npcId);
+
+  // validar si el NPC pertenece a una misión ya completada
+for (const missionLoop of window.missionsData.missions) {
+
+  if (!isMissionCompleted(missionLoop.id)) continue;
+
+  const npcMission = Array.isArray(missionLoop.npcs)
+    ? missionLoop.npcs.find(n => n.id === npcId)
+    : null;
+
+  if (!npcMission) continue;
+
+  return {
+    type: "mission_completed",
+    lines: npcMission.dialogos?.completado?.length
+      ? npcMission.dialogos.completado
+      : npcMission.dialogos?.en_progreso?.length
+        ? npcMission.dialogos.en_progreso
+        : [npcMission.conversation_default || npcLocal?.conversation_default || "..."],
+    missionId: missionLoop.id
+  };
+
+}
 
   if (!window.missionsData || !Array.isArray(window.missionsData.missions)) {
     return {

@@ -65,6 +65,14 @@ NOTA: Las clasificaciones aún no han sido desarrolladas ni utilizadas en el alg
  --> maximo hasta 3 NPC por misiónes
  --> cantidad de misiones tipo 3 por mapa; 1 sola misión
  --> En las misiones tipo 3 Encerrar al 3er sujeto en un espacio de tal manera que el usuario pueda hablar una sola vez con el, ya que no se ha corregido el bug de seleccionar la combersación correspondiente en ese punto. 
+--> Las misiones tipo 3 es para desbloquear los algoritmos de conocimientos. si el mapa no requiere "algoritmo de conocimiento" entonces se puede utilizar para otro tipo de misión. (Minimapa / mapa complementario a mapa principal)
+
+-->Relación de NPC por mapa: Total NPCs designado a misiones 36 por mapa de 5000x5000<--
+
+NOTA: Se recomienda un máximo de 12 misiones por mapa:
+-> 7 diarias (Formato combersacional)
+-> 4 segundarias (Formato combersacional - validación de inventario)
+-> 1 principal correspondiente al 3er formato de misiones  (Formato combersacional - llamamiento de funciones)
 
 
 
