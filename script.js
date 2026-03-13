@@ -384,7 +384,18 @@ function openMetaMap() {
     for (const npc of starters) {
       const marker = document.createElement("div");
       marker.className = "metamap-starter-marker";
-      marker.textContent = "?";
+      const missionStarter = window.missionsData?.missions?.find(
+  m => m.pasos?.[0]?.npcId === npc.id
+);
+
+if (
+  missionStarter &&
+  window.missionSystem?.completedMissionIds?.includes(missionStarter.id)
+) {
+  marker.textContent = "⚝";
+} else {
+  marker.textContent = "?";
+}
       viewport.appendChild(marker);
 
       starterMarkers.push({
@@ -4132,19 +4143,41 @@ function drawNPCs(ctx) {
     const isActiveTarget = activeNpcId && npc.id === activeNpcId;
     const isStarterWithoutMission = !activeMission && npc.missionStarter;
 
-    if (isActiveTarget || isStarterWithoutMission) {
-      ctx.fillStyle = "yellow";
-      ctx.font = "20px arcade";
-      ctx.textAlign = "center";
+if (isActiveTarget || npc.missionStarter) {
 
-ctx.fillText(
-  isStarterWithoutMission ? "?" : "!",
-  npc.x + npc.w / 2,
-  npc.y - 10
-);
+  let symbol = null;
 
-      ctx.textAlign = "start";
+  if (isActiveTarget) {
+    symbol = "!";
+  }
+
+  if (!activeMission && npc.missionStarter) {
+
+    const missionStarter = window.missionsData?.missions?.find(
+      m => m.pasos?.[0]?.npcId === npc.id
+    );
+
+    if (missionStarter && isMissionCompleted(missionStarter.id)) {
+      symbol = "⚝";
+    } else {
+      symbol = "?";
     }
+  }
+
+  if (symbol) {
+    ctx.fillStyle = "yellow";
+    ctx.font = "20px arcade";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+      symbol,
+      npc.x + npc.w / 2,
+      npc.y - 10
+    );
+
+    ctx.textAlign = "start";
+  }
+}
 
     ctx.fillStyle = "white";
     ctx.font = "12px arcade";
