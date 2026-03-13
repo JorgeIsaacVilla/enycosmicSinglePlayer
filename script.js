@@ -3663,54 +3663,20 @@ window.reto_codificacion_01 = function () {
 };
 //------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
 
-/*
 function setActiveMission(missionId) {
   if (!isMissionAccepted(missionId)) return;
+  if (isMissionCompleted(missionId)) return;
 
   window.missionSystem.activeMissionId = missionId;
 
   const mission = getMissionById(missionId);
-  if (!mission) {
-    refreshMissionPanelIfOpen();
-    return;
-  }
-
-  let stepIndex = window.missionSystem.activeStepIndexByMission[missionId];
-
-  if (typeof stepIndex !== "number") {
-    stepIndex = 0;
-    window.missionSystem.activeStepIndexByMission[missionId] = 0;
-  }
-
-  const currentStep = mission.pasos?.[stepIndex] || null;
-
-  if (currentStep?.verificador?.posicion) {
-    coordenadasMisionsX = Number(currentStep.verificador.posicion.x) || 0;
-    coordenadasMisionsY = Number(currentStep.verificador.posicion.y) || 0;
-    coordenadasMisionState = true;
-  } else {
-    coordenadasMisionState = false;
-  }
- console.log("Misión seleccionada:", missionId, mission?.nombre);
-  refreshMissionPanelIfOpen();
-}
-*/
-function setActiveMission(missionId) {
-  if (!isMissionAccepted(missionId)) return;
-
-  window.missionSystem.activeMissionId = missionId;
-
-  const mission = getMissionById(missionId);
-  if (!mission) return;
-
   const stepIndex = window.missionSystem.activeStepIndexByMission[missionId] ?? 0;
-
-  const currentStep = mission.pasos?.[stepIndex] || null;
-  const nextStep = mission.pasos?.[stepIndex + 1] || null;
+  const currentStep = mission?.pasos?.[stepIndex] || null;
+  const nextStep = mission?.pasos?.[stepIndex + 1] || null;
 
   console.log("MISIÓN ACTIVA", {
     id: missionId,
-    nombre: mission.nombre,
+    nombre: mission?.nombre,
     pasoActual: {
       index: stepIndex,
       titulo: currentStep?.titulo || null
@@ -3720,7 +3686,7 @@ function setActiveMission(missionId) {
           index: stepIndex + 1,
           titulo: nextStep.titulo
         }
-      : "No hay más pasos (misión finalizada)"
+      : "No hay más pasos"
   });
 
   refreshMissionPanelIfOpen();
@@ -4511,9 +4477,6 @@ function buildMissionsHTML() {
   ensureMissionUIStyles();
 
   const acceptedIds = window.missionSystem.acceptedMissionIds || [];
-  const completedIds = window.missionSystem.completedMissionIds || [];
-  const activeMissionId = window.missionSystem.activeMissionId || null;
-
   const missions = acceptedIds
     .map(id => getMissionById(id))
     .filter(Boolean);
@@ -4529,57 +4492,56 @@ function buildMissionsHTML() {
     `;
   }
 
-  const pendingMissions = missions.filter(m => !completedIds.includes(m.id));
-  const doneMissions = missions.filter(m => completedIds.includes(m.id));
-  const orderedMissions = [...pendingMissions, ...doneMissions];
+  const activeMissionId = window.missionSystem.activeMissionId || null;
 
-  const html = orderedMissions.map((mission) => {
-    const revealed = window.missionSystem.revealedStepIndexes[mission.id] || [];
-    const completedSteps = window.missionSystem.completedSteps[mission.id] || [];
-    const isCompleted = completedIds.includes(mission.id);
+  const pendingMissions = missions.filter(m => !isMissionCompleted(m.id));
+  const completedMissions = missions.filter(m => isMissionCompleted(m.id));
+
+  const orderedMissions = [...pendingMissions, ...completedMissions];
+
+  const missionsHTML = orderedMissions.map((mission) => {
+    const accepted = isMissionAccepted(mission.id);
+    const completed = isMissionCompleted(mission.id);
     const isActive = activeMissionId === mission.id;
 
-    const missionTitle = mission.tipo === "principal"
-      ? `➜ ${mission.nombre}`
-      : `→ ${mission.nombre}`;
+    const revealed = window.missionSystem.revealedStepIndexes[mission.id] || [];
+    const completedSteps = window.missionSystem.completedSteps[mission.id] || [];
 
-    const titleClass = isActive
-      ? "ui-mission-title ui-mission-title-active"
-      : "ui-mission-title";
+const pasosHTML = (accepted && !completed)
+  ? revealed.map((stepIndex) => {
+      const step = mission.pasos?.[stepIndex];
+      if (!step) return "";
 
-    const stepsHTML = (isActive && !isCompleted)
-      ? revealed.map((stepIndex) => {
-          const step = mission.pasos?.[stepIndex];
-          if (!step) return "";
+      const done = completedSteps.includes(stepIndex);
+      const x = step.verificador?.posicion?.x ?? "-";
+      const y = step.verificador?.posicion?.y ?? "-";
 
-          const done = completedSteps.includes(stepIndex);
-          const x = step.verificador?.posicion?.x ?? "-";
-          const y = step.verificador?.posicion?.y ?? "-";
-
-          return `
-            <div class="ui-mission-step-box ${done ? "ui-mission-step-done" : ""}">
-              <p class="ui-mission-step">${done ? "✔ " : ""}${step.titulo}</p>
-              <p class="ui-mission-step">${step.descripcion}</p>
-              <p class="ui-mission-coords">X: ${x} | Y: ${y}</p>
-            </div>
-          `;
-        }).join("")
-      : "";
+      return `
+        <div class="ui-mission-step-box ${done ? "ui-mission-step-done" : ""}">
+          <p class="ui-mission-step">${done ? "✔ " : ""}${step.titulo}</p>
+          <p class="ui-mission-step">${step.descripcion}</p>
+          <p class="ui-mission-coords">X: ${x} | Y: ${y}</p>
+        </div>
+      `;
+    }).join("")
+  : "";
 
     return `
-      <div class="ui-mission-card ${isCompleted ? "ui-mission-card-completed" : ""}" data-mission-select="${mission.id}">
-        <p class="${titleClass}">
-          ${isCompleted ? "✔ " : ""}${missionTitle}
+      <div
+        class="ui-mission-card ${completed ? "ui-mission-card-completed" : ""}"
+        data-mission-id="${mission.id}"
+        ${completed ? "" : `data-selectable-mission="1"`}
+      >
+        <p class="ui-mission-title ${isActive ? "ui-mission-title-active" : ""}">
+          ${mission.tipo === "principal" ? "➜ " : ""}${completed ? "✔ " : ""}${mission.nombre}
         </p>
-        ${stepsHTML}
+        ${pasosHTML}
       </div>
     `;
   }).join("");
 
-  return `<div class="ui-missions-root">${html}</div>`;
+  return `<div class="ui-missions-root">${missionsHTML}</div>`;
 }
-
-window.buildMissionsHTML = buildMissionsHTML;
 
 window.buildMissionsHTML = buildMissionsHTML;
 
@@ -4663,14 +4625,13 @@ function refreshMissionPanelIfOpen() {
 }
 
 document.addEventListener("click", (e) => {
-  const missionCard = e.target.closest?.("#container-interfas[data-panel='misions'] [data-mission-select]");
-  if (!missionCard) return;
+  const card = e.target.closest?.("#container-interfas[data-panel='misions'] .ui-mission-card");
+  if (!card) return;
 
-  const missionId = missionCard.dataset.missionSelect;
+  const missionId = card.dataset.missionId;
   if (!missionId) return;
+  if (!card.dataset.selectableMission) return;
 
-  e.preventDefault();
-  e.stopPropagation();
   setActiveMission(missionId);
 }, true);
 
