@@ -3625,22 +3625,6 @@ function setActiveMission(missionId) {
   refreshMissionPanelIfOpen();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getActiveMission() {
   return getMissionById(window.missionSystem.activeMissionId);
 }
@@ -3652,12 +3636,6 @@ function getCurrentMissionStep() {
   const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id];
   return mission.pasos?.[stepIndex] || null;
 }
-
-
-
-
-
-
 function isMissionAvailable(mission) {
   if (!mission) return false;
 
@@ -3695,10 +3673,6 @@ function isMissionAvailable(mission) {
 }
 
 */
-
-
-
-
 
 function revealMissionStep(missionId, stepIndex) {
   if (!window.missionSystem.revealedStepIndexes[missionId]) {
@@ -4046,6 +4020,22 @@ function preloadNPCs(list) {
 }
 
 function drawNPCs(ctx) {
+  const activeMission = getActiveMission();
+  const activeMissionId = window.missionSystem.activeMissionId;
+  const activeStepIndex = activeMissionId != null
+    ? (window.missionSystem.activeStepIndexByMission[activeMissionId] ?? 0)
+    : -1;
+
+  const activeStep = activeMission?.pasos?.[activeStepIndex] || null;
+  const activeNpcId =
+    activeStep &&
+    (
+      activeStep.tipo === "hablar_npc" ||
+      activeStep.tipo === "hablar_npc_entrega"
+    )
+      ? activeStep.npcId
+      : null;
+
   for (const npc of npcs) {
     const imgOk =
       npc.img &&
@@ -4072,21 +4062,23 @@ function drawNPCs(ctx) {
       ctx.textAlign = "start";
     }
 
-    if (npc.missionStarter) {
+    const isActiveTarget = activeNpcId && npc.id === activeNpcId;
+    const isStarterWithoutMission = !activeMission && npc.missionStarter;
+
+    if (isActiveTarget || isStarterWithoutMission) {
       ctx.fillStyle = "yellow";
       ctx.font = "20px arcade";
       ctx.textAlign = "center";
 
-      ctx.fillText(
-        "?",
-        npc.x + npc.w / 2,
-        npc.y - 10
-      );
+ctx.fillText(
+  isStarterWithoutMission ? "?" : "!",
+  npc.x + npc.w / 2,
+  npc.y - 10
+);
 
       ctx.textAlign = "start";
     }
-    
-    // nombre del NPC debajo del avatar
+
     ctx.fillStyle = "white";
     ctx.font = "12px arcade";
     ctx.textAlign = "center";
