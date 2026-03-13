@@ -4,7 +4,7 @@
       "id": "m1",
       "nombre": "Ecos del primer contacto",
       "tipo": "principal",
-      "clasificacion": "inicio",
+      "clasificacion": "diaria",
       "descripcion": "Habla con tres NPC para recopilar información inicial sobre el sistema Enycosmic.",
       "estadoFinalizacion": {
         "tipo": "automatica",
@@ -131,25 +131,26 @@
             }
           ]
         },
-        {
-          "step": 3,
-          "id": "m1s3",
-          "tipo": "hablar_npc",
-          "npcId": "npc003",
-          "titulo": "Habla con Orbek",
-          "descripcion": "Completa la red de información.",
-          "estadoInicial": false,
-          "verificador": {
-            "tipoObjetivo": "npc",
-            "objetivoId": "npc003",
-            "imagen": "./assets/avatares/npc/Orbek.png",
-            "posicion": {
-              "x": 1180,
-              "y": 1260
-            }
-          },
-          "otorgaItems": []
-        }
+{
+  "step": 3,
+  "id": "m3s3",
+  "tipo": "completar_reto",
+  "titulo": "Completa el reto de codificación",
+  "descripcion": "Resuelve la secuencia lógica del panel.",
+  "retoId": "reto_codificacion_01",
+  "llamar_funcion_reto": "reto_codificacion_01()",
+  "estadoInicial": false,
+  "verificador": {
+    "tipoObjetivo": "objeto",
+    "objetivoId": "reto_codificacion_01",
+    "imagen": "./assets/items/diodoLazer.svg",
+    "posicion": {
+      "x": 2460,
+      "y": 1660
+    }
+  },
+  "otorgaItems": []
+}
       ],
       "recompensas": {
         "iq": 6,
@@ -158,11 +159,25 @@
         "codigoSecreto": null
       }
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
       "id": "m2",
       "nombre": "Intercambio de energía",
       "tipo": "secundaria",
-      "clasificacion": "recoleccion",
+      "clasificacion": "diaria",
       "descripcion": "Completa un reto, recolecta materiales y entrégalos para reactivar un circuito auxiliar.",
       "estadoFinalizacion": {
         "tipo": "automatica",
@@ -297,11 +312,23 @@
         "codigoSecreto": null
       }
     },
+
+
+
+
+
+
+
+
+
+
+
+
     {
       "id": "m3",
       "nombre": "La ruta del código oculto",
       "tipo": "principal",
-      "clasificacion": "cadena_npc",
+      "clasificacion": "diaria",
       "descripcion": "Recorre una breve cadena de contactos, supera una prueba y asegura un fragmento clave del sistema.",
       "estadoFinalizacion": {
         "tipo": "automatica",
@@ -484,5 +511,23 @@
         "codigoSecreto": null
       }
     }
+    
   ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

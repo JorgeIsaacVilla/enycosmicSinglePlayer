@@ -1867,7 +1867,9 @@ function equiparItemDelInventario(slotIndex) {
   const esEquipable =
     tipo === "arma" ||
     tipo === "equipo" ||
-    tipo === "consumible";
+    tipo === "equipo_especial" ||
+    tipo === "arma_especial"
+    //tipo === "consumible";
 
   console.log("Intentando equipar:", item);
   console.log("Tipo detectado:", tipo);
@@ -3316,6 +3318,8 @@ window.player = player;
 
 let npcs = []; // arreglo donde se almacenan los NPC
 
+
+//-- lógica de misiones
 async function cargarNPCsDesdeMisiones() {
   const response = await fetch("./npc-itemsJSON/missions.json");
   const data = await response.json();
@@ -3372,14 +3376,191 @@ function isMissionAccepted(missionId) {
   return window.missionSystem.acceptedMissionIds.includes(missionId);
 }
 
+//------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
+function openRetoPopup(retoId, onComplete) {
+  const oldPopup = document.getElementById("reto-popup-overlay");
+  if (oldPopup) oldPopup.remove();
 
+  const overlay = document.createElement("div");
+  overlay.id = "reto-popup-overlay";
 
+  overlay.innerHTML = `
+    <div
+      style="
+        position:absolute;
+        inset:0;
+        z-index:6000;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      "
+    >
+      <div
+        style="
+          width:320px;
+          height:320px;
+          background:black;
+          color:#00ffcc;
+          border:3px solid #00ffcc;
+          box-shadow:
+            0 0 0 2px #0b3d35,
+            0 0 0 4px #00ffcc,
+            0 10px 30px rgba(0,0,0,0.45);
+          font-family:'arcade','monospace';
+          image-rendering:pixelated;
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+          padding:14px;
+          box-sizing:border-box;
+          text-align:center;
+        "
+      >
+        <div
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            border-bottom:2px solid rgba(0,255,204,.35);
+            padding-bottom:8px;
+          "
+        >
+          <div
+            style="
+              font-size:12px;
+              text-transform:uppercase;
+            "
+          >
+            Reto
+          </div>
 
+          <button
+            id="reto-popup-close"
+            type="button"
+            style="
+              width:36px;
+              height:36px;
+              background:black;
+              color:#00ffcc;
+              border:2px solid #00ffcc;
+              font-family:'arcade','monospace';
+              font-size:14px;
+              cursor:pointer;
+            "
+          >
+            X
+          </button>
+        </div>
 
+        <div
+          style="
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:18px;
+          "
+        >
+          <div
+            style="
+              font-size:12px;
+              line-height:1.5;
+              text-transform:uppercase;
+            "
+          >
+            Presiona el botón para pasar el reto
+          </div>
 
+          <button
+            id="reto-popup-pass"
+            type="button"
+            style="
+              min-width:160px;
+              min-height:44px;
+              padding:8px 14px;
+              background:black;
+              color:#00ffcc;
+              border:2px solid #00ffcc;
+              font-family:'arcade','monospace';
+              font-size:12px;
+              cursor:pointer;
+              text-transform:uppercase;
+            "
+          >
+            Pasar reto
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
 
+  wrapEl.appendChild(overlay);
 
+  const closeBtn = overlay.querySelector("#reto-popup-close");
+  const passBtn = overlay.querySelector("#reto-popup-pass");
 
+  function closeRetoPopup() {
+    overlay.remove();
+  }
+
+  closeBtn.addEventListener("click", closeRetoPopup);
+
+  passBtn.addEventListener("click", () => {
+    if (typeof onComplete === "function") {
+      onComplete(retoId);
+    }
+    closeRetoPopup();
+  });
+}
+
+function completarRetoMission(retoId) {
+  const mission = getActiveMission();
+  if (!mission) return false;
+
+  const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id] ?? 0;
+  const step = mission.pasos?.[stepIndex];
+  if (!step) return false;
+
+  if (step.tipo !== "completar_reto") return false;
+  if (step.retoId !== retoId) return false;
+
+  markMissionStepCompleted(mission.id, stepIndex);
+
+  const nextIndex = stepIndex + 1;
+
+  if (nextIndex < mission.pasos.length) {
+    window.missionSystem.activeStepIndexByMission[mission.id] = nextIndex;
+    revealMissionStep(mission.id, nextIndex);
+
+    const nextStep = mission.pasos[nextIndex];
+
+    if (nextStep?.verificador?.posicion) {
+      coordenadasMisionsX = Number(nextStep.verificador.posicion.x) || 0;
+      coordenadasMisionsY = Number(nextStep.verificador.posicion.y) || 0;
+      coordenadasMisionState = true;
+    } else {
+      coordenadasMisionState = false;
+    }
+
+    refreshMissionPanelIfOpen();
+
+    console.log("Reto completado:", {
+      missionId: mission.id,
+      retoId,
+      siguientePaso: nextStep?.id || null
+    });
+
+    return true;
+  }
+
+  return false;
+}
+
+window.reto_codificacion_01 = function () {
+  openRetoPopup("reto_codificacion_01", completarRetoMission);
+};
+//------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
 
 /*
 function setActiveMission(missionId) {

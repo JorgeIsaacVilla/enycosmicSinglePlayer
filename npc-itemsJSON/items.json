@@ -163,7 +163,7 @@
     {
       "id": "baso_de_agua",
       "nombre_item": "Baso De Agua",
-      "tipo_item": "item",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/basoAgua.svg",
       "agotable": true,
       "cantidad_de_usos": 1,
@@ -239,7 +239,7 @@
     {
       "id": "diodo_lazer",
       "nombre_item": "Diodo Lazer",
-      "tipo_item": "item especial",
+      "tipo_item": "consumible_especial",
       "imagen": "./assets/items/diodoLazer.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -252,7 +252,7 @@
     {
       "id": "limon",
       "nombre_item": "Limon",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/limon.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -265,7 +265,7 @@
     {
       "id": "sal",
       "nombre_item": "Sal",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/sal.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -278,7 +278,7 @@
     {
       "id": "baso",
       "nombre_item": "Baso",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/baso.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -291,7 +291,7 @@
     {
       "id": "agua",
       "nombre_item": "Agua",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/agua.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -304,7 +304,7 @@
     {
       "id": "palo_de_madera",
       "nombre_item": "Palo De Madera",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/paloMadera.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -319,7 +319,7 @@
     {
       "id": "madera",
       "nombre_item": "Madera",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/madera.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -332,7 +332,7 @@
     {
       "id": "hierro",
       "nombre_item": "Hierro",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/hierro.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -345,7 +345,7 @@
     {
       "id": "cobre",
       "nombre_item": "Cobre",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/cobre.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -358,7 +358,7 @@
     {
       "id": "plastico",
       "nombre_item": "Plastico",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/plastico.svg",
       "agotable": false,
       "cantidad_de_usos": null,
@@ -371,7 +371,7 @@
     {
       "id": "balinera",
       "nombre_item": "Balinera",
-      "tipo_item": "material_base",
+      "tipo_item": "consumible",
       "imagen": "./assets/items/balinera.svg",
       "agotable": false,
       "cantidad_de_usos": null,
