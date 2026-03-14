@@ -3430,6 +3430,62 @@ window.player = player;
 
 let npcs = []; // arreglo donde se almacenan los NPC
 
+//-- NPC's Ambiente
+let npcsAmbiente = [];
+window.npcsAmbiente = npcsAmbiente;
+
+//--lógica NPC's ambiente
+
+async function cargarNPCsAmbiente() {
+  const response = await fetch("./world.JSON/NPCambiente.json");
+  const data = await response.json();
+
+  const lista = Array.isArray(data) ? data : (data.npcs || []);
+
+return lista.map((npc, index) => ({
+  id: npc.id || `npc_amb_${index}`,
+  nombre: npc.nombre || `NPC-${index + 1}`,
+  imageSrc: npc.imagen,
+  img: null,
+
+  x: Number(npc.x) || 0,
+  y: Number(npc.y) || 0,
+  baseX: Number(npc.x) || 0,
+  baseY: Number(npc.y) || 0,
+
+  w: Number(npc.w) || 64,
+  h: Number(npc.h) || 64,
+
+  velocidad: Number(npc.velocidad) || 1,
+  dialogos_automaticos: Array.isArray(npc.dialogos_automaticos) ? npc.dialogos_automaticos : [],
+
+  dirX: 0,
+  dirY: 0,
+  isMoving: false,
+  pasosRestantes: 0,
+  tiempoCambioDecision: 0,
+  tiempoMaxDecision: 12000,
+  tiempoMinDecision: 1500,
+
+  bubbleText: "",
+  bubbleTimer: 0,
+  bubbleMaxTime: 2600,
+
+  tiempoHablaCooldown: 0,
+  tiempoMinHabla: 4000,
+  tiempoMaxHabla: 12000,
+
+  facing: "down",
+  frame: 0,
+  frameTimer: 0,
+  frameDurationMs: 160,
+  frameWidth: 64,
+  frameHeight: 64,
+  totalFrames: 4
+}));
+
+}
+
 
 //-- lógica de misiones
 async function cargarNPCsDesdeMisiones() {
@@ -4074,7 +4130,30 @@ function getCurrentNPCMissionRole(npcId) {
 /*Dibujar NPC (inicio) */
 //===========================================
 
+//--NPC's ambiente
+function preloadNPCsAmbiente(list) {
+  return Promise.all(
+    list.map(npc => new Promise((resolve) => {
+      const img = new Image();
 
+      img.onload = () => {
+        npc.img = img;
+        resolve();
+      };
+
+      img.onerror = () => {
+        console.warn("NPC ambiente no cargó:", npc.imageSrc);
+        npc.img = null;
+        resolve();
+      };
+
+      img.src = npc.imageSrc;
+    }))
+  );
+}
+
+
+//--NPC's Misiones
 function preloadNPCs(list) {
   return Promise.all(
     list.map(npc => new Promise((resolve) => {
@@ -4096,6 +4175,126 @@ function preloadNPCs(list) {
     }))
   );
 }
+//--NPC's Ambiente (inicio)
+function drawBubbleNPCambiente(ctx, npc) {
+  if (!npc?.bubbleText || npc.bubbleTimer <= 0) return;
+
+  const text = npc.bubbleText;
+  const fontSize = 12;
+  const paddingX = 8;
+  const paddingY = 6;
+  const lineHeight = 14;
+  const maxCharsPerLine = 22;
+
+  ctx.save();
+  ctx.font = `${fontSize}px arcade`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (test.length <= maxCharsPerLine) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+
+  const longest = lines.reduce((a, b) => a.length > b.length ? a : b, "");
+  const bubbleW = Math.max(40, ctx.measureText(longest).width + paddingX * 2);
+  const bubbleH = (lines.length * lineHeight) + paddingY * 2;
+
+  const bubbleX = npc.x + npc.w / 2;
+  const bubbleY = npc.y - 18 - bubbleH;
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fillRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.beginPath();
+  ctx.moveTo(bubbleX - 6, bubbleY + bubbleH);
+  ctx.lineTo(bubbleX, bubbleY + bubbleH + 8);
+  ctx.lineTo(bubbleX + 6, bubbleY + bubbleH);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.fillStyle = "black";
+  for (let i = 0; i < lines.length; i++) {
+    ctx.fillText(
+      lines[i],
+      bubbleX,
+      bubbleY + paddingY + (lineHeight / 2) + (i * lineHeight)
+    );
+  }
+
+  ctx.restore();
+}
+
+//--NPC's Ambiente (fin)
+
+//--NPC's ambiente (inicio)
+function drawNPCsAmbiente(ctx) {
+  for (const npc of npcsAmbiente) {
+    if (!npc) continue;
+
+    const imgOk =
+      npc.img &&
+      npc.img.complete &&
+      npc.img.naturalWidth > 0 &&
+      npc.img.naturalHeight > 0;
+
+    if (imgOk) {
+      const row = rowForFacing(npc.facing || "down");
+      const sx = (npc.frame || 0) * (npc.frameWidth || 64);
+      const sy = row * (npc.frameHeight || 64);
+
+      ctx.drawImage(
+        npc.img,
+        sx,
+        sy,
+        npc.frameWidth || 64,
+        npc.frameHeight || 64,
+        npc.x,
+        npc.y,
+        npc.w,
+        npc.h
+      );
+    } else {
+      ctx.strokeStyle = "cyan";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(npc.x, npc.y, npc.w, npc.h);
+    }
+
+    ctx.fillStyle = "white";
+    ctx.font = "12px arcade";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      npc.nombre,
+      npc.x + npc.w / 2,
+      npc.y + npc.h + 14
+    );
+    ctx.textAlign = "start";
+  }
+}
+
+function drawBubblesNPCsAmbiente(ctx) {
+  for (const npc of npcsAmbiente) {
+    if (!npc) continue;
+    drawBubbleNPCambiente(ctx, npc);
+  }
+}
+
+
+//--NPC's ambiente (fin)
 
 function drawNPCs(ctx) {
   const activeMission = getActiveMission();
@@ -5298,7 +5497,125 @@ function isPlayerNearNPC(npc, maxDistance = 220) {
   };
   return ROW[facing] ?? 0;
 };
+//--NPC's ambiente
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
+function elegirDireccionAleatoriaNPC() {
+  const dirs = [
+    { x: 0, y: -1 },
+    { x: 1, y: 0 },
+    { x: 0, y: 1 },
+    { x: -1, y: 0 }
+  ];
+
+  return dirs[randomInt(0, dirs.length - 1)];
+}
+
+function hacerHablarNPCambiente(npc) {
+  if (!npc || !npc.dialogos_automaticos?.length) return;
+
+  const index = randomInt(0, npc.dialogos_automaticos.length - 1);
+  npc.bubbleText = npc.dialogos_automaticos[index];
+  npc.bubbleTimer = npc.bubbleMaxTime;
+  npc.tiempoHablaCooldown = randomInt(npc.tiempoMinHabla, npc.tiempoMaxHabla);
+}
+
+function decidirNuevaAccionNPCambiente(npc) {
+  if (!npc) return;
+
+  const seMovera = Math.random() < 0.7;
+
+  if (seMovera) {
+    const dir = elegirDireccionAleatoriaNPC();
+    npc.dirX = dir.x;
+    npc.dirY = dir.y;
+    npc.isMoving = true;
+    npc.pasosRestantes = randomInt(20, 120);
+  } else {
+    npc.dirX = 0;
+    npc.dirY = 0;
+    npc.isMoving = false;
+    npc.pasosRestantes = 0;
+  }
+
+  npc.tiempoCambioDecision = randomInt(npc.tiempoMinDecision, npc.tiempoMaxDecision);
+
+  if (npc.tiempoHablaCooldown <= 0 && Math.random() < 0.35) {
+    hacerHablarNPCambiente(npc);
+  }
+}
+
+//--NPC'sambiente (Inicio)
+function updateNPCsAmbiente(dtMs) {
+  for (const npc of npcsAmbiente) {
+    if (!npc) continue;
+
+    if (npc.bubbleTimer > 0) {
+      npc.bubbleTimer -= dtMs;
+      if (npc.bubbleTimer < 0) {
+        npc.bubbleTimer = 0;
+        npc.bubbleText = "";
+      }
+    }
+
+    if (npc.tiempoHablaCooldown > 0) {
+      npc.tiempoHablaCooldown -= dtMs;
+      if (npc.tiempoHablaCooldown < 0) npc.tiempoHablaCooldown = 0;
+    }
+
+    npc.tiempoCambioDecision -= dtMs;
+
+    if (npc.tiempoCambioDecision <= 0 || (npc.isMoving && npc.pasosRestantes <= 0)) {
+      decidirNuevaAccionNPCambiente(npc);
+    }
+
+    if (npc.isMoving && npc.pasosRestantes > 0) {
+      const delta = dtMs / 16.6667;
+      const nextX = npc.x + (npc.dirX * npc.velocidad * delta);
+      const nextY = npc.y + (npc.dirY * npc.velocidad * delta);
+
+      const limiteIzq = 0;
+      const limiteArr = 0;
+      const limiteDer = WORLD_W - npc.w;
+      const limiteAbj = WORLD_H - npc.h;
+
+      npc.x = clamp(nextX, limiteIzq, limiteDer);
+      npc.y = clamp(nextY, limiteArr, limiteAbj);
+
+      if (npc.dirX > 0) npc.facing = "right";
+      else if (npc.dirX < 0) npc.facing = "left";
+      else if (npc.dirY > 0) npc.facing = "down";
+      else if (npc.dirY < 0) npc.facing = "up";
+
+      npc.frameTimer += dtMs;
+      while (npc.frameTimer >= npc.frameDurationMs) {
+        npc.frameTimer -= npc.frameDurationMs;
+        npc.frame = (npc.frame + 1) % npc.totalFrames;
+      }
+
+      npc.pasosRestantes -= 1;
+
+      const pegoBorde =
+        npc.x <= limiteIzq ||
+        npc.x >= limiteDer ||
+        npc.y <= limiteArr ||
+        npc.y >= limiteAbj;
+
+      if (pegoBorde) {
+        npc.pasosRestantes = 0;
+        npc.isMoving = false;
+      }
+    } else {
+      npc.frame = 0;
+      npc.frameTimer = 0;
+    }
+  }
+}
+
+
+//--NPC'sambiente (Fin)
   function update(dtMs) {
 
     //pdv = Math.max(0, pdv - dtMs * 0.001); // prueba: baja 1 PDV por segundo
@@ -5338,6 +5655,9 @@ function isPlayerNearNPC(npc, maxDistance = 220) {
       player.frame = 0;
       player.frameTimer = 0;
     }
+
+    updateNPCsAmbiente(dtMs);
+
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -5656,6 +5976,7 @@ async function handleCanvasClick(e) {
 }
 
 
+
 /*Lógica selector de genero. mover valor para mover y visualizar el texto con el ratio del clic (Inicio) */
 const fontSiseGender = 28; //tamaño de letra selector de genero
 /*Constante posicionamiento selector genero hombre */
@@ -5785,10 +6106,9 @@ const PROF_BOX = {
   btnSize: 24,  // Tamaño (ancho y alto) de los botones laterales ◀ ▶
 
   btnPad: 16,   // Separación entre:
-                 // - flechas y borde del cuadro
-                 // - flechas y parte inferior del cuadro
-                 // Mientras mayor sea, más se alejan del borde
-
+                // - flechas y borde del cuadro
+                // - flechas y parte inferior del cuadro
+                // Mientras mayor sea, más se alejan del borde
 };
 
 function getProfessionUI() {
@@ -6648,12 +6968,13 @@ ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
 
 // Dibujar NPCs
 drawNPCs(ctx);
+drawNPCsAmbiente(ctx);
 
 // Dibujar items
 pruebaDeItems();
 drawItems(ctx);
 
-// Dibujar avatar después, para que quede por encima
+// Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
 
 const row = rowForFacing(player.facing);
@@ -6666,6 +6987,10 @@ ctx.drawImage(
   player.x, player.y,
   HERO_DRAW_W, HERO_DRAW_H
 );
+
+// Dibujar globos de chat de NPC ambiente después del jugador
+drawBubblesNPCsAmbiente(ctx);
+
 
     ctx.restore();
 
@@ -6852,6 +7177,21 @@ function start() {
 preloadAvatars(characters)
   .catch(err => console.error("Error precargando avatares:", err));
 
+//--NPC's ambiente (inicio)
+async function initNPCsAmbiente() {
+  npcsAmbiente = await cargarNPCsAmbiente();
+  window.npcsAmbiente = npcsAmbiente;
+
+  await preloadNPCsAmbiente(npcsAmbiente);
+
+  for (const npc of npcsAmbiente) {
+    decidirNuevaAccionNPCambiente(npc);
+    npc.tiempoHablaCooldown = randomInt(2000, 9000);
+  }
+}
+
+//--NPC's ambiente (fin)
+
 async function initNPCs() {
   npcs = await cargarNPCsDesdeMisiones();
   window.npcs = npcs;
@@ -6860,6 +7200,8 @@ async function initNPCs() {
 }
 
 initNPCs();
+initNPCsAmbiente();
+
 
 // decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)
 checkUserProfile();

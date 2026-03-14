@@ -1,7 +1,7 @@
 [
   {
-    "imagen": "./assets/avatares/npc/mapa1/Niris.png",
-    "nombre": "Niris",
+    "imagen": "./assets/avatares/npc/mapa1/Neris.png",
+    "nombre": "Neris",
     "velocidad": 1.2,
     "dialogos_automaticos": [
       "Las estrellas guardan secretos antiguos.",
