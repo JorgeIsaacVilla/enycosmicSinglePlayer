@@ -36,7 +36,7 @@
     "y": 1100
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Armin",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -48,7 +48,7 @@
     "y": 700
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Darius",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -60,7 +60,7 @@
     "y": 950
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Lucan",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -72,7 +72,7 @@
     "y": 1200
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Rael",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -84,7 +84,7 @@
     "y": 1000
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Korin",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -96,7 +96,7 @@
     "y": 800
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Valen",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -108,7 +108,7 @@
     "y": 900
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Tarek",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -120,7 +120,7 @@
     "y": 1100
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Marek",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -132,7 +132,7 @@
     "y": 950
   },
   {
-    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "imagen": "./assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Orion",
     "velocidad": 1,
     "dialogos_automaticos": [
