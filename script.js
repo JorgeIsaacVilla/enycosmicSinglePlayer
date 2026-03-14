@@ -3489,7 +3489,7 @@ return lista.map((npc, index) => ({
 
 //-- lógica de misiones
 async function cargarNPCsDesdeMisiones() {
-  const response = await fetch("./world.json/missions.json");
+  const response = await fetch("./world.JSON/missions.json");
   const data = await response.json();
 
   window.missionsData = data;
