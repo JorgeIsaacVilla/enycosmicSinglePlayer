@@ -1,0 +1,146 @@
+[
+  {
+    "imagen": "./assets/avatares/npc/mapa1/Niris.png",
+    "nombre": "Niris",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Las estrellas guardan secretos antiguos.",
+      "No todo lo que brilla es energía cósmica.",
+      "Sigue observando el cielo."
+    ],
+    "x": 1200,
+    "y": 850
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/Thera.png",
+    "nombre": "Thera",
+    "velocidad": 1.1,
+    "dialogos_automaticos": [
+      "La energía del mapa cambia constantemente.",
+      "A veces las respuestas están más cerca de lo que crees.",
+      "Escucha el entorno."
+    ],
+    "x": 1500,
+    "y": 900
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/Karina.png",
+    "nombre": "Karina",
+    "velocidad": 1.3,
+    "dialogos_automaticos": [
+      "Las misiones revelan más que recompensas.",
+      "El conocimiento también es poder.",
+      "Sigue explorando."
+    ],
+    "x": 1000,
+    "y": 1100
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Armin",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "He visto viajeros pasar por aquí.",
+      "Algunos regresan con respuestas.",
+      "Otros con más preguntas."
+    ],
+    "x": 1800,
+    "y": 700
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Darius",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los portales no siempre aparecen donde esperas.",
+      "A veces el camino correcto parece incorrecto.",
+      "Observa bien el terreno."
+    ],
+    "x": 2100,
+    "y": 950
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Lucan",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "El mapa guarda patrones.",
+      "Si miras suficiente tiempo los verás.",
+      "Nada es casualidad."
+    ],
+    "x": 2400,
+    "y": 1200
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Rael",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los viajeros sabios escuchan antes de actuar.",
+      "La paciencia también es una herramienta.",
+      "No subestimes los detalles."
+    ],
+    "x": 2700,
+    "y": 1000
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Korin",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "La energía aquí fluctúa.",
+      "A veces abre rutas nuevas.",
+      "Mantente atento."
+    ],
+    "x": 3000,
+    "y": 800
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Valen",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los símbolos antiguos no son decoración.",
+      "Cada uno tiene un propósito.",
+      "Aprende a reconocerlos."
+    ],
+    "x": 3300,
+    "y": 900
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Tarek",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los exploradores curiosos llegan más lejos.",
+      "Pero también se pierden más.",
+      "Equilibra ambas cosas."
+    ],
+    "x": 3600,
+    "y": 1100
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Marek",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Hay zonas donde la gravedad se comporta extraño.",
+      "No todo sigue las reglas normales.",
+      "Experimenta."
+    ],
+    "x": 3900,
+    "y": 950
+  },
+  {
+    "imagen": "./assets/avatares/npc/mapa1/centinela.png",
+    "nombre": "Centinela-Orion",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Las rutas más seguras no siempre son las mejores.",
+      "A veces debes arriesgarte.",
+      "El universo recompensa a los valientes."
+    ],
+    "x": 4200,
+    "y": 850
+  }
+]

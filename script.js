@@ -3433,7 +3433,7 @@ let npcs = []; // arreglo donde se almacenan los NPC
 
 //-- lógica de misiones
 async function cargarNPCsDesdeMisiones() {
-  const response = await fetch("./npc-itemsJSON/missions.json");
+  const response = await fetch("./world.json/missions.json");
   const data = await response.json();
 
   window.missionsData = data;
@@ -5848,7 +5848,7 @@ window.inventarioUser.push(
 
 async function cargarItemsJSON(){
 
-  const res = await fetch("./npc-itemsJSON/items.json");
+  const res = await fetch("./items.json");
   const data = await res.json();
 
   itemsData = data.items;
@@ -6906,7 +6906,7 @@ resetPlayerProfile() */
 
 //------Prueba de items-----
 //Prueba de escudo:
-/*   */
+/*  
 function pruebaQuitarUsoEscudo() {
   if (!window.equipSlots) return;
 
@@ -7040,3 +7040,4 @@ function pruebaUsarEscudoHierro() {
 
   console.log("Usos restantes del Escudo de hierro:", item.usos);
 }
+ */

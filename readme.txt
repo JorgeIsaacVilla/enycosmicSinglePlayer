@@ -12,11 +12,12 @@ https://www.figma.com/design/4I6dlSCN6tx1BAvZ76SyXd/Metaverso?node-id=0-1&t=PjwP
 //efectos css:
 juegos artificiales: https://codepen.io/matt-cannon/pen/YPKGBGm
 Crecimiento de un bebe: https://codepen.io/leimapapa/pen/YzoEaEd
-abla periodica: https://codepen.io/stoumann/pen/gONqOXZ
+Tabla periodica: https://codepen.io/stoumann/pen/gONqOXZ
 https://codepen.io/venky2842/details/rNxjoxr Rompecabeza
 https://codepen.io/GeorgePark/pen/MqVoYP paper mario
 https://codepen.io/Julia-Farcash/pen/oNRBwEN  //juego enycosmic
 
+https://codepen.io/jkantner/pen/wdzYNr  //NPC ambiente - parte de su logica se tomará para los Enemys
 
 /*Definición de mapas y perspectivas de mapas*/
 - perspectiva cenital inclinada (top-down) ligeramente inclinada

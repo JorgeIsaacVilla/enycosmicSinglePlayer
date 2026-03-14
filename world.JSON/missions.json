@@ -21,7 +21,7 @@
           "id": "npc001",
           "nombre": "Aelys",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Aelys.png",
+          "imagen": "./assets/avatares/npc/mapa1/Aelys.png",
           "posicion": { "x": 420, "y": 560 },
           "conversation_default": "Estoy revisando la red de observación.",
           "dialogos": {
@@ -41,7 +41,7 @@
           "id": "npc002",
           "nombre": "Jack",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Jack.png",
+          "imagen": "./assets/avatares/npc/mapa1/Jack.png",
           "posicion": { "x": 760, "y": 780 },
           "conversation_default": "Todavía estoy ajustando las lecturas ópticas.",
           "dialogos": {
@@ -61,7 +61,7 @@
           "id": "npc003",
           "nombre": "Kaia",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Kaia.png",
+          "imagen": "./assets/avatares/npc/mapa1/Kaia.png",
           "posicion": { "x": 1120, "y": 940 },
           "conversation_default": "Este panel no debe quedar fuera de sincronía.",
           "dialogos": {
@@ -90,7 +90,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc001",
-            "imagen": "./assets/avatares/npc/Aelys.png",
+            "imagen": "./assets/avatares/npc/mapa1/Aelys.png",
             "posicion": { "x": 420, "y": 560 }
           },
           "otorgaItems": []
@@ -106,7 +106,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc002",
-            "imagen": "./assets/avatares/npc/Jack.png",
+            "imagen": "./assets/avatares/npc/mapa1/Jack.png",
             "posicion": { "x": 760, "y": 780 }
           },
           "otorgaItems": [
@@ -127,7 +127,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc003",
-            "imagen": "./assets/avatares/npc/Kaia.png",
+            "imagen": "./assets/avatares/npc/mapa1/Kaia.png",
             "posicion": { "x": 1120, "y": 940 }
           },
           "otorgaItems": []
@@ -161,7 +161,7 @@
           "id": "npc004",
           "nombre": "Manuel",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Manuel.png",
+          "imagen": "./assets/avatares/npc/mapa1/Manuel.png",
           "posicion": { "x": 1350, "y": 620 },
           "conversation_default": "Estoy cartografiando nuevas rutas.",
           "dialogos": {
@@ -181,7 +181,7 @@
           "id": "npc005",
           "nombre": "Myra",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Myra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Myra.png",
           "posicion": { "x": 1580, "y": 890 },
           "conversation_default": "Las rutas cambian según la actividad orbital.",
           "dialogos": {
@@ -201,7 +201,7 @@
           "id": "npc006",
           "nombre": "Nyra",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Nyra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Nyra.png",
           "posicion": { "x": 1810, "y": 1110 },
           "conversation_default": "No puedo liberar el tránsito sin autorización.",
           "dialogos": {
@@ -230,7 +230,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc004",
-            "imagen": "./assets/avatares/npc/Manuel.png",
+            "imagen": "./assets/avatares/npc/mapa1/Manuel.png",
             "posicion": { "x": 1350, "y": 620 }
           },
           "otorgaItems": []
@@ -246,7 +246,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc005",
-            "imagen": "./assets/avatares/npc/Myra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Myra.png",
             "posicion": { "x": 1580, "y": 890 }
           },
           "otorgaItems": [
@@ -267,7 +267,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc006",
-            "imagen": "./assets/avatares/npc/Nyra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Nyra.png",
             "posicion": { "x": 1810, "y": 1110 }
           },
           "otorgaItems": []
@@ -301,7 +301,7 @@
           "id": "npc007",
           "nombre": "Astra",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Astra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Astra.png",
           "posicion": { "x": 520, "y": 1320 },
           "conversation_default": "Todavía no cierro el registro de resonancia.",
           "dialogos": {
@@ -321,7 +321,7 @@
           "id": "npc008",
           "nombre": "Cyra",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Cyra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Cyra.png",
           "posicion": { "x": 860, "y": 1460 },
           "conversation_default": "Esa frecuencia no parece natural.",
           "dialogos": {
@@ -341,7 +341,7 @@
           "id": "npc009",
           "nombre": "Elara",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Elara.png",
+          "imagen": "./assets/avatares/npc/mapa1/Elara.png",
           "posicion": { "x": 1210, "y": 1590 },
           "conversation_default": "No he liberado todavía el archivo central.",
           "dialogos": {
@@ -370,7 +370,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc007",
-            "imagen": "./assets/avatares/npc/Astra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Astra.png",
             "posicion": { "x": 520, "y": 1320 }
           },
           "otorgaItems": []
@@ -386,7 +386,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc008",
-            "imagen": "./assets/avatares/npc/Cyra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Cyra.png",
             "posicion": { "x": 860, "y": 1460 }
           },
           "otorgaItems": []
@@ -402,7 +402,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc009",
-            "imagen": "./assets/avatares/npc/Elara.png",
+            "imagen": "./assets/avatares/npc/mapa1/Elara.png",
             "posicion": { "x": 1210, "y": 1590 }
           },
           "otorgaItems": [
@@ -441,7 +441,7 @@
           "id": "npc010",
           "nombre": "Eira",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Eira.png",
+          "imagen": "./assets/avatares/npc/mapa1/Eira.png",
           "posicion": { "x": 1490, "y": 1520 },
           "conversation_default": "Todavía estoy revisando el circuito óptico.",
           "dialogos": {
@@ -461,7 +461,7 @@
           "id": "npc011",
           "nombre": "Lyra",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Lyra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Lyra.png",
           "posicion": { "x": 1740, "y": 1670 },
           "conversation_default": "Estoy afinando la lente secundaria.",
           "dialogos": {
@@ -481,7 +481,7 @@
           "id": "npc012",
           "nombre": "Vanya",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Vanya.png",
+          "imagen": "./assets/avatares/npc/mapa1/Vanya.png",
           "posicion": { "x": 2010, "y": 1810 },
           "conversation_default": "No liberaré el circuito sin confirmación completa.",
           "dialogos": {
@@ -510,7 +510,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc010",
-            "imagen": "./assets/avatares/npc/Eira.png",
+            "imagen": "./assets/avatares/npc/mapa1/Eira.png",
             "posicion": { "x": 1490, "y": 1520 }
           },
           "otorgaItems": []
@@ -526,7 +526,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc011",
-            "imagen": "./assets/avatares/npc/Lyra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Lyra.png",
             "posicion": { "x": 1740, "y": 1670 }
           },
           "otorgaItems": []
@@ -542,7 +542,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc012",
-            "imagen": "./assets/avatares/npc/Vanya.png",
+            "imagen": "./assets/avatares/npc/mapa1/Vanya.png",
             "posicion": { "x": 2010, "y": 1810 }
           },
           "otorgaItems": []
@@ -576,7 +576,7 @@
           "id": "npc013",
           "nombre": "Vexa",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Vexa.png",
+          "imagen": "./assets/avatares/npc/mapa1/Vexa.png",
           "posicion": { "x": 2140, "y": 920 },
           "conversation_default": "Todavía no he terminado de distribuir los avisos.",
           "dialogos": {
@@ -596,7 +596,7 @@
           "id": "npc014",
           "nombre": "Zevran",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Zevran.png",
+          "imagen": "./assets/avatares/npc/mapa1/Zevran.png",
           "posicion": { "x": 2360, "y": 1080 },
           "conversation_default": "El corredor sigue bajo monitoreo.",
           "dialogos": {
@@ -616,7 +616,7 @@
           "id": "npc015",
           "nombre": "Ziria",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Ziria.png",
+          "imagen": "./assets/avatares/npc/mapa1/Ziria.png",
           "posicion": { "x": 2590, "y": 1230 },
           "conversation_default": "No puedo cerrar el registro hasta recibir todos los datos.",
           "dialogos": {
@@ -645,7 +645,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc013",
-            "imagen": "./assets/avatares/npc/Vexa.png",
+            "imagen": "./assets/avatares/npc/mapa1/Vexa.png",
             "posicion": { "x": 2140, "y": 920 }
           },
           "otorgaItems": []
@@ -661,7 +661,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc014",
-            "imagen": "./assets/avatares/npc/Zevran.png",
+            "imagen": "./assets/avatares/npc/mapa1/Zevran.png",
             "posicion": { "x": 2360, "y": 1080 }
           },
           "otorgaItems": []
@@ -677,7 +677,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc015",
-            "imagen": "./assets/avatares/npc/Ziria.png",
+            "imagen": "./assets/avatares/npc/mapa1/Ziria.png",
             "posicion": { "x": 2590, "y": 1230 }
           },
           "otorgaItems": []
@@ -711,7 +711,7 @@
           "id": "npc016",
           "nombre": "Alira",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Alira.png",
+          "imagen": "./assets/avatares/npc/mapa1/Alira.png",
           "posicion": { "x": 720, "y": 1940 },
           "conversation_default": "Aún no cierro el anillo de confirmación.",
           "dialogos": {
@@ -731,7 +731,7 @@
           "id": "npc017",
           "nombre": "Selka",
           "rol": "informante",
-          "imagen": "./assets/avatares/npc/Selka.png",
+          "imagen": "./assets/avatares/npc/mapa1/Selka.png",
           "posicion": { "x": 1030, "y": 2060 },
           "conversation_default": "Mi firma no será válida sin el sello final.",
           "dialogos": {
@@ -751,7 +751,7 @@
           "id": "npc018",
           "nombre": "Syra",
           "rol": "cierre_informativo",
-          "imagen": "./assets/avatares/npc/Syra.png",
+          "imagen": "./assets/avatares/npc/mapa1/Syra.png",
           "posicion": { "x": 1340, "y": 2180 },
           "conversation_default": "No puedo sellar el anillo sin la secuencia completa.",
           "dialogos": {
@@ -780,7 +780,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc016",
-            "imagen": "./assets/avatares/npc/Alira.png",
+            "imagen": "./assets/avatares/npc/mapa1/Alira.png",
             "posicion": { "x": 720, "y": 1940 }
           },
           "otorgaItems": []
@@ -796,7 +796,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc017",
-            "imagen": "./assets/avatares/npc/Selka.png",
+            "imagen": "./assets/avatares/npc/mapa1/Selka.png",
             "posicion": { "x": 1030, "y": 2060 }
           },
           "otorgaItems": []
@@ -812,7 +812,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc018",
-            "imagen": "./assets/avatares/npc/Syra.png",
+            "imagen": "./assets/avatares/npc/mapa1/Syra.png",
             "posicion": { "x": 1340, "y": 2180 }
           },
           "otorgaItems": []
@@ -846,7 +846,7 @@
           "id": "npc019",
           "nombre": "Arkon",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Arkon.png",
+          "imagen": "./assets/avatares/npc/mapa1/Arkon.png",
           "posicion": { "x": 1660, "y": 2320 },
           "conversation_default": "La bobina sigue descargada.",
           "dialogos": {
@@ -866,7 +866,7 @@
           "id": "npc020",
           "nombre": "Valen",
           "rol": "intercambio",
-          "imagen": "./assets/avatares/npc/Valen.png",
+          "imagen": "./assets/avatares/npc/mapa1/Valen.png",
           "posicion": { "x": 1940, "y": 2460 },
           "conversation_default": "Sin materiales no podré reparar nada.",
           "dialogos": {
@@ -894,7 +894,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc019",
-            "imagen": "./assets/avatares/npc/Arkon.png",
+            "imagen": "./assets/avatares/npc/mapa1/Arkon.png",
             "posicion": { "x": 1660, "y": 2320 }
           },
           "otorgaItems": []
@@ -933,7 +933,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc020",
-            "imagen": "./assets/avatares/npc/Valen.png",
+            "imagen": "./assets/avatares/npc/mapa1/Valen.png",
             "posicion": { "x": 1940, "y": 2460 }
           },
           "otorgaItems": []
@@ -949,7 +949,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc019",
-            "imagen": "./assets/avatares/npc/Arkon.png",
+            "imagen": "./assets/avatares/npc/mapa1/Arkon.png",
             "posicion": { "x": 1660, "y": 2320 }
           },
           "otorgaItems": []
@@ -992,7 +992,7 @@
           "id": "npc021",
           "nombre": "Orion",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Orion.png",
+          "imagen": "./assets/avatares/npc/mapa1/Orion.png",
           "posicion": { "x": 2240, "y": 2080 },
           "conversation_default": "El pulso del corredor aún es inestable.",
           "dialogos": {
@@ -1012,7 +1012,7 @@
           "id": "npc022",
           "nombre": "Kael",
           "rol": "intercambio",
-          "imagen": "./assets/avatares/npc/Kael.png",
+          "imagen": "./assets/avatares/npc/mapa1/Kael.png",
           "posicion": { "x": 2480, "y": 2250 },
           "conversation_default": "No puedo reconstruir el pulso sin insumos.",
           "dialogos": {
@@ -1040,7 +1040,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc021",
-            "imagen": "./assets/avatares/npc/Orion.png",
+            "imagen": "./assets/avatares/npc/mapa1/Orion.png",
             "posicion": { "x": 2240, "y": 2080 }
           },
           "otorgaItems": []
@@ -1079,7 +1079,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc022",
-            "imagen": "./assets/avatares/npc/Kael.png",
+            "imagen": "./assets/avatares/npc/mapa1/Kael.png",
             "posicion": { "x": 2480, "y": 2250 }
           },
           "otorgaItems": []
@@ -1095,7 +1095,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc021",
-            "imagen": "./assets/avatares/npc/Orion.png",
+            "imagen": "./assets/avatares/npc/mapa1/Orion.png",
             "posicion": { "x": 2240, "y": 2080 }
           },
           "otorgaItems": []
@@ -1138,7 +1138,7 @@
           "id": "npc023",
           "nombre": "Samnder",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Samnder.png",
+          "imagen": "./assets/avatares/npc/mapa1/Samnder.png",
           "posicion": { "x": 2680, "y": 1820 },
           "conversation_default": "La consola fría sigue fuera de línea.",
           "dialogos": {
@@ -1158,7 +1158,7 @@
           "id": "npc024",
           "nombre": "Sena",
           "rol": "intercambio",
-          "imagen": "./assets/avatares/npc/Sena.png",
+          "imagen": "./assets/avatares/npc/mapa1/Sena.png",
           "posicion": { "x": 2870, "y": 2010 },
           "conversation_default": "Sin recursos no podré reactivar la consola.",
           "dialogos": {
@@ -1186,7 +1186,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
-            "imagen": "./assets/avatares/npc/Samnder.png",
+            "imagen": "./assets/avatares/npc/mapa1/Samnder.png",
             "posicion": { "x": 2680, "y": 1820 }
           },
           "otorgaItems": []
@@ -1225,7 +1225,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc024",
-            "imagen": "./assets/avatares/npc/Sena.png",
+            "imagen": "./assets/avatares/npc/mapa1/Sena.png",
             "posicion": { "x": 2870, "y": 2010 }
           },
           "otorgaItems": []
@@ -1241,7 +1241,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
-            "imagen": "./assets/avatares/npc/Samnder.png",
+            "imagen": "./assets/avatares/npc/mapa1/Samnder.png",
             "posicion": { "x": 2680, "y": 1820 }
           },
           "otorgaItems": []
@@ -1284,7 +1284,7 @@
           "id": "npc025",
           "nombre": "Cyron",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Cyron.png",
+          "imagen": "./assets/avatares/npc/mapa1/Cyron.png",
           "posicion": { "x": 3010, "y": 1520 },
           "conversation_default": "La estación orbital no puede mezclar sin reactivos.",
           "dialogos": {
@@ -1304,7 +1304,7 @@
           "id": "npc026",
           "nombre": "Darek",
           "rol": "intercambio",
-          "imagen": "./assets/avatares/npc/Darek.png",
+          "imagen": "./assets/avatares/npc/mapa1/Darek.png",
           "posicion": { "x": 3230, "y": 1690 },
           "conversation_default": "No puedo preparar la mezcla sin los ingredientes exactos.",
           "dialogos": {
@@ -1332,7 +1332,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc025",
-            "imagen": "./assets/avatares/npc/Cyron.png",
+            "imagen": "./assets/avatares/npc/mapa1/Cyron.png",
             "posicion": { "x": 3010, "y": 1520 }
           },
           "otorgaItems": []
@@ -1371,7 +1371,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc026",
-            "imagen": "./assets/avatares/npc/Darek.png",
+            "imagen": "./assets/avatares/npc/mapa1/Darek.png",
             "posicion": { "x": 3230, "y": 1690 }
           },
           "otorgaItems": []
@@ -1387,7 +1387,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc025",
-            "imagen": "./assets/avatares/npc/Cyron.png",
+            "imagen": "./assets/avatares/npc/mapa1/Cyron.png",
             "posicion": { "x": 3010, "y": 1520 }
           },
           "otorgaItems": []
@@ -1430,7 +1430,7 @@
           "id": "npc027",
           "nombre": "Maese_Ion",
           "rol": "inicio",
-          "imagen": "./assets/avatares/npc/Maese_Ion.png",
+          "imagen": "./assets/avatares/npc/mapa1/Maese_Ion.png",
           "posicion": { "x": 3480, "y": 1280 },
           "conversation_default": "El algoritmo aún no ha sido revelado.",
           "dialogos": {
@@ -1450,7 +1450,7 @@
           "id": "npc028",
           "nombre": "Aelys",
           "rol": "contacto",
-          "imagen": "./assets/avatares/npc/Aelys.png",
+          "imagen": "./assets/avatares/npc/mapa1/Aelys.png",
           "posicion": { "x": 3690, "y": 1460 },
           "conversation_default": "La secuencia no será entregada fuera de protocolo.",
           "dialogos": {
@@ -1470,7 +1470,7 @@
           "id": "npc029",
           "nombre": "Orbek",
           "rol": "cierre",
-          "imagen": "./assets/avatares/npc/Orbek.png",
+          "imagen": "./assets/avatares/npc/mapa1/Orbek.png",
           "posicion": { "x": 3920, "y": 1620 },
           "conversation_default": "El núcleo no responde si la secuencia sigue abierta.",
           "dialogos": {
@@ -1499,7 +1499,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc027",
-            "imagen": "./assets/avatares/npc/Maese_Ion.png",
+            "imagen": "./assets/avatares/npc/mapa1/Maese_Ion.png",
             "posicion": { "x": 3480, "y": 1280 }
           },
           "otorgaItems": []
@@ -1515,7 +1515,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc028",
-            "imagen": "./assets/avatares/npc/Aelys.png",
+            "imagen": "./assets/avatares/npc/mapa1/Aelys.png",
             "posicion": { "x": 3690, "y": 1460 }
           },
           "otorgaItems": []
@@ -1548,7 +1548,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc029",
-            "imagen": "./assets/avatares/npc/Orbek.png",
+            "imagen": "./assets/avatares/npc/mapa1/Orbek.png",
             "posicion": { "x": 3920, "y": 1620 }
           },
           "otorgaItems": []
@@ -1564,7 +1564,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc027",
-            "imagen": "./assets/avatares/npc/Maese_Ion.png",
+            "imagen": "./assets/avatares/npc/mapa1/Maese_Ion.png",
             "posicion": { "x": 3480, "y": 1280 }
           },
           "otorgaItems": []
