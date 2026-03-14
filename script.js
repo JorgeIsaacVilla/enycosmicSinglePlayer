@@ -6966,13 +6966,13 @@ if (logoImg) {
 
 ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
 
-// Dibujar NPCs
-drawNPCs(ctx);
-drawNPCsAmbiente(ctx);
-
 // Dibujar items
 pruebaDeItems();
 drawItems(ctx);
+
+// Dibujar NPCs
+drawNPCs(ctx);
+drawNPCsAmbiente(ctx);
 
 // Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
