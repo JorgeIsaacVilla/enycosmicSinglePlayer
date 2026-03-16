@@ -5655,8 +5655,18 @@ function updateNPCsAmbiente(dtMs) {
       player.frame = 0;
       player.frameTimer = 0;
     }
+const equipSlotsLimpiados = limpiarEquipSlotsAgotados();
 
-    updateNPCsAmbiente(dtMs);
+if (equipSlotsLimpiados) {
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+updateNPCsAmbiente(dtMs);
 
   }
 
@@ -6586,7 +6596,27 @@ cargarItemsJSON();
 // =======================================================================================
 // Lógica de items/consumibles/armas (fin)
 // =======================================================================================
+function limpiarEquipSlotsAgotados() {
+  if (!Array.isArray(window.equipSlots)) return false;
 
+  let huboCambios = false;
+
+  for (let i = 0; i < window.equipSlots.length; i++) {
+    const item = window.equipSlots[i];
+    if (!item) continue;
+
+    const esAgotable = item.agotable === true;
+    const desapareceAlAgotarse = item.desaparece_al_agotarse === true;
+    const usosActuales = Number(item.usos ?? item.usos_restantes ?? 0);
+
+    if (esAgotable && desapareceAlAgotarse && usosActuales <= 0) {
+      window.equipSlots[i] = null;
+      huboCambios = true;
+    }
+  }
+
+  return huboCambios;
+}
 // =======================================================================================
 // Lógica de pintura en canvas (inicio)
 // =======================================================================================
@@ -7104,7 +7134,7 @@ if (window.equipSlots && window.equipSlots.length) {
     if (item._hudImg.complete && item._hudImg.naturalWidth > 0) {
       ctx.drawImage(item._hudImg, x + 3, y + 3, slotSize - 6, slotSize - 6);
     }
-    
+
 const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
 const usosMaximos = item.usos_maximos ?? usosActuales;
 const esAgotable = item.agotable === true;
