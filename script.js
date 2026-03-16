@@ -1980,8 +1980,8 @@ function equiparItemDelInventario(slotIndex) {
     tipo === "arma" ||
     tipo === "equipo" ||
     tipo === "equipo_especial" ||
-    tipo === "arma_especial"
-    //tipo === "consumible";
+    tipo === "arma_especial" ||
+    tipo === "consumible"
 
   console.log("Intentando equipar:", item);
   console.log("Tipo detectado:", tipo);
@@ -6595,7 +6595,8 @@ function draw(images) {
   // =============================
 // ✨ Brillo global del juego
 // =============================
-ctx.shadowColor = "#00ffcc";
+//ctx.shadowColor = "#00ffcc";
+ctx.shadowColor = "black";
 ctx.shadowBlur = 3;
 
   // reset
@@ -6615,7 +6616,7 @@ ctx.shadowBlur = 3;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     return;
   }
-
+  
   // 🟡 MODO CHECKING
   if (gameMode === "checking") {
     ctx.fillStyle = "black";
@@ -7103,41 +7104,41 @@ if (window.equipSlots && window.equipSlots.length) {
     if (item._hudImg.complete && item._hudImg.naturalWidth > 0) {
       ctx.drawImage(item._hudImg, x + 3, y + 3, slotSize - 6, slotSize - 6);
     }
+    
+const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
+const usosMaximos = item.usos_maximos ?? usosActuales;
+const esAgotable = item.agotable === true;
 
-    const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
-    const usosMaximos = item.usos_maximos ?? usosActuales;
-    const esAgotable = item.agotable === true;
+if (esAgotable && usosMaximos > 0) {
+  const barraX = x + 2;
+  const barraY = y - 7;
+  const barraW = slotSize - 4;
+  const barraH = 5;
+  const progreso = Math.max(0, Math.min(1, usosActuales / usosMaximos));
 
-    if (esAgotable && usosMaximos > 0) {
-      const barraX = x + 2;
-      const barraY = y - 7;
-      const barraW = slotSize - 4;
-      const barraH = 5;
-      const progreso = Math.max(0, Math.min(1, usosActuales / usosMaximos));
+  // fondo barra
+  ctx.fillStyle = "#222";
+  ctx.fillRect(barraX, barraY, barraW, barraH);
 
-      // fondo barra
-      ctx.fillStyle = "#222";
-      ctx.fillRect(barraX, barraY, barraW, barraH);
+  // progreso
+  ctx.fillStyle = "#00ffcc";
+  ctx.fillRect(barraX, barraY, barraW * progreso, barraH);
 
-      // progreso
-      ctx.fillStyle = "#00ffcc";
-      ctx.fillRect(barraX, barraY, barraW * progreso, barraH);
+  // borde
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(barraX, barraY, barraW, barraH);
 
-      // borde
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(barraX, barraY, barraW, barraH);
-    }
+  // contador solo para items agotables
+  ctx.fillStyle = "black";
+  ctx.fillRect(x + slotSize - 18, y + slotSize - 14, 16, 12);
 
-    // contador
-    ctx.fillStyle = "black";
-    ctx.fillRect(x + slotSize - 18, y + slotSize - 14, 16, 12);
-
-    ctx.fillStyle = "white";
-    ctx.font = "10px arcade";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(usosActuales), x + slotSize - 10, y + slotSize - 8);
+  ctx.fillStyle = "white";
+  ctx.font = "10px arcade";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(String(usosActuales), x + slotSize - 10, y + slotSize - 8);
+}
   });
 
   ctx.restore();
@@ -7248,7 +7249,7 @@ resetPlayerProfile() */
 
 //------Prueba de items-----
 //Prueba de escudo:
-/*  
+/*   */
 function pruebaQuitarUsoEscudo() {
   if (!window.equipSlots) return;
 
@@ -7382,4 +7383,3 @@ function pruebaUsarEscudoHierro() {
 
   console.log("Usos restantes del Escudo de hierro:", item.usos);
 }
- */
