@@ -245,7 +245,7 @@
       "imagen": "./assets/avatares/enemy/dragon-de-comodo.png",
       "puntos_de_vida": 180,
       "puntos_de_ataque": 25,
-      "atackAnimation": "ataqueEnemigoJefe",
+      "atackAnimation": "ataqueEnemigoJefeComodo",
       "Speed_enemy": 1.2,
       "radioVision": 500,
       "dialogos": [

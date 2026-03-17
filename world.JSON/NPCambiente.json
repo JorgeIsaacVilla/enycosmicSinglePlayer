@@ -8,6 +8,12 @@
       "No todo lo que brilla es energía cósmica.",
       "Sigue observando el cielo."
     ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Corran, rápido!",
+      "¡Hay enemigos cerca!"
+    ],
     "x": 1200,
     "y": 850
   },
@@ -19,6 +25,12 @@
       "La energía del mapa cambia constantemente.",
       "A veces las respuestas están más cerca de lo que crees.",
       "Escucha el entorno."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos descubrieron!",
+      "¡Hay peligro!"
     ],
     "x": 1500,
     "y": 900
@@ -32,6 +44,12 @@
       "El conocimiento también es poder.",
       "Sigue explorando."
     ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡Tenemos que huir!",
+      "¡Un enemigo!",
+      "¡No se acerquen!"
+    ],
     "x": 1000,
     "y": 1100
   },
@@ -43,6 +61,12 @@
       "He visto viajeros pasar por aquí.",
       "Algunos regresan con respuestas.",
       "Otros con más preguntas."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Defiéndanse!",
+      "¡Corran!",
+      "¡Un reptiliano!"
     ],
     "x": 1800,
     "y": 700
@@ -56,6 +80,12 @@
       "A veces el camino correcto parece incorrecto.",
       "Observa bien el terreno."
     ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡Nos están persiguiendo!",
+      "¡Huyan!",
+      "¡Peligro!"
+    ],
     "x": 2100,
     "y": 950
   },
@@ -67,6 +97,12 @@
       "El mapa guarda patrones.",
       "Si miras suficiente tiempo los verás.",
       "Nada es casualidad."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Corran ya!",
+      "¡Enemigo al frente!"
     ],
     "x": 2400,
     "y": 1200
@@ -80,6 +116,12 @@
       "La paciencia también es una herramienta.",
       "No subestimes los detalles."
     ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡Retrocedan!",
+      "¡Corran!",
+      "¡Vienen hacia acá!"
+    ],
     "x": 2700,
     "y": 1000
   },
@@ -91,6 +133,12 @@
       "La energía aquí fluctúa.",
       "A veces abre rutas nuevas.",
       "Mantente atento."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos invaden!",
+      "¡Corran, deprisa!",
+      "¡Hay un enemigo!"
     ],
     "x": 3000,
     "y": 800
@@ -104,6 +152,12 @@
       "Cada uno tiene un propósito.",
       "Aprende a reconocerlos."
     ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡No se detengan!",
+      "¡Huyan!",
+      "¡Nos alcanzarán!"
+    ],
     "x": 3300,
     "y": 900
   },
@@ -115,6 +169,12 @@
       "Los exploradores curiosos llegan más lejos.",
       "Pero también se pierden más.",
       "Equilibra ambas cosas."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡A correr!",
+      "¡Nos siguen!",
+      "¡Un monstruo!"
     ],
     "x": 3600,
     "y": 1100
@@ -128,6 +188,12 @@
       "No todo sigue las reglas normales.",
       "Experimenta."
     ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡Nos atacan!",
+      "¡Corran!",
+      "¡No quiero morir!"
+    ],
     "x": 3900,
     "y": 950
   },
@@ -139,6 +205,12 @@
       "Las rutas más seguras no siempre son las mejores.",
       "A veces debes arriesgarte.",
       "El universo recompensa a los valientes."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Peligro!",
+      "¡Corran ahora!",
+      "¡Enemigos cerca!"
     ],
     "x": 4200,
     "y": 850

@@ -113,6 +113,7 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 // Función llamado de metafon.html a index.html (inicio)
 // ================================================
 
+const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
@@ -124,6 +125,7 @@ function openMetaMap() {
   const MAP_SRC = "./assets/mapas/mapa1-5000x5000.svg";
   const WORLD_W = 5000;
   const WORLD_H = 5000;
+
 
   const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
   const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
@@ -3517,8 +3519,8 @@ return lista.map((npc, index) => ({
   h: Number(npc.h) || 64,
 
   velocidad: Number(npc.velocidad) || 1,
-  dialogos_automaticos: Array.isArray(npc.dialogos_automaticos) ? npc.dialogos_automaticos : [],
-
+ dialogos_automaticos: Array.isArray(npc.dialogos_automaticos) ? npc.dialogos_automaticos : [],
+dialogos_miedo: Array.isArray(npc.dialogos_miedo) ? npc.dialogos_miedo : [],
   dirX: 0,
   dirY: 0,
   isMoving: false,
@@ -5692,6 +5694,49 @@ function obtenerCentroEntidad(entidad) {
   };
 }
 
+function buscarEnemigoCercano(npc) {
+  const lista = window.enemigos || [];
+
+  let enemigoMasCercano = null;
+  let distanciaMin = Infinity;
+
+  for (const enemy of lista) {
+    if (!enemy) continue;
+
+    const dist = distanciaEntreEntidades(
+      { x: npc.x, y: npc.y, w: npc.w, h: npc.h },
+      { x: enemy.x, y: enemy.y, w: enemy.w, h: enemy.h }
+    );
+
+    if (dist < distanciaMin) {
+      distanciaMin = dist;
+      enemigoMasCercano = enemy;
+    }
+  }
+
+  if (distanciaMin <= NPC_FEAR_RADIUS) {
+    return enemigoMasCercano;
+  }
+
+  return null;
+}
+
+function huirDeEnemigo(npc, enemigo) {
+  const npcCentro = obtenerCentroEntidad(npc);
+  const enemigoCentro = obtenerCentroEntidad(enemigo);
+
+  const dx = npcCentro.x - enemigoCentro.x;
+  const dy = npcCentro.y - enemigoCentro.y;
+
+  const len = Math.hypot(dx, dy) || 1;
+
+  npc.dirX = dx / len;
+  npc.dirY = dy / len;
+
+  npc.isMoving = true;
+  npc.pasosRestantes = 60;
+}
+
 function distanciaEntreEntidades(a, b) {
   const centroA = obtenerCentroEntidad(a);
   const centroB = obtenerCentroEntidad(b);
@@ -5748,11 +5793,18 @@ function hacerHablarEnemigo(enemy, modo = "reposo") {
   enemy.tiempoHablaCooldown = randomInt(enemy.tiempoMinHabla, enemy.tiempoMaxHabla);
 }
 
-function hacerHablarNPCambiente(npc) {
-  if (!npc || !npc.dialogos_automaticos?.length) return;
+function hacerHablarNPCambiente(npc, modo = "normal") {
+  if (!npc) return;
 
-  const index = randomInt(0, npc.dialogos_automaticos.length - 1);
-  npc.bubbleText = npc.dialogos_automaticos[index];
+  const banco =
+    modo === "miedo"
+      ? (npc.dialogos_miedo || [])
+      : (npc.dialogos_automaticos || []);
+
+  if (!banco.length) return;
+
+  const index = randomInt(0, banco.length - 1);
+  npc.bubbleText = banco[index];
   npc.bubbleTimer = npc.bubbleMaxTime;
   npc.tiempoHablaCooldown = randomInt(npc.tiempoMinHabla, npc.tiempoMaxHabla);
 }
@@ -5926,6 +5978,17 @@ function updateEnemigos(dtMs) {
 //--NPC'sambiente (Inicio)
 function updateNPCsAmbiente(dtMs) {
   for (const npc of npcsAmbiente) {
+
+const enemigoCerca = buscarEnemigoCercano(npc);
+
+if (enemigoCerca) {
+  huirDeEnemigo(npc, enemigoCerca);
+
+  if (npc.tiempoHablaCooldown <= 0) {
+    hacerHablarNPCambiente(npc, "miedo");
+  }
+}
+
     if (!npc) continue;
 
     if (npc.bubbleTimer > 0) {
