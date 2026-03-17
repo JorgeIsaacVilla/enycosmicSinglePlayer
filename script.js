@@ -114,6 +114,22 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 // ================================================
 
 const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
+
+const FRASES_VALIENTES = [
+  "¡No te tengo miedo, monstruo!",
+  "¡No me moverás de aquí!",
+  "¡Este lugar está protegido!",
+  "¡No pasarás!",
+  "¡No huiré!",
+  "¡Defenderé esta base!",
+  "¡Atrévete si puedes!",
+  "¡No me intimidas!",
+  "¡Este es mi puesto!",
+  "¡No daré un paso atrás!",
+  "¡No me asustas!",
+  "¡Aquí termina tu invasión!"
+];
+
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
@@ -3547,7 +3563,95 @@ dialogos_miedo: Array.isArray(npc.dialogos_miedo) ? npc.dialogos_miedo : [],
 }));
 
 }
+//--Lógica Valiente
+function algoritmoValiente(npc, dtMs) {
 
+  const enemigoCerca = buscarEnemigoCercano(npc);
+
+  if (!enemigoCerca) return;
+
+  npc.valienteTimer += dtMs;
+
+  if (npc.valienteTimer >= npc.valienteCooldown) {
+
+    const frase =
+      FRASES_VALIENTES[
+        Math.floor(Math.random() * FRASES_VALIENTES.length)
+      ];
+
+    npc.bubbleText = frase;
+    npc.bubbleTimer = 2500;
+
+    npc.valienteTimer = 0;
+  }
+}
+
+function drawBubbleNPCMision(ctx, npc) {
+
+  if (!npc?.bubbleText || npc.bubbleTimer <= 0) return;
+
+  const text = npc.bubbleText;
+  const fontSize = 12;
+  const paddingX = 8;
+  const paddingY = 6;
+  const lineHeight = 14;
+  const maxCharsPerLine = 22;
+
+  ctx.save();
+  ctx.font = `${fontSize}px arcade`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+
+    if (test.length <= maxCharsPerLine) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+
+  const longest = lines.reduce((a, b) => a.length > b.length ? a : b, "");
+  const bubbleW = Math.max(40, ctx.measureText(longest).width + paddingX * 2);
+  const bubbleH = (lines.length * lineHeight) + paddingY * 2;
+
+  const bubbleX = npc.x + npc.w / 2;
+  const bubbleY = npc.y - 18 - bubbleH;
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fillRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.beginPath();
+  ctx.moveTo(bubbleX - 6, bubbleY + bubbleH);
+  ctx.lineTo(bubbleX, bubbleY + bubbleH + 8);
+  ctx.lineTo(bubbleX + 6, bubbleY + bubbleH);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.fillStyle = "black";
+
+  for (let i = 0; i < lines.length; i++) {
+    ctx.fillText(
+      lines[i],
+      bubbleX,
+      bubbleY + paddingY + (lineHeight / 2) + (i * lineHeight)
+    );
+  }
+
+  ctx.restore();
+}
 
 //-- lógica de misiones
 async function cargarNPCsDesdeMisiones() {
@@ -3562,6 +3666,9 @@ async function cargarNPCsDesdeMisiones() {
     (mision.npcs || []).forEach(npc => {
       if (!mapaNPCs.has(npc.id)) {
         mapaNPCs.set(npc.id, {
+          valienteTimer: 0,
+          valienteCooldown: 5000,
+
           id: npc.id,
           nombre: npc.nombre,
           x: npc.posicion.x,
@@ -4544,43 +4651,40 @@ function drawNPCs(ctx) {
     }
 
     const isActiveTarget = activeNpcId && npc.id === activeNpcId;
-    const isStarterWithoutMission = !activeMission && npc.missionStarter;
 
-if (isActiveTarget || npc.missionStarter) {
+    if (isActiveTarget || npc.missionStarter) {
+      let symbol = null;
 
-  let symbol = null;
+      if (isActiveTarget) {
+        symbol = "!";
+      }
 
-  if (isActiveTarget) {
-    symbol = "!";
-  }
+      if (!activeMission && npc.missionStarter) {
+        const missionStarter = window.missionsData?.missions?.find(
+          m => m.pasos?.[0]?.npcId === npc.id
+        );
 
-  if (!activeMission && npc.missionStarter) {
+        if (missionStarter && isMissionCompleted(missionStarter.id)) {
+          symbol = "⚝";
+        } else {
+          symbol = "?";
+        }
+      }
 
-    const missionStarter = window.missionsData?.missions?.find(
-      m => m.pasos?.[0]?.npcId === npc.id
-    );
+      if (symbol) {
+        ctx.fillStyle = "yellow";
+        ctx.font = "20px arcade";
+        ctx.textAlign = "center";
 
-    if (missionStarter && isMissionCompleted(missionStarter.id)) {
-      symbol = "⚝";
-    } else {
-      symbol = "?";
+        ctx.fillText(
+          symbol,
+          npc.x + npc.w / 2,
+          npc.y - 10
+        );
+
+        ctx.textAlign = "start";
+      }
     }
-  }
-
-  if (symbol) {
-    ctx.fillStyle = "yellow";
-    ctx.font = "20px arcade";
-    ctx.textAlign = "center";
-
-    ctx.fillText(
-      symbol,
-      npc.x + npc.w / 2,
-      npc.y - 10
-    );
-
-    ctx.textAlign = "start";
-  }
-}
 
     ctx.fillStyle = "white";
     ctx.font = "12px arcade";
@@ -4593,6 +4697,8 @@ if (isActiveTarget || npc.missionStarter) {
     );
 
     ctx.textAlign = "start";
+
+    drawBubbleNPCMision(ctx, npc);
   }
 }
 
@@ -6106,6 +6212,17 @@ if (equipSlotsLimpiados) {
 
 updateNPCsAmbiente(dtMs);
 updateEnemigos(dtMs);
+
+for (const npc of npcs) {
+
+  algoritmoValiente(npc, dtMs);
+
+  if (npc.bubbleTimer > 0) {
+    npc.bubbleTimer -= dtMs;
+  }
+
+}
+
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
