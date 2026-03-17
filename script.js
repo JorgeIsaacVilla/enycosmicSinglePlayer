@@ -3434,6 +3434,39 @@ let npcs = []; // arreglo donde se almacenan los NPC
 let npcsAmbiente = [];
 window.npcsAmbiente = npcsAmbiente;
 
+//--Enemigos
+
+async function cargarEnemigos() {
+  const response = await fetch("./world.JSON/enemy.json");
+  const data = await response.json();
+
+  const lista = Array.isArray(data) ? data : (data.enemigos || []);
+
+  return lista.map((enemy, index) => ({
+    id: enemy.id || `enemy_${index}`,
+    nombre: enemy.nombre || `Enemigo-${index + 1}`,
+    tipo: enemy.tipo || "basico",
+    imageSrc: enemy.imagen,
+    img: null,
+
+    x: Number(enemy.posicion?.x ?? enemy.x) || 0,
+    y: Number(enemy.posicion?.y ?? enemy.y) || 0,
+
+    w: Number(enemy.tamano?.w ?? enemy.w) || 64,
+    h: Number(enemy.tamano?.h ?? enemy.h) || 64,
+
+    puntos_de_vida: Number(enemy.puntos_de_vida) || 30,
+    puntos_de_ataque: Number(enemy.puntos_de_ataque) || 5,
+    ejecucion_script: enemy.ejecucion_script || null,
+
+    facing: "down",
+    frame: 0,
+    frameWidth: 64,
+    frameHeight: 64,
+    totalFrames: 4
+  }));
+}
+
 //--lógica NPC's ambiente
 
 async function cargarNPCsAmbiente() {
@@ -4130,6 +4163,28 @@ function getCurrentNPCMissionRole(npcId) {
 /*Dibujar NPC (inicio) */
 //===========================================
 
+//--Enemigos
+function preloadEnemigos(list) {
+  return Promise.all(
+    list.map(enemy => new Promise((resolve) => {
+      const img = new Image();
+
+      img.onload = () => {
+        enemy.img = img;
+        resolve();
+      };
+
+      img.onerror = () => {
+        console.warn("Enemigo no cargó:", enemy.imageSrc);
+        enemy.img = null;
+        resolve();
+      };
+
+      img.src = enemy.imageSrc;
+    }))
+  );
+}
+
 //--NPC's ambiente
 function preloadNPCsAmbiente(list) {
   return Promise.all(
@@ -4294,8 +4349,52 @@ function drawBubblesNPCsAmbiente(ctx) {
 }
 
 
-//--NPC's ambiente (fin)
+//--Enemigo
+function drawEnemigos(ctx) {
+  for (const enemy of enemigos) {
+    if (!enemy) continue;
 
+    const imgOk =
+      enemy.img &&
+      enemy.img.complete &&
+      enemy.img.naturalWidth > 0 &&
+      enemy.img.naturalHeight > 0;
+
+    if (imgOk) {
+      const row = rowForFacing(enemy.facing || "down");
+      const sx = (enemy.frame || 0) * (enemy.frameWidth || 64);
+      const sy = row * (enemy.frameHeight || 64);
+
+      ctx.drawImage(
+        enemy.img,
+        sx,
+        sy,
+        enemy.frameWidth || 64,
+        enemy.frameHeight || 64,
+        enemy.x,
+        enemy.y,
+        enemy.w,
+        enemy.h
+      );
+    } else {
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(enemy.x, enemy.y, enemy.w, enemy.h);
+    }
+
+    ctx.fillStyle = "white";
+    ctx.font = "12px arcade";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      enemy.nombre,
+      enemy.x + enemy.w / 2,
+      enemy.y + enemy.h + 14
+    );
+    ctx.textAlign = "start";
+  }
+}
+
+//--NPC's ambiente (fin)
 function drawNPCs(ctx) {
   const activeMission = getActiveMission();
   const activeMissionId = window.missionSystem.activeMissionId;
@@ -7005,6 +7104,9 @@ drawItems(ctx);
 drawNPCs(ctx);
 drawNPCsAmbiente(ctx);
 
+//--Enemigos
+drawEnemigos(ctx);
+
 // Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
 
@@ -7221,8 +7323,15 @@ async function initNPCsAmbiente() {
   }
 }
 
-//--NPC's ambiente (fin)
+//--Enemigos
+async function initEnemigos() {
+  enemigos = await cargarEnemigos();
+  window.enemigos = enemigos;
 
+  await preloadEnemigos(enemigos);
+}
+
+//--NPC's ambiente (fin)
 async function initNPCs() {
   npcs = await cargarNPCsDesdeMisiones();
   window.npcs = npcs;
@@ -7232,6 +7341,7 @@ async function initNPCs() {
 
 initNPCs();
 initNPCsAmbiente();
+initEnemigos(); //--Enemigos
 
 
 // decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)

@@ -1,0 +1,156 @@
+{
+  "enemigos": [
+    {
+      "id": "enemy_centinela_reptiliano_01",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 8,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1180,
+        "y": 940
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_centinela_reptiliano_02",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 8,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1320,
+        "y": 1010
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_centinela_reptiliano_03",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 42,
+      "puntos_de_ataque": 9,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1490,
+        "y": 1120
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_centinela_reptiliano_armado_01",
+      "nombre": "Comandante reptiliano",
+      "tipo": "basico",
+      "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 30,
+      "puntos_de_ataque": 5,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1710,
+        "y": 980
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_centinela_reptiliano_armado_02",
+      "nombre": "Comandante reptiliano",
+      "tipo": "basico",
+      "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 30,
+      "puntos_de_ataque": 5,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1860,
+        "y": 1080
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_reptiliano_volador_01",
+      "nombre": "Reptiliano Volador",
+      "tipo": "intermedio",
+      "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 55,
+      "puntos_de_ataque": 12,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3200,
+        "y": 860
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_reptiliano_volador_02",
+      "nombre": "Reptiliano Volador",
+      "tipo": "intermedio",
+      "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 55,
+      "puntos_de_ataque": 12,
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2320,
+        "y": 920
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_dragon_de_comodo_01",
+      "nombre": "Dragon De Comodo",
+      "tipo": "jefe",
+      "imagen": "./assets/avatares/enemy/dragon-de-comodo.png",
+      "puntos_de_vida": 180,
+      "puntos_de_ataque": 25,
+      "tamano": {
+        "w": 320,
+        "h": 320
+      },
+      "posicion": {
+        "x": 2780,
+        "y": 1180
+      },
+      "ejecucion_script": {
+        "al_morir": "bossDragonDeComodoDefeated"
+      }
+    }
+  ]
+}
