@@ -3435,7 +3435,6 @@ let npcsAmbiente = [];
 window.npcsAmbiente = npcsAmbiente;
 
 //--Enemigos
-
 async function cargarEnemigos() {
   const response = await fetch("./world.JSON/enemy.json");
   const data = await response.json();
@@ -3451,6 +3450,8 @@ async function cargarEnemigos() {
 
     x: Number(enemy.posicion?.x ?? enemy.x) || 0,
     y: Number(enemy.posicion?.y ?? enemy.y) || 0,
+    spawnX: Number(enemy.posicion?.x ?? enemy.x) || 0,
+    spawnY: Number(enemy.posicion?.y ?? enemy.y) || 0,
 
     w: Number(enemy.tamano?.w ?? enemy.w) || 64,
     h: Number(enemy.tamano?.h ?? enemy.h) || 64,
@@ -3458,9 +3459,35 @@ async function cargarEnemigos() {
     puntos_de_vida: Number(enemy.puntos_de_vida) || 30,
     puntos_de_ataque: Number(enemy.puntos_de_ataque) || 5,
     ejecucion_script: enemy.ejecucion_script || null,
+    atackAnimation: enemy.atackAnimation || null,
+
+    velocidad: Number(enemy.Speed_enemy) || 1.4,
+
+    dialogos_automaticos: Array.isArray(enemy.dialogos) ? enemy.dialogos : [],
+    dialogos_Atack: Array.isArray(enemy.dialogos_Atack) ? enemy.dialogos_Atack : [],
+
+    dirX: 0,
+    dirY: 0,
+    isMoving: false,
+    pasosRestantes: 0,
+    tiempoCambioDecision: 0,
+    tiempoMinDecision: 1500,
+    tiempoMaxDecision: 12000,
+
+    persiguiendo: false,
+    radioVision: Number(enemy.radioVision) || 500, //radio vision enemigo
+
+    bubbleText: "",
+    bubbleTimer: 0,
+    bubbleMaxTime: 2200,
+    tiempoHablaCooldown: 0,
+    tiempoMinHabla: 1800,
+    tiempoMaxHabla: 5000,
 
     facing: "down",
     frame: 0,
+    frameTimer: 0,
+    frameDurationMs: 140,
     frameWidth: 64,
     frameHeight: 64,
     totalFrames: 4
@@ -4351,7 +4378,9 @@ function drawBubblesNPCsAmbiente(ctx) {
 
 //--Enemigo
 function drawEnemigos(ctx) {
-  for (const enemy of enemigos) {
+  const listaEnemigos = window.enemigos || [];
+
+  for (const enemy of listaEnemigos) {
     if (!enemy) continue;
 
     const imgOk =
@@ -4391,6 +4420,80 @@ function drawEnemigos(ctx) {
       enemy.y + enemy.h + 14
     );
     ctx.textAlign = "start";
+  }
+}
+
+function drawBubbleEnemigo(ctx, enemy) {
+  if (!enemy?.bubbleText || enemy.bubbleTimer <= 0) return;
+
+  const text = enemy.bubbleText;
+  const fontSize = 12;
+  const paddingX = 8;
+  const paddingY = 6;
+  const lineHeight = 14;
+  const maxCharsPerLine = 22;
+
+  ctx.save();
+  ctx.font = `${fontSize}px arcade`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (test.length <= maxCharsPerLine) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+
+  const longest = lines.reduce((a, b) => a.length > b.length ? a : b, "");
+  const bubbleW = Math.max(40, ctx.measureText(longest).width + paddingX * 2);
+  const bubbleH = (lines.length * lineHeight) + paddingY * 2;
+
+  const bubbleX = enemy.x + enemy.w / 2;
+  const bubbleY = enemy.y - 18 - bubbleH;
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fillRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.beginPath();
+  ctx.moveTo(bubbleX - 6, bubbleY + bubbleH);
+  ctx.lineTo(bubbleX, bubbleY + bubbleH + 8);
+  ctx.lineTo(bubbleX + 6, bubbleY + bubbleH);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(bubbleX - bubbleW / 2, bubbleY, bubbleW, bubbleH);
+
+  ctx.fillStyle = "black";
+  for (let i = 0; i < lines.length; i++) {
+    ctx.fillText(
+      lines[i],
+      bubbleX,
+      bubbleY + paddingY + (lineHeight / 2) + (i * lineHeight)
+    );
+  }
+
+  ctx.restore();
+}
+
+//--Enemigos
+function drawBubblesEnemigos(ctx) {
+  const listaEnemigos = window.enemigos || [];
+
+  for (const enemy of listaEnemigos) {
+    if (!enemy) continue;
+    drawBubbleEnemigo(ctx, enemy);
   }
 }
 
@@ -5582,6 +5685,22 @@ function isPlayerNearNPC(npc, maxDistance = 220) {
 // =======================================================
 // SISTEMA DE CONVERSACIÓN NPC CON MANIPULACIÓN DEL DOM (fin)
 // =======================================================
+function obtenerCentroEntidad(entidad) {
+  return {
+    x: entidad.x + (entidad.w || 64) / 2,
+    y: entidad.y + (entidad.h || 64) / 2
+  };
+}
+
+function distanciaEntreEntidades(a, b) {
+  const centroA = obtenerCentroEntidad(a);
+  const centroB = obtenerCentroEntidad(b);
+
+  const dx = centroA.x - centroB.x;
+  const dy = centroA.y - centroB.y;
+
+  return Math.hypot(dx, dy);
+}
 //===========================================
 /*Dibujar NPC (fin) */
 //===========================================
@@ -5612,6 +5731,23 @@ function elegirDireccionAleatoriaNPC() {
   return dirs[randomInt(0, dirs.length - 1)];
 }
 
+//--Enemigo funcion para hablar
+function hacerHablarEnemigo(enemy, modo = "reposo") {
+  if (!enemy) return;
+
+  const banco =
+    modo === "ataque"
+      ? (enemy.dialogos_Atack || [])
+      : (enemy.dialogos_automaticos || []);
+
+  if (!banco.length) return;
+
+  const index = randomInt(0, banco.length - 1);
+  enemy.bubbleText = banco[index];
+  enemy.bubbleTimer = enemy.bubbleMaxTime;
+  enemy.tiempoHablaCooldown = randomInt(enemy.tiempoMinHabla, enemy.tiempoMaxHabla);
+}
+
 function hacerHablarNPCambiente(npc) {
   if (!npc || !npc.dialogos_automaticos?.length) return;
 
@@ -5619,6 +5755,32 @@ function hacerHablarNPCambiente(npc) {
   npc.bubbleText = npc.dialogos_automaticos[index];
   npc.bubbleTimer = npc.bubbleMaxTime;
   npc.tiempoHablaCooldown = randomInt(npc.tiempoMinHabla, npc.tiempoMaxHabla);
+}
+
+//--Enemigo función de acción
+function decidirNuevaAccionEnemigo(enemy) {
+  if (!enemy) return;
+
+  const seMovera = Math.random() < 0.75;
+
+  if (seMovera) {
+    const dir = elegirDireccionAleatoriaNPC();
+    enemy.dirX = dir.x;
+    enemy.dirY = dir.y;
+    enemy.isMoving = true;
+    enemy.pasosRestantes = randomInt(25, 120);
+  } else {
+    enemy.dirX = 0;
+    enemy.dirY = 0;
+    enemy.isMoving = false;
+    enemy.pasosRestantes = 0;
+  }
+
+  enemy.tiempoCambioDecision = randomInt(enemy.tiempoMinDecision, enemy.tiempoMaxDecision);
+
+  if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.45) {
+    hacerHablarEnemigo(enemy, "reposo");
+  }
 }
 
 function decidirNuevaAccionNPCambiente(npc) {
@@ -5645,6 +5807,121 @@ function decidirNuevaAccionNPCambiente(npc) {
     hacerHablarNPCambiente(npc);
   }
 }
+
+//--Enemigos (inicio)
+function updateEnemigos(dtMs) {
+  const listaEnemigos = window.enemigos || [];
+
+  for (const enemy of listaEnemigos) {
+    if (!enemy) continue;
+
+    if (enemy.bubbleTimer > 0) {
+      enemy.bubbleTimer -= dtMs;
+      if (enemy.bubbleTimer < 0) {
+        enemy.bubbleTimer = 0;
+        enemy.bubbleText = "";
+      }
+    }
+
+    if (enemy.tiempoHablaCooldown > 0) {
+      enemy.tiempoHablaCooldown -= dtMs;
+      if (enemy.tiempoHablaCooldown < 0) enemy.tiempoHablaCooldown = 0;
+    }
+
+    const distancia = distanciaEntreEntidades(
+      { x: enemy.x, y: enemy.y, w: enemy.w, h: enemy.h },
+      { x: player.x, y: player.y, w: HERO_DRAW_W, h: HERO_DRAW_H }
+    );
+
+    const usuarioDentroVision = distancia <= enemy.radioVision;
+
+    if (usuarioDentroVision) {
+      enemy.persiguiendo = true;
+
+      const enemyCenter = obtenerCentroEntidad(enemy);
+      const playerCenter = {
+        x: player.x + HERO_DRAW_W / 2,
+        y: player.y + HERO_DRAW_H / 2
+      };
+
+      const dx = playerCenter.x - enemyCenter.x;
+      const dy = playerCenter.y - enemyCenter.y;
+      const len = Math.hypot(dx, dy) || 1;
+
+      enemy.dirX = dx / len;
+      enemy.dirY = dy / len;
+      enemy.isMoving = true;
+
+      const delta = dtMs / 16.6667;
+      const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
+      const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
+
+      enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+
+      if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
+        enemy.facing = enemy.dirX > 0 ? "right" : "left";
+      } else {
+        enemy.facing = enemy.dirY > 0 ? "down" : "up";
+      }
+
+      enemy.frameTimer += dtMs;
+      while (enemy.frameTimer >= enemy.frameDurationMs) {
+        enemy.frameTimer -= enemy.frameDurationMs;
+        enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+      }
+
+      if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
+        hacerHablarEnemigo(enemy, "ataque");
+      }
+    } else {
+      enemy.persiguiendo = false;
+      enemy.tiempoCambioDecision -= dtMs;
+
+      if (enemy.tiempoCambioDecision <= 0 || (enemy.isMoving && enemy.pasosRestantes <= 0)) {
+        decidirNuevaAccionEnemigo(enemy);
+      }
+
+      if (enemy.isMoving && enemy.pasosRestantes > 0) {
+        const delta = dtMs / 16.6667;
+        const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
+        const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
+
+        enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
+        enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+
+        if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
+          enemy.facing = enemy.dirX > 0 ? "right" : "left";
+        } else if (enemy.dirY !== 0) {
+          enemy.facing = enemy.dirY > 0 ? "down" : "up";
+        }
+
+        enemy.frameTimer += dtMs;
+        while (enemy.frameTimer >= enemy.frameDurationMs) {
+          enemy.frameTimer -= enemy.frameDurationMs;
+          enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+        }
+
+        enemy.pasosRestantes -= 1;
+
+        const pegoBorde =
+          enemy.x <= 0 ||
+          enemy.x >= WORLD_W - enemy.w ||
+          enemy.y <= 0 ||
+          enemy.y >= WORLD_H - enemy.h;
+
+        if (pegoBorde) {
+          enemy.pasosRestantes = 0;
+          enemy.isMoving = false;
+        }
+      } else {
+        enemy.frame = 0;
+        enemy.frameTimer = 0;
+      }
+    }
+  }
+}
+//--Enemigos (fin)
 
 //--NPC'sambiente (Inicio)
 function updateNPCsAmbiente(dtMs) {
@@ -5713,7 +5990,6 @@ function updateNPCsAmbiente(dtMs) {
   }
 }
 
-
 //--NPC'sambiente (Fin)
   function update(dtMs) {
 
@@ -5766,7 +6042,7 @@ if (equipSlotsLimpiados) {
 }
 
 updateNPCsAmbiente(dtMs);
-
+updateEnemigos(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -7123,7 +7399,7 @@ ctx.drawImage(
 
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
-
+drawBubblesEnemigos(ctx);
 
     ctx.restore();
 

@@ -7,6 +7,21 @@
       "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
       "puntos_de_vida": 40,
       "puntos_de_ataque": 8,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 200,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -26,6 +41,21 @@
       "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
       "puntos_de_vida": 40,
       "puntos_de_ataque": 8,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 200,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -45,6 +75,21 @@
       "imagen": "./assets/avatares/enemy/centinela-reptiliano.png",
       "puntos_de_vida": 42,
       "puntos_de_ataque": 9,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7,
+      "radioVision": 300,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -64,6 +109,21 @@
       "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
       "puntos_de_vida": 30,
       "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -83,6 +143,21 @@
       "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
       "puntos_de_vida": 30,
       "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -102,6 +177,21 @@
       "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
       "puntos_de_vida": 55,
       "puntos_de_ataque": 12,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.2,
+      "radioVision": 350,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -121,6 +211,21 @@
       "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
       "puntos_de_vida": 55,
       "puntos_de_ataque": 12,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.2,
+      "radioVision": 350,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
       "tamano": {
         "w": 64,
         "h": 64
@@ -140,6 +245,21 @@
       "imagen": "./assets/avatares/enemy/dragon-de-comodo.png",
       "puntos_de_vida": 180,
       "puntos_de_ataque": 25,
+      "atackAnimation": "ataqueEnemigoJefe",
+      "Speed_enemy": 1.2,
+      "radioVision": 500,
+      "dialogos": [
+        "GRAAAARRR...!!",
+        "El portal será abierto",
+        "La dominación del mundo ha comenzado",
+        "Tu especie caerá"
+      ],
+      "dialogos_Atack": [
+        "¡Te aplastaré!",
+        "¡Nadie sobrevive al dragón!",
+        "¡Ríndete ahora!",
+        "¡La tierra me pertenece!"
+      ],
       "tamano": {
         "w": 320,
         "h": 320
