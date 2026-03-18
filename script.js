@@ -155,6 +155,8 @@ const FRASES_VALIENTES = [
   "¡Aquí termina tu invasión!"
 ];
 
+let escudoMaderaActivo = false;
+
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
@@ -3043,9 +3045,13 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       console.log("El usuario usará este item: espada de madera");
       break;
 
-    case "escudo_de_madera":
-      console.log("El usuario usará este item: escudo de madera");
-      break;
+case "escudo_de_madera":
+
+  escudoMaderaActivo = true;
+
+  console.log("El usuario usará este item: escudo de madera");
+
+  break;
 
     case "bumerang":
       console.log("El usuario usará este item: bumerang");
@@ -6099,18 +6105,40 @@ function updateEnemigos(dtMs) {
     const usuarioDentroVision = distancia <= enemy.radioVision;
 if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
 
-  pdv -= enemy.puntos_de_ataque;
-  if (pdv < 0) pdv = 0;
+  const escudo = window.equipSlots?.find(i => i && i.id === "escudo_de_madera");
 
-  crearTextoDanio(
-  player.x + HERO_DRAW_W / 2,
-  player.y - 10,
-  '-' + enemy.puntos_de_ataque
-);
+  if (escudo && (escudo.usos ?? 0) > 0) {
 
-if (pdv <= 0 && !gameOverActive) {
-  activarGameOver();
-}
+    escudo.usos -= enemy.puntos_de_ataque;
+
+    if (escudo.usos < 0) escudo.usos = 0;
+
+    crearTextoDanio(
+      player.x + 32,
+      player.y - 10,
+      "-" + enemy.puntos_de_ataque,
+      "#ffaa00",
+      "#ffaa00"
+    );
+
+    console.log("El escudo de madera recibió el daño. Usos restantes:", escudo.usos);
+
+  } else {
+
+    pdv -= enemy.puntos_de_ataque;
+
+    if (pdv < 0) pdv = 0;
+
+    crearTextoDanio(
+      player.x + 32,
+      player.y - 10,
+      "-" + enemy.puntos_de_ataque
+    );
+
+    if (pdv <= 0 && !gameOverActive) {
+      activarGameOver();
+    }
+  }
 
   // retroceso del jugador
   const dx = player.x - enemy.x;
