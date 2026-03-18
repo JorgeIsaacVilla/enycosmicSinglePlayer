@@ -3170,9 +3170,35 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       break;
 
-    case "bumerang":
-      lanzarBumerang();
-      break;
+case "bumerang": {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  if ((item.usos ?? 0) <= 0) {
+    console.log("No quedan bumerangs");
+    return;
+  }
+
+  lanzarBumerang();
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes del Bumerang:", item.usos);
+
+  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+    window.equipSlots[slotIndex] = null;
+  }
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  break;
+}
 
     case "pico_escabador":
       console.log("El usuario usará este item: pico escabador");
