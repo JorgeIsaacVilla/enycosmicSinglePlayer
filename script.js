@@ -1240,9 +1240,9 @@ function buildInterfas(type) {
       bodyHTML = buildIQPanelHTML();
       break;
 
-case "misions":
-  bodyHTML = window.buildMissionsHTML();
-  break;
+    case "misions":
+      bodyHTML = window.buildMissionsHTML();
+      break;
 
 default:
   bodyHTML = `
@@ -3045,13 +3045,13 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       console.log("El usuario usará este item: espada de madera");
       break;
 
-case "escudo_de_madera":
+    case "escudo_de_madera":
 
-  escudoMaderaActivo = true;
+      escudoMaderaActivo = true;
 
-  console.log("El usuario usará este item: escudo de madera");
+      console.log("El usuario usará este item: escudo de madera");
 
-  break;
+      break;
 
     case "bumerang":
       console.log("El usuario usará este item: bumerang");
@@ -6105,34 +6105,44 @@ function updateEnemigos(dtMs) {
     const usuarioDentroVision = distancia <= enemy.radioVision;
 if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
 
-  const escudo = window.equipSlots?.find(i => i && i.id === "escudo_de_madera");
+  let danio = enemy.puntos_de_ataque;
 
-  if (escudo && (escudo.usos ?? 0) > 0) {
+  const escudoHierro = window.equipSlots?.find(i => i && i.id === "escudo_de_hierro");
+  const escudoMadera = window.equipSlots?.find(i => i && i.id === "escudo_de_madera");
 
-    escudo.usos -= enemy.puntos_de_ataque;
+  // 1) Escudo de hierro reduce 2 puntos de daño
+  if (escudoHierro) {
+    danio = Math.max(0, danio - 2);
+  }
 
-    if (escudo.usos < 0) escudo.usos = 0;
+  // 2) Escudo de madera absorbe el daño restante con sus usos
+  if (escudoMadera && (escudoMadera.usos ?? 0) > 0 && danio > 0) {
+
+    const absorcion = Math.min(escudoMadera.usos, danio);
+    escudoMadera.usos -= absorcion;
+    danio -= absorcion;
 
     crearTextoDanio(
       player.x + 32,
       player.y - 10,
-      "-" + enemy.puntos_de_ataque,
+      "-" + absorcion,
       "#ffaa00",
       "#ffaa00"
     );
 
-    console.log("El escudo de madera recibió el daño. Usos restantes:", escudo.usos);
+    console.log("El escudo de madera absorbió daño. Usos restantes:", escudoMadera.usos);
+  }
 
-  } else {
-
-    pdv -= enemy.puntos_de_ataque;
+  // 3) Si aún queda daño, lo recibe la vida
+  if (danio > 0) {
+    pdv -= danio;
 
     if (pdv < 0) pdv = 0;
 
     crearTextoDanio(
       player.x + 32,
       player.y - 10,
-      "-" + enemy.puntos_de_ataque
+      "-" + danio
     );
 
     if (pdv <= 0 && !gameOverActive) {
@@ -6145,7 +6155,7 @@ if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
   const dy = player.y - enemy.y;
   const dist = Math.hypot(dx, dy) || 1;
 
-  const push = 32;  //Distancia de retroceso al momento de colicionar con el enemigo
+  const push = 32;
 
   player.x += (dx / dist) * push;
   player.y += (dy / dist) * push;
@@ -6336,7 +6346,13 @@ function update(dtMs) {
     if (dir) {
       player.facing = dir;
       const d = dirs[dir];
-      const delta = dtMs / 8; // velicidad del avatar. entre menor sea el numero, más rapido camina
+      let delta = dtMs / 8;
+
+const patinesEquipados = window.equipSlots?.find(i => i && i.id === "patines");
+
+if (patinesEquipados) {
+  delta *= 2;
+}
       player.x += d.x * player.speed * delta;
       player.y += d.y * player.speed * delta;
     }
