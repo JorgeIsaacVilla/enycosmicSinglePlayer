@@ -1403,3 +1403,179 @@ cuando el jugador lo complete.
     
   ]
 }
+
+
+
+
+animación espada
+// =============================
+// 🗡️ ESPADA DE MADERA - ANIMACIÓN
+// =============================
+window.ataquesEspadaMaderaActivos = [];
+window.particulasEspadaMadera = [];
+
+function lanzarAtaqueEspadaMadera() {
+  const alcance = 42;
+  const duracion = 180;
+
+  let offsetX = 0;
+  let offsetY = 0;
+  let anguloInicio = 0;
+  let anguloFin = 0;
+
+  if (player.facing === "up") {
+    offsetX = 0;
+    offsetY = -30;
+    anguloInicio = 2.2;
+    anguloFin = 0.9;
+  } else if (player.facing === "down") {
+    offsetX = 0;
+    offsetY = 34;
+    anguloInicio = -1.0;
+    anguloFin = 0.4;
+  } else if (player.facing === "left") {
+    offsetX = -28;
+    offsetY = 8;
+    anguloInicio = 0.9;
+    anguloFin = -0.8;
+  } else {
+    offsetX = 28;
+    offsetY = 8;
+    anguloInicio = 3.8;
+    anguloFin = 2.1;
+  }
+
+  window.ataquesEspadaMaderaActivos.push({
+    x: player.x + 32 + offsetX,
+    y: player.y + 32 + offsetY,
+    offsetX,
+    offsetY,
+    alcance,
+    tiempo: duracion,
+    tiempoMax: duracion,
+    anguloInicio,
+    anguloFin,
+    facing: player.facing
+  });
+}
+
+window.lanzarAtaqueEspadaMadera = lanzarAtaqueEspadaMadera;
+
+function crearParticulasEspadaMadera(ataque) {
+  const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+  const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+  const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+  const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+  for (let i = 0; i < 2; i++) {
+    window.particulasEspadaMadera.push({
+      x: puntaX + (Math.random() - 0.5) * 6,
+      y: puntaY + (Math.random() - 0.5) * 6,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: 1.6 + Math.random() * 1.8,
+      life: 90 + Math.random() * 40,
+      maxLife: 130,
+      color: Math.random() < 0.5 ? "#8b5a2b" : "#c8ff66"
+    });
+  }
+}
+
+function updateAtaquesEspadaMadera(dtMs) {
+  for (let i = window.ataquesEspadaMaderaActivos.length - 1; i >= 0; i--) {
+    const ataque = window.ataquesEspadaMaderaActivos[i];
+
+    ataque.x = player.x + 32 + ataque.offsetX;
+    ataque.y = player.y + 32 + ataque.offsetY;
+    ataque.tiempo -= dtMs;
+
+    crearParticulasEspadaMadera(ataque);
+
+    if (ataque.tiempo <= 0) {
+      window.ataquesEspadaMaderaActivos.splice(i, 1);
+    }
+  }
+}
+
+function updateParticulasEspadaMadera(dtMs) {
+  for (let i = window.particulasEspadaMadera.length - 1; i >= 0; i--) {
+    const p = window.particulasEspadaMadera[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    p.size *= 0.975;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasEspadaMadera.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasEspadaMadera(ctx) {
+  for (const p of (window.particulasEspadaMadera || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = "#c8ff66";
+    ctx.shadowBlur = 10;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function drawAtaquesEspadaMadera(ctx) {
+  for (const ataque of (window.ataquesEspadaMaderaActivos || [])) {
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+    const alpha = Math.max(0.15, ataque.tiempo / ataque.tiempoMax);
+
+    ctx.save();
+    ctx.translate(ataque.x, ataque.y);
+    ctx.rotate(angulo);
+    ctx.globalAlpha = alpha;
+
+    // rastro del arco
+    ctx.strokeStyle = "#c8ff66";
+    ctx.lineWidth = 5;
+    ctx.shadowColor = "#c8ff66";
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    ctx.moveTo(-6, 0);
+    ctx.lineTo(ataque.alcance + 8, 0);
+    ctx.stroke();
+
+    // hoja madera fluorescente
+    ctx.fillStyle = "#8b5a2b";
+    ctx.strokeStyle = "#d8ff7a";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#d8ff7a";
+    ctx.shadowBlur = 10;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -5);
+    ctx.lineTo(ataque.alcance - 10, -3);
+    ctx.lineTo(ataque.alcance + 6, 0);
+    ctx.lineTo(ataque.alcance - 10, 3);
+    ctx.lineTo(0, 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // mango
+    ctx.fillStyle = "#5c3a1e";
+    ctx.shadowBlur = 0;
+    ctx.fillRect(-8, -3, 10, 6);
+
+    ctx.restore();
+  }
+}

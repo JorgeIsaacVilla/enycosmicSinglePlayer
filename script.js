@@ -3184,9 +3184,26 @@ case "pistola_lazer": {
   break;
 }
 
-    case "espada_de_madera":
-      console.log("El usuario usará este item: espada de madera");
-      break;
+case "espada_de_madera": {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  if ((item.usos ?? 0) <= 0) {
+    console.log("La espada de madera está agotada");
+    return;
+  }
+
+  window.lanzarAtaqueEspadaMadera(slotIndex);
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  break;
+}
 
     case "escudo_de_madera":
 
@@ -3395,6 +3412,280 @@ window.bumerangsActivos = [];
 // =============================
 window.disparosLazerActivos = [];
 window.lazerColor = "#eaff00";
+
+// =============================
+// 🗡️ ESPADA DE MADERA - ANIMACIÓN
+// =============================
+window.ataquesEspadaMaderaActivos = [];
+window.particulasEspadaMadera = [];
+
+function lanzarAtaqueEspadaMadera(slotIndex) {
+  const alcance = 58;
+  const duracion = 120;
+
+  let pivotOffsetX = 0;
+  let pivotOffsetY = 0;
+  let anguloInicio = 0;
+  let anguloFin = 0;
+
+  if (player.facing === "up") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -2.45;
+    anguloFin = -0.75;
+  } else if (player.facing === "down") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 0.75;
+    anguloFin = 2.45;
+  } else if (player.facing === "left") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 2.35;
+    anguloFin = 4.05;
+  } else {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -0.85;
+    anguloFin = 0.85;
+  }
+
+  window.ataquesEspadaMaderaActivos.push({
+    x: player.x + 32 + pivotOffsetX,
+    y: player.y + 32 + pivotOffsetY,
+    pivotOffsetX,
+    pivotOffsetY,
+    alcance,
+    tiempo: duracion,
+    tiempoMax: duracion,
+    anguloInicio,
+    anguloFin,
+    facing: player.facing,
+    slotIndex,
+    yaDesgasto: false,
+    enemigosGolpeados: []
+  });
+}
+
+window.lanzarAtaqueEspadaMadera = lanzarAtaqueEspadaMadera;
+
+function consumirUsoEspadaMadera(slotIndex) {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  item.usos = Math.max(0, (item.usos ?? 0) - 1);
+
+  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+    window.equipSlots[slotIndex] = null;
+  }
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+}
+
+function crearParticulasEspadaMadera(ataque) {
+  const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+  const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+  const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+  const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+  for (let i = 0; i < 2; i++) {
+    window.particulasEspadaMadera.push({
+      x: puntaX + (Math.random() - 0.5) * 6,
+      y: puntaY + (Math.random() - 0.5) * 6,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: 1.6 + Math.random() * 1.8,
+      life: 90 + Math.random() * 40,
+      maxLife: 130,
+      color: Math.random() < 0.5 ? "#8b5a2b" : "#c8ff66"
+    });
+  }
+}
+
+function updateAtaquesEspadaMadera(dtMs) {
+  for (let i = window.ataquesEspadaMaderaActivos.length - 1; i >= 0; i--) {
+    const ataque = window.ataquesEspadaMaderaActivos[i];
+
+    ataque.x = player.x + 32 + ataque.pivotOffsetX;
+    ataque.y = player.y + 32 + ataque.pivotOffsetY;
+    ataque.tiempo -= dtMs;
+
+    crearParticulasEspadaMadera(ataque);
+
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+    const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+    for (let j = 0; j < (window.enemigos || []).length; j++) {
+      const enemy = window.enemigos[j];
+      if (!enemy) continue;
+      if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+      if (ataque.enemigosGolpeados.includes(enemy.id)) continue;
+
+      const centroX = enemy.x + enemy.w / 2;
+      const centroY = enemy.y + enemy.h / 2;
+
+      const dx = puntaX - centroX;
+      const dy = puntaY - centroY;
+      const distancia = Math.hypot(dx, dy);
+
+      const radioGolpe = Math.max(enemy.w, enemy.h) * 0.55;
+
+      if (distancia > radioGolpe) continue;
+
+      ataque.enemigosGolpeados.push(enemy.id);
+
+      const item = window.equipSlots?.[ataque.slotIndex];
+      const danio = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0;
+
+      enemy.puntos_de_vida = Math.max(0, (enemy.puntos_de_vida || 0) - danio);
+
+      crearTextoDanio(
+        enemy.x + enemy.w / 2,
+        enemy.y - 10,
+        "-" + danio,
+        "#ffb347",
+        "#ff7b00"
+      );
+
+      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
+      const push = 32;
+
+      enemy.x += (Math.cos(angulo) / len) * push;
+      enemy.y += (Math.sin(angulo) / len) * push;
+
+      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+
+      if (!ataque.yaDesgasto) {
+        consumirUsoEspadaMadera(ataque.slotIndex);
+        ataque.yaDesgasto = true;
+      }
+
+      if (enemy.puntos_de_vida <= 0) {
+        eliminarEnemigoPorDerrota(enemy);
+      }
+
+      break;
+    }
+
+    if (ataque.tiempo <= 0) {
+      window.ataquesEspadaMaderaActivos.splice(i, 1);
+    }
+  }
+}
+
+function updateParticulasEspadaMadera(dtMs) {
+  for (let i = window.particulasEspadaMadera.length - 1; i >= 0; i--) {
+    const p = window.particulasEspadaMadera[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    p.size *= 0.975;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasEspadaMadera.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasEspadaMadera(ctx) {
+  for (const p of (window.particulasEspadaMadera || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = "#c8ff66";
+    ctx.shadowBlur = 10;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function drawAtaquesEspadaMadera(ctx) {
+  for (const ataque of (window.ataquesEspadaMaderaActivos || [])) {
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const fade = Math.max(0, ataque.tiempo / ataque.tiempoMax);
+    const alpha = Math.max(0.18, fade);
+    const slashScale = 0.82 + (Math.sin(progreso * Math.PI) * 0.32);
+
+    ctx.save();
+    ctx.translate(ataque.x, ataque.y);
+    ctx.rotate(angulo);
+    ctx.scale(slashScale, slashScale);
+    ctx.globalAlpha = alpha;
+
+    // rastro feroz del corte
+    ctx.strokeStyle = "#c8ff66";
+    ctx.lineWidth = 6;
+    ctx.shadowColor = "#c8ff66";
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.moveTo(-10, 0);
+    ctx.lineTo(ataque.alcance + 14, 0);
+    ctx.stroke();
+
+    // estela extra para dar sensación de velocidad
+    ctx.globalAlpha = alpha * 0.45;
+    ctx.lineWidth = 10;
+    ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.moveTo(-18, 0);
+    ctx.lineTo(ataque.alcance + 6, 0);
+    ctx.stroke();
+
+    ctx.globalAlpha = alpha;
+
+    // hoja
+    ctx.fillStyle = "#8b5a2b";
+    ctx.strokeStyle = "#d8ff7a";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#d8ff7a";
+    ctx.shadowBlur = 12;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(ataque.alcance - 12, -4);
+    ctx.lineTo(ataque.alcance + 10, 0);
+    ctx.lineTo(ataque.alcance - 12, 4);
+    ctx.lineTo(0, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // brillo interno
+    ctx.strokeStyle = "#e8ff9a";
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(6, 0);
+    ctx.lineTo(ataque.alcance - 6, 0);
+    ctx.stroke();
+
+    // mango
+    ctx.fillStyle = "#5c3a1e";
+    ctx.shadowBlur = 0;
+    ctx.fillRect(-10, -3.5, 12, 7);
+
+    ctx.restore();
+  }
+}
 
   // Scroll con rueda (desktop)
 canvas.addEventListener("wheel", (e) => {
@@ -7088,6 +7379,9 @@ if (player.blinkTimer > 0) {
     updateBumerangs(dtMs);
     updateParticulasBumerang(dtMs);
     updateDisparosLazer(dtMs);
+
+    updateAtaquesEspadaMadera(dtMs);
+    updateParticulasEspadaMadera(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -8549,11 +8843,17 @@ drawNPCsAmbiente(ctx);
 
 //--Enemigos
 drawEnemigos(ctx);
+
+//--Efecto disparo lazer
 drawDisparosLazer(ctx);
 
 //--Efectos bumerang
 drawParticulasBumerang(ctx);
 drawBumerangs(ctx);
+
+//--Efecto Espadas
+drawParticulasEspadaMadera(ctx);
+drawAtaquesEspadaMadera(ctx);
 
 //--Efecto Skeit de patines
 for (let i = skateParticles.length - 1; i >= 0; i--) {
