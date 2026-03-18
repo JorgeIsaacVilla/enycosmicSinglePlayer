@@ -27,7 +27,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 1180,
+        "x": 118,
         "y": 940
       },
       "ejecucion_script": {
@@ -61,7 +61,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 1320,
+        "x": 132,
         "y": 1010
       },
       "ejecucion_script": {
@@ -95,8 +95,8 @@
         "h": 64
       },
       "posicion": {
-        "x": 1490,
-        "y": 1120
+        "x": 149,
+        "y": 110
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"
@@ -129,7 +129,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 1710,
+        "x": 171,
         "y": 980
       },
       "ejecucion_script": {
@@ -197,7 +197,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 3200,
+        "x": 320,
         "y": 860
       },
       "ejecucion_script": {
@@ -231,7 +231,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 2320,
+        "x": 232,
         "y": 920
       },
       "ejecucion_script": {
@@ -265,8 +265,8 @@
         "h": 320
       },
       "posicion": {
-        "x": 2780,
-        "y": 1180
+        "x": 278,
+        "y": 118
       },
       "ejecucion_script": {
         "al_morir": "bossDragonDeComodoDefeated"

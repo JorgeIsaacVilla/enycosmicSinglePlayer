@@ -181,6 +181,74 @@ const FRASES_VALIENTES = [
 ];
 
 let escudoMaderaActivo = false;
+let skateParticles = [];
+
+function crearParticulaPatin() {
+  skateParticles.push({
+    x: player.x + 32 + (Math.random() * 14 - 7),
+    y: player.y + 56 + (Math.random() * 6 - 3),
+
+    vx: (Math.random() - 0.5) * 1.4,
+    vy: 0.3 + Math.random() * 0.9,
+
+    size: 2 + Math.random() * 3,
+    life: 500 + Math.random() * 250,
+    maxLife: 750,
+
+    glow: 10 + Math.random() * 10,
+    orbit: Math.random() * Math.PI * 2,
+    spin: 0.08 + Math.random() * 0.12,
+    color: Math.random() < 0.5 ? "#00eaff" : "#7a5cff"
+  });
+}
+
+function updateSkateParticles(dtMs) {
+  for (let i = skateParticles.length - 1; i >= 0; i--) {
+    const p = skateParticles[i];
+
+    p.life -= dtMs;
+    p.orbit += p.spin;
+
+    p.x += p.vx + Math.cos(p.orbit) * 0.15;
+    p.y += p.vy + Math.sin(p.orbit) * 0.15;
+
+    p.size *= 0.992;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      skateParticles.splice(i, 1);
+    }
+  }
+}
+
+function drawSkateParticles(ctx) {
+  if (!skateParticles.length) return;
+
+  ctx.save();
+
+  for (const p of skateParticles) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.globalAlpha = alpha;
+
+    // núcleo brillante
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = p.glow;
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    // aura exterior
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = p.glow * 1.4;
+    ctx.arc(p.x, p.y, p.size * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
 
 // ===============================
 //-----MetaMap (inicio)
@@ -6369,19 +6437,23 @@ function update(dtMs) {
     const dir = held[0];
     player.walking = !!dir;
 
-    if (dir) {
-      player.facing = dir;
-      const d = dirs[dir];
-      let delta = dtMs / 8;
+if (dir) {
+    player.facing = dir;
+    const d = dirs[dir];
+    let delta = dtMs / 8;
 
 const patinesEquipados = window.equipSlots?.find(i => i && i.id === "patines");
 
 if (patinesEquipados) {
   delta *= 2;
+
+  if (player.walking && Math.random() < 0.55) {
+    crearParticulaPatin();
+  }
 }
-      player.x += d.x * player.speed * delta;
-      player.y += d.y * player.speed * delta;
-    }
+    player.x += d.x * player.speed * delta;
+    player.y += d.y * player.speed * delta;
+  }
 
     // límites del mundo completo (5000x5000)
     const leftLimit = 0;
@@ -6421,6 +6493,7 @@ if (equipSlotsLimpiados) {
 
 updateNPCsAmbiente(dtMs);
 updateEnemigos(dtMs);
+updateSkateParticles(dtMs);
 
 if (shieldEffect.timer > 0) {
   shieldEffect.timer -= dtMs;
@@ -7263,8 +7336,6 @@ function limpiarSlotsDeCombinacionUsados(resultado) {
   }
 }
 
-
-
 function intentarCrearItemFinal() {
   if (!combinacionResultado) return;
 
@@ -7874,6 +7945,7 @@ if (logoImg) {
     ctx.translate(-camCenterX, -camCenterY);
 
 ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
+drawSkateParticles(ctx);
 
 // Dibujar items
 pruebaDeItems();
@@ -7885,6 +7957,36 @@ drawNPCsAmbiente(ctx);
 
 //--Enemigos
 drawEnemigos(ctx);
+
+//--Efecto Skeit de patines
+for (let i = skateParticles.length - 1; i >= 0; i--) {
+
+  const p = skateParticles[i];
+
+  p.life -= 16;
+  p.x += p.vx;
+  p.y += p.vy;
+
+  const alpha = p.life / 500;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  ctx.fillStyle = "#00ffcc";
+  ctx.shadowColor = "#00ffcc";
+  ctx.shadowBlur = 12;
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+
+  if (p.life <= 0) {
+    skateParticles.splice(i,1);
+  }
+
+}
 
 // Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
