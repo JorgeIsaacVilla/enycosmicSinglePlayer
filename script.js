@@ -1137,6 +1137,23 @@ function openCameraAR() {
     videoPlane.rotation.x = -Math.PI / 2;
     state.markerRoot.add(videoPlane);
 
+function updateBumerangs(dtMs) {
+  for (let i = bumerangsActivos.length - 1; i >= 0; i--) {
+    const b = bumerangsActivos[i];
+
+    b.x += b.vx;
+    b.y += b.vy;
+    b.angulo += 0.55;
+    b.vida -= dtMs;
+
+    crearParticulasBumerang(b);
+
+    if (b.vida <= 0) {
+      bumerangsActivos.splice(i, 1);
+    }
+  }
+}
+
     function update() {
       if (state.arToolkitSource && state.arToolkitSource.ready !== false) {
         state.arToolkitContext.update(state.arToolkitSource.domElement);
@@ -2598,7 +2615,31 @@ const PDV_MAX = 100;
 const CORAZON_SRC = "./assets/panelOptions/corazon.svg";
 let corazonImg = null;
 
+function drawBumerangs(ctx) {
+  if (!window.bumerangImg || !window.bumerangImg.complete) return;
 
+  for (const b of (window.bumerangsActivos || [])) {
+    ctx.save();
+
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.angulo);
+
+    const size = 42;
+
+    ctx.shadowColor = "#d7a15e";
+    ctx.shadowBlur = 8;
+
+    ctx.drawImage(
+      window.bumerangImg,
+      -size / 2,
+      -size / 2,
+      size,
+      size
+    );
+
+    ctx.restore();
+  }
+}
 
 function drawLifeBar(ctx, canvas) {
 
@@ -3147,7 +3188,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       break;
 
     case "bumerang":
-      console.log("El usuario usará este item: bumerang");
+      lanzarBumerang();
       break;
 
     case "pico_escabador":
@@ -3305,6 +3346,14 @@ const WORLD_H = 5000;
   const wrap = document.getElementById("wrap");
   const ctx = canvas.getContext("2d");
   
+  // =============================
+// 🪃 VARIABLES GLOBALES BUMERANG
+// =============================
+window.bumerangsActivos = [];
+window.particulasBumerang = [];
+
+window.bumerangImg = new Image();
+window.bumerangImg.src = "./assets/items/bumerang.svg";
 
   // Scroll con rueda (desktop)
 canvas.addEventListener("wheel", (e) => {
@@ -3686,7 +3735,6 @@ async function cargarEnemigos() {
 }
 
 //--lógica NPC's ambiente
-
 async function cargarNPCsAmbiente() {
   const response = await fetch("./world.JSON/NPCambiente.json");
   const data = await response.json();
@@ -6426,6 +6474,170 @@ if (enemigoCerca) {
 }
 
 //--NPC'sambiente (Fin)
+
+//--Funciones bumerang
+function lanzarBumerang() {
+  const velocidad = 6;
+  const size = 14;
+
+  let vx = 0;
+  let vy = 0;
+
+  if (player.facing === "up") vy = -velocidad;
+  if (player.facing === "down") vy = velocidad;
+  if (player.facing === "left") vx = -velocidad;
+  if (player.facing === "right") vx = velocidad;
+
+  const nuevoBumerang = {
+    x: player.x + 32,
+    y: player.y + 32,
+    vx,
+    vy,
+    angulo: 0,
+    size,
+    vida: 1200
+  };
+
+  window.bumerangsActivos.push(nuevoBumerang);
+
+  for (let i = 0; i < 8; i++) {
+    window.particulasBumerang.push({
+      x: nuevoBumerang.x - vx * 0.6,
+      y: nuevoBumerang.y - vy * 0.6,
+      vx: (-vx * 0.05) + (Math.random() - 0.5) * 1.2,
+      vy: (-vy * 0.05) + (Math.random() - 0.5) * 1.2,
+      size: 2.5 + Math.random() * 2.5,
+      life: 160 + Math.random() * 80,
+      maxLife: 240,
+      color: Math.random() < 0.5 ? "#8b5a2b" : "#c08a52",
+      esRayo: false
+    });
+  }
+
+  for (let i = 0; i < 3; i++) {
+    window.particulasBumerang.push({
+      x: nuevoBumerang.x - vx,
+      y: nuevoBumerang.y - vy,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      size: 8 + Math.random() * 4,
+      life: 80 + Math.random() * 40,
+      maxLife: 120,
+      color: "#ffd38a",
+      esRayo: true
+    });
+  }
+}
+
+window.lanzarBumerang = lanzarBumerang;
+
+function crearParticulasBumerang(b) {
+  for (let i = 0; i < 3; i++) {
+    window.particulasBumerang.push({
+      x: b.x,
+      y: b.y,
+      vx: (-b.vx * 0.08) + (Math.random() - 0.5) * 0.9,
+      vy: (-b.vy * 0.08) + (Math.random() - 0.5) * 0.9,
+      size: 2 + Math.random() * 2,
+      life: 100 + Math.random() * 60,
+      maxLife: 160,
+      color: Math.random() < 0.5 ? "#8b5a2b" : "#c08a52",
+      esRayo: false
+    });
+  }
+
+  if (Math.random() < 0.45) {
+    window.particulasBumerang.push({
+      x: b.x - b.vx * 0.35,
+      y: b.y - b.vy * 0.35,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      size: 6 + Math.random() * 3,
+      life: 50 + Math.random() * 30,
+      maxLife: 90,
+      color: "#ffe2a8",
+      esRayo: true
+    });
+  }
+}
+
+function updateBumerangs(dtMs) {
+  for (let i = window.bumerangsActivos.length - 1; i >= 0; i--) {
+    const b = window.bumerangsActivos[i];
+
+    b.x += b.vx;
+    b.y += b.vy;
+    b.angulo += 0.55;
+    b.vida -= dtMs;
+
+    crearParticulasBumerang(b);
+
+    if (b.vida <= 0) {
+      window.bumerangsActivos.splice(i, 1);
+    }
+  }
+}
+
+function updateParticulasBumerang(dtMs) {
+  for (let i = window.particulasBumerang.length - 1; i >= 0; i--) {
+    const p = window.particulasBumerang[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+
+    p.vx *= 0.985;
+    p.vy *= 0.985;
+
+    if (p.esRayo) {
+      p.size *= 0.93;
+    } else {
+      p.size *= 0.975;
+    }
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasBumerang.splice(i, 1);
+    }
+  }
+}
+
+
+function drawParticulasBumerang(ctx) {
+  for (const p of (window.particulasBumerang || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if (p.esRayo) {
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = Math.max(1.2, p.size * 0.28);
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 14;
+
+      ctx.beginPath();
+      ctx.moveTo(p.x - p.size, p.y - p.size * 0.22);
+      ctx.lineTo(p.x + p.size, p.y + p.size * 0.22);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = "#ffd38a";
+      ctx.shadowBlur = 12;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#fff3d6";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+}
+
 function update(dtMs) {
 
   if (gameOverActive) {
@@ -6531,6 +6743,9 @@ if (player.blinkTimer > 0) {
   player.blinkTimer -= dtMs;
   if (player.blinkTimer < 0) player.blinkTimer = 0;
 }
+
+    updateBumerangs(dtMs);
+    updateParticulasBumerang(dtMs);
 
   }
 
@@ -7994,6 +8209,10 @@ drawNPCsAmbiente(ctx);
 //--Enemigos
 drawEnemigos(ctx);
 
+//--Efectos bumerang
+drawParticulasBumerang(ctx);
+drawBumerangs(ctx);
+
 //--Efecto Skeit de patines
 for (let i = skateParticles.length - 1; i >= 0; i--) {
 
@@ -8429,7 +8648,7 @@ resetPlayerProfile() */
 
 //------Prueba de items-----
 //Prueba de escudo:
-/*   */
+/*   
 function pruebaQuitarUsoEscudo() {
   if (!window.equipSlots) return;
 
@@ -8563,3 +8782,4 @@ function pruebaUsarEscudoHierro() {
 
   console.log("Usos restantes del Escudo de hierro:", item.usos);
 }
+*/
