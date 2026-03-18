@@ -7480,80 +7480,116 @@ function limpiarEquipSlotsAgotados() {
   return huboCambios;
 }
 
-function drawShieldEffect(ctx) {
+function drawShieldEffect(ctx, layer = "front") {
+  const escudosEquipados = (window.equipSlots || []).filter(
+    item =>
+      item &&
+      (
+        item.id === "escudo_de_madera" ||
+        item.id === "escudo_de_hierro"
+      )
+  );
 
-  if (!window.equipSlots) return;
+  if (!escudosEquipados.length) return;
 
-  const cx = player.x + HERO_DRAW_W / 2;
-  const cy = player.y + HERO_DRAW_H / 2;
+  const cx = player.x + 32;
+  const cy = player.y + 32;
+  const time = performance.now() * 0.0015;
 
-  const escudoArriba = window.equipSlots[0];
-  const escudoAbajo = window.equipSlots[1];
-
-  function dibujarEscudo(tipo, inclinacion, offsetY = 0) {
-    const esMadera = tipo === "escudo_de_madera";
+  escudosEquipados.forEach((escudo, index) => {
+    const esMadera = escudo.id === "escudo_de_madera";
 
     const ringColor = esMadera ? "#ffe600" : "#cfd4da";
-    const glowColor = esMadera ? "#fff16b" : "#ffffff";
+    const glowColor = esMadera ? "#fff16b" : "#f4f7fb";
 
-    const pulse = 1 + Math.sin(performance.now() * 0.004) * 0.08;
+    let tilt = 0;
+    let radiusBase = 28;
+
+    if (escudosEquipados.length === 1) {
+      tilt = 0.32;
+      radiusBase = 30;
+    } else {
+      tilt = index === 0 ? -0.32 : 0.32;
+      radiusBase = index === 0 ? 28 : 34;
+    }
+
+    const pulse = 1 + Math.sin((performance.now() * 0.008) + index) * 0.03;
 
     ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(tilt);
+    ctx.scale(1.35 * pulse, 0.45 * pulse);
 
-    ctx.translate(cx, cy + offsetY);
-    ctx.rotate(inclinacion);
-    ctx.scale(1.6 * pulse, 0.55 * pulse);
-
-    // aro principal
-    ctx.beginPath();
-    ctx.strokeStyle = ringColor;
-    ctx.lineWidth = 5;
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = 26;
-    ctx.ellipse(0, 0, 28, 28, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // halo exterior
-    ctx.beginPath();
-    ctx.strokeStyle = glowColor;
-    ctx.lineWidth = 2;
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = 32;
-    ctx.ellipse(0, 0, 34, 34, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // polvo brillante / partículas
-    const tiempo = performance.now() * 0.004;
-
-    for (let i = 0; i < 10; i++) {
-      const angle = tiempo + (i * (Math.PI * 2 / 10));
-      const px = Math.cos(angle) * (24 + (i % 3) * 6);
-      const py = Math.sin(angle) * 12;
+    if (layer === "back") {
+      ctx.beginPath();
+      ctx.strokeStyle = ringColor;
+      ctx.lineWidth = 4;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 18;
+      ctx.ellipse(0, 0, radiusBase, radiusBase, 0, Math.PI, Math.PI * 2);
+      ctx.stroke();
 
       ctx.beginPath();
-      ctx.fillStyle = ringColor;
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = 1.5;
       ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 16;
-      ctx.arc(px, py, 1.8 + (i % 2), 0, Math.PI * 2);
-      ctx.fill();
+      ctx.shadowBlur = 24;
+      ctx.ellipse(0, 0, radiusBase + 5, radiusBase + 5, 0, Math.PI, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    if (layer === "front") {
+      ctx.beginPath();
+      ctx.strokeStyle = ringColor;
+      ctx.lineWidth = 4;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 18;
+      ctx.ellipse(0, 0, radiusBase, radiusBase, 0, 0, Math.PI);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 24;
+      ctx.ellipse(0, 0, radiusBase + 5, radiusBase + 5, 0, 0, Math.PI);
+      ctx.stroke();
     }
 
     ctx.restore();
-  }
 
-  if (
-    escudoArriba &&
-    (escudoArriba.id === "escudo_de_madera" || escudoArriba.id === "escudo_de_hierro")
-  ) {
-    dibujarEscudo(escudoArriba.id, -0.45, -4);
-  }
+    if (layer === "front") {
+      const particleCount = 5;
 
-  if (
-    escudoAbajo &&
-    (escudoAbajo.id === "escudo_de_madera" || escudoAbajo.id === "escudo_de_hierro")
-  ) {
-    dibujarEscudo(escudoAbajo.id, 0.45, 4);
-  }
+      for (let i = 0; i < particleCount; i++) {
+        const a = time * 2.2 + (i * (Math.PI * 2 / particleCount)) + index * 0.7;
+
+        // punto base SOBRE el aro, no sobre la cabeza
+        const ringX = cx + Math.cos(a) * (radiusBase * 1.28);
+        const ringY = cy + Math.sin(a) * (radiusBase * 0.42);
+
+        // deriva suave hacia arriba
+        const driftX = Math.sin(time * 3 + i + index) * 2.5;
+        const driftY = ((time * 40 + i * 9 + index * 13) % 16);
+
+        const px = ringX + driftX;
+        const py = ringY - driftY;
+
+        const size = 0.9 + ((Math.sin(time * 4 + i) + 1) * 0.45);
+
+        ctx.save();
+        ctx.globalAlpha = 0.14 + ((Math.sin(time * 2 + i) + 1) * 0.07);
+        ctx.fillStyle = ringColor;
+        ctx.shadowColor = glowColor;
+        ctx.shadowBlur = 8;
+
+        ctx.beginPath();
+        ctx.arc(px, py, size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  });
 }
 
 // =======================================================================================
@@ -8017,6 +8053,8 @@ const row = rowForFacing(player.facing);
 const sx = player.frame * HERO_W;
 const sy = row * HERO_H;
 
+drawShieldEffect(ctx, "back");
+
 if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
   ctx.drawImage(
     images.hero,
@@ -8026,7 +8064,7 @@ if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
   );
 }
 
-drawShieldEffect(ctx);
+drawShieldEffect(ctx, "front");
 
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
