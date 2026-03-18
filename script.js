@@ -116,6 +116,17 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
 let floatingTexts = []; //Almacenar texto flotante (Vida del usuario)
 
+function crearTextoDanio(x, y, texto, color = "#ff1a1a", glow = "#ff0000") {
+  floatingTexts.push({
+    x: x,
+    y: y,
+    valor: texto,
+    vida: 700,
+    color: color,
+    glow: glow
+  });
+}
+
 
 //--Variables al momento de morir (inicio)
 let gameOverActive = false;
@@ -3002,7 +3013,22 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
   switch (item.id) {
     case "corazon":
+      pdv = PDV_MAX;
+
+      crearTextoDanio(
+        player.x + 32,
+        player.y - 10,
+        "+(Vida restaurada)",
+        "#00ffcc",
+        "#00ffcc"
+      );
+
+      if (item.agotable === true) {
+        item.usos = Math.max(0, (item.usos ?? 1) - 1);
+      }
+
       console.log("El usuario usará este item: corazon");
+      
       break;
 
     case "antorcha_de_fuego":
@@ -5909,14 +5935,6 @@ function colisionaEnemigoConJugador(enemy) {
   );
 }
 
-function crearTextoDanio(x, y, cantidad) {
-  floatingTexts.push({
-    x: x,
-    y: y,
-    valor: "-" + cantidad,
-    vida: 700
-  });
-}
 function activarGameOver() {
   gameOverActive = true;
   held.length = 0;
@@ -7702,23 +7720,18 @@ drawEnemigos(ctx);
 // Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
 
-//--Visual de vida restada (inicio)
+//--Visual de vida restada o sumada (inicio)
 for (let i = floatingTexts.length - 1; i >= 0; i--) {
-
   const t = floatingTexts[i];
 
-ctx.save();
-
-ctx.fillStyle = "#ff1a1a";       // rojo más brillante
-ctx.shadowColor = "#ff0000";     // color del brillo
-ctx.shadowBlur = 12;             // intensidad del glow
-
-ctx.font = "20px arcade";
-ctx.textAlign = "center";
-
-ctx.fillText(t.valor, t.x, t.y);
-
-ctx.restore();
+  ctx.save();
+  ctx.fillStyle = t.color || "#ff1a1a";
+  ctx.shadowColor = t.glow || "#ff0000";
+  ctx.shadowBlur = 16;
+  ctx.font = "20px arcade";
+  ctx.textAlign = "center";
+  ctx.fillText(t.valor, t.x, t.y);
+  ctx.restore();
 
   t.y -= 0.4;
   t.vida -= 16;
@@ -7727,7 +7740,7 @@ ctx.restore();
     floatingTexts.splice(i, 1);
   }
 }
-//--Visual de vida restada (fin)
+//--Visual de vida restada o sumada (fin)
 
 const row = rowForFacing(player.facing);
 const sx = player.frame * HERO_W;
