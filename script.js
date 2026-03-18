@@ -3018,7 +3018,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       crearTextoDanio(
         player.x + 32,
         player.y - 10,
-        "+(Vida restaurada)",
+        "+" + pdv,
         "#00ffcc",
         "#00ffcc"
       );
@@ -6105,7 +6105,7 @@ if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
   crearTextoDanio(
   player.x + HERO_DRAW_W / 2,
   player.y - 10,
-  enemy.puntos_de_ataque
+  '-' + enemy.puntos_de_ataque
 );
 
 if (pdv <= 0 && !gameOverActive) {
