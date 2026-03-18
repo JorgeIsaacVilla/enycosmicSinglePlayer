@@ -3250,9 +3250,21 @@ case "bumerang": {
       console.log("El usuario usará este item: patines");
       break;
 
-    case "espada_de_hierro":
-      console.log("El usuario usará este item: espada de hierro");
-      break;
+case "espada_de_hierro": {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  window.lanzarAtaqueEspadaHierro(slotIndex);
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  break;
+}
 
     case "escudo_de_hierro":
       //activarEfectoEscudo("hierro", player.facing === "up" ? "up" : "down");
@@ -3419,6 +3431,12 @@ window.lazerColor = "#eaff00";
 window.ataquesEspadaMaderaActivos = [];
 window.particulasEspadaMadera = [];
 
+// =============================
+// 🗡️ ESPADA DE hierro - ANIMACIÓN
+// =============================
+window.ataquesEspadaHierroActivos = [];
+window.particulasEspadaHierro = [];
+
 let espadaMaderaLunge = {
   active: false,
   facing: "down",
@@ -3444,6 +3462,252 @@ function activarLungeEspadaMadera(facing) {
   // frame de paso hacia adelante del spritesheet
   espadaMaderaFrameOverride.active = true;
   espadaMaderaFrameOverride.frame = 1;
+}
+
+function lanzarAtaqueEspadaHierro(slotIndex) {
+  const alcance = 64;
+  const duracion = 120;
+
+  let pivotOffsetX = 0;
+  let pivotOffsetY = 0;
+  let anguloInicio = 0;
+  let anguloFin = 0;
+
+  if (player.facing === "up") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -2.45;
+    anguloFin = -0.75;
+  } else if (player.facing === "down") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 0.75;
+    anguloFin = 2.45;
+  } else if (player.facing === "left") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 2.35;
+    anguloFin = 4.05;
+  } else {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -0.85;
+    anguloFin = 0.85;
+  }
+
+  activarLungeEspadaMadera(player.facing);
+
+  window.ataquesEspadaHierroActivos.push({
+    x: player.x + 32 + pivotOffsetX,
+    y: player.y + 32 + pivotOffsetY,
+    pivotOffsetX,
+    pivotOffsetY,
+    alcance,
+    tiempo: duracion,
+    tiempoMax: duracion,
+    anguloInicio,
+    anguloFin,
+    facing: player.facing,
+    slotIndex,
+    enemigosGolpeados: []
+  });
+}
+
+window.lanzarAtaqueEspadaHierro = lanzarAtaqueEspadaHierro;
+
+function crearParticulasEspadaHierro(ataque) {
+  const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+  const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+  const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+  const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+  for (let i = 0; i < 3; i++) {
+    window.particulasEspadaHierro.push({
+      x: puntaX + (Math.random() - 0.5) * 7,
+      y: puntaY + (Math.random() - 0.5) * 7,
+      vx: (Math.random() - 0.5) * 1.0,
+      vy: (Math.random() - 0.5) * 1.0,
+      size: 1.8 + Math.random() * 2,
+      life: 100 + Math.random() * 50,
+      maxLife: 150,
+      color: Math.random() < 0.5 ? "#cfd4da" : "#d8ff7a"
+    });
+  }
+}
+
+function updateAtaquesEspadaHierro(dtMs) {
+  for (let i = window.ataquesEspadaHierroActivos.length - 1; i >= 0; i--) {
+    const ataque = window.ataquesEspadaHierroActivos[i];
+
+    ataque.x = player.x + 32 + ataque.pivotOffsetX + espadaMaderaLunge.offsetX;
+    ataque.y = player.y + 32 + ataque.pivotOffsetY + espadaMaderaLunge.offsetY;
+    ataque.tiempo -= dtMs;
+
+    crearParticulasEspadaHierro(ataque);
+
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+    const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+    for (let j = 0; j < (window.enemigos || []).length; j++) {
+      const enemy = window.enemigos[j];
+      if (!enemy) continue;
+      if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+      if (ataque.enemigosGolpeados.includes(enemy.id)) continue;
+
+      const centroX = enemy.x + enemy.w / 2;
+      const centroY = enemy.y + enemy.h / 2;
+
+      const dx = puntaX - centroX;
+      const dy = puntaY - centroY;
+      const distancia = Math.hypot(dx, dy);
+      const radioGolpe = Math.max(enemy.w, enemy.h) * 0.55;
+
+      if (distancia > radioGolpe) continue;
+
+      ataque.enemigosGolpeados.push(enemy.id);
+
+      const item = window.equipSlots?.[ataque.slotIndex];
+      const danio = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0;
+
+      enemy.puntos_de_vida = Math.max(0, (enemy.puntos_de_vida || 0) - danio);
+
+      crearTextoDanio(
+        enemy.x + enemy.w / 2,
+        enemy.y - 10,
+        "-" + danio,
+        "#e5ecf5",
+        "#d8ff7a"
+      );
+
+      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
+      const push = 32;
+
+      enemy.x += (Math.cos(angulo) / len) * push;
+      enemy.y += (Math.sin(angulo) / len) * push;
+
+      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+
+      if (enemy.puntos_de_vida <= 0) {
+        eliminarEnemigoPorDerrota(enemy);
+      }
+
+      break;
+    }
+
+    if (ataque.tiempo <= 0) {
+      window.ataquesEspadaHierroActivos.splice(i, 1);
+    }
+  }
+}
+
+function updateParticulasEspadaHierro(dtMs) {
+  for (let i = window.particulasEspadaHierro.length - 1; i >= 0; i--) {
+    const p = window.particulasEspadaHierro[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    p.size *= 0.975;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasEspadaHierro.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasEspadaHierro(ctx) {
+  for (const p of (window.particulasEspadaHierro || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = "#d8ff7a";
+    ctx.shadowBlur = 12;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function drawAtaquesEspadaHierro(ctx) {
+  for (const ataque of (window.ataquesEspadaHierroActivos || [])) {
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const fade = Math.max(0, ataque.tiempo / ataque.tiempoMax);
+    const alpha = Math.max(0.18, fade);
+    const slashScale = 0.85 + (Math.sin(progreso * Math.PI) * 0.34);
+
+    ctx.save();
+    ctx.translate(ataque.x, ataque.y);
+    ctx.rotate(angulo);
+    ctx.scale(slashScale, slashScale);
+    ctx.globalAlpha = alpha;
+
+    // rastro
+    ctx.strokeStyle = "#d8ff7a";
+    ctx.lineWidth = 6;
+    ctx.shadowColor = "#d8ff7a";
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.moveTo(-10, 0);
+    ctx.lineTo(ataque.alcance + 14, 0);
+    ctx.stroke();
+
+    ctx.globalAlpha = alpha * 0.45;
+    ctx.lineWidth = 10;
+    ctx.shadowBlur = 24;
+    ctx.beginPath();
+    ctx.moveTo(-18, 0);
+    ctx.lineTo(ataque.alcance + 6, 0);
+    ctx.stroke();
+
+    ctx.globalAlpha = alpha;
+
+    // hoja metalizada
+    ctx.fillStyle = "#cfd4da";
+    ctx.strokeStyle = "#f4f7fb";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#d8ff7a";
+    ctx.shadowBlur = 14;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(ataque.alcance - 12, -4);
+    ctx.lineTo(ataque.alcance + 12, 0);
+    ctx.lineTo(ataque.alcance - 12, 4);
+    ctx.lineTo(0, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // brillo interno
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(6, 0);
+    ctx.lineTo(ataque.alcance - 6, 0);
+    ctx.stroke();
+
+    // mango metálico
+    ctx.fillStyle = "#7f8a96";
+    ctx.shadowBlur = 0;
+    ctx.fillRect(-10, -3.5, 12, 7);
+
+    ctx.restore();
+  }
 }
 
 function lanzarAtaqueEspadaMadera(slotIndex) {
@@ -7440,6 +7704,9 @@ if (player.blinkTimer > 0) {
 
     updateAtaquesEspadaMadera(dtMs);
     updateParticulasEspadaMadera(dtMs);
+
+    updateAtaquesEspadaHierro(dtMs);
+    updateParticulasEspadaHierro(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -8912,6 +9179,8 @@ drawBumerangs(ctx);
 //--Efecto Espadas (dibujar espadazo)
 drawParticulasEspadaMadera(ctx);
 drawAtaquesEspadaMadera(ctx);
+drawParticulasEspadaHierro(ctx);
+drawAtaquesEspadaHierro(ctx);
 
 //--Efecto Skeit de patines
 for (let i = skateParticles.length - 1; i >= 0; i--) {

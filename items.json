@@ -137,7 +137,7 @@
       "imagen": "./assets/items/espadaHierro.svg",
       "agotable": false,
       "cantidad_de_usos": null,
-      "cuanto_quita_de_vida_al_enemigo": null,
+      "cuanto_quita_de_vida_al_enemigo": 18,
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
