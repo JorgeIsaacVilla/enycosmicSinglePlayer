@@ -1137,23 +1137,6 @@ function openCameraAR() {
     videoPlane.rotation.x = -Math.PI / 2;
     state.markerRoot.add(videoPlane);
 
-function updateBumerangs(dtMs) {
-  for (let i = bumerangsActivos.length - 1; i >= 0; i--) {
-    const b = bumerangsActivos[i];
-
-    b.x += b.vx;
-    b.y += b.vy;
-    b.angulo += 0.55;
-    b.vida -= dtMs;
-
-    crearParticulasBumerang(b);
-
-    if (b.vida <= 0) {
-      bumerangsActivos.splice(i, 1);
-    }
-  }
-}
-
     function update() {
       if (state.arToolkitSource && state.arToolkitSource.ready !== false) {
         state.arToolkitContext.update(state.arToolkitSource.domElement);
