@@ -58,7 +58,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 0; //0 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 30; //0 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -115,6 +115,19 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 
 const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
 let floatingTexts = []; //Almacenar texto flotante (Vida del usuario)
+
+
+//--Variables al momento de morir (inicio)
+let gameOverActive = false;
+const PLAYER_SPAWN_X = 3200;
+const PLAYER_SPAWN_Y = 1024;
+
+const gameOverState = {
+  centinelaIzqImg: null,
+  centinelaDerImg: null,
+  continueBtn: { x: 0, y: 0, w: 0, h: 0 }
+};
+//--Variables al momento de morir (fin)
 
 const FRASES_VALIENTES = [
   "¡No te tengo miedo, monstruo!",
@@ -3176,6 +3189,29 @@ canvas.addEventListener("wheel", (e) => {
 }, { passive: false });
 
 canvas.addEventListener("pointerdown", (e) => {
+  if (!gameOverActive) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const clickY = e.clientY - rect.top;
+
+  const btn = gameOverState.continueBtn;
+
+  const hit =
+    clickX >= btn.x &&
+    clickX <= btn.x + btn.w &&
+    clickY >= btn.y &&
+    clickY <= btn.y + btn.h;
+
+  if (!hit) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  continuarTrasGameOver();
+}, { passive: false });
+
+canvas.addEventListener("pointerdown", (e) => {
   if (gameMode !== "playing") return;
 
   const rect = canvas.getBoundingClientRect();
@@ -3393,6 +3429,15 @@ resizeFullscreen();
     img.onload = () => res(img);
     img.onerror = rej;
     img.src = src;
+  });
+
+  loadImage("./assets/avatares/enemy/centinela-reptiliano-armado.png")
+  .then(img => {
+    gameOverState.centinelaIzqImg = img;
+    gameOverState.centinelaDerImg = img;
+  })
+  .catch(() => {
+    console.warn("No cargó imagen de centinela armado para GAME OVER");
   });
 
   // Input
@@ -5872,6 +5917,24 @@ function crearTextoDanio(x, y, cantidad) {
     vida: 700
   });
 }
+function activarGameOver() {
+  gameOverActive = true;
+  held.length = 0;
+  player.walking = false;
+}
+
+function continuarTrasGameOver() {
+  if (cosmonedas >= 3) {
+    cosmonedas -= 3;
+  }
+
+  pdv = Math.floor(PDV_MAX / 2);
+  player.x = PLAYER_SPAWN_X;
+  player.y = PLAYER_SPAWN_Y;
+  player.blinkTimer = 0;
+
+  gameOverActive = false;
+}
 //===========================================
 /*Dibujar NPC (fin) */
 //===========================================
@@ -6026,6 +6089,10 @@ if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
   player.y - 10,
   enemy.puntos_de_ataque
 );
+
+if (pdv <= 0 && !gameOverActive) {
+  activarGameOver();
+}
 
   // retroceso del jugador
   const dx = player.x - enemy.x;
@@ -6209,8 +6276,13 @@ if (enemigoCerca) {
 }
 
 //--NPC'sambiente (Fin)
-  function update(dtMs) {
+function update(dtMs) {
 
+  if (gameOverActive) {
+    held.length = 0;
+    player.walking = false;
+    return;
+  }
     //pdv = Math.max(0, pdv - dtMs * 0.001); // prueba: baja 1 PDV por segundo
     const dir = held[0];
     player.walking = !!dir;
@@ -7526,6 +7598,13 @@ ctx.shadowBlur = 3;
 
   // 🟢 MODO PLAYING
   if (gameMode === "playing") {
+
+        if (gameOverActive) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawGameOverScreen();
+      return;
+    }
     setGameState("gamePlay");
 if (!gameAssetsLoaded) {
 
@@ -7587,7 +7666,10 @@ if (logoImg) {
   );
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  return;
+  if (gameOverActive) {
+  drawGameOverScreen();
+}
+  return; 
 }
 
     const viewW = canvas.width / CAMERA_ZOOM;
@@ -7832,6 +7914,101 @@ if (esAgotable && usosMaximos > 0) {
 // =======================================================================================
 // Lógica de pintura en canvas (fin)
 // =======================================================================================
+function drawGameOverScreen() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  ctx.fillStyle = "rgba(0,0,0,0.96)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  const playerDrawW = 96;
+  const playerDrawH = 96;
+
+  const guardW = 96;
+  const guardH = 96;
+  const separation = 120;
+
+  const playerRow = rowForFacing("down");
+  const playerSx = 0;
+  const playerSy = playerRow * HERO_H;
+
+  const guardRow = rowForFacing("down");
+  const guardSx = 0;
+  const guardSy = guardRow * 64;
+
+  const playerX = centerX - (playerDrawW / 2);
+  const playerY = centerY - 90;
+
+  const guardLeftX = centerX - separation - (guardW / 2);
+  const guardRightX = centerX + separation - (guardW / 2);
+  const guardY = centerY - 90;
+
+  if (gameOverState.centinelaIzqImg) {
+    ctx.drawImage(
+      gameOverState.centinelaIzqImg,
+      guardSx, guardSy, 64, 64,
+      guardLeftX, guardY, guardW, guardH
+    );
+  }
+
+  if (images.hero) {
+    ctx.drawImage(
+      images.hero,
+      playerSx, playerSy, HERO_W, HERO_H,
+      playerX, playerY, playerDrawW, playerDrawH
+    );
+  }
+
+  if (gameOverState.centinelaDerImg) {
+    ctx.drawImage(
+      gameOverState.centinelaDerImg,
+      guardSx, guardSy, 64, 64,
+      guardRightX, guardY, guardW, guardH
+    );
+  }
+
+  ctx.textAlign = "center";
+
+  ctx.fillStyle = "#ff2b2b";
+  ctx.shadowColor = "#ff0000";
+  ctx.shadowBlur = 16;
+  ctx.font = "30px arcade";
+  ctx.fillText("GAME OVER", centerX, centerY + 40);
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "14px arcade";
+  ctx.fillText("Te atraparon los reptilianos", centerX, centerY + 80);
+  ctx.fillText("Para continuar tendras que pagar 3 cosmonedas", centerX, centerY + 110);
+
+  const btnW = 190;
+  const btnH = 42;
+  const btnX = centerX - (btnW / 2);
+  const btnY = centerY + 145;
+
+  gameOverState.continueBtn = {
+    x: btnX,
+    y: btnY,
+    w: btnW,
+    h: btnH
+  };
+
+  ctx.fillStyle = "#00ffcc";
+  ctx.fillRect(btnX, btnY, btnW, btnH);
+
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(btnX, btnY, btnW, btnH);
+
+  ctx.fillStyle = "#000000";
+  ctx.font = "16px arcade";
+  ctx.fillText("CONTINUAR", centerX, btnY + 27);
+
+  ctx.restore();
+}
 
 function start() {
   let last = performance.now();
