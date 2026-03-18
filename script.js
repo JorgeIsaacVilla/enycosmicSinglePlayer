@@ -114,6 +114,7 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 // ================================================
 
 const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
+let floatingTexts = []; //Almacenar texto flotante (Vida del usuario)
 
 const FRASES_VALIENTES = [
   "¡No te tengo miedo, monstruo!",
@@ -3441,7 +3442,7 @@ resizeFullscreen();
   const player = {
     x: 3200, y: 1024, speed: 3, //datos Avatar: Coordenadas - Velocidad
     facing: "down", walking: false,
-    frame: 0, frameTimer: 0, frameDurationMs: 150,
+    frame: 0, frameTimer: 0, frameDurationMs: 150, blinkTimer: 0,
   };
 
 window.player = player;
@@ -3494,6 +3495,7 @@ async function cargarEnemigos() {
 
     persiguiendo: false,
     radioVision: Number(enemy.radioVision) || 500, //radio vision enemigo
+    cooldownDano: 0,
 
     bubbleText: "",
     bubbleTimer: 0,
@@ -5852,6 +5854,24 @@ function distanciaEntreEntidades(a, b) {
 
   return Math.hypot(dx, dy);
 }
+
+function colisionaEnemigoConJugador(enemy) {
+  return (
+    player.x < enemy.x + enemy.w &&
+    player.x + HERO_DRAW_W > enemy.x &&
+    player.y < enemy.y + enemy.h &&
+    player.y + HERO_DRAW_H > enemy.y
+  );
+}
+
+function crearTextoDanio(x, y, cantidad) {
+  floatingTexts.push({
+    x: x,
+    y: y,
+    valor: "-" + cantidad,
+    vida: 700
+  });
+}
 //===========================================
 /*Dibujar NPC (fin) */
 //===========================================
@@ -5971,6 +5991,10 @@ function updateEnemigos(dtMs) {
   const listaEnemigos = window.enemigos || [];
 
   for (const enemy of listaEnemigos) {
+      if (enemy.cooldownDano > 0) {
+      enemy.cooldownDano -= dtMs;
+      if (enemy.cooldownDano < 0) enemy.cooldownDano = 0;
+    }
     if (!enemy) continue;
 
     if (enemy.bubbleTimer > 0) {
@@ -5992,6 +6016,31 @@ function updateEnemigos(dtMs) {
     );
 
     const usuarioDentroVision = distancia <= enemy.radioVision;
+if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
+
+  pdv -= enemy.puntos_de_ataque;
+  if (pdv < 0) pdv = 0;
+
+  crearTextoDanio(
+  player.x + HERO_DRAW_W / 2,
+  player.y - 10,
+  enemy.puntos_de_ataque
+);
+
+  // retroceso del jugador
+  const dx = player.x - enemy.x;
+  const dy = player.y - enemy.y;
+  const dist = Math.hypot(dx, dy) || 1;
+
+  const push = 32;  //Distancia de retroceso al momento de colicionar con el enemigo
+
+  player.x += (dx / dist) * push;
+  player.y += (dy / dist) * push;
+
+  player.blinkTimer = 300;
+
+  enemy.cooldownDano = 800;
+}
 
     if (usuarioDentroVision) {
       enemy.persiguiendo = true;
@@ -6221,6 +6270,11 @@ for (const npc of npcs) {
     npc.bubbleTimer -= dtMs;
   }
 
+}
+
+if (player.blinkTimer > 0) {
+  player.blinkTimer -= dtMs;
+  if (player.blinkTimer < 0) player.blinkTimer = 0;
 }
 
   }
@@ -7566,16 +7620,45 @@ drawEnemigos(ctx);
 // Dibujar avatar
 ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
 
+//--Visual de vida restada (inicio)
+for (let i = floatingTexts.length - 1; i >= 0; i--) {
+
+  const t = floatingTexts[i];
+
+ctx.save();
+
+ctx.fillStyle = "#ff1a1a";       // rojo más brillante
+ctx.shadowColor = "#ff0000";     // color del brillo
+ctx.shadowBlur = 12;             // intensidad del glow
+
+ctx.font = "20px arcade";
+ctx.textAlign = "center";
+
+ctx.fillText(t.valor, t.x, t.y);
+
+ctx.restore();
+
+  t.y -= 0.4;
+  t.vida -= 16;
+
+  if (t.vida <= 0) {
+    floatingTexts.splice(i, 1);
+  }
+}
+//--Visual de vida restada (fin)
+
 const row = rowForFacing(player.facing);
 const sx = player.frame * HERO_W;
 const sy = row * HERO_H;
 
-ctx.drawImage(
-  images.hero,
-  sx, sy, HERO_W, HERO_H,
-  player.x, player.y,
-  HERO_DRAW_W, HERO_DRAW_H
-);
+if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
+  ctx.drawImage(
+    images.hero,
+    sx, sy, HERO_W, HERO_H,
+    player.x, player.y,
+    HERO_DRAW_W, HERO_DRAW_H
+  );
+}
 
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
