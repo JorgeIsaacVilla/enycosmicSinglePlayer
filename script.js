@@ -3154,9 +3154,35 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       console.log("El usuario usará este item: antorcha de fuego");
       break;
 
-    case "pistola_lazer":
-      console.log("El usuario usará este item: pistola lazer");
-      break;
+case "pistola_lazer": {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  if ((item.usos ?? 0) <= 0) {
+    console.log("No quedan cargas de pistola lazer");
+    return;
+  }
+
+  window.lanzarDisparoLazer(item);
+  
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  console.log("Usos restantes de Pistola Lazer:", item.usos);
+
+  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+    window.equipSlots[slotIndex] = null;
+  }
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  break;
+}
 
     case "espada_de_madera":
       console.log("El usuario usará este item: espada de madera");
@@ -3362,6 +3388,13 @@ window.particulasBumerang = [];
 
 window.bumerangImg = new Image();
 window.bumerangImg.src = "./assets/items/bumerang.svg";
+window.bumerangsActivos = [];
+
+// =============================
+// 🪃 VARIABLES GLOBALES pistola lazer
+// =============================
+window.disparosLazerActivos = [];
+window.lazerColor = "#eaff00";
 
   // Scroll con rueda (desktop)
 canvas.addEventListener("wheel", (e) => {
@@ -3638,12 +3671,60 @@ resizeFullscreen();
     W:"up", S:"down", A:"left", D:"right",
   };
 
-  window.addEventListener("keydown", (e) => {
-    const dir = keyToDir[e.key];
-    if (!dir) return;
+window.addEventListener("keydown", (e) => {
+
+  // =============================
+  // 🔒 Bloqueos globales
+  // =============================
+  if (gameOverActive) return;
+
+  const tag = (e.target?.tagName || "").toLowerCase();
+  const isEditable =
+    tag === "input" ||
+    tag === "textarea" ||
+    tag === "select" ||
+    e.target?.isContentEditable;
+
+  if (isEditable) return;
+
+  const key = String(e.key || "").toLowerCase();
+
+  // =============================
+  // ⌨️ MOVIMIENTO
+  // =============================
+  const dir = keyToDir[e.key];
+  if (dir) {
     if (!held.includes(dir)) held.unshift(dir);
     e.preventDefault();
-  });
+    return;
+  }
+
+  // =============================
+  // 🪃 USO DE ITEMS (Q / E)
+  // =============================
+  if (gameMode === "playing" && !npcDialogOpen && !e.repeat) {
+
+    if (key === "q") {
+      usarItemEquipadoDesdeHUD(0);
+      e.preventDefault();
+      return;
+    }
+
+    if (key === "e") {
+      usarItemEquipadoDesdeHUD(1);
+      e.preventDefault();
+      return;
+    }
+  }
+
+  // =============================
+  // ❌ CERRAR DIÁLOGO
+  // =============================
+  if (e.key === "Escape" && npcDialogOpen) {
+    closeNPCDialog();
+  }
+
+});
 
   window.addEventListener("keyup", (e) => {
     const dir = keyToDir[e.key];
@@ -3652,12 +3733,6 @@ resizeFullscreen();
     if (i !== -1) held.splice(i, 1);
     e.preventDefault();
   });
-
-  window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && npcDialogOpen) {
-    closeNPCDialog();
-  }
-});
 
   // Dpad
   let pressed = false;
@@ -6482,6 +6557,154 @@ if (enemigoCerca) {
 }
 
 //--NPC'sambiente (Fin)
+//--Lamzar disparos lazer
+function lanzarDisparoLazer(itemData) {
+  const velocidad = 14;
+  const largo = 34;
+
+  let vx = 0;
+  let vy = 0;
+
+  if (player.facing === "up") vy = -velocidad;
+  if (player.facing === "down") vy = velocidad;
+  if (player.facing === "left") vx = -velocidad;
+  if (player.facing === "right") vx = velocidad;
+
+  window.disparosLazerActivos.push({
+    x: player.x + 32,
+    y: player.y + 32,
+    vx,
+    vy,
+    largo,
+    vida: 260,
+    danio: Number(itemData?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
+    facing: player.facing
+  });
+}
+
+window.lanzarDisparoLazer = lanzarDisparoLazer;
+
+function updateDisparosLazer(dtMs) {
+  for (let i = window.disparosLazerActivos.length - 1; i >= 0; i--) {
+    const d = window.disparosLazerActivos[i];
+
+    d.x += d.vx;
+    d.y += d.vy;
+    d.vida -= dtMs;
+
+    let impacto = false;
+
+    for (let j = 0; j < (window.enemigos || []).length; j++) {
+      const enemy = window.enemigos[j];
+      if (!enemy) continue;
+
+      const hitboxW = d.facing === "left" || d.facing === "right" ? d.largo : 10;
+      const hitboxH = d.facing === "up" || d.facing === "down" ? d.largo : 10;
+
+      const hitX = d.x - hitboxW / 2;
+      const hitY = d.y - hitboxH / 2;
+
+      const colisiona =
+        hitX < enemy.x + enemy.w &&
+        hitX + hitboxW > enemy.x &&
+        hitY < enemy.y + enemy.h &&
+        hitY + hitboxH > enemy.y;
+
+      if (!colisiona) continue;
+
+      const danio = Number(d.danio ?? 0) || 0;
+      enemy.puntos_de_vida = Math.max(0, (enemy.puntos_de_vida || 0) - danio);
+
+      crearTextoDanio(
+        enemy.x + enemy.w / 2,
+        enemy.y - 10,
+        "-" + danio,
+        "#eaff00",
+        "#eaff00"
+      );
+
+      const len = Math.hypot(d.vx, d.vy) || 1;
+      const push = 32;
+
+      enemy.x += (d.vx / len) * push;
+      enemy.y += (d.vy / len) * push;
+
+      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+
+      if (enemy.puntos_de_vida <= 0) {
+        eliminarEnemigoPorDerrota(enemy);
+      }
+
+      impacto = true;
+      break;
+    }
+
+    if (
+      impacto ||
+      d.vida <= 0 ||
+      d.x < -100 ||
+      d.y < -100 ||
+      d.x > WORLD_W + 100 ||
+      d.y > WORLD_H + 100
+    ) {
+      window.disparosLazerActivos.splice(i, 1);
+    }
+  }
+}
+
+function drawDisparosLazer(ctx) {
+  for (const d of (window.disparosLazerActivos || [])) {
+    ctx.save();
+
+    ctx.strokeStyle = window.lazerColor;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = window.lazerColor;
+    ctx.shadowBlur = 14;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+
+    if (d.facing === "right") {
+      ctx.moveTo(d.x - d.largo / 2, d.y);
+      ctx.lineTo(d.x + d.largo / 2, d.y);
+    } else if (d.facing === "left") {
+      ctx.moveTo(d.x + d.largo / 2, d.y);
+      ctx.lineTo(d.x - d.largo / 2, d.y);
+    } else if (d.facing === "up") {
+      ctx.moveTo(d.x, d.y + d.largo / 2);
+      ctx.lineTo(d.x, d.y - d.largo / 2);
+    } else {
+      ctx.moveTo(d.x, d.y - d.largo / 2);
+      ctx.lineTo(d.x, d.y + d.largo / 2);
+    }
+
+    ctx.stroke();
+
+    ctx.strokeStyle = "#fffed6";
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+
+    if (d.facing === "right") {
+      ctx.moveTo(d.x - d.largo / 2, d.y);
+      ctx.lineTo(d.x + d.largo / 2, d.y);
+    } else if (d.facing === "left") {
+      ctx.moveTo(d.x + d.largo / 2, d.y);
+      ctx.lineTo(d.x - d.largo / 2, d.y);
+    } else if (d.facing === "up") {
+      ctx.moveTo(d.x, d.y + d.largo / 2);
+      ctx.lineTo(d.x, d.y - d.largo / 2);
+    } else {
+      ctx.moveTo(d.x, d.y - d.largo / 2);
+      ctx.lineTo(d.x, d.y + d.largo / 2);
+    }
+
+    ctx.stroke();
+
+    ctx.restore();
+  }
+}
 
 //--Funciones bumerang
 function lanzarBumerang(itemData) {
@@ -6607,25 +6830,8 @@ function updateBumerangs(dtMs) {
         "#ff7b00"
       );
 
-      if (enemy.puntos_de_vida <= 0) {
-
-        crearExplosionBumerang(
-  enemy.x + enemy.w / 2,
-  enemy.y + enemy.h / 2
-);
-
-  // ejecutar script de muerte si existe
-  if (enemy.ejecucion_script && enemy.ejecucion_script.al_morir) {
-    const script = enemy.ejecucion_script.al_morir;
-
-    if (typeof window[script] === "function") {
-      window[script](enemy);
-    }
-  }
-
-  // eliminar enemigo del array
-  window.enemigos.splice(j, 1);
-
+if (enemy.puntos_de_vida <= 0) {
+  eliminarEnemigoPorDerrota(enemy);
   impacto = true;
   break;
 }
@@ -6655,6 +6861,28 @@ function updateBumerangs(dtMs) {
     ) {
       window.bumerangsActivos.splice(i, 1);
     }
+  }
+}
+
+function eliminarEnemigoPorDerrota(enemy) {
+  if (!enemy) return;
+
+  crearExplosionBumerang(
+    enemy.x + enemy.w / 2,
+    enemy.y + enemy.h / 2
+  );
+
+  if (enemy.ejecucion_script && enemy.ejecucion_script.al_morir) {
+    const script = enemy.ejecucion_script.al_morir;
+
+    if (typeof window[script] === "function") {
+      window[script](enemy);
+    }
+  }
+
+  const index = window.enemigos.indexOf(enemy);
+  if (index !== -1) {
+    window.enemigos.splice(index, 1);
   }
 }
 
@@ -6859,7 +7087,7 @@ if (player.blinkTimer > 0) {
 
     updateBumerangs(dtMs);
     updateParticulasBumerang(dtMs);
-
+    updateDisparosLazer(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -8321,6 +8549,7 @@ drawNPCsAmbiente(ctx);
 
 //--Enemigos
 drawEnemigos(ctx);
+drawDisparosLazer(ctx);
 
 //--Efectos bumerang
 drawParticulasBumerang(ctx);

@@ -41,7 +41,7 @@
       "imagen": "./assets/items/pistolaLazer.svg",
       "agotable": true,
       "cantidad_de_usos": 60,
-      "cuanto_quita_de_vida_al_enemigo": null,
+      "cuanto_quita_de_vida_al_enemigo": 12,
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
