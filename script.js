@@ -3419,6 +3419,33 @@ window.lazerColor = "#eaff00";
 window.ataquesEspadaMaderaActivos = [];
 window.particulasEspadaMadera = [];
 
+let espadaMaderaLunge = {
+  active: false,
+  facing: "down",
+  time: 0,
+  timeMax: 0,
+  offsetX: 0,
+  offsetY: 0
+};
+
+let espadaMaderaFrameOverride = {
+  active: false,
+  frame: 0
+};
+
+function activarLungeEspadaMadera(facing) {
+  espadaMaderaLunge.active = true;
+  espadaMaderaLunge.facing = facing;
+  espadaMaderaLunge.time = 120;
+  espadaMaderaLunge.timeMax = 120;
+  espadaMaderaLunge.offsetX = 0;
+  espadaMaderaLunge.offsetY = 0;
+
+  // frame de paso hacia adelante del spritesheet
+  espadaMaderaFrameOverride.active = true;
+  espadaMaderaFrameOverride.frame = 1;
+}
+
 function lanzarAtaqueEspadaMadera(slotIndex) {
   const alcance = 58;
   const duracion = 120;
@@ -3449,6 +3476,8 @@ function lanzarAtaqueEspadaMadera(slotIndex) {
     anguloInicio = -0.85;
     anguloFin = 0.85;
   }
+
+  activarLungeEspadaMadera(player.facing);
 
   window.ataquesEspadaMaderaActivos.push({
     x: player.x + 32 + pivotOffsetX,
@@ -3507,11 +3536,41 @@ function crearParticulasEspadaMadera(ataque) {
 }
 
 function updateAtaquesEspadaMadera(dtMs) {
+
+  if (espadaMaderaLunge.active) {
+    espadaMaderaLunge.time -= dtMs;
+
+    const progreso = 1 - Math.max(0, espadaMaderaLunge.time) / espadaMaderaLunge.timeMax;
+    const fuerza = Math.sin(progreso * Math.PI) * 10;
+
+    espadaMaderaLunge.offsetX = 0;
+    espadaMaderaLunge.offsetY = 0;
+
+    if (espadaMaderaLunge.facing === "up") {
+      espadaMaderaLunge.offsetY = -fuerza;
+    } else if (espadaMaderaLunge.facing === "down") {
+      espadaMaderaLunge.offsetY = fuerza;
+    } else if (espadaMaderaLunge.facing === "left") {
+      espadaMaderaLunge.offsetX = -fuerza;
+    } else if (espadaMaderaLunge.facing === "right") {
+      espadaMaderaLunge.offsetX = fuerza;
+    }
+
+if (espadaMaderaLunge.time <= 0) {
+  espadaMaderaLunge.active = false;
+  espadaMaderaLunge.offsetX = 0;
+  espadaMaderaLunge.offsetY = 0;
+
+  espadaMaderaFrameOverride.active = false;
+  espadaMaderaFrameOverride.frame = 0;
+}
+  }
+
   for (let i = window.ataquesEspadaMaderaActivos.length - 1; i >= 0; i--) {
     const ataque = window.ataquesEspadaMaderaActivos[i];
 
-    ataque.x = player.x + 32 + ataque.pivotOffsetX;
-    ataque.y = player.y + 32 + ataque.pivotOffsetY;
+    ataque.x = player.x + 32 + ataque.pivotOffsetX + espadaMaderaLunge.offsetX;
+    ataque.y = player.y + 32 + ataque.pivotOffsetY + espadaMaderaLunge.offsetY;
     ataque.tiempo -= dtMs;
 
     crearParticulasEspadaMadera(ataque);
@@ -3534,7 +3593,6 @@ function updateAtaquesEspadaMadera(dtMs) {
       const dx = puntaX - centroX;
       const dy = puntaY - centroY;
       const distancia = Math.hypot(dx, dy);
-
       const radioGolpe = Math.max(enemy.w, enemy.h) * 0.55;
 
       if (distancia > radioGolpe) continue;
@@ -8851,7 +8909,7 @@ drawDisparosLazer(ctx);
 drawParticulasBumerang(ctx);
 drawBumerangs(ctx);
 
-//--Efecto Espadas
+//--Efecto Espadas (dibujar espadazo)
 drawParticulasEspadaMadera(ctx);
 drawAtaquesEspadaMadera(ctx);
 
@@ -8886,7 +8944,10 @@ for (let i = skateParticles.length - 1; i >= 0; i--) {
 }
 
 // Dibujar avatar
-ctx.drawImage(images.shadow, player.x, player.y, HERO_DRAW_W, HERO_DRAW_H);
+const heroDrawX = player.x + (espadaMaderaLunge.offsetX || 0);
+const heroDrawY = player.y + (espadaMaderaLunge.offsetY || 0);
+
+ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
 
 //--Visual de vida restada o sumada (inicio)
 for (let i = floatingTexts.length - 1; i >= 0; i--) {
@@ -8911,18 +8972,22 @@ for (let i = floatingTexts.length - 1; i >= 0; i--) {
 //--Visual de vida restada o sumada (fin)
 
 const row = rowForFacing(player.facing);
-const sx = player.frame * HERO_W;
+const frameToDraw = espadaMaderaFrameOverride.active
+  ? espadaMaderaFrameOverride.frame
+  : player.frame;
+
+const sx = frameToDraw * HERO_W;
 const sy = row * HERO_H;
 
 drawShieldEffect(ctx, "back");
 
 if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
-  ctx.drawImage(
-    images.hero,
-    sx, sy, HERO_W, HERO_H,
-    player.x, player.y,
-    HERO_DRAW_W, HERO_DRAW_H
-  );
+ctx.drawImage(
+  images.hero,
+  sx, sy, HERO_W, HERO_H,
+  heroDrawX, heroDrawY,
+  HERO_DRAW_W, HERO_DRAW_H
+);
 }
 
 drawShieldEffect(ctx, "front");
