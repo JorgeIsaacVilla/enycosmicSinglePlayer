@@ -2158,9 +2158,9 @@ window.equipSlots[slotLibre] = {
   desaparece_al_agotarse: item.desaparece_al_agotarse === true,
   usos: item.usos ?? item.cantidad_de_usos ?? item.cantidad ?? 1,
   usos_maximos: item.cantidad_de_usos ?? item.cantidad_usos ?? item.usos ?? 1,
-  cantidad: 1
+  cantidad: 1,
+  cuanto_quita_de_vida_al_enemigo: Number(item.cuanto_quita_de_vida_al_enemigo ?? 0) || 0
 };
-
   if ((item.cantidad || 1) > 1) {
     item.cantidad -= 1;
   } else {
@@ -3179,7 +3179,7 @@ case "bumerang": {
     return;
   }
 
-  lanzarBumerang();
+  lanzarBumerang(item);
 
   item.usos -= 1;
   if (item.usos < 0) item.usos = 0;
@@ -3199,7 +3199,6 @@ case "bumerang": {
 
   break;
 }
-
     case "pico_escabador":
       console.log("El usuario usará este item: pico escabador");
       break;
@@ -6485,7 +6484,7 @@ if (enemigoCerca) {
 //--NPC'sambiente (Fin)
 
 //--Funciones bumerang
-function lanzarBumerang() {
+function lanzarBumerang(itemData) {
   const velocidad = 6;
   const size = 14;
 
@@ -6504,7 +6503,8 @@ function lanzarBumerang() {
     vy,
     angulo: 0,
     size,
-    vida: 1200
+    vida: 1200,
+    danio: Number(itemData?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0
   };
 
   window.bumerangsActivos.push(nuevoBumerang);
@@ -6581,10 +6581,114 @@ function updateBumerangs(dtMs) {
 
     crearParticulasBumerang(b);
 
-    if (b.vida <= 0) {
+    let impacto = false;
+
+    for (let j = 0; j < (window.enemigos || []).length; j++) {
+      const enemy = window.enemigos[j];
+      if (!enemy) continue;
+      if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+
+      const colisiona =
+        b.x - b.size < enemy.x + enemy.w &&
+        b.x + b.size > enemy.x &&
+        b.y - b.size < enemy.y + enemy.h &&
+        b.y + b.size > enemy.y;
+
+      if (!colisiona) continue;
+
+      const danio = Number(b.danio ?? 0) || 0;
+      enemy.puntos_de_vida = Math.max(0, (enemy.puntos_de_vida || 0) - danio);
+
+      crearTextoDanio(
+        enemy.x + enemy.w / 2,
+        enemy.y - 10,
+        "-" + danio,
+        "#ffb347",
+        "#ff7b00"
+      );
+
+      if (enemy.puntos_de_vida <= 0) {
+
+        crearExplosionBumerang(
+  enemy.x + enemy.w / 2,
+  enemy.y + enemy.h / 2
+);
+
+  // ejecutar script de muerte si existe
+  if (enemy.ejecucion_script && enemy.ejecucion_script.al_morir) {
+    const script = enemy.ejecucion_script.al_morir;
+
+    if (typeof window[script] === "function") {
+      window[script](enemy);
+    }
+  }
+
+  // eliminar enemigo del array
+  window.enemigos.splice(j, 1);
+
+  impacto = true;
+  break;
+}
+
+      const len = Math.hypot(b.vx, b.vy) || 1;
+      const push = 32;
+
+      enemy.x += (b.vx / len) * push;
+      enemy.y += (b.vy / len) * push;
+
+      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+
+      enemy.cooldownDano = 250;
+
+      impacto = true;
+      break;
+    }
+
+    if (
+      impacto ||
+      b.x < -100 ||
+      b.y < -100 ||
+      b.x > WORLD_W + 100 ||
+      b.y > WORLD_H + 100 ||
+      b.vida <= 0
+    ) {
       window.bumerangsActivos.splice(i, 1);
     }
   }
+}
+
+function crearExplosionBumerang(x, y) {
+
+  for (let i = 0; i < 20; i++) {
+    window.particulasBumerang.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 0.5) * 4,
+      size: 3 + Math.random() * 3,
+      life: 500,
+      maxLife: 500,
+      //color: Math.random() < 0.5 ? "#c08a52" : "#ffd38a", //Color de exploción del enemigo
+      color: Math.random() < 0.5 ? "#00ffcc" : "#39ff14",
+      esRayo: false
+    });
+  }
+
+  for (let i = 0; i < 6; i++) {
+    window.particulasBumerang.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      size: 8 + Math.random() * 6,
+      life: 250,
+      maxLife: 250,
+      color: "#ffe2a8",
+      esRayo: true
+    });
+  }
+
 }
 
 function updateParticulasBumerang(dtMs) {

@@ -87,8 +87,8 @@
       "tipo_item": "arma",
       "imagen": "./assets/items/bumerang.svg",
       "agotable": true,
-      "cantidad_de_usos": 15,
-      "cuanto_quita_de_vida_al_enemigo": null,
+      "cantidad_de_usos": 32,
+      "cuanto_quita_de_vida_al_enemigo": 4,
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
