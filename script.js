@@ -6201,13 +6201,13 @@ if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
 
   let danio = enemy.puntos_de_ataque;
 
-  const escudoHierro = window.equipSlots?.find(i => i && i.id === "escudo_de_hierro");
+  const escudosHierro = (window.equipSlots || []).filter(i => i && i.id === "escudo_de_hierro");
   const escudoMadera = window.equipSlots?.find(i => i && i.id === "escudo_de_madera");
 
   // 1) Escudo de hierro reduce 2 puntos de daño
-  if (escudoHierro) {
-    danio = Math.max(0, danio - 2);
-  }
+if (escudosHierro.length > 0) {
+  danio = Math.max(0, danio - (2 * escudosHierro.length));
+}
 
   // 2) Escudo de madera absorbe el daño restante con sus usos
   if (escudoMadera && (escudoMadera.usos ?? 0) > 0 && danio > 0) {
