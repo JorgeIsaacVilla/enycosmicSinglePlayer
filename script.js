@@ -115,6 +115,13 @@ window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/e
 
 const NPC_FEAR_RADIUS = 300; //Foco de radio de NPC para detectar enemigos
 let floatingTexts = []; //Almacenar texto flotante (Vida del usuario)
+let shieldEffect = {
+  active: false,
+  type: null,          // "madera" | "hierro"
+  tilt: 0,             // inclinación visual del aro
+  timer: 0,            // duración visual
+  particles: []
+};
 
 function crearTextoDanio(x, y, texto, color = "#ff1a1a", glow = "#ff0000") {
   floatingTexts.push({
@@ -127,6 +134,24 @@ function crearTextoDanio(x, y, texto, color = "#ff1a1a", glow = "#ff0000") {
   });
 }
 
+function activarEfectoEscudo(tipo, orientacion = "down") {
+  shieldEffect.active = true;
+  shieldEffect.type = tipo;
+  shieldEffect.timer = 1200;
+  shieldEffect.particles = [];
+
+  shieldEffect.tilt = orientacion === "up" ? -0.35 : 0.35;
+
+  for (let i = 0; i < 20; i++) {
+    shieldEffect.particles.push({
+      angle: (Math.PI * 2 / 20) * i,
+      radius: 18 + Math.random() * 12,
+      life: 500 + Math.random() * 500,
+      drift: 0.15 + Math.random() * 0.35,
+      size: 2 + Math.random() * 2
+    });
+  }
+}
 
 //--Variables al momento de morir (inicio)
 let gameOverActive = false;
@@ -3047,8 +3072,8 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
     case "escudo_de_madera":
 
-      escudoMaderaActivo = true;
-
+      //escudoMaderaActivo = true;
+      //activarEfectoEscudo("madera", player.facing === "up" ? "up" : "down");
       console.log("El usuario usará este item: escudo de madera");
 
       break;
@@ -3070,6 +3095,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       break;
 
     case "escudo_de_hierro":
+      //activarEfectoEscudo("hierro", player.facing === "up" ? "up" : "down");
       console.log("El usuario usará este item: escudo de hierro");
       break;
 
@@ -6396,6 +6422,28 @@ if (equipSlotsLimpiados) {
 updateNPCsAmbiente(dtMs);
 updateEnemigos(dtMs);
 
+if (shieldEffect.timer > 0) {
+  shieldEffect.timer -= dtMs;
+  if (shieldEffect.timer < 0) shieldEffect.timer = 0;
+}
+
+if (shieldEffect.particles.length > 0) {
+  for (let i = shieldEffect.particles.length - 1; i >= 0; i--) {
+    const p = shieldEffect.particles[i];
+    p.life -= dtMs;
+    p.radius += p.drift;
+
+    if (p.life <= 0) {
+      shieldEffect.particles.splice(i, 1);
+    }
+  }
+}
+
+if (shieldEffect.timer <= 0 && shieldEffect.particles.length === 0) {
+  shieldEffect.active = false;
+  shieldEffect.type = null;
+}
+
 for (const npc of npcs) {
 
   algoritmoValiente(npc, dtMs);
@@ -7360,6 +7408,83 @@ function limpiarEquipSlotsAgotados() {
 
   return huboCambios;
 }
+
+function drawShieldEffect(ctx) {
+
+  if (!window.equipSlots) return;
+
+  const cx = player.x + HERO_DRAW_W / 2;
+  const cy = player.y + HERO_DRAW_H / 2;
+
+  const escudoArriba = window.equipSlots[0];
+  const escudoAbajo = window.equipSlots[1];
+
+  function dibujarEscudo(tipo, inclinacion, offsetY = 0) {
+    const esMadera = tipo === "escudo_de_madera";
+
+    const ringColor = esMadera ? "#ffe600" : "#cfd4da";
+    const glowColor = esMadera ? "#fff16b" : "#ffffff";
+
+    const pulse = 1 + Math.sin(performance.now() * 0.004) * 0.08;
+
+    ctx.save();
+
+    ctx.translate(cx, cy + offsetY);
+    ctx.rotate(inclinacion);
+    ctx.scale(1.6 * pulse, 0.55 * pulse);
+
+    // aro principal
+    ctx.beginPath();
+    ctx.strokeStyle = ringColor;
+    ctx.lineWidth = 5;
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = 26;
+    ctx.ellipse(0, 0, 28, 28, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // halo exterior
+    ctx.beginPath();
+    ctx.strokeStyle = glowColor;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = 32;
+    ctx.ellipse(0, 0, 34, 34, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // polvo brillante / partículas
+    const tiempo = performance.now() * 0.004;
+
+    for (let i = 0; i < 10; i++) {
+      const angle = tiempo + (i * (Math.PI * 2 / 10));
+      const px = Math.cos(angle) * (24 + (i % 3) * 6);
+      const py = Math.sin(angle) * 12;
+
+      ctx.beginPath();
+      ctx.fillStyle = ringColor;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 16;
+      ctx.arc(px, py, 1.8 + (i % 2), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  if (
+    escudoArriba &&
+    (escudoArriba.id === "escudo_de_madera" || escudoArriba.id === "escudo_de_hierro")
+  ) {
+    dibujarEscudo(escudoArriba.id, -0.45, -4);
+  }
+
+  if (
+    escudoAbajo &&
+    (escudoAbajo.id === "escudo_de_madera" || escudoAbajo.id === "escudo_de_hierro")
+  ) {
+    dibujarEscudo(escudoAbajo.id, 0.45, 4);
+  }
+}
+
 // =======================================================================================
 // Lógica de pintura en canvas (inicio)
 // =======================================================================================
@@ -7798,6 +7923,8 @@ if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
     HERO_DRAW_W, HERO_DRAW_H
   );
 }
+
+drawShieldEffect(ctx);
 
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
