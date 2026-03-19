@@ -4706,7 +4706,18 @@ async function cargarEnemigos() {
     frameDurationMs: 140,
     frameWidth: 64,
     frameHeight: 64,
-    totalFrames: 4
+    totalFrames: 4,
+
+// =============================
+// 🔥 ATAQUE ESPECIAL JEFE
+// =============================
+cooldownAtaqueEspecial: enemy.tipo === "jefe" ? (2200 + Math.random() * 2400) : 0,
+ataqueEspecialPreparando: false,
+ataqueEspecialActivo: false,
+ataqueEspecialHitAplicado: false,
+ataqueEspecialDecisionMin: 1800,
+ataqueEspecialDecisionMax: 4200,
+ataqueEspecialProbabilidad: 0.38
   }));
 }
 
@@ -7227,6 +7238,29 @@ function updateEnemigos(dtMs) {
     );
 
     const usuarioDentroVision = distancia <= enemy.radioVision;
+
+    if (enemy.tipo === "jefe") {
+  if (enemy.cooldownAtaqueEspecial > 0) {
+    enemy.cooldownAtaqueEspecial -= dtMs;
+    if (enemy.cooldownAtaqueEspecial < 0) enemy.cooldownAtaqueEspecial = 0;
+  }
+
+  if (
+    usuarioDentroVision &&
+    !enemy.ataqueEspecialActivo &&
+    enemy.cooldownAtaqueEspecial <= 0
+  ) {
+    if (Math.random() < (enemy.ataqueEspecialProbabilidad || 0.38)) {
+      lanzarAtaqueEspecialJefe(enemy);
+    } else {
+      enemy.cooldownAtaqueEspecial = randomInt(
+        enemy.ataqueEspecialDecisionMin || 1800,
+        enemy.ataqueEspecialDecisionMax || 4200
+      );
+    }
+  }
+}
+
 if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
 
   let danio = enemy.puntos_de_ataque;
@@ -7486,6 +7520,298 @@ if (enemigoCerca) {
 }
 
 //--NPC'sambiente (Fin)
+
+//--Ataques especiales jefe
+window.ataquesEspecialesJefeActivos = [];
+
+function inicializarEstadoAtaqueEspecialJefe(enemy) {
+  if (!enemy || enemy.tipo !== "jefe") return;
+
+  enemy.cooldownAtaqueEspecial = 2200 + Math.random() * 2400;
+  enemy.ataqueEspecialPreparando = false;
+  enemy.ataqueEspecialActivo = false;
+  enemy.ataqueEspecialHitAplicado = false;
+  enemy.ataqueEspecialDecisionMin = 1800;
+  enemy.ataqueEspecialDecisionMax = 4200;
+  enemy.ataqueEspecialProbabilidad = 0.38;
+}
+
+function lanzarAtaqueEspecialJefe(enemy) {
+  if (!enemy || enemy.tipo !== "jefe") return;
+  if (enemy.ataqueEspecialActivo) return;
+
+  const cx = enemy.x + enemy.w / 2;
+  const cy = enemy.y + enemy.h / 2;
+
+  const ataque = {
+    enemyId: enemy.id,
+    enemyRef: enemy,
+    x: cx,
+    y: cy,
+
+    radioMax: 200,
+    radioActual: 18,
+
+    tiempo: 0,
+    duracionPreparacion: 700,
+    duracionExpansion: 850,
+    duracionSostenida: 650,
+    duracionDesvanecer: 450,
+
+    golpeAplicado: false,
+    activo: true
+  };
+
+  enemy.ataqueEspecialPreparando = true;
+  enemy.ataqueEspecialActivo = true;
+  enemy.ataqueEspecialHitAplicado = false;
+
+  if (enemy.tiempoHablaCooldown <= 0) {
+    hacerHablarEnemigo(enemy, "ataque");
+  }
+
+  window.ataquesEspecialesJefeActivos.push(ataque);
+}
+
+function updateAtaquesEspecialesJefe(dtMs) {
+  for (let i = window.ataquesEspecialesJefeActivos.length - 1; i >= 0; i--) {
+    const atk = window.ataquesEspecialesJefeActivos[i];
+    const enemy = atk.enemyRef;
+
+    if (!enemy || (enemy.puntos_de_vida ?? 0) <= 0) {
+      window.ataquesEspecialesJefeActivos.splice(i, 1);
+      continue;
+    }
+
+    atk.x = enemy.x + enemy.w / 2;
+    atk.y = enemy.y + enemy.h / 2;
+    atk.tiempo += dtMs;
+
+    const t = atk.tiempo;
+    const prepEnd = atk.duracionPreparacion;
+    const expandEnd = prepEnd + atk.duracionExpansion;
+    const sustainEnd = expandEnd + atk.duracionSostenida;
+    const fadeEnd = sustainEnd + atk.duracionDesvanecer;
+
+    if (t <= prepEnd) {
+      const p = t / prepEnd;
+      atk.radioActual = 18 + Math.sin(p * Math.PI) * 24;
+    } else if (t <= expandEnd) {
+      const p = (t - prepEnd) / atk.duracionExpansion;
+      atk.radioActual = 42 + (atk.radioMax - 42) * p;
+    } else if (t <= sustainEnd) {
+      atk.radioActual = atk.radioMax;
+    } else if (t <= fadeEnd) {
+      const p = (t - sustainEnd) / atk.duracionDesvanecer;
+      atk.radioActual = atk.radioMax + (16 * p);
+    } else {
+      enemy.ataqueEspecialPreparando = false;
+      enemy.ataqueEspecialActivo = false;
+      enemy.ataqueEspecialHitAplicado = false;
+      enemy.cooldownAtaqueEspecial = randomInt(
+        enemy.ataqueEspecialDecisionMin || 1800,
+        enemy.ataqueEspecialDecisionMax || 4200
+      );
+      window.ataquesEspecialesJefeActivos.splice(i, 1);
+      continue;
+    }
+
+    const playerCenterX = player.x + HERO_DRAW_W / 2;
+    const playerCenterY = player.y + HERO_DRAW_H / 2;
+
+    const dx = playerCenterX - atk.x;
+    const dy = playerCenterY - atk.y;
+
+    const dist = Math.hypot(dx, dy);
+
+    const grosorAro = 48;
+    const radioInterno = Math.max(0, atk.radioActual - grosorAro * 0.55);
+    const radioExterno = atk.radioActual + grosorAro * 0.55;
+
+    const puedeGolpear =
+      t >= prepEnd + 160 &&
+      t <= sustainEnd + 120;
+
+    if (!atk.golpeAplicado && puedeGolpear && dist >= radioInterno && dist <= radioExterno) {
+      let danio = Number(enemy.puntos_de_ataque ?? 0) || 0;
+
+      const escudosHierro = (window.equipSlots || []).filter(it => it && it.id === "escudo_de_hierro");
+      const escudoMadera = window.equipSlots?.find(it => it && it.id === "escudo_de_madera");
+
+      if (escudosHierro.length > 0) {
+        danio = Math.max(0, danio - (2 * escudosHierro.length));
+      }
+
+      if (escudoMadera && (escudoMadera.usos ?? 0) > 0 && danio > 0) {
+        const absorcion = Math.min(escudoMadera.usos, danio);
+        escudoMadera.usos -= absorcion;
+        danio -= absorcion;
+
+        crearTextoDanio(
+          player.x + 32,
+          player.y - 10,
+          "-" + absorcion,
+          "#ffaa00",
+          "#ffaa00"
+        );
+      }
+
+      if (danio > 0) {
+        pdv -= danio;
+        if (pdv < 0) pdv = 0;
+
+        crearTextoDanio(
+          player.x + 32,
+          player.y - 10,
+          "-" + danio,
+          "#ff5a1f",
+          "#ff2b00"
+        );
+
+        player.blinkTimer = 300;
+
+        if (pdv <= 0 && !gameOverActive) {
+          activarGameOver();
+        }
+      }
+
+      const len = Math.hypot(dx, dy) || 1;
+      const push = 46;
+
+      player.x += (dx / len) * push;
+      player.y += (dy / len) * push;
+
+      player.x = clamp(player.x, 0, WORLD_W - HERO_W);
+      player.y = clamp(player.y, 0, WORLD_H - HERO_H);
+
+      atk.golpeAplicado = true;
+      enemy.ataqueEspecialHitAplicado = true;
+    }
+  }
+}
+
+function drawFireRingHalf(ctx, atk, mitad = "front") {
+  const t = atk.tiempo;
+  const prepEnd = atk.duracionPreparacion;
+  const expandEnd = prepEnd + atk.duracionExpansion;
+  const sustainEnd = expandEnd + atk.duracionSostenida;
+  const fadeEnd = sustainEnd + atk.duracionDesvanecer;
+
+  let alpha = 1;
+
+  if (t <= prepEnd) {
+    alpha = 0.45 + Math.sin((t / prepEnd) * Math.PI) * 0.25;
+  } else if (t <= sustainEnd) {
+    alpha = 1;
+  } else {
+    const p = (t - sustainEnd) / atk.duracionDesvanecer;
+    alpha = Math.max(0, 1 - p);
+  }
+
+  const baseR = atk.radioActual;
+  const flameCount = Math.max(42, Math.floor(baseR * 0.34));
+  const now = performance.now() * 0.012;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  for (let i = 0; i < flameCount; i++) {
+    const a = (Math.PI * 2 / flameCount) * i + now * 0.018;
+
+    const dibujar =
+      mitad === "back"
+        ? Math.sin(a) < 0
+        : Math.sin(a) >= 0;
+
+    if (!dibujar) continue;
+
+    const frenzy = 0.7 + Math.abs(Math.sin(now * 0.8 + i * 1.37)) * 1.1;
+    const jitterR = (Math.sin(now * 1.6 + i * 2.1) * 7) + (Math.cos(now * 1.1 + i) * 5);
+    const outerR = baseR + jitterR;
+    const innerR = Math.max(20, outerR - (28 + frenzy * 10));
+
+    const x1 = atk.x + Math.cos(a) * innerR;
+    const y1 = atk.y + Math.sin(a) * innerR * 0.52;
+
+    const x2 = atk.x + Math.cos(a) * outerR;
+    const y2 = atk.y + Math.sin(a) * outerR * 0.52;
+
+    const flameLen = 18 + frenzy * 20;
+    const tipX = atk.x + Math.cos(a) * (outerR + flameLen);
+    const tipY = atk.y + Math.sin(a) * (outerR + flameLen) * 0.52;
+
+    ctx.save();
+    ctx.lineCap = "round";
+
+    ctx.strokeStyle = "#ff2b00";
+    ctx.lineWidth = 8 + frenzy * 2.4;
+    ctx.shadowColor = "#ff4d00";
+    ctx.shadowBlur = 24 + frenzy * 5;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo(x2, y2, tipX, tipY);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#ff9a00";
+    ctx.lineWidth = 4 + frenzy * 1.4;
+    ctx.shadowColor = "#ffb300";
+    ctx.shadowBlur = 16;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo(x2, y2, tipX, tipY);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#fff2a6";
+    ctx.lineWidth = 1.8 + frenzy * 0.6;
+    ctx.shadowColor = "#fff7cc";
+    ctx.shadowBlur = 8;
+
+    ctx.beginPath();
+    ctx.moveTo(
+      x1 + (Math.random() - 0.5) * 2,
+      y1 + (Math.random() - 0.5) * 2
+    );
+    ctx.quadraticCurveTo(x2, y2, tipX, tipY);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  const ellipseStart = mitad === "back" ? Math.PI : 0;
+  const ellipseEnd = mitad === "back" ? Math.PI * 2 : Math.PI;
+
+  ctx.beginPath();
+  ctx.strokeStyle = mitad === "back" ? "rgba(255,90,0,0.55)" : "rgba(255,180,0,0.9)";
+  ctx.lineWidth = mitad === "back" ? 16 : 18;
+  ctx.shadowColor = mitad === "back" ? "#ff4d00" : "#ffae00";
+  ctx.shadowBlur = mitad === "back" ? 18 : 24;
+  ctx.ellipse(atk.x, atk.y, baseR, baseR * 0.52, 0, ellipseStart, ellipseEnd);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "rgba(255,245,210,0.7)";
+  ctx.lineWidth = mitad === "back" ? 3 : 4;
+  ctx.shadowColor = "#fff6cf";
+  ctx.shadowBlur = 10;
+  ctx.ellipse(atk.x, atk.y, Math.max(10, baseR - 10), Math.max(8, (baseR - 10) * 0.52), 0, ellipseStart, ellipseEnd);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawAtaquesEspecialesJefeBack(ctx) {
+  for (const atk of (window.ataquesEspecialesJefeActivos || [])) {
+    drawFireRingHalf(ctx, atk, "back");
+  }
+}
+
+function drawAtaquesEspecialesJefeFront(ctx) {
+  for (const atk of (window.ataquesEspecialesJefeActivos || [])) {
+    drawFireRingHalf(ctx, atk, "front");
+  }
+}
 
 //--Lanzar disparos enemigo
 window.disparosEnemigosArmadosActivos = [];
@@ -8119,6 +8445,7 @@ if (equipSlotsLimpiados) {
 
 updateNPCsAmbiente(dtMs);
 updateEnemigos(dtMs);
+updateAtaquesEspecialesJefe(dtMs);
 updateSkateParticles(dtMs);
 
 if (shieldEffect.timer > 0) {
@@ -9631,8 +9958,11 @@ drawItems(ctx);
 drawNPCs(ctx);
 drawNPCsAmbiente(ctx);
 
+drawAtaquesEspecialesJefeBack(ctx);
+
 //--Enemigos
 drawEnemigos(ctx);
+drawAtaquesEspecialesJefeFront(ctx);
 drawDisparosEnemigosArmados(ctx);
 
 //--Efecto disparo lazer
@@ -9973,7 +10303,8 @@ function drawGameOverScreen() {
   ctx.fillStyle = "#ffffff";
   ctx.font = "14px arcade";
   ctx.fillText("Te atraparon los reptilianos", centerX, centerY + 80);
-  ctx.fillText("Para continuar tendras que pagar 3 cosmonedas", centerX, centerY + 110);
+  ctx.fillText("Para continuar", centerX, centerY + 110);
+  ctx.fillText("tendras que pagar 3 cosmonedas", centerX, centerY + 130);
 
   const btnW = 190;
   const btnH = 42;
