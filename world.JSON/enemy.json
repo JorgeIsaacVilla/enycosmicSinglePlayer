@@ -105,7 +105,7 @@
     {
       "id": "enemy_centinela_reptiliano_armado_01",
       "nombre": "Comandante reptiliano",
-      "tipo": "basico",
+      "tipo": "armado",
       "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
       "puntos_de_vida": 30,
       "puntos_de_ataque": 4,
@@ -139,7 +139,7 @@
     {
       "id": "enemy_centinela_reptiliano_armado_02",
       "nombre": "Comandante reptiliano",
-      "tipo": "basico",
+      "tipo": "armado",
       "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
       "puntos_de_vida": 30,
       "puntos_de_ataque": 4,
@@ -173,7 +173,7 @@
     {
       "id": "enemy_reptiliano_volador_01",
       "nombre": "Reptiliano Volador",
-      "tipo": "intermedio",
+      "tipo": "basico",
       "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
       "puntos_de_vida": 55,
       "puntos_de_ataque": 4,
@@ -207,7 +207,7 @@
     {
       "id": "enemy_reptiliano_volador_02",
       "nombre": "Reptiliano Volador",
-      "tipo": "intermedio",
+      "tipo": "basico",
       "imagen": "./assets/avatares/enemy/reptiliano-volador.png",
       "puntos_de_vida": 55,
       "puntos_de_ataque": 4,
@@ -240,7 +240,7 @@
     },
     {
       "id": "enemy_dragon_de_comodo_01",
-      "nombre": "Dragon De Comodo",
+      "nombre": "VELKARION, COLMILLO DE TITANIO",
       "tipo": "jefe",
       "imagen": "./assets/avatares/enemy/dragon-de-comodo.png",
       "puntos_de_vida": 180,

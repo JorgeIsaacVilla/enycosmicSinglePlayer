@@ -4686,6 +4686,13 @@ async function cargarEnemigos() {
     radioVision: Number(enemy.radioVision) || 500, //radio vision enemigo
     cooldownDano: 0,
 
+    modoCombate: "correr",
+    disparoCooldown: 0,
+    largoDisparo: 28,
+    velocidadDisparo: 8.5,
+    tiempoMinDecisionCombate: 350,
+    tiempoMaxDecisionCombate: 900,
+
     bubbleText: "",
     bubbleTimer: 0,
     bubbleMaxTime: 2200,
@@ -7189,6 +7196,12 @@ function updateEnemigos(dtMs) {
   const listaEnemigos = window.enemigos || [];
 
   for (const enemy of listaEnemigos) {
+
+    if (enemy.disparoCooldown > 0) {
+      enemy.disparoCooldown -= dtMs;
+      if (enemy.disparoCooldown < 0) enemy.disparoCooldown = 0;
+    }
+    
       if (enemy.cooldownDano > 0) {
       enemy.cooldownDano -= dtMs;
       if (enemy.cooldownDano < 0) enemy.cooldownDano = 0;
@@ -7276,21 +7289,36 @@ if (escudosHierro.length > 0) {
   enemy.cooldownDano = 800;
 }
 
-    if (usuarioDentroVision) {
-      enemy.persiguiendo = true;
+if (usuarioDentroVision) {
+  enemy.persiguiendo = true;
 
-      const enemyCenter = obtenerCentroEntidad(enemy);
-      const playerCenter = {
-        x: player.x + HERO_DRAW_W / 2,
-        y: player.y + HERO_DRAW_H / 2
-      };
+  const enemyCenter = obtenerCentroEntidad(enemy);
+  const playerCenter = {
+    x: player.x + HERO_DRAW_W / 2,
+    y: player.y + HERO_DRAW_H / 2
+  };
 
-      const dx = playerCenter.x - enemyCenter.x;
-      const dy = playerCenter.y - enemyCenter.y;
-      const len = Math.hypot(dx, dy) || 1;
+  const dx = playerCenter.x - enemyCenter.x;
+  const dy = playerCenter.y - enemyCenter.y;
+  const len = Math.hypot(dx, dy) || 1;
 
-      enemy.dirX = dx / len;
-      enemy.dirY = dy / len;
+  enemy.dirX = dx / len;
+  enemy.dirY = dy / len;
+
+  if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
+    enemy.facing = enemy.dirX > 0 ? "right" : "left";
+  } else {
+    enemy.facing = enemy.dirY > 0 ? "down" : "up";
+  }
+
+  if (enemy.tipo === "armado") {
+    enemy.tiempoCambioDecision -= dtMs;
+
+    if (enemy.tiempoCambioDecision <= 0) {
+      decidirAccionEnemigoArmado(enemy);
+    }
+
+    if (enemy.modoCombate === "correr") {
       enemy.isMoving = true;
 
       const delta = dtMs / 16.6667;
@@ -7300,22 +7328,37 @@ if (escudosHierro.length > 0) {
       enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
       enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
 
-      if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
-        enemy.facing = enemy.dirX > 0 ? "right" : "left";
-      } else {
-        enemy.facing = enemy.dirY > 0 ? "down" : "up";
-      }
-
       enemy.frameTimer += dtMs;
       while (enemy.frameTimer >= enemy.frameDurationMs) {
         enemy.frameTimer -= enemy.frameDurationMs;
         enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
       }
-
-      if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
-        hacerHablarEnemigo(enemy, "ataque");
-      }
     } else {
+      enemy.isMoving = false;
+      enemy.frame = 0;
+      enemy.frameTimer = 0;
+    }
+  } else {
+    enemy.isMoving = true;
+
+    const delta = dtMs / 16.6667;
+    const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
+    const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
+
+    enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
+    enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+
+    enemy.frameTimer += dtMs;
+    while (enemy.frameTimer >= enemy.frameDurationMs) {
+      enemy.frameTimer -= enemy.frameDurationMs;
+      enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+    }
+
+    if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
+      hacerHablarEnemigo(enemy, "ataque");
+    }
+  }
+} else {
       enemy.persiguiendo = false;
       enemy.tiempoCambioDecision -= dtMs;
 
@@ -7443,6 +7486,150 @@ if (enemigoCerca) {
 }
 
 //--NPC'sambiente (Fin)
+
+//--Lanzar disparos enemigo
+window.disparosEnemigosArmadosActivos = [];
+
+function lanzarDisparoEnemigoArmado(enemy) {
+  if (!enemy) return;
+
+  const enemyCenterX = enemy.x + enemy.w / 2;
+  const enemyCenterY = enemy.y + enemy.h / 2;
+
+  const playerCenterX = player.x + HERO_DRAW_W / 2;
+  const playerCenterY = player.y + HERO_DRAW_H / 2;
+
+  const dx = playerCenterX - enemyCenterX;
+  const dy = playerCenterY - enemyCenterY;
+  const len = Math.hypot(dx, dy) || 1;
+
+  const vx = (dx / len) * (enemy.velocidadDisparo || 8.5);
+  const vy = (dy / len) * (enemy.velocidadDisparo || 8.5);
+
+  window.disparosEnemigosArmadosActivos.push({
+    x: enemyCenterX,
+    y: enemyCenterY,
+    vx,
+    vy,
+    largo: enemy.largoDisparo || 28,
+    vida: 700,
+    danio: Number(enemy.puntos_de_ataque ?? 0) || 0
+  });
+}
+
+function decidirAccionEnemigoArmado(enemy) {
+  if (!enemy) return;
+
+  const disparar = Math.random() < 0.45;
+
+  if (disparar && enemy.disparoCooldown <= 0) {
+    enemy.modoCombate = "disparar";
+    lanzarDisparoEnemigoArmado(enemy);
+    enemy.disparoCooldown = 900;
+
+    if (Math.random() < 0.8) {
+      hacerHablarEnemigo(enemy, "ataque");
+    }
+  } else {
+    enemy.modoCombate = "correr";
+  }
+
+  enemy.tiempoCambioDecision = randomInt(
+    enemy.tiempoMinDecisionCombate || 350,
+    enemy.tiempoMaxDecisionCombate || 900
+  );
+}
+
+function updateDisparosEnemigosArmados(dtMs) {
+  for (let i = window.disparosEnemigosArmadosActivos.length - 1; i >= 0; i--) {
+    const d = window.disparosEnemigosArmadosActivos[i];
+
+    d.x += d.vx;
+    d.y += d.vy;
+    d.vida -= dtMs;
+
+    const hitboxW = 10;
+    const hitboxH = 10;
+    const hitX = d.x - hitboxW / 2;
+    const hitY = d.y - hitboxH / 2;
+
+    const colisionaJugador =
+      hitX < player.x + HERO_DRAW_W &&
+      hitX + hitboxW > player.x &&
+      hitY < player.y + HERO_DRAW_H &&
+      hitY + hitboxH > player.y;
+
+    if (colisionaJugador) {
+      const danio = Number(d.danio ?? 0) || 0;
+
+      pdv -= danio;
+      if (pdv < 0) pdv = 0;
+
+      crearTextoDanio(
+        player.x + 32,
+        player.y - 10,
+        "-" + danio,
+        "#ff3b3b",
+        "#ff0000"
+      );
+
+      player.blinkTimer = 300;
+
+      if (pdv <= 0 && !gameOverActive) {
+        activarGameOver();
+      }
+
+      window.disparosEnemigosArmadosActivos.splice(i, 1);
+      continue;
+    }
+
+    if (
+      d.vida <= 0 ||
+      d.x < -100 ||
+      d.y < -100 ||
+      d.x > WORLD_W + 100 ||
+      d.y > WORLD_H + 100
+    ) {
+      window.disparosEnemigosArmadosActivos.splice(i, 1);
+    }
+  }
+}
+
+function drawDisparosEnemigosArmados(ctx) {
+  for (const d of (window.disparosEnemigosArmadosActivos || [])) {
+    const len = Math.hypot(d.vx, d.vy) || 1;
+    const ux = d.vx / len;
+    const uy = d.vy / len;
+
+    const x1 = d.x - ux * (d.largo / 2);
+    const y1 = d.y - uy * (d.largo / 2);
+    const x2 = d.x + ux * (d.largo / 2);
+    const y2 = d.y + uy * (d.largo / 2);
+
+    ctx.save();
+
+    ctx.strokeStyle = "#ff1a1a";
+    ctx.lineWidth = 4;
+    ctx.shadowColor = "#ff0000";
+    ctx.shadowBlur = 16;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#ffd6d6";
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
 //--Lamzar disparos lazer
 function lanzarDisparoLazer(itemData) {
   const velocidad = 14;
@@ -7983,6 +8170,8 @@ if (player.blinkTimer > 0) {
 
     updateAtaquesPicoEscabador(dtMs);
     updateParticulasPicoEscabador(dtMs);
+
+    updateDisparosEnemigosArmados(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -9444,23 +9633,12 @@ drawNPCsAmbiente(ctx);
 
 //--Enemigos
 drawEnemigos(ctx);
+drawDisparosEnemigosArmados(ctx);
 
 //--Efecto disparo lazer
 drawDisparosLazer(ctx);
 
-//--Efectos bumerang
-drawParticulasBumerang(ctx);
-drawBumerangs(ctx);
 
-//--Efectp pico escabador
-drawParticulasPicoEscabador(ctx);
-drawAtaquesPicoEscabador(ctx);
-
-//--Efecto Espadas (dibujar espadazo)
-drawParticulasEspadaMadera(ctx);
-drawAtaquesEspadaMadera(ctx);
-drawParticulasEspadaHierro(ctx);
-drawAtaquesEspadaHierro(ctx);
 
 //--Efecto Skeit de patines
 for (let i = skateParticles.length - 1; i >= 0; i--) {
@@ -9540,6 +9718,20 @@ ctx.drawImage(
 }
 
 drawShieldEffect(ctx, "front");
+
+//--Efectos bumerang
+drawParticulasBumerang(ctx);
+drawBumerangs(ctx);
+
+//--Efectp pico escabador
+drawParticulasPicoEscabador(ctx);
+drawAtaquesPicoEscabador(ctx);
+
+//--Efecto Espadas (dibujar espadazo)
+drawParticulasEspadaMadera(ctx);
+drawAtaquesEspadaMadera(ctx);
+drawParticulasEspadaHierro(ctx);
+drawAtaquesEspadaHierro(ctx);
 
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
