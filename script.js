@@ -7523,6 +7523,8 @@ if (enemigoCerca) {
 
 //--Ataques especiales jefe
 window.ataquesEspecialesJefeActivos = [];
+window.particulasVolcanJefeActivas = [];
+window.explosionesJefeActivas = [];
 
 function inicializarEstadoAtaqueEspecialJefe(enemy) {
   if (!enemy || enemy.tipo !== "jefe") return;
@@ -7534,6 +7536,221 @@ function inicializarEstadoAtaqueEspecialJefe(enemy) {
   enemy.ataqueEspecialDecisionMin = 1800;
   enemy.ataqueEspecialDecisionMax = 4200;
   enemy.ataqueEspecialProbabilidad = 0.38;
+}
+
+function crearParticulasVolcanJefe(atk) {
+  const enemy = atk.enemyRef;
+  if (!enemy) return;
+
+  const cx = enemy.x + enemy.w / 2;
+  const cy = enemy.y + enemy.h / 2;
+
+  const emitir = atk.tiempo < atk.duracionPreparacion ? 8 : 14;
+
+  for (let i = 0; i < emitir; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const radioBase = 20 + Math.random() * 46;
+
+    const px = cx + Math.cos(ang) * radioBase;
+    const py = cy + Math.sin(ang) * radioBase * 0.45;
+
+    const haciaArriba = Math.random() < 0.7;
+
+    window.particulasVolcanJefeActivas.push({
+      x: px,
+      y: py,
+
+      vx: (Math.random() - 0.5) * 2.6,
+      vy: haciaArriba
+        ? (-2.8 - Math.random() * 4.6)
+        : (0.8 + Math.random() * 2.8),
+
+      size: 3 + Math.random() * 7,
+      life: 420 + Math.random() * 380,
+      maxLife: 800,
+
+      color: Math.random() < 0.33
+        ? "#ff2b00"
+        : Math.random() < 0.66
+          ? "#ff9a00"
+          : "#ffd36b",
+
+      glow: 12 + Math.random() * 18,
+      gravity: haciaArriba ? 0.05 + Math.random() * 0.08 : -0.01,
+      drift: (Math.random() - 0.5) * 0.08,
+      humo: Math.random() < 0.25
+    });
+  }
+}
+
+function crearExplosionDramaticaJefe(enemy) {
+  if (!enemy) return;
+
+  const cx = enemy.x + enemy.w / 2;
+  const cy = enemy.y + enemy.h / 2;
+
+  window.explosionesJefeActivas.push({
+    x: cx,
+    y: cy,
+    radio: 20,
+    radioMax: 210,
+    life: 620,
+    maxLife: 620
+  });
+
+  for (let i = 0; i < 90; i++) {
+    const ang = (Math.PI * 2 / 90) * i + (Math.random() - 0.5) * 0.18;
+    const speed = 2.5 + Math.random() * 7.5;
+
+    window.particulasVolcanJefeActivas.push({
+      x: cx,
+      y: cy,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed * 0.72 - (Math.random() * 1.5),
+      size: 5 + Math.random() * 10,
+      life: 500 + Math.random() * 420,
+      maxLife: 920,
+      color: Math.random() < 0.4
+        ? "#ff2b00"
+        : Math.random() < 0.7
+          ? "#ff9a00"
+          : "#fff0a8",
+      glow: 18 + Math.random() * 24,
+      gravity: 0.04 + Math.random() * 0.08,
+      drift: (Math.random() - 0.5) * 0.1,
+      humo: Math.random() < 0.18
+    });
+  }
+
+  for (let i = 0; i < 36; i++) {
+    const ang = (Math.PI * 2 / 36) * i;
+    const speed = 1.8 + Math.random() * 2.8;
+
+    window.particulasVolcanJefeActivas.push({
+      x: cx,
+      y: cy,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed * 0.45,
+      size: 16 + Math.random() * 18,
+      life: 280 + Math.random() * 180,
+      maxLife: 460,
+      color: "#3a3a3a",
+      glow: 8,
+      gravity: -0.005,
+      drift: (Math.random() - 0.5) * 0.04,
+      humo: true
+    });
+  }
+}
+
+function updateParticulasVolcanJefe(dtMs) {
+  for (let i = window.particulasVolcanJefeActivas.length - 1; i >= 0; i--) {
+    const p = window.particulasVolcanJefeActivas[i];
+
+    p.life -= dtMs;
+    p.vx += p.drift;
+    p.vy += p.gravity;
+
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if (p.humo) {
+      p.size *= 1.01;
+    } else {
+      p.size *= 0.986;
+    }
+
+    if (p.life <= 0 || p.size <= 0.25) {
+      window.particulasVolcanJefeActivas.splice(i, 1);
+    }
+  }
+
+  for (let i = window.explosionesJefeActivas.length - 1; i >= 0; i--) {
+    const ex = window.explosionesJefeActivas[i];
+    ex.life -= dtMs;
+
+    const p = 1 - Math.max(0, ex.life) / ex.maxLife;
+    ex.radio = ex.radioMax * (0.2 + p * 0.8);
+
+    if (ex.life <= 0) {
+      window.explosionesJefeActivas.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasVolcanJefe(ctx, layer = "front") {
+  for (const p of (window.particulasVolcanJefeActivas || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    const esBack = p.vy < 0;
+    if (layer === "back" && !esBack) continue;
+    if (layer === "front" && esBack) continue;
+
+    ctx.save();
+    ctx.globalAlpha = alpha * (p.humo ? 0.38 : 0.95);
+
+    if (p.humo) {
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = "#555555";
+      ctx.shadowBlur = p.glow * 0.5;
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = p.glow;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (!p.humo) {
+      ctx.fillStyle = "#fff7cf";
+      ctx.shadowColor = "#fff7cf";
+      ctx.shadowBlur = p.glow * 0.55;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+}
+
+function drawExplosionesJefe(ctx, layer = "front") {
+  for (const ex of (window.explosionesJefeActivas || [])) {
+    const alpha = Math.max(0, ex.life / ex.maxLife);
+    const start = layer === "back" ? Math.PI : 0;
+    const end = layer === "back" ? Math.PI * 2 : Math.PI;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#ff3b00";
+    ctx.lineWidth = 28;
+    ctx.shadowColor = "#ff3b00";
+    ctx.shadowBlur = 34;
+    ctx.ellipse(ex.x, ex.y, ex.radio, ex.radio * 0.58, 0, start, end);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#ffb300";
+    ctx.lineWidth = 14;
+    ctx.shadowColor = "#ffb300";
+    ctx.shadowBlur = 22;
+    ctx.ellipse(ex.x, ex.y, ex.radio * 0.86, ex.radio * 0.48, 0, start, end);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#fff4c7";
+    ctx.lineWidth = 5;
+    ctx.shadowColor = "#fff4c7";
+    ctx.shadowBlur = 12;
+    ctx.ellipse(ex.x, ex.y, ex.radio * 0.74, ex.radio * 0.4, 0, start, end);
+    ctx.stroke();
+
+    ctx.restore();
+  }
 }
 
 function lanzarAtaqueEspecialJefe(enemy) {
@@ -7559,6 +7776,7 @@ function lanzarAtaqueEspecialJefe(enemy) {
     duracionDesvanecer: 450,
 
     golpeAplicado: false,
+    explosionLanzada: false,
     activo: true
   };
 
@@ -7587,6 +7805,8 @@ function updateAtaquesEspecialesJefe(dtMs) {
     atk.y = enemy.y + enemy.h / 2;
     atk.tiempo += dtMs;
 
+    crearParticulasVolcanJefe(atk);
+
     const t = atk.tiempo;
     const prepEnd = atk.duracionPreparacion;
     const expandEnd = prepEnd + atk.duracionExpansion;
@@ -7596,10 +7816,15 @@ function updateAtaquesEspecialesJefe(dtMs) {
     if (t <= prepEnd) {
       const p = t / prepEnd;
       atk.radioActual = 18 + Math.sin(p * Math.PI) * 24;
-    } else if (t <= expandEnd) {
-      const p = (t - prepEnd) / atk.duracionExpansion;
-      atk.radioActual = 42 + (atk.radioMax - 42) * p;
-    } else if (t <= sustainEnd) {
+} else if (t <= expandEnd) {
+  const p = (t - prepEnd) / atk.duracionExpansion;
+  atk.radioActual = 42 + (atk.radioMax - 42) * p;
+
+  if (!atk.explosionLanzada && p >= 0.08) {
+    crearExplosionDramaticaJefe(enemy);
+    atk.explosionLanzada = true;
+  }
+} else if (t <= sustainEnd) {
       atk.radioActual = atk.radioMax;
     } else if (t <= fadeEnd) {
       const p = (t - sustainEnd) / atk.duracionDesvanecer;
@@ -8446,6 +8671,7 @@ if (equipSlotsLimpiados) {
 updateNPCsAmbiente(dtMs);
 updateEnemigos(dtMs);
 updateAtaquesEspecialesJefe(dtMs);
+updateParticulasVolcanJefe(dtMs);
 updateSkateParticles(dtMs);
 
 if (shieldEffect.timer > 0) {
@@ -9958,10 +10184,15 @@ drawItems(ctx);
 drawNPCs(ctx);
 drawNPCsAmbiente(ctx);
 
+drawExplosionesJefe(ctx, "back");
+drawParticulasVolcanJefe(ctx, "back");
 drawAtaquesEspecialesJefeBack(ctx);
 
 //--Enemigos
 drawEnemigos(ctx);
+
+drawExplosionesJefe(ctx, "front");
+drawParticulasVolcanJefe(ctx, "front");
 drawAtaquesEspecialesJefeFront(ctx);
 drawDisparosEnemigosArmados(ctx);
 
