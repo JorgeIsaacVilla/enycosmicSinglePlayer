@@ -3242,9 +3242,26 @@ case "bumerang": {
 
   break;
 }
-    case "pico_escabador":
-      console.log("El usuario usará este item: pico escabador");
-      break;
+case "pico_escabador": {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  if ((item.usos ?? 0) <= 0) {
+    console.log("El pico escabador está agotado");
+    return;
+  }
+
+  window.lanzarAtaquePicoEscabador(slotIndex);
+
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  break;
+}
 
     case "patines":
       console.log("El usuario usará este item: patines");
@@ -3419,6 +3436,12 @@ window.bumerangImg = new Image();
 window.bumerangImg.src = "./assets/items/bumerang.svg";
 window.bumerangsActivos = [];
 
+  // =============================
+// 🪃 VARIABLES GLOBALES pico escabador
+// =============================
+window.ataquesPicoEscabadorActivos = [];
+window.particulasPicoEscabador = [];
+
 // =============================
 // 🪃 VARIABLES GLOBALES pistola lazer
 // =============================
@@ -3462,6 +3485,256 @@ function activarLungeEspadaMadera(facing) {
   // frame de paso hacia adelante del spritesheet
   espadaMaderaFrameOverride.active = true;
   espadaMaderaFrameOverride.frame = 1;
+}
+
+function lanzarAtaquePicoEscabador(slotIndex) {
+  const alcance = 60;
+  const duracion = 125;
+
+  let pivotOffsetX = 0;
+  let pivotOffsetY = 0;
+  let anguloInicio = 0;
+  let anguloFin = 0;
+
+  if (player.facing === "up") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -2.45;
+    anguloFin = -0.75;
+  } else if (player.facing === "down") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 0.75;
+    anguloFin = 2.45;
+  } else if (player.facing === "left") {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = 2.35;
+    anguloFin = 4.05;
+  } else {
+    pivotOffsetX = 0;
+    pivotOffsetY = 4;
+    anguloInicio = -0.85;
+    anguloFin = 0.85;
+  }
+
+  activarLungeEspadaMadera(player.facing);
+
+  window.ataquesPicoEscabadorActivos.push({
+    x: player.x + 32 + pivotOffsetX,
+    y: player.y + 32 + pivotOffsetY,
+    pivotOffsetX,
+    pivotOffsetY,
+    alcance,
+    tiempo: duracion,
+    tiempoMax: duracion,
+    anguloInicio,
+    anguloFin,
+    facing: player.facing,
+    slotIndex,
+    yaDesgasto: false,
+    enemigosGolpeados: []
+  });
+}
+
+window.lanzarAtaquePicoEscabador = lanzarAtaquePicoEscabador;
+
+function crearParticulasPicoEscabador(ataque) {
+  const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+  const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+  const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+  const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+  for (let i = 0; i < 3; i++) {
+    window.particulasPicoEscabador.push({
+      x: puntaX + (Math.random() - 0.5) * 6,
+      y: puntaY + (Math.random() - 0.5) * 6,
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: (Math.random() - 0.5) * 0.7,
+      size: 1.8 + Math.random() * 2,
+      life: 90 + Math.random() * 50,
+      maxLife: 140,
+      color: Math.random() < 0.5 ? "#7b5b3a" : "#a07a4f"
+    });
+  }
+}
+
+function updateAtaquesPicoEscabador(dtMs) {
+  for (let i = window.ataquesPicoEscabadorActivos.length - 1; i >= 0; i--) {
+    const ataque = window.ataquesPicoEscabadorActivos[i];
+
+    ataque.x = player.x + 32 + ataque.pivotOffsetX + espadaMaderaLunge.offsetX;
+    ataque.y = player.y + 32 + ataque.pivotOffsetY + espadaMaderaLunge.offsetY;
+    ataque.tiempo -= dtMs;
+
+    crearParticulasPicoEscabador(ataque);
+
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
+    const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
+
+    for (let j = 0; j < (window.enemigos || []).length; j++) {
+      const enemy = window.enemigos[j];
+      if (!enemy) continue;
+      if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+      if (ataque.enemigosGolpeados.includes(enemy.id)) continue;
+
+      const centroX = enemy.x + enemy.w / 2;
+      const centroY = enemy.y + enemy.h / 2;
+
+      const dx = puntaX - centroX;
+      const dy = puntaY - centroY;
+      const distancia = Math.hypot(dx, dy);
+      const radioGolpe = Math.max(enemy.w, enemy.h) * 0.55;
+
+      if (distancia > radioGolpe) continue;
+
+      ataque.enemigosGolpeados.push(enemy.id);
+
+      const item = window.equipSlots?.[ataque.slotIndex];
+      const danio = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0;
+
+      enemy.puntos_de_vida = Math.max(0, (enemy.puntos_de_vida || 0) - danio);
+
+      crearTextoDanio(
+        enemy.x + enemy.w / 2,
+        enemy.y - 10,
+        "-" + danio,
+        "#c98a3d",
+        "#8b5a2b"
+      );
+
+      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
+      const push = 32;
+
+      enemy.x += (Math.cos(angulo) / len) * push;
+      enemy.y += (Math.sin(angulo) / len) * push;
+
+      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
+      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+
+      if (!ataque.yaDesgasto) {
+        const itemSlot = window.equipSlots?.[ataque.slotIndex];
+        if (itemSlot) {
+          itemSlot.usos = Math.max(0, (itemSlot.usos ?? 0) - 1);
+
+          if (itemSlot.agotable === true && itemSlot.desaparece_al_agotarse === true && itemSlot.usos <= 0) {
+            window.equipSlots[ataque.slotIndex] = null;
+          }
+
+          if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+            const bodyEl = interfasEl.querySelector(".ui-body");
+            if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+          }
+        }
+
+        ataque.yaDesgasto = true;
+      }
+
+      if (enemy.puntos_de_vida <= 0) {
+        eliminarEnemigoPorDerrota(enemy);
+      }
+
+      break;
+    }
+
+    if (ataque.tiempo <= 0) {
+      window.ataquesPicoEscabadorActivos.splice(i, 1);
+    }
+  }
+}
+
+function updateParticulasPicoEscabador(dtMs) {
+  for (let i = window.particulasPicoEscabador.length - 1; i >= 0; i--) {
+    const p = window.particulasPicoEscabador[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    p.size *= 0.975;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasPicoEscabador.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasPicoEscabador(ctx) {
+  for (const p of (window.particulasPicoEscabador || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = "#7b5b3a";
+    ctx.shadowBlur = 8;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function drawAtaquesPicoEscabador(ctx) {
+  for (const ataque of (window.ataquesPicoEscabadorActivos || [])) {
+    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
+    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+
+    const fade = Math.max(0, ataque.tiempo / ataque.tiempoMax);
+    const alpha = Math.max(0.22, fade);
+    const slashScale = 0.88 + (Math.sin(progreso * Math.PI) * 0.22);
+
+    ctx.save();
+    ctx.translate(ataque.x, ataque.y);
+    ctx.rotate(angulo);
+    ctx.scale(slashScale, slashScale);
+    ctx.globalAlpha = alpha;
+
+    // rastro sutil del golpe
+    ctx.strokeStyle = "brown";
+    ctx.lineWidth = 4;
+    ctx.shadowColor = "brown";
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(-8, 0);
+    ctx.lineTo(ataque.alcance + 2, 0);
+    ctx.stroke();
+
+    // mango marrón
+    ctx.fillStyle = "brown";
+    ctx.shadowBlur = 0;
+    ctx.fillRect(-10, -3, ataque.alcance - 20, 6);
+
+    // cabeza de martillo negra
+    const headX = ataque.alcance - 14;
+    ctx.fillStyle = "black";
+    const headW = 30;
+    const headH = 22;
+
+    ctx.fillStyle = "#111111";
+    ctx.strokeStyle = "#2f2f2f";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#444444";
+    ctx.shadowBlur = 8;
+
+    ctx.beginPath();
+    ctx.rect(headX, -headH / 2, headW, headH);
+    ctx.fill();
+    ctx.stroke();
+
+    // unión mango-cabeza
+    ctx.fillStyle = "#030303";
+    ctx.fillRect(headX - 3, -4, 4, 8);
+
+    ctx.restore();
+  }
 }
 
 function lanzarAtaqueEspadaHierro(slotIndex) {
@@ -7707,6 +7980,9 @@ if (player.blinkTimer > 0) {
 
     updateAtaquesEspadaHierro(dtMs);
     updateParticulasEspadaHierro(dtMs);
+
+    updateAtaquesPicoEscabador(dtMs);
+    updateParticulasPicoEscabador(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -9175,6 +9451,10 @@ drawDisparosLazer(ctx);
 //--Efectos bumerang
 drawParticulasBumerang(ctx);
 drawBumerangs(ctx);
+
+//--Efectp pico escabador
+drawParticulasPicoEscabador(ctx);
+drawAtaquesPicoEscabador(ctx);
 
 //--Efecto Espadas (dibujar espadazo)
 drawParticulasEspadaMadera(ctx);
