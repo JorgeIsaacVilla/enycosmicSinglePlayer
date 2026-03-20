@@ -250,6 +250,36 @@ function drawSkateParticles(ctx) {
   ctx.restore();
 }
 
+// =============================
+// 🌍 AMBIENTE SYSTEM (inicio)
+// =============================
+let ambienteObjetos = [];
+let ambienteImagenesCache = {};
+let ambienteAudioCache = {};
+let ambienteViewX = 0;
+let ambienteViewY = 0;
+
+async function cargarAmbiente() {
+  const res = await fetch("./world.JSON/ambiente.json");
+  const data = await res.json();
+
+  const lista = Array.isArray(data) ? data : (data.objetos || []);
+
+  ambienteObjetos = lista.map(obj => ({
+    ...obj,
+    frameActual: 0,
+    frameTimer: 0,
+    frameDuration: 90,
+    audio: null,
+    audioPlaying: false
+  }));
+
+  console.log("Ambiente cargado:", ambienteObjetos);
+}
+// =============================
+// 🌍 AMBIENTE SYSTEM (final)
+// =============================
+
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
@@ -3401,13 +3431,7 @@ async function loadGameAssets() {
   const CAMERA_ZOOM = 1; // 1 = normal, 0.5 = más lejos, 0.25 = mucho más lejos
   const LOGICAL_W = 160;
   const LOGICAL_H = 144;
-/* resolución perfecta para celulares menores de 400px de resolución
-    const LOGICAL_W = 160;
-    const LOGICAL_H = 300;*/
-/* Resolución perfecto para tablets PC y laptos
-  const LOGICAL_W = 160;
-  const LOGICAL_H = 144;
-*/
+  
 const camera = { x: 0, y: 0, w: LOGICAL_W, h: LOGICAL_H };
 
   //dimenciones del mapa
@@ -3421,6 +3445,11 @@ const WORLD_H = 5000;
   //tamaño visual dentro del canvas
   const HERO_DRAW_W = 64;  // tamaño visual del avatar en canva
   const HERO_DRAW_H = 64;
+
+  const PLAYER_HIT_W = 28;  //ratio ancho colicionable del avatar del usuario
+const PLAYER_HIT_H = 50; // ratio alto colicionable del abatar del usuario
+const PLAYER_OFFSET_X = (HERO_DRAW_W - PLAYER_HIT_W) / 2;
+const PLAYER_OFFSET_Y = HERO_DRAW_H - PLAYER_HIT_H;
 
   const canvas = document.getElementById("game");
   const wrap = document.getElementById("wrap");
@@ -7359,8 +7388,13 @@ if (usuarioDentroVision) {
       const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
       const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
 
-      enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+moverEntidadConColision(
+  enemy,
+  clamp(nextX, 0, WORLD_W - enemy.w),
+  clamp(nextY, 0, WORLD_H - enemy.h),
+  enemy.w,
+  enemy.h
+);
 
       enemy.frameTimer += dtMs;
       while (enemy.frameTimer >= enemy.frameDurationMs) {
@@ -7486,8 +7520,13 @@ if (enemigoCerca) {
       const limiteDer = WORLD_W - npc.w;
       const limiteAbj = WORLD_H - npc.h;
 
-      npc.x = clamp(nextX, limiteIzq, limiteDer);
-      npc.y = clamp(nextY, limiteArr, limiteAbj);
+moverEntidadConColision(
+  npc,
+  clamp(nextX, limiteIzq, limiteDer),
+  clamp(nextY, limiteArr, limiteAbj),
+  npc.w,
+  npc.h
+);
 
       if (npc.dirX > 0) npc.facing = "right";
       else if (npc.dirX < 0) npc.facing = "left";
@@ -8099,6 +8138,11 @@ function updateDisparosEnemigosArmados(dtMs) {
     d.y += d.vy;
     d.vida -= dtMs;
 
+    if (proyectilColisionaAmbiente(d.x - 5, d.y - 5, 10, 10)) {
+  window.disparosEnemigosArmadosActivos.splice(i, 1);
+  continue;
+}
+
     const hitboxW = 10;
     const hitboxH = 10;
     const hitX = d.x - hitboxW / 2;
@@ -8215,6 +8259,14 @@ function updateDisparosLazer(dtMs) {
     d.x += d.vx;
     d.y += d.vy;
     d.vida -= dtMs;
+
+    const lazerHitW = d.facing === "left" || d.facing === "right" ? d.largo : 10;
+const lazerHitH = d.facing === "up" || d.facing === "down" ? d.largo : 10;
+
+if (proyectilColisionaAmbiente(d.x - lazerHitW / 2, d.y - lazerHitH / 2, lazerHitW, lazerHitH)) {
+  window.disparosLazerActivos.splice(i, 1);
+  continue;
+}
 
     let impacto = false;
 
@@ -8426,6 +8478,11 @@ function updateBumerangs(dtMs) {
     b.angulo += 0.55;
     b.vida -= dtMs;
 
+    if (proyectilColisionaAmbiente(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2)) {
+  window.bumerangsActivos.splice(i, 1);
+  continue;
+}
+
     crearParticulasBumerang(b);
 
     let impacto = false;
@@ -8615,22 +8672,45 @@ function update(dtMs) {
     player.walking = !!dir;
 
 if (dir) {
-    player.facing = dir;
-    const d = dirs[dir];
-    let delta = dtMs / 8;
+  player.facing = dir;
+  const d = dirs[dir];
+  let delta = dtMs / 8;
 
-const patinesEquipados = window.equipSlots?.find(i => i && i.id === "patines");
+  const patinesEquipados = window.equipSlots?.find(i => i && i.id === "patines");
 
-if (patinesEquipados) {
-  delta *= 2;
+  if (patinesEquipados) {
+    delta *= 2;
 
-  if (player.walking && Math.random() < 0.55) {
-    crearParticulaPatin();
+    if (player.walking && Math.random() < 0.55) {
+      crearParticulaPatin();
+    }
   }
+
+  const nextX = player.x + d.x * player.speed * delta;
+  const nextY = player.y + d.y * player.speed * delta;
+
+const hitX = colisionAmbiente(
+  nextX + PLAYER_OFFSET_X,
+  player.y + PLAYER_OFFSET_Y,
+  PLAYER_HIT_W,
+  PLAYER_HIT_H
+);
+
+if (!hitX) {
+  player.x = nextX;
 }
-    player.x += d.x * player.speed * delta;
-    player.y += d.y * player.speed * delta;
-  }
+
+const hitY = colisionAmbiente(
+  player.x + PLAYER_OFFSET_X,
+  nextY + PLAYER_OFFSET_Y,
+  PLAYER_HIT_W,
+  PLAYER_HIT_H
+);
+
+if (!hitY) {
+  player.y = nextY;
+}
+}
 
     // límites del mundo completo (5000x5000)
     const leftLimit = 0;
@@ -9786,6 +9866,248 @@ function drawShieldEffect(ctx, layer = "front") {
 }
 
 // =======================================================================================
+// Lógica ambiente.jsons (inicio)
+// =======================================================================================
+function drawAmbiente(ctx) {
+  if (!ambienteObjetos || !ambienteObjetos.length) return;
+
+  for (const obj of ambienteObjetos) {
+    if (!obj) continue;
+
+    // =============================
+    // COLOR
+    // =============================
+    if (obj.color) {
+      ctx.fillStyle = obj.color;
+      ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+    }
+
+    // =============================
+    // IMAGEN ESTÁTICA
+    // =============================
+    if (obj.imagen) {
+      if (!ambienteImagenesCache[obj.imagen]) {
+        const img = new Image();
+        img.onload = () => console.log("Imagen ambiente cargada:", obj.imagen);
+        img.onerror = () => console.warn("No cargó imagen ambiente:", obj.imagen);
+        img.src = obj.imagen;
+        ambienteImagenesCache[obj.imagen] = img;
+      }
+
+      const img = ambienteImagenesCache[obj.imagen];
+
+      if (img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
+      }
+    }
+
+    // =============================
+    // SPRITE 1x10
+    // =============================
+    if (obj.sprites_1x10) {
+      if (!ambienteImagenesCache[obj.sprites_1x10]) {
+        const img = new Image();
+        img.onload = () => console.log("Sprite ambiente cargado:", obj.sprites_1x10);
+        img.onerror = () => console.warn("No cargó sprite ambiente:", obj.sprites_1x10);
+        img.src = obj.sprites_1x10;
+        ambienteImagenesCache[obj.sprites_1x10] = img;
+      }
+
+      const img = ambienteImagenesCache[obj.sprites_1x10];
+
+      if (img.complete && img.naturalWidth > 0) {
+        const FRAME_W = 120;
+        const FRAME_H = 120;
+        const TOTAL_FRAMES = 10;
+
+        obj.frameTimer += 16;
+
+        const speed = Number(obj.velocidad_movimiento) || 1;
+
+        if (obj.frameTimer >= (obj.frameDuration / speed)) {
+          obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
+          obj.frameTimer = 0;
+        }
+
+        const sx = obj.frameActual * FRAME_W;
+
+        ctx.drawImage(
+          img,
+          sx, 0, FRAME_W, FRAME_H,
+          obj.x, obj.y, obj.w, obj.h
+        );
+      }
+    }
+
+    // =============================
+    // SONIDO POR PROXIMIDAD
+    // =============================
+    if (obj.sonido_ambiente) {
+      const dx = (player.x + 32) - (obj.x + obj.w / 2);
+      const dy = (player.y + 32) - (obj.y + obj.h / 2);
+      const dist = Math.hypot(dx, dy);
+
+      if (!ambienteAudioCache[obj.sonido_ambiente]) {
+        const audio = new Audio(obj.sonido_ambiente);
+        audio.loop = true;
+        ambienteAudioCache[obj.sonido_ambiente] = audio;
+      }
+
+      const audio = ambienteAudioCache[obj.sonido_ambiente];
+
+      if (dist < 500) {
+        audio.volume = Math.max(0, 1 - (dist / 500));
+
+        if (!obj.audioPlaying) {
+          audio.play().catch(() => {});
+          obj.audioPlaying = true;
+        }
+      } else {
+        if (obj.audioPlaying) {
+          audio.pause();
+          obj.audioPlaying = false;
+        }
+      }
+    }
+  }
+}
+
+function colisionAmbiente(x, y, w, h) {
+
+  for (const obj of ambienteObjetos) {
+
+    if (!obj.tipo.includes("colisionables")) continue;
+
+    if (
+      x < obj.x + obj.w &&
+      x + w > obj.x &&
+      y < obj.y + obj.h &&
+      y + h > obj.y
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// =============================
+// funciones ambientes.json elementos cliqueables (inicio)
+// =============================
+//portal dimencional
+window.portalDimencional = function () {
+  const old = document.getElementById("portal-info-overlay");
+  if (old) old.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "portal-info-overlay";
+  overlay.style.position = "absolute";
+  overlay.style.inset = "0";
+  overlay.style.zIndex = "7000";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+
+  overlay.innerHTML = `
+    <div style="
+      width:320px;
+      min-height:180px;
+      background:black;
+      color:#00ffcc;
+      border:3px solid #00ffcc;
+      box-shadow:0 0 0 2px #0b3d35, 0 0 0 4px #00ffcc, 0 10px 30px rgba(0,0,0,.45);
+      font-family:'arcade','monospace';
+      padding:16px;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:18px;
+      text-align:center;
+    ">
+      <div style="font-size:12px; text-transform:uppercase;">Portal dimensional</div>
+      <div style="font-size:12px; line-height:1.6;">Este es el portal de la escuela espacial</div>
+      <button id="portal-info-close" type="button" style="
+        min-width:120px;
+        height:34px;
+        margin:0 auto;
+        background:black;
+        color:#00ffcc;
+        border:2px solid #00ffcc;
+        font-family:'arcade','monospace';
+        font-size:10px;
+        cursor:pointer;
+        text-transform:uppercase;
+      ">Cerrar</button>
+    </div>
+  `;
+
+  wrapEl.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector("#portal-info-close");
+
+  function cerrar() {
+    overlay.remove();
+  }
+
+  closeBtn.addEventListener("click", cerrar);
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) cerrar();
+  });
+};
+// =============================
+// funciones ambientes.json elementos cliqueables (fin)
+// =============================
+
+function obtenerObjetosColisionablesAmbiente() {
+  return (ambienteObjetos || []).filter(
+    obj => obj && String(obj.tipo || "").includes("colisionables")
+  );
+}
+
+function colisionAmbiente(x, y, w, h) {
+  const bloques = obtenerObjetosColisionablesAmbiente();
+
+  for (const obj of bloques) {
+    if (
+      x < obj.x + obj.w &&
+      x + w > obj.x &&
+      y < obj.y + obj.h &&
+      y + h > obj.y
+    ) {
+      return obj;
+    }
+  }
+
+  return null;
+}
+
+function moverEntidadConColision(entidad, nextX, nextY, w, h) {
+  let xFinal = entidad.x;
+  let yFinal = entidad.y;
+
+  const hitX = colisionAmbiente(nextX, entidad.y, w, h);
+  if (!hitX) {
+    xFinal = nextX;
+  }
+
+  const hitY = colisionAmbiente(xFinal, nextY, w, h);
+  if (!hitY) {
+    yFinal = nextY;
+  }
+
+  entidad.x = xFinal;
+  entidad.y = yFinal;
+}
+
+function proyectilColisionaAmbiente(x, y, w = 10, h = 10) {
+  return !!colisionAmbiente(x, y, w, h);
+}
+// =======================================================================================
+// Lógica ambiente.jsons (fin)
+// =======================================================================================
+
+// =======================================================================================
 // Lógica de pintura en canvas (inicio)
 // =======================================================================================
 
@@ -10168,6 +10490,9 @@ if (logoImg) {
     const camCenterX = clamp(heroCenterX, viewW / 2, WORLD_W - viewW / 2);
     const camCenterY = clamp(heroCenterY, viewH / 2, WORLD_H - viewH / 2);
 
+    ambienteViewX = camCenterX - viewW / 2;
+    ambienteViewY = camCenterY - viewH / 2;
+
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
@@ -10237,6 +10562,17 @@ const heroDrawY = player.y + (espadaMaderaLunge.offsetY || 0);
 
 ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
 
+// 🔶 DEBUG BLOQUE JUGADOR (debajo del sprite)
+ctx.save();
+ctx.fillStyle = "rgba(255,255,0,0.35)";
+ctx.fillRect(
+  heroDrawX + PLAYER_OFFSET_X,
+  heroDrawY + PLAYER_OFFSET_Y,
+  PLAYER_HIT_W,
+  PLAYER_HIT_H
+);
+ctx.restore();
+
 //--Visual de vida restada o sumada (inicio)
 for (let i = floatingTexts.length - 1; i >= 0; i--) {
   const t = floatingTexts[i];
@@ -10297,6 +10633,9 @@ drawAtaquesEspadaHierro(ctx);
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
 drawBubblesEnemigos(ctx);
+
+//Elementos ambientes dinamicos ambiente.json
+drawAmbiente(ctx);
 
     ctx.restore();
 
@@ -10611,7 +10950,38 @@ async function initNPCs() {
 initNPCs();
 initNPCsAmbiente();
 initEnemigos(); //--Enemigos
+cargarAmbiente(); // Sistemas ambinte.json
 
+//--Dibujar elementos ambiente.json (inicio)
+canvas.addEventListener("pointerdown", function (e) {
+  if (gameMode !== "playing") return;
+  if (npcDialogOpen) return;
+
+  const rect = canvas.getBoundingClientRect();
+
+  const mx = ((e.clientX - rect.left) / CAMERA_ZOOM) + ambienteViewX;
+  const my = ((e.clientY - rect.top) / CAMERA_ZOOM) + ambienteViewY;
+
+  for (const obj of ambienteObjetos) {
+    if (!obj) continue;
+    if (!String(obj.tipo || "").includes("cliqueable")) continue;
+
+    if (
+      mx >= obj.x &&
+      mx <= obj.x + obj.w &&
+      my >= obj.y &&
+      my <= obj.y + obj.h
+    ) {
+      if (obj.funcion && typeof window[obj.funcion] === "function") {
+        e.preventDefault();
+        e.stopPropagation();
+        window[obj.funcion]();
+        return;
+      }
+    }
+  }
+}, { capture: true, passive: false });
+//--Dibujar elementos ambiente.json (fin)
 
 // decide si muestra checking o playing (pero playing mostrará “Cargando...” hasta que haya assets)
 checkUserProfile();

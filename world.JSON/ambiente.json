@@ -1,0 +1,58 @@
+[
+  {
+    "zona_id": "rectangulo_rojo_01",
+    "color": "red",
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 3260,
+    "y": 1030,
+    "w": 120,
+    "h": 40,
+    "imagen": null,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+  {
+    "zona_id": "pared_laboratorio_01",
+    "color": null,
+    "tipo": "visual",
+    "funcion": null,
+    "x": 3400,
+    "y": 1000,
+    "w": 180,
+    "h": 120,
+    "imagen": "./assets/spriteAmbiente/paredLaboratorio.png",
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+  {
+    "zona_id": "fuente_laberinto_01",
+    "color": null,
+    "tipo": "visual",
+    "funcion": null,
+    "x": 3180,
+    "y": 1160,
+    "w": 140,
+    "h": 140,
+    "imagen": null,
+    "sprites_1x10": "./assets/spriteAmbiente/sprites ambiente.png",
+    "velocidad_movimiento": 1.1,
+    "sonido_ambiente": null
+  },
+    {
+    "zona_id": "portal_dimensional_01",
+    "color": null,
+    "tipo": "cliqueable",
+    "funcion": "portalDimencional",
+    "x": 3470,
+    "y": 1180,
+    "w": 120,
+    "h": 120,
+    "imagen": "./assets/spriteAmbiente/nucleo.png",
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+    }
+]

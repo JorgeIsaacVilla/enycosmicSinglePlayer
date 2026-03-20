@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prueba sprite árbol 10 frames</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1c1c1c;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      gap: 14px;
+    }
+
+    canvas {
+      border: 1px solid #444;
+      background: #78c465;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .panel {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .frame-panel {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+    }
+
+    .frame-btn {
+      padding: 8px 12px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      background: #2b2b2b;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .frame-btn:hover {
+      background: #3a3a3a;
+    }
+
+    .frame-btn.active {
+      background: #2f7d32;
+      border-color: #4caf50;
+    }
+
+    input[type="range"] {
+      width: 180px;
+    }
+
+    .ruta {
+      background: #111;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .estado {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Prueba de sprite 1x10</h2>
+
+  <div class="panel">
+    <label>
+      Velocidad:
+      <input type="range" id="speedInput" min="1" max="20" value="8">
+      <span id="speedLabel">8</span>
+    </label>
+
+    <button id="pauseBtn">Pausar</button>
+    <button id="resumeSequenceBtn">Volver a secuencia</button>
+  </div>
+
+  <div class="frame-panel" id="frameButtons"></div>
+
+  <div class="estado" id="frameStatus">Frame actual: 0</div>
+
+  <div class="ruta">
+    Cambia esta ruta en el código:
+    <strong>SPRITE_SRC = "sprites/tree_sprites_10frames.png"</strong>
+  </div>
+
+  <canvas id="canvas" width="800" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const speedInput = document.getElementById("speedInput");
+    const speedLabel = document.getElementById("speedLabel");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resumeSequenceBtn = document.getElementById("resumeSequenceBtn");
+    const frameButtonsContainer = document.getElementById("frameButtons");
+    const frameStatus = document.getElementById("frameStatus");
+
+    const FRAME_WIDTH = 120;
+    const FRAME_HEIGHT = 120;
+    const TOTAL_FRAMES = 10;
+
+    const sequence = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+
+    const SPRITE_SRC = "./sprites ambiente.png";
+
+    let sprite = new Image();
+    let spriteLoaded = false;
+    let paused = false;
+    let manualFrameMode = false;
+
+    let frame = 0;
+    let seqIndex = 0;
+    let lastTime = 0;
+    let accumulator = 0;
+
+    let frameDuration = 1000 / Number(speedInput.value);
+
+    function updateFrameStatus() {
+      frameStatus.textContent = `Frame actual: ${frame}`;
+    }
+
+    function updateFrameButtons() {
+      const buttons = document.querySelectorAll(".frame-btn");
+      buttons.forEach((btn) => {
+        const btnFrame = Number(btn.dataset.frame);
+        btn.classList.toggle("active", btnFrame === frame);
+      });
+    }
+
+    function drawGroundShadow(x, y) {
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.beginPath();
+      ctx.ellipse(x + 60, y + 108, 42, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPlaceholder(mensaje = "Cargando sprite...") {
+      const x = (canvas.width - FRAME_WIDTH) / 2;
+      const y = (canvas.height - FRAME_HEIGHT) / 2;
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.fillRect(x, y, FRAME_WIDTH, FRAME_HEIGHT);
+      ctx.strokeStyle = "#ffffff55";
+      ctx.strokeRect(x + 0.5, y + 0.5, FRAME_WIDTH - 1, FRAME_HEIGHT - 1);
+      ctx.fillStyle = "#fff";
+      ctx.font = "16px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(mensaje, canvas.width / 2, canvas.height / 2 - 8);
+      ctx.fillText(SPRITE_SRC, canvas.width / 2, canvas.height / 2 + 18);
+      ctx.restore();
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#78c465";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const x = (canvas.width - FRAME_WIDTH) / 2;
+      const y = (canvas.height - FRAME_HEIGHT) / 2;
+
+      drawGroundShadow(x, y);
+
+      if (!spriteLoaded) {
+        drawPlaceholder("No se pudo cargar o sigue cargando");
+        return;
+      }
+
+      ctx.drawImage(
+        sprite,
+        frame * FRAME_WIDTH,
+        0,
+        FRAME_WIDTH,
+        FRAME_HEIGHT,
+        x,
+        y,
+        FRAME_WIDTH,
+        FRAME_HEIGHT
+      );
+    }
+
+    function animate(timestamp) {
+      if (!lastTime) lastTime = timestamp;
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+
+      if (!paused && !manualFrameMode && spriteLoaded) {
+        accumulator += delta;
+
+        while (accumulator >= frameDuration) {
+          seqIndex = (seqIndex + 1) % sequence.length;
+          frame = sequence[seqIndex];
+          accumulator -= frameDuration;
+        }
+
+        updateFrameStatus();
+        updateFrameButtons();
+      }
+
+      render();
+      requestAnimationFrame(animate);
+    }
+
+    function loadSprite() {
+      sprite = new Image();
+
+      sprite.onload = () => {
+        spriteLoaded = true;
+        seqIndex = 0;
+        frame = sequence[0];
+        updateFrameStatus();
+        updateFrameButtons();
+
+        const expectedWidth = FRAME_WIDTH * TOTAL_FRAMES;
+        const expectedHeight = FRAME_HEIGHT;
+
+        if (sprite.width !== expectedWidth || sprite.height !== expectedHeight) {
+          console.warn(
+            `La imagen mide ${sprite.width}x${sprite.height}. ` +
+            `Se esperaba ${expectedWidth}x${expectedHeight}.`
+          );
+        }
+      };
+
+      sprite.onerror = () => {
+        spriteLoaded = false;
+        console.error("No se pudo cargar la imagen:", SPRITE_SRC);
+      };
+
+      sprite.src = SPRITE_SRC;
+    }
+
+    function createFrameButtons() {
+      frameButtonsContainer.innerHTML = "";
+
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const button = document.createElement("button");
+        button.textContent = `Frame ${i}`;
+        button.className = "frame-btn";
+        button.dataset.frame = i;
+
+        button.addEventListener("click", () => {
+          manualFrameMode = true;
+          paused = true;
+          pauseBtn.textContent = "Reanudar";
+
+          frame = i;
+          accumulator = 0;
+
+          updateFrameStatus();
+          updateFrameButtons();
+          render();
+        });
+
+        frameButtonsContainer.appendChild(button);
+      }
+    }
+
+    speedInput.addEventListener("input", () => {
+      speedLabel.textContent = speedInput.value;
+      frameDuration = 1000 / Number(speedInput.value);
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Reanudar" : "Pausar";
+    });
+
+    resumeSequenceBtn.addEventListener("click", () => {
+      manualFrameMode = false;
+      paused = false;
+
+      const foundIndex = sequence.indexOf(frame);
+      seqIndex = foundIndex >= 0 ? foundIndex : 0;
+
+      pauseBtn.textContent = "Pausar";
+      accumulator = 0;
+      updateFrameButtons();
+    });
+
+    createFrameButtons();
+    loadSprite();
+    render();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

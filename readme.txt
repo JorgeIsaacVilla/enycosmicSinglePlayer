@@ -1404,178 +1404,176 @@ cuando el jugador lo complete.
   ]
 }
 
+//----------------Sistema de bloques del mundo (JSON)
 
+El juego usará un archivo .json para definir todos los elementos del mapa.
+Este archivo separa la lógica del código y permite construir mundos fácilmente.
+Existen 3 tipos de bloques:
 
+//--------------------
+// Colisionables
+//--------------------
+Son bloques sólidos que no se pueden atravesar.
+- bloquean jugador, NPC, enemigos y disparos
+- definen paredes, límites, obstáculos
+- pueden ser invisibles o con colores solidos
 
-animación espada
-// =============================
-// 🗡️ ESPADA DE MADERA - ANIMACIÓN
-// =============================
-window.ataquesEspadaMaderaActivos = [];
-window.particulasEspadaMadera = [];
+//--------------------
+// Visuales
+//--------------------
+Sirven solo para pintar el entorno. No tienen colisión por defecto.
+Se dividen en:
+-> estáticos
+objetos fijos como rocas, mesas, libros, etc
 
-function lanzarAtaqueEspadaMadera() {
-  const alcance = 42;
-  const duracion = 180;
+-> sprites de ambiente
+animaciones tipo 1x10 cada recuadro del sprites es de 120x120px
+usados para árboles, agua, humo, efectos
 
-  let offsetX = 0;
-  let offsetY = 0;
-  let anguloInicio = 0;
-  let anguloFin = 0;
+//--------------------
+// Cliqueables
+//--------------------
+Son objetos o zonas que ejecutan acciones al interactuar.
+Se dividen en:
 
-  if (player.facing === "up") {
-    offsetX = 0;
-    offsetY = -30;
-    anguloInicio = 2.2;
-    anguloFin = 0.9;
-  } else if (player.facing === "down") {
-    offsetX = 0;
-    offsetY = 34;
-    anguloInicio = -1.0;
-    anguloFin = 0.4;
-  } else if (player.facing === "left") {
-    offsetX = -28;
-    offsetY = 8;
-    anguloInicio = 0.9;
-    anguloFin = -0.8;
-  } else {
-    offsetX = 28;
-    offsetY = 8;
-    anguloInicio = 3.8;
-    anguloFin = 2.1;
-  }
+-> invisibles
+no tienen imagen
+activan eventos, misiones o funciones
 
-  window.ataquesEspadaMaderaActivos.push({
-    x: player.x + 32 + offsetX,
-    y: player.y + 32 + offsetY,
-    offsetX,
-    offsetY,
-    alcance,
-    tiempo: duracion,
-    tiempoMax: duracion,
-    anguloInicio,
-    anguloFin,
-    facing: player.facing
-  });
-}
+-> con imagen
+objetos visibles como cofres, botones, consolas
 
-window.lanzarAtaqueEspadaMadera = lanzarAtaqueEspadaMadera;
+Ambos casos ejecutan acciones al hacer clic.
 
-function crearParticulasEspadaMadera(ataque) {
-  const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
-  const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
+Ejemplo de uso ambiente.json:
 
-  const puntaX = ataque.x + Math.cos(angulo) * ataque.alcance;
-  const puntaY = ataque.y + Math.sin(angulo) * ataque.alcance;
-
-  for (let i = 0; i < 2; i++) {
-    window.particulasEspadaMadera.push({
-      x: puntaX + (Math.random() - 0.5) * 6,
-      y: puntaY + (Math.random() - 0.5) * 6,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: (Math.random() - 0.5) * 0.8,
-      size: 1.6 + Math.random() * 1.8,
-      life: 90 + Math.random() * 40,
-      maxLife: 130,
-      color: Math.random() < 0.5 ? "#8b5a2b" : "#c8ff66"
-    });
-  }
-}
-
-function updateAtaquesEspadaMadera(dtMs) {
-  for (let i = window.ataquesEspadaMaderaActivos.length - 1; i >= 0; i--) {
-    const ataque = window.ataquesEspadaMaderaActivos[i];
-
-    ataque.x = player.x + 32 + ataque.offsetX;
-    ataque.y = player.y + 32 + ataque.offsetY;
-    ataque.tiempo -= dtMs;
-
-    crearParticulasEspadaMadera(ataque);
-
-    if (ataque.tiempo <= 0) {
-      window.ataquesEspadaMaderaActivos.splice(i, 1);
+{
+  "objetos": [
+    {
+      "zona_id": "pared_laberinto_01",
+      "color": "red",
+      "tipo": "colisionable",
+      "funcion": null,
+      "x": 3001,
+      "y": 4875,
+      "w": 380,
+      "h": 20,
+      "imagen": null,
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": null
+    },
+    {
+      "zona_id": "roca_decorativa_01",
+      "color": null,
+      "tipo": "visual",
+      "funcion": null,
+      "x": 2870,
+      "y": 4780,
+      "w": 64,
+      "h": 64,
+      "imagen": "./assets/ambiente/roca_01.svg",
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": null
+    },
+    {
+      "zona_id": "terminal_mision_01",
+      "color": null,
+      "tipo": "cliqueable",
+      "funcion": "activarTerminalMision01",
+      "x": 3120,
+      "y": 4820,
+      "w": 48,
+      "h": 48,
+      "imagen": "./assets/ambiente/terminal_01.svg",
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": null
+    },
+    {
+      "zona_id": "arbusto_bloqueo_01",
+      "color": null,
+      "tipo": "colisionable_visual",
+      "funcion": null,
+      "x": 2940,
+      "y": 4910,
+      "w": 96,
+      "h": 64,
+      "imagen": "./assets/ambiente/arbusto_grande.svg",
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": null
+    },
+    {
+      "zona_id": "agua_animada_01",
+      "color": null,
+      "tipo": "visual",
+      "funcion": null,
+      "x": 3200,
+      "y": 4700,
+      "w": 128,
+      "h": 128,
+      "imagen": null,
+      "sprites_1x4": "./assets/ambiente/agua_animada_1x4.svg",
+      "velocidad_movimiento": 1.1,
+      "sonido_ambiente": "./assets/audio/agua_suave.mp3"
+    },
+    {
+      "zona_id": "zona_dialogo_invisible_01",
+      "color": "rgba(255,255,0,0.25)",
+      "tipo": "cliqueable",
+      "funcion": "activarDialogoZona01",
+      "x": 3050,
+      "y": 4760,
+      "w": 140,
+      "h": 90,
+      "imagen": null,
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": null
+    },
+    {
+      "zona_id": "puerta_bunker_01",
+      "color": null,
+      "tipo": "colisionable_cliqueable_visual",
+      "funcion": "abrirPuertaBunker01",
+      "x": 3340,
+      "y": 4860,
+      "w": 80,
+      "h": 120,
+      "imagen": "./assets/ambiente/puerta_bunker.svg",
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": "./assets/audio/puerta_metalica.mp3"
+    },
+    {
+      "zona_id": "arbol_animado_bloqueo_01",
+      "color": null,
+      "tipo": "colisionable_visual",
+      "funcion": null,
+      "x": 2760,
+      "y": 4680,
+      "w": 96,
+      "h": 128,
+      "imagen": null,
+      "sprites_1x4": "./assets/ambiente/arbol_viento_1x4.svg",
+      "velocidad_movimiento": 0.8,
+      "sonido_ambiente": "./assets/audio/viento_hojas.mp3"
+    },
+    {
+      "zona_id": "altar_portal_01",
+      "color": null,
+      "tipo": "cliqueable_visual",
+      "funcion": "activarPortalProtoMapa01",
+      "x": 3480,
+      "y": 4720,
+      "w": 96,
+      "h": 96,
+      "imagen": "./assets/ambiente/altar_portal.svg",
+      "sprites_1x4": null,
+      "velocidad_movimiento": null,
+      "sonido_ambiente": "./assets/audio/zumbido_portal.mp3"
     }
-  }
-}
-
-function updateParticulasEspadaMadera(dtMs) {
-  for (let i = window.particulasEspadaMadera.length - 1; i >= 0; i--) {
-    const p = window.particulasEspadaMadera[i];
-
-    p.life -= dtMs;
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vx *= 0.98;
-    p.vy *= 0.98;
-    p.size *= 0.975;
-
-    if (p.life <= 0 || p.size <= 0.2) {
-      window.particulasEspadaMadera.splice(i, 1);
-    }
-  }
-}
-
-function drawParticulasEspadaMadera(ctx) {
-  for (const p of (window.particulasEspadaMadera || [])) {
-    const alpha = Math.max(0, p.life / p.maxLife);
-
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = p.color;
-    ctx.shadowColor = "#c8ff66";
-    ctx.shadowBlur = 10;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
-}
-
-function drawAtaquesEspadaMadera(ctx) {
-  for (const ataque of (window.ataquesEspadaMaderaActivos || [])) {
-    const progreso = 1 - (ataque.tiempo / ataque.tiempoMax);
-    const angulo = ataque.anguloInicio + (ataque.anguloFin - ataque.anguloInicio) * progreso;
-    const alpha = Math.max(0.15, ataque.tiempo / ataque.tiempoMax);
-
-    ctx.save();
-    ctx.translate(ataque.x, ataque.y);
-    ctx.rotate(angulo);
-    ctx.globalAlpha = alpha;
-
-    // rastro del arco
-    ctx.strokeStyle = "#c8ff66";
-    ctx.lineWidth = 5;
-    ctx.shadowColor = "#c8ff66";
-    ctx.shadowBlur = 14;
-    ctx.beginPath();
-    ctx.moveTo(-6, 0);
-    ctx.lineTo(ataque.alcance + 8, 0);
-    ctx.stroke();
-
-    // hoja madera fluorescente
-    ctx.fillStyle = "#8b5a2b";
-    ctx.strokeStyle = "#d8ff7a";
-    ctx.lineWidth = 2;
-    ctx.shadowColor = "#d8ff7a";
-    ctx.shadowBlur = 10;
-
-    ctx.beginPath();
-    ctx.moveTo(0, -5);
-    ctx.lineTo(ataque.alcance - 10, -3);
-    ctx.lineTo(ataque.alcance + 6, 0);
-    ctx.lineTo(ataque.alcance - 10, 3);
-    ctx.lineTo(0, 5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // mango
-    ctx.fillStyle = "#5c3a1e";
-    ctx.shadowBlur = 0;
-    ctx.fillRect(-8, -3, 10, 6);
-
-    ctx.restore();
-  }
+  ]
 }
