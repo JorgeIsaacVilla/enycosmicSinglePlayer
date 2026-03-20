@@ -3461,6 +3461,8 @@ const PLAYER_OFFSET_Y = HERO_DRAW_H - PLAYER_HIT_H;
 window.bumerangsActivos = [];
 window.particulasBumerang = [];
 
+window.particulasImpactoBloque = [];
+
 window.bumerangImg = new Image();
 window.bumerangImg.src = "./assets/items/bumerang.svg";
 window.bumerangsActivos = [];
@@ -3502,6 +3504,72 @@ let espadaMaderaFrameOverride = {
   active: false,
   frame: 0
 };
+
+function crearChispasImpactoBloque(x, y, colorBase = "#ffd36b") {
+  for (let i = 0; i < 12; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const speed = 0.8 + Math.random() * 3.2;
+
+    window.particulasImpactoBloque.push({
+      x,
+      y,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed - (Math.random() * 0.8),
+      size: 1.8 + Math.random() * 2.8,
+      life: 180 + Math.random() * 120,
+      maxLife: 300,
+      color: Math.random() < 0.5 ? colorBase : "#fff4b0",
+      glow: 8 + Math.random() * 8
+    });
+  }
+  console.log("chispas bloque", x, y);
+}
+
+function drawParticulasImpactoBloque(ctx) {
+  for (const p of (window.particulasImpactoBloque || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = p.glow || 12;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#ffffff";
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function updateParticulasImpactoBloque(dtMs) {
+  for (let i = window.particulasImpactoBloque.length - 1; i >= 0; i--) {
+    const p = window.particulasImpactoBloque[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+
+    p.vx *= 0.97;
+    p.vy *= 0.97;
+    p.vy += 0.03;
+
+    p.size *= 0.985;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasImpactoBloque.splice(i, 1);
+    }
+  }
+}
 
 function activarLungeEspadaMadera(facing) {
   espadaMaderaLunge.active = true;
@@ -8138,7 +8206,8 @@ function updateDisparosEnemigosArmados(dtMs) {
     d.y += d.vy;
     d.vida -= dtMs;
 
-    if (proyectilColisionaAmbiente(d.x - 5, d.y - 5, 10, 10)) {
+if (proyectilColisionaAmbiente(d.x - 5, d.y - 5, 10, 10)) {
+  crearChispasImpactoBloque(d.x, d.y, "#ff5a5a");
   window.disparosEnemigosArmadosActivos.splice(i, 1);
   continue;
 }
@@ -8264,6 +8333,7 @@ function updateDisparosLazer(dtMs) {
 const lazerHitH = d.facing === "up" || d.facing === "down" ? d.largo : 10;
 
 if (proyectilColisionaAmbiente(d.x - lazerHitW / 2, d.y - lazerHitH / 2, lazerHitW, lazerHitH)) {
+  crearChispasImpactoBloque(d.x, d.y, "#eaff00");
   window.disparosLazerActivos.splice(i, 1);
   continue;
 }
@@ -8478,7 +8548,8 @@ function updateBumerangs(dtMs) {
     b.angulo += 0.55;
     b.vida -= dtMs;
 
-    if (proyectilColisionaAmbiente(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2)) {
+if (proyectilColisionaAmbiente(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2)) {
+  crearChispasImpactoBloque(b.x, b.y, "#ffb347");
   window.bumerangsActivos.splice(i, 1);
   continue;
 }
@@ -8793,6 +8864,7 @@ if (player.blinkTimer > 0) {
 
     updateBumerangs(dtMs);
     updateParticulasBumerang(dtMs);
+    updateParticulasImpactoBloque(dtMs);
     updateDisparosLazer(dtMs);
 
     updateAtaquesEspadaMadera(dtMs);
@@ -10564,7 +10636,8 @@ ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
 
 // 🔶 DEBUG BLOQUE JUGADOR (debajo del sprite)
 ctx.save();
-ctx.fillStyle = "rgba(255,255,0,0.35)";
+//ctx.fillStyle = "rgba(255,255,0,0.35)";
+ctx.fillStyle = "transparent";
 ctx.fillRect(
   heroDrawX + PLAYER_OFFSET_X,
   heroDrawY + PLAYER_OFFSET_Y,
@@ -10620,6 +10693,8 @@ drawShieldEffect(ctx, "front");
 drawParticulasBumerang(ctx);
 drawBumerangs(ctx);
 
+
+
 //--Efectp pico escabador
 drawParticulasPicoEscabador(ctx);
 drawAtaquesPicoEscabador(ctx);
@@ -10636,6 +10711,10 @@ drawBubblesEnemigos(ctx);
 
 //Elementos ambientes dinamicos ambiente.json
 drawAmbiente(ctx);
+
+//Chispas disparo
+drawParticulasImpactoBloque(ctx);
+
 
     ctx.restore();
 
