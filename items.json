@@ -1,6 +1,35 @@
 {
   "items": [
     {
+  "id": "arcilla",
+  "nombre_item": "Arcilla",
+  "tipo_item": "consumible",
+  "imagen": "./assets/items/arcilla.svg",
+  "agotable": false,
+  "cantidad_de_usos": null,
+  "cuanto_quita_de_vida_al_enemigo": 0,
+  "desaparece_al_agotarse": false,
+  "creable": false,
+  "materiales_requeridos_para_crear": [],
+  "combinable": true
+},
+{
+  "id": "bloque_de_arcilla",
+  "nombre_item": "Bloque de arcilla",
+  "tipo_item": "consumible",
+  "imagen": "./assets/items/bloqueArcilla.svg",
+  "agotable": true,
+  "cantidad_de_usos": 1,
+  "cuanto_quita_de_vida_al_enemigo": 0,
+  "desaparece_al_agotarse": true,
+  "creable": true,
+  "materiales_requeridos_para_crear": [
+    { "item_id": "baso_de_agua", "cantidad": 1 },
+    { "item_id": "arcilla", "cantidad": 5 }
+  ],
+  "combinable": false
+},
+    {
       "id": "corazon",
       "nombre_item": "Corazon",
       "tipo_item": "consumible",

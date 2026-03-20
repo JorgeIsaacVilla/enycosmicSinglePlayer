@@ -280,6 +280,18 @@ async function cargarAmbiente() {
 // 🌍 AMBIENTE SYSTEM (final)
 // =============================
 
+// =============================
+// 🌍 LOGICA ITEM BLOQUES DE ARCILLA (inicio)
+// =============================
+window.particulasArcillaActivas = [];
+
+const BLOQUE_ARCILLA_W = 64;
+const BLOQUE_ARCILLA_H = 64;
+const BLOQUE_ARCILLA_PDR = 12;
+// =============================
+// 🌍 LOGICA ITEM BLOQUES DE ARCILLA (FIN)
+// =============================
+
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
@@ -2085,7 +2097,10 @@ function devolverItemDesdeEquipado(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
 
-  const usosActuales = item.usos ?? 0;
+  const itemId = item.id ?? item.item_id;
+  const esBloqueArcilla = itemId === "bloque_de_arcilla";
+
+  const usosActuales = Number(item.usos ?? 0);
   const desapareceAlAgotarse = item.desaparece_al_agotarse === true;
   const esAgotable = item.agotable === true;
 
@@ -2101,16 +2116,16 @@ function devolverItemDesdeEquipado(slotIndex) {
   }
 
   const agregado = window.agregarItemAlInventario({
-    id: item.id ?? item.item_id,
-    item_id: item.item_id ?? item.id,
+    id: itemId,
+    item_id: item.item_id ?? itemId,
     nombre_item: item.nombre_item,
     imagen: item.imagen,
     tipo_item: item.tipo ?? item.tipo_item ?? "",
     agotable: item.agotable === true,
     desaparece_al_agotarse: item.desaparece_al_agotarse === true,
-    usos: item.usos ?? null,
-    usos_maximos: item.usos_maximos ?? null,
-    cantidad: 1
+    usos: esBloqueArcilla ? null : (item.usos ?? null),
+    usos_maximos: esBloqueArcilla ? null : (item.usos_maximos ?? null),
+    cantidad: esBloqueArcilla ? Math.max(1, usosActuales) : 1
   });
 
   if (!agregado) {
@@ -2149,7 +2164,7 @@ function equiparItemDelInventario(slotIndex) {
     tipo === "equipo" ||
     tipo === "equipo_especial" ||
     tipo === "arma_especial" ||
-    tipo === "consumible"
+    tipo === "consumible";
 
   console.log("Intentando equipar:", item);
   console.log("Tipo detectado:", tipo);
@@ -2162,6 +2177,35 @@ function equiparItemDelInventario(slotIndex) {
 
   window.equipSlots = window.equipSlots || [null, null];
 
+  const itemId = item.id ?? item.item_id;
+  const esBloqueArcilla = itemId === "bloque_de_arcilla";
+  const cantidadInventario = Number(item.cantidad || 1) || 1;
+
+  // si ya hay bloque de arcilla equipado, se suma ahí
+  if (esBloqueArcilla) {
+    const slotExistente = window.equipSlots.findIndex(
+      slot => slot && (slot.id === "bloque_de_arcilla" || slot.item_id === "bloque_de_arcilla")
+    );
+
+    if (slotExistente !== -1) {
+      const slot = window.equipSlots[slotExistente];
+      slot.usos = Number(slot.usos || 0) + cantidadInventario;
+      slot.usos_maximos = Number(slot.usos_maximos || 0) + cantidadInventario;
+      slot.cantidad = Number(slot.cantidad || 0) + cantidadInventario;
+
+      window.inventarioUser.splice(slotIndex, 1);
+      window.inventarioUser = window.inventarioUser.filter(Boolean);
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+      return;
+    }
+  }
+
   const slotLibre = window.equipSlots.findIndex(slot => slot === null);
   if (slotLibre === -1) {
     console.log("No hay espacio en los slots de equipo");
@@ -2169,32 +2213,48 @@ function equiparItemDelInventario(slotIndex) {
     return;
   }
 
-  const agotable = item.agotable === true;
-  const usosBase = Number(
-    item.usos_restantes ??
-    item.usos ??
-    item.cantidad_de_usos ??
-    item.cantidad_usos ??
-    1
-  ) || 1;
+  const usosEquipado = esBloqueArcilla
+    ? cantidadInventario
+    : (Number(
+        item.usos_restantes ??
+        item.usos ??
+        item.cantidad_de_usos ??
+        item.cantidad_usos ??
+        1
+      ) || 1);
 
-window.equipSlots[slotLibre] = {
-  id: item.id ?? item.item_id,
-  item_id: item.item_id ?? item.id,
-  nombre_item: item.nombre_item ?? item.nombre ?? "Item",
-  imagen: item.imagen ?? item.image ?? "",
-  tipo: tipo,
-  agotable: item.agotable === true,
-  desaparece_al_agotarse: item.desaparece_al_agotarse === true,
-  usos: item.usos ?? item.cantidad_de_usos ?? item.cantidad ?? 1,
-  usos_maximos: item.cantidad_de_usos ?? item.cantidad_usos ?? item.usos ?? 1,
-  cantidad: 1,
-  cuanto_quita_de_vida_al_enemigo: Number(item.cuanto_quita_de_vida_al_enemigo ?? 0) || 0
-};
-  if ((item.cantidad || 1) > 1) {
-    item.cantidad -= 1;
-  } else {
+  const usosMaximosEquipado = esBloqueArcilla
+    ? cantidadInventario
+    : (Number(
+        item.usos_maximos ??
+        item.cantidad_de_usos ??
+        item.cantidad_usos ??
+        item.usos ??
+        1
+      ) || 1);
+
+  window.equipSlots[slotLibre] = {
+    id: itemId,
+    item_id: item.item_id ?? itemId,
+    nombre_item: item.nombre_item ?? item.nombre ?? "Item",
+    imagen: item.imagen ?? item.image ?? "",
+    tipo: tipo,
+    agotable: item.agotable === true,
+    desaparece_al_agotarse: item.desaparece_al_agotarse === true,
+    usos: usosEquipado,
+    usos_maximos: usosMaximosEquipado,
+    cantidad: esBloqueArcilla ? cantidadInventario : 1,
+    cuanto_quita_de_vida_al_enemigo: Number(item.cuanto_quita_de_vida_al_enemigo ?? 0) || 0
+  };
+
+  if (esBloqueArcilla) {
     window.inventarioUser.splice(slotIndex, 1);
+  } else {
+    if ((item.cantidad || 1) > 1) {
+      item.cantidad -= 1;
+    } else {
+      window.inventarioUser.splice(slotIndex, 1);
+    }
   }
 
   window.inventarioUser = window.inventarioUser.filter(Boolean);
@@ -3161,157 +3221,171 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
   if (!item) return;
 
   switch (item.id) {
-    case "corazon":
-      pdv = PDV_MAX;
 
-      crearTextoDanio(
-        player.x + 32,
-        player.y - 10,
-        "+" + pdv,
-        "#00ffcc",
-        "#00ffcc"
-      );
+  case "corazon":
+    pdv = PDV_MAX;
 
-      if (item.agotable === true) {
-        item.usos = Math.max(0, (item.usos ?? 1) - 1);
-      }
+    crearTextoDanio(
+      player.x + 32,
+      player.y - 10,
+      "+" + pdv,
+      "#00ffcc",
+      "#00ffcc"
+    );
 
-      console.log("El usuario usará este item: corazon");
-      
-      break;
+    if (item.agotable === true) {
+      item.usos = Math.max(0, (item.usos ?? 1) - 1);
+    }
 
-    case "antorcha_de_fuego":
-      console.log("El usuario usará este item: antorcha de fuego");
-      break;
+    console.log("El usuario usará este item: corazon");
+    
+    break;
 
-case "pistola_lazer": {
-  const item = window.equipSlots?.[slotIndex];
-  if (!item) return;
+  case "bloque_de_arcilla": {
+    window.colocarBloqueArcillaDesdeHUD(slotIndex);
 
-  if ((item.usos ?? 0) <= 0) {
-    console.log("No quedan cargas de pistola lazer");
-    return;
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    break;
   }
 
-  window.lanzarDisparoLazer(item);
-  
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
+  case "antorcha_de_fuego":
+    console.log("El usuario usará este item: antorcha de fuego");
+    break;
 
-  console.log("Usos restantes de Pistola Lazer:", item.usos);
+  case "pistola_lazer": {
+    const item = window.equipSlots?.[slotIndex];
+    if (!item) return;
 
-  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
-    window.equipSlots[slotIndex] = null;
+    if ((item.usos ?? 0) <= 0) {
+      console.log("No quedan cargas de pistola lazer");
+      return;
+    }
+
+    window.lanzarDisparoLazer(item);
+    
+    item.usos -= 1;
+    if (item.usos < 0) item.usos = 0;
+
+    console.log("Usos restantes de Pistola Lazer:", item.usos);
+
+    if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+      window.equipSlots[slotIndex] = null;
+    }
+
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    break;
   }
 
-  closeInventarioPopup();
+  case "espada_de_madera": {
+    const item = window.equipSlots?.[slotIndex];
+    if (!item) return;
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    if ((item.usos ?? 0) <= 0) {
+      console.log("La espada de madera está agotada");
+      return;
+    }
+
+    window.lanzarAtaqueEspadaMadera(slotIndex);
+
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    break;
   }
 
-  break;
-}
+  case "escudo_de_madera":
 
-case "espada_de_madera": {
-  const item = window.equipSlots?.[slotIndex];
-  if (!item) return;
+    //escudoMaderaActivo = true;
+    //activarEfectoEscudo("madera", player.facing === "up" ? "up" : "down");
+    console.log("El usuario usará este item: escudo de madera");
 
-  if ((item.usos ?? 0) <= 0) {
-    console.log("La espada de madera está agotada");
-    return;
+    break;
+
+  case "bumerang": {
+    const item = window.equipSlots?.[slotIndex];
+    if (!item) return;
+
+    if ((item.usos ?? 0) <= 0) {
+      console.log("No quedan bumerangs");
+      return;
+    }
+
+    lanzarBumerang(item);
+
+    item.usos -= 1;
+    if (item.usos < 0) item.usos = 0;
+
+    console.log("Usos restantes del Bumerang:", item.usos);
+
+    if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+      window.equipSlots[slotIndex] = null;
+    }
+
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    break;
   }
+  case "pico_escabador": {
+    const item = window.equipSlots?.[slotIndex];
+    if (!item) return;
 
-  window.lanzarAtaqueEspadaMadera(slotIndex);
+    if ((item.usos ?? 0) <= 0) {
+      console.log("El pico escabador está agotado");
+      return;
+    }
 
-  closeInventarioPopup();
+    window.lanzarAtaquePicoEscabador(slotIndex);
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
+    break;
   }
-
-  break;
-}
-
-    case "escudo_de_madera":
-
-      //escudoMaderaActivo = true;
-      //activarEfectoEscudo("madera", player.facing === "up" ? "up" : "down");
-      console.log("El usuario usará este item: escudo de madera");
-
-      break;
-
-case "bumerang": {
-  const item = window.equipSlots?.[slotIndex];
-  if (!item) return;
-
-  if ((item.usos ?? 0) <= 0) {
-    console.log("No quedan bumerangs");
-    return;
-  }
-
-  lanzarBumerang(item);
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes del Bumerang:", item.usos);
-
-  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
-    window.equipSlots[slotIndex] = null;
-  }
-
-  closeInventarioPopup();
-
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-  }
-
-  break;
-}
-case "pico_escabador": {
-  const item = window.equipSlots?.[slotIndex];
-  if (!item) return;
-
-  if ((item.usos ?? 0) <= 0) {
-    console.log("El pico escabador está agotado");
-    return;
-  }
-
-  window.lanzarAtaquePicoEscabador(slotIndex);
-
-  closeInventarioPopup();
-
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-  }
-
-  break;
-}
 
     case "patines":
       console.log("El usuario usará este item: patines");
       break;
 
-case "espada_de_hierro": {
-  const item = window.equipSlots?.[slotIndex];
-  if (!item) return;
+    case "espada_de_hierro": {
+      const item = window.equipSlots?.[slotIndex];
+      if (!item) return;
 
-  window.lanzarAtaqueEspadaHierro(slotIndex);
+      window.lanzarAtaqueEspadaHierro(slotIndex);
 
-  closeInventarioPopup();
+      closeInventarioPopup();
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-  }
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
 
-  break;
-}
+      break;
+    }
 
     case "escudo_de_hierro":
       //activarEfectoEscudo("hierro", player.facing === "up" ? "up" : "down");
@@ -3522,7 +3596,7 @@ function crearChispasImpactoBloque(x, y, colorBase = "#ffd36b") {
       glow: 8 + Math.random() * 8
     });
   }
-  console.log("chispas bloque", x, y);
+  //console.log("chispas bloque", x, y);
 }
 
 function drawParticulasImpactoBloque(ctx) {
@@ -3737,6 +3811,39 @@ function updateAtaquesPicoEscabador(dtMs) {
 
       break;
     }
+
+    if (!ataque.yaDesgasto) {
+  const item = window.equipSlots?.[ataque.slotIndex];
+  const danioBloque = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 1) || 1;
+
+  const golpeoBloque = danarBloqueArcillaEnRect(
+    puntaX - 12,
+    puntaY - 12,
+    24,
+    24,
+    danioBloque,
+    puntaX,
+    puntaY
+  );
+
+  if (golpeoBloque) {
+    const itemSlot = window.equipSlots?.[ataque.slotIndex];
+    if (itemSlot) {
+      itemSlot.usos = Math.max(0, (itemSlot.usos ?? 0) - 1);
+
+      if (itemSlot.agotable === true && itemSlot.desaparece_al_agotarse === true && itemSlot.usos <= 0) {
+        window.equipSlots[ataque.slotIndex] = null;
+      }
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+    }
+
+    ataque.yaDesgasto = true;
+  }
+}
 
     if (ataque.tiempo <= 0) {
       window.ataquesPicoEscabadorActivos.splice(i, 1);
@@ -3968,6 +4075,19 @@ function updateAtaquesEspadaHierro(dtMs) {
 
       break;
     }
+
+    const item = window.equipSlots?.[ataque.slotIndex];
+const danioBloque = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 1) || 1;
+
+danarBloqueArcillaEnRect(
+  puntaX - 10,
+  puntaY - 10,
+  20,
+  20,
+  danioBloque,
+  puntaX,
+  puntaY
+);
 
     if (ataque.tiempo <= 0) {
       window.ataquesEspadaHierroActivos.splice(i, 1);
@@ -4266,7 +4386,25 @@ if (espadaMaderaLunge.time <= 0) {
 
       break;
     }
+if (!ataque.yaDesgasto) {
+  const item = window.equipSlots?.[ataque.slotIndex];
+  const danioBloque = Number(item?.cuanto_quita_de_vida_al_enemigo ?? 1) || 1;
 
+  const golpeoBloque = danarBloqueArcillaEnRect(
+    puntaX - 10,
+    puntaY - 10,
+    20,
+    20,
+    danioBloque,
+    puntaX,
+    puntaY
+  );
+
+  if (golpeoBloque) {
+    consumirUsoEspadaMadera(ataque.slotIndex);
+    ataque.yaDesgasto = true;
+  }
+}
     if (ataque.tiempo <= 0) {
       window.ataquesEspadaMaderaActivos.splice(i, 1);
     }
@@ -7868,6 +8006,7 @@ function lanzarAtaqueEspecialJefe(enemy) {
   const cy = enemy.y + enemy.h / 2;
 
   const ataque = {
+    bloquesGolpeados: [],
     enemyId: enemy.id,
     enemyRef: enemy,
     x: cx,
@@ -7923,15 +8062,15 @@ function updateAtaquesEspecialesJefe(dtMs) {
     if (t <= prepEnd) {
       const p = t / prepEnd;
       atk.radioActual = 18 + Math.sin(p * Math.PI) * 24;
-} else if (t <= expandEnd) {
-  const p = (t - prepEnd) / atk.duracionExpansion;
-  atk.radioActual = 42 + (atk.radioMax - 42) * p;
+    } else if (t <= expandEnd) {
+      const p = (t - prepEnd) / atk.duracionExpansion;
+      atk.radioActual = 42 + (atk.radioMax - 42) * p;
 
-  if (!atk.explosionLanzada && p >= 0.08) {
-    crearExplosionDramaticaJefe(enemy);
-    atk.explosionLanzada = true;
-  }
-} else if (t <= sustainEnd) {
+      if (!atk.explosionLanzada && p >= 0.08) {
+        crearExplosionDramaticaJefe(enemy);
+        atk.explosionLanzada = true;
+      }
+    } else if (t <= sustainEnd) {
       atk.radioActual = atk.radioMax;
     } else if (t <= fadeEnd) {
       const p = (t - sustainEnd) / atk.duracionDesvanecer;
@@ -7953,12 +8092,31 @@ function updateAtaquesEspecialesJefe(dtMs) {
 
     const dx = playerCenterX - atk.x;
     const dy = playerCenterY - atk.y;
-
     const dist = Math.hypot(dx, dy);
 
     const grosorAro = 48;
     const radioInterno = Math.max(0, atk.radioActual - grosorAro * 0.55);
     const radioExterno = atk.radioActual + grosorAro * 0.55;
+
+    for (const obj of (ambienteObjetos || [])) {
+      if (!esBloqueArcilla(obj)) continue;
+      if (atk.bloquesGolpeados.includes(obj.zona_id)) continue;
+
+      const cx = obj.x + obj.w / 2;
+      const cy = obj.y + obj.h / 2;
+      const distBloque = Math.hypot(cx - atk.x, cy - atk.y);
+
+      if (distBloque >= radioInterno && distBloque <= radioExterno) {
+        aplicarDanioABloqueArcilla(
+          obj,
+          Number(enemy.puntos_de_ataque ?? 1) || 1,
+          cx,
+          cy
+        );
+
+        atk.bloquesGolpeados.push(obj.zona_id);
+      }
+    }
 
     const puedeGolpear =
       t >= prepEnd + 160 &&
@@ -7967,8 +8125,12 @@ function updateAtaquesEspecialesJefe(dtMs) {
     if (!atk.golpeAplicado && puedeGolpear && dist >= radioInterno && dist <= radioExterno) {
       let danio = Number(enemy.puntos_de_ataque ?? 0) || 0;
 
-      const escudosHierro = (window.equipSlots || []).filter(it => it && it.id === "escudo_de_hierro");
-      const escudoMadera = window.equipSlots?.find(it => it && it.id === "escudo_de_madera");
+      const escudosHierro = (window.equipSlots || []).filter(
+        it => it && it.id === "escudo_de_hierro"
+      );
+      const escudoMadera = window.equipSlots?.find(
+        it => it && it.id === "escudo_de_madera"
+      );
 
       if (escudosHierro.length > 0) {
         danio = Math.max(0, danio - (2 * escudosHierro.length));
@@ -8206,6 +8368,19 @@ function updateDisparosEnemigosArmados(dtMs) {
     d.y += d.vy;
     d.vida -= dtMs;
 
+if (danarBloqueArcillaEnRect(
+  d.x - 5,
+  d.y - 5,
+  10,
+  10,
+  Number(d.danio ?? 1) || 1,
+  d.x,
+  d.y
+)) {
+  window.disparosEnemigosArmadosActivos.splice(i, 1);
+  continue;
+}
+
 if (proyectilColisionaAmbiente(d.x - 5, d.y - 5, 10, 10)) {
   crearChispasImpactoBloque(d.x, d.y, "#ff5a5a");
   window.disparosEnemigosArmadosActivos.splice(i, 1);
@@ -8331,6 +8506,19 @@ function updateDisparosLazer(dtMs) {
 
     const lazerHitW = d.facing === "left" || d.facing === "right" ? d.largo : 10;
 const lazerHitH = d.facing === "up" || d.facing === "down" ? d.largo : 10;
+
+if (danarBloqueArcillaEnRect(
+  d.x - lazerHitW / 2,
+  d.y - lazerHitH / 2,
+  lazerHitW,
+  lazerHitH,
+  Number(d.danio ?? 1) || 1,
+  d.x,
+  d.y
+)) {
+  window.disparosLazerActivos.splice(i, 1);
+  continue;
+}
 
 if (proyectilColisionaAmbiente(d.x - lazerHitW / 2, d.y - lazerHitH / 2, lazerHitW, lazerHitH)) {
   crearChispasImpactoBloque(d.x, d.y, "#eaff00");
@@ -8547,6 +8735,19 @@ function updateBumerangs(dtMs) {
     b.y += b.vy;
     b.angulo += 0.55;
     b.vida -= dtMs;
+
+if (danarBloqueArcillaEnRect(
+  b.x - b.size,
+  b.y - b.size,
+  b.size * 2,
+  b.size * 2,
+  Number(b.danio ?? 1) || 1,
+  b.x,
+  b.y
+)) {
+  window.bumerangsActivos.splice(i, 1);
+  continue;
+}
 
 if (proyectilColisionaAmbiente(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2)) {
   crearChispasImpactoBloque(b.x, b.y, "#ffb347");
@@ -8877,6 +9078,8 @@ if (player.blinkTimer > 0) {
     updateParticulasPicoEscabador(dtMs);
 
     updateDisparosEnemigosArmados(dtMs);
+
+    updateParticulasArcilla(dtMs);
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -9472,9 +9675,12 @@ function agregarItemAlInventario(nuevoItem) {
   if (!nuevoItem) return false;
 
   const nuevoId = nuevoItem.id ?? nuevoItem.item_id;
+  const esBloqueArcilla = nuevoId === "bloque_de_arcilla";
+
   const nuevoEsAgotable = nuevoItem.agotable === true;
   const nuevoUsos = nuevoItem.usos ?? nuevoItem.cantidad_de_usos ?? null;
   const nuevoUsosMaximos = nuevoItem.usos_maximos ?? nuevoItem.cantidad_de_usos ?? null;
+  const nuevaCantidad = Number(nuevoItem.cantidad || 1) || 1;
 
   for (const slot of window.inventarioUser) {
     if (!slot) continue;
@@ -9486,8 +9692,7 @@ function agregarItemAlInventario(nuevoItem) {
 
     const mismoItem = slotId === nuevoId;
 
-    // Si es agotable, solo acumula si además tienen exactamente el mismo estado de uso
-    const mismoEstadoDeUso = (
+    let mismoEstadoDeUso = (
       !nuevoEsAgotable ||
       (
         slotEsAgotable === nuevoEsAgotable &&
@@ -9496,12 +9701,88 @@ function agregarItemAlInventario(nuevoItem) {
       )
     );
 
+    // bloque de arcilla siempre debe apilar por ID
+    if (esBloqueArcilla) {
+      mismoEstadoDeUso = true;
+    }
+
     if (mismoItem && mismoEstadoDeUso) {
       if (!slot.cantidad) slot.cantidad = 1;
 
       if (slot.cantidad < MAX_STACK) {
-        slot.cantidad += nuevoItem.cantidad || 1;
-        return true;
+        const espacio = MAX_STACK - slot.cantidad;
+        const aSumar = Math.min(espacio, nuevaCantidad);
+
+        slot.cantidad += aSumar;
+
+        // si el item guarda usos por cantidad, los reseteamos para que no parta stacks
+        if (esBloqueArcilla) {
+          slot.usos = null;
+          slot.usos_maximos = null;
+        }
+
+        const restante = nuevaCantidad - aSumar;
+        if (restante <= 0) return true;
+function agregarItemAlInventario(nuevoItem) {
+  const MAX_SLOTS = 16;
+  const MAX_STACK = 25;
+
+  if (!nuevoItem) return false;
+
+  const nuevoId = nuevoItem.id ?? nuevoItem.item_id;
+  const esBloqueArcilla = nuevoId === "bloque_de_arcilla";
+
+  const nuevoEsAgotable = nuevoItem.agotable === true;
+  const nuevoUsos = nuevoItem.usos ?? nuevoItem.cantidad_de_usos ?? null;
+  const nuevoUsosMaximos = nuevoItem.usos_maximos ?? nuevoItem.cantidad_de_usos ?? null;
+  const nuevaCantidad = Number(nuevoItem.cantidad || 1) || 1;
+
+  for (const slot of window.inventarioUser) {
+    if (!slot) continue;
+
+    const slotId = slot.id ?? slot.item_id;
+    const slotEsAgotable = slot.agotable === true;
+    const slotUsos = slot.usos ?? slot.cantidad_de_usos ?? null;
+    const slotUsosMaximos = slot.usos_maximos ?? slot.cantidad_de_usos ?? null;
+
+    const mismoItem = slotId === nuevoId;
+
+    let mismoEstadoDeUso = (
+      !nuevoEsAgotable ||
+      (
+        slotEsAgotable === nuevoEsAgotable &&
+        slotUsos === nuevoUsos &&
+        slotUsosMaximos === nuevoUsosMaximos
+      )
+    );
+
+    // bloque de arcilla siempre debe apilar por ID
+    if (esBloqueArcilla) {
+      mismoEstadoDeUso = true;
+    }
+
+    if (mismoItem && mismoEstadoDeUso) {
+      if (!slot.cantidad) slot.cantidad = 1;
+
+      if (slot.cantidad < MAX_STACK) {
+        const espacio = MAX_STACK - slot.cantidad;
+        const aSumar = Math.min(espacio, nuevaCantidad);
+
+        slot.cantidad += aSumar;
+
+        // si el item guarda usos por cantidad, los reseteamos para que no parta stacks
+        if (esBloqueArcilla) {
+          slot.usos = null;
+          slot.usos_maximos = null;
+        }
+
+        const restante = nuevaCantidad - aSumar;
+        if (restante <= 0) return true;
+
+        nuevoItem = {
+          ...nuevoItem,
+          cantidad: restante
+        };
       }
     }
   }
@@ -9510,16 +9791,41 @@ function agregarItemAlInventario(nuevoItem) {
     return false;
   }
 
-window.inventarioUser.push({
-  ...nuevoItem,
-  id: nuevoId,
-  item_id: nuevoItem.item_id ?? nuevoId,
-  cantidad: nuevoItem.cantidad || 1,
-  agotable: nuevoEsAgotable,
-  desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
-  usos: nuevoUsos,
-  usos_maximos: nuevoUsosMaximos
-});
+  window.inventarioUser.push({
+    ...nuevoItem,
+    id: nuevoId,
+    item_id: nuevoItem.item_id ?? nuevoId,
+    cantidad: Number(nuevoItem.cantidad || 1) || 1,
+    agotable: nuevoEsAgotable,
+    desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
+    usos: esBloqueArcilla ? null : nuevoUsos,
+    usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos
+  });
+
+  return true;
+}
+        nuevoItem = {
+          ...nuevoItem,
+          cantidad: restante
+        };
+      }
+    }
+  }
+
+  if (window.inventarioUser.length >= MAX_SLOTS) {
+    return false;
+  }
+
+  window.inventarioUser.push({
+    ...nuevoItem,
+    id: nuevoId,
+    item_id: nuevoItem.item_id ?? nuevoId,
+    cantidad: Number(nuevoItem.cantidad || 1) || 1,
+    agotable: nuevoEsAgotable,
+    desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
+    usos: esBloqueArcilla ? null : nuevoUsos,
+    usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos
+  });
 
   return true;
 }
@@ -10043,6 +10349,229 @@ function drawAmbiente(ctx) {
     }
   }
 }
+
+//-- lógica arcilla (inicio)
+function esBloqueArcilla(obj) {
+  return !!obj && obj.subtipo === "bloque_arcilla";
+}
+
+function rectsOverlap(a, b) {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
+}
+
+function crearParticulasArcilla(x, y) {
+  for (let i = 0; i < 20; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 3.5;
+
+    window.particulasArcillaActivas.push({
+      x,
+      y,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed - (Math.random() * 1.2),
+      size: 3 + Math.random() * 4,
+      life: 280 + Math.random() * 220,
+      maxLife: 500,
+      color: Math.random() < 0.5 ? "#8b5a2b" : "#a97449"
+    });
+  }
+}
+
+function updateParticulasArcilla(dtMs) {
+  for (let i = window.particulasArcillaActivas.length - 1; i >= 0; i--) {
+    const p = window.particulasArcillaActivas[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    p.vy += 0.03;
+    p.size *= 0.985;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      window.particulasArcillaActivas.splice(i, 1);
+    }
+  }
+}
+
+function drawParticulasArcilla(ctx) {
+  for (const p of (window.particulasArcillaActivas || [])) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function areaLibreParaBloqueArcilla(x, y, w, h) {
+  const choque = colisionAmbiente(x, y, w, h);
+  if (choque) {
+    console.log("Bloque arcilla choca con ambiente:", choque.zona_id || choque);
+    return false;
+  }
+
+  const bloque = { x, y, w, h };
+
+  const playerBox = {
+    x: player.x + PLAYER_OFFSET_X,
+    y: player.y + PLAYER_OFFSET_Y,
+    w: PLAYER_HIT_W,
+    h: PLAYER_HIT_H
+  };
+
+  if (rectsOverlap(bloque, playerBox)) {
+    console.log("Bloque arcilla choca con player");
+    return false;
+  }
+
+  for (const npc of (window.npcsAmbiente || [])) {
+    if (rectsOverlap(bloque, { x: npc.x, y: npc.y, w: npc.w, h: npc.h })) {
+      console.log("Bloque arcilla choca con NPC:", npc.id || npc.nombre);
+      return false;
+    }
+  }
+
+  for (const enemy of (window.enemigos || [])) {
+    if (rectsOverlap(bloque, { x: enemy.x, y: enemy.y, w: enemy.w, h: enemy.h })) {
+      console.log("Bloque arcilla choca con enemigo:", enemy.id || enemy.nombre);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function obtenerPosicionBloqueArcillaFrenteAlJugador() {
+  let x = player.x;
+  let y = player.y;
+
+  if (player.facing === "up") {
+    x += 0;
+    y -= BLOQUE_ARCILLA_H;
+  } else if (player.facing === "down") {
+    x += 0;
+    y += HERO_DRAW_H;
+  } else if (player.facing === "left") {
+    x -= BLOQUE_ARCILLA_W;
+    y += HERO_DRAW_H - BLOQUE_ARCILLA_H;
+  } else {
+    x += HERO_DRAW_W;
+    y += HERO_DRAW_H - BLOQUE_ARCILLA_H;
+  }
+
+  x = Math.floor(clamp(x, 0, WORLD_W - BLOQUE_ARCILLA_W));
+  y = Math.floor(clamp(y, 0, WORLD_H - BLOQUE_ARCILLA_H));
+
+  return { x, y };
+}
+
+window.colocarBloqueArcillaDesdeHUD = function(slotIndex) {
+
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+  if (item.id !== "bloque_de_arcilla") return;
+  if ((item.usos ?? 0) <= 0) return;
+
+  const pos = obtenerPosicionBloqueArcillaFrenteAlJugador();
+
+  if (!areaLibreParaBloqueArcilla(pos.x, pos.y, BLOQUE_ARCILLA_W, BLOQUE_ARCILLA_H)) {
+    console.log("No hay espacio libre para colocar el bloque de arcilla");
+    return;
+  }
+
+  ambienteObjetos.push({
+    zona_id: `bloque_arcilla_${Date.now()}_${Math.floor(Math.random() * 9999)}`,
+    color: null,
+    tipo: "colisionables",
+    subtipo: "bloque_arcilla",
+    funcion: null,
+    x: pos.x,
+    y: pos.y,
+    w: BLOQUE_ARCILLA_W,
+    h: BLOQUE_ARCILLA_H,
+    imagen: "./assets/items/bloqueArcilla.svg",
+    sprites_1x10: null,
+    velocidad_movimiento: null,
+    sonido_ambiente: null,
+    pdr: 12,
+    pdr_max: 12
+  });
+
+  item.usos -= 1;
+  if (item.usos < 0) item.usos = 0;
+
+  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+    window.equipSlots[slotIndex] = null;
+  }
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+};
+
+function aplicarDanioABloqueArcilla(obj, danio, impactoX, impactoY) {
+  if (!esBloqueArcilla(obj)) return false;
+
+  obj.pdr = Math.max(0, (Number(obj.pdr || BLOQUE_ARCILLA_PDR)) - (Number(danio) || 0));
+
+  crearParticulasArcilla(impactoX, impactoY);
+
+  if (obj.pdr <= 0) {
+    crearParticulasArcilla(obj.x + obj.w / 2, obj.y + obj.h / 2);
+    const idx = ambienteObjetos.indexOf(obj);
+    if (idx !== -1) ambienteObjetos.splice(idx, 1);
+  }
+
+  return true;
+}
+
+function danarBloqueArcillaEnRect(x, y, w, h, danio, impactoX, impactoY) {
+  const obj = colisionAmbiente(x, y, w, h);
+  if (!obj) return false;
+  if (!esBloqueArcilla(obj)) return false;
+
+  return aplicarDanioABloqueArcilla(
+    obj,
+    danio,
+    impactoX ?? (x + w / 2),
+    impactoY ?? (y + h / 2)
+  );
+}
+
+function procesarImpactoEnemigoContraBloque(enemy, nextX, nextY) {
+  const obj = colisionAmbiente(nextX, nextY, enemy.w, enemy.h);
+  if (!obj || !esBloqueArcilla(obj)) return false;
+
+  enemy.cooldownGolpeBloque = enemy.cooldownGolpeBloque || 0;
+
+  if (enemy.cooldownGolpeBloque <= 0) {
+    aplicarDanioABloqueArcilla(
+      obj,
+      Number(enemy.puntos_de_ataque ?? 1) || 1,
+      obj.x + obj.w / 2,
+      obj.y + obj.h / 2
+    );
+
+    enemy.cooldownGolpeBloque = 700;
+  }
+
+  return true;
+}
+//-- lógica arcilla (fin)
 
 function colisionAmbiente(x, y, w, h) {
 
@@ -10580,6 +11109,9 @@ drawItems(ctx);
 // Dibujar NPCs
 drawNPCs(ctx);
 drawNPCsAmbiente(ctx);
+
+//Bloques de arcilla
+drawParticulasArcilla(ctx);
 
 drawExplosionesJefe(ctx, "back");
 drawParticulasVolcanJefe(ctx, "back");
