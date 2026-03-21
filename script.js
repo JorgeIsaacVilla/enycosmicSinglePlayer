@@ -10802,20 +10802,12 @@ function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
 function drawAmbiente(ctx) {
   if (!ambienteObjetos || !ambienteObjetos.length) return;
 
-  for (const obj of ambienteObjetos) {
-    if (!obj) continue;
-
-    // =============================
-    // COLOR
-    // =============================
+  function drawBaseObjeto(obj) {
     if (obj.color) {
       ctx.fillStyle = obj.color;
       ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
     }
 
-    // =============================
-    // IMAGEN ESTÁTICA
-    // =============================
     if (obj.imagen) {
       if (!ambienteImagenesCache[obj.imagen]) {
         const img = new Image();
@@ -10832,9 +10824,6 @@ function drawAmbiente(ctx) {
       }
     }
 
-    // =============================
-    // SPRITE 1x10
-    // =============================
     if (obj.sprites_1x10) {
       if (!ambienteImagenesCache[obj.sprites_1x10]) {
         const img = new Image();
@@ -10870,9 +10859,6 @@ function drawAmbiente(ctx) {
       }
     }
 
-    // =============================
-    // SONIDO POR PROXIMIDAD
-    // =============================
     if (obj.sonido_ambiente) {
       const dx = (player.x + 32) - (obj.x + obj.w / 2);
       const dy = (player.y + 32) - (obj.y + obj.h / 2);
@@ -10900,9 +10886,29 @@ function drawAmbiente(ctx) {
         }
       }
     }
-        if (obj.subtipo === "antorcha_suelo") {
-      drawAntorchaSuelo(ctx, obj);
-    }
+  }
+
+  // 1) bloques de arcilla
+  for (const obj of ambienteObjetos) {
+    if (!obj) continue;
+    if (!esBloqueArcilla(obj)) continue;
+    drawBaseObjeto(obj);
+  }
+
+  // 2) antorchas montadas en bloques
+  for (const obj of ambienteObjetos) {
+    if (!obj) continue;
+    if (obj.subtipo !== "antorcha_suelo") continue;
+    drawAntorchaSuelo(ctx, obj);
+  }
+
+  // 3) resto de objetos ambiente
+  for (const obj of ambienteObjetos) {
+    if (!obj) continue;
+    if (esBloqueArcilla(obj)) continue;
+    if (obj.subtipo === "antorcha_suelo") continue;
+
+    drawBaseObjeto(obj);
   }
 }
 
@@ -11011,20 +11017,25 @@ function areaLibreParaBloqueArcilla(x, y, w, h) {
 }
 
 function obtenerPosicionBloqueArcillaFrenteAlJugador() {
+  const separacion = 6;
+
   let x = player.x;
   let y = player.y;
 
   if (player.facing === "up") {
-    x += 0;
-    y -= BLOQUE_ARCILLA_H;
+    x += (HERO_DRAW_W - BLOQUE_ARCILLA_W) / 2;
+    y -= BLOQUE_ARCILLA_H + separacion;
+
   } else if (player.facing === "down") {
-    x += 0;
-    y += HERO_DRAW_H;
+    x += (HERO_DRAW_W - BLOQUE_ARCILLA_W) / 2;
+    y += HERO_DRAW_H + separacion;
+
   } else if (player.facing === "left") {
-    x -= BLOQUE_ARCILLA_W;
+    x -= BLOQUE_ARCILLA_W + separacion;
     y += HERO_DRAW_H - BLOQUE_ARCILLA_H;
+
   } else {
-    x += HERO_DRAW_W;
+    x += HERO_DRAW_W + separacion;
     y += HERO_DRAW_H - BLOQUE_ARCILLA_H;
   }
 
@@ -11795,12 +11806,13 @@ drawAtaquesEspadaMadera(ctx);
 drawParticulasEspadaHierro(ctx);
 drawAtaquesEspadaHierro(ctx);
 
+//Elementos ambientes dinamicos ambiente.json
+drawAmbiente(ctx);
+
+
 // Dibujar globos de chat de NPC ambiente después del jugador
 drawBubblesNPCsAmbiente(ctx);
 drawBubblesEnemigos(ctx);
-
-//Elementos ambientes dinamicos ambiente.json
-drawAmbiente(ctx);
 
 //Chispas disparo
 drawParticulasImpactoBloque(ctx);
