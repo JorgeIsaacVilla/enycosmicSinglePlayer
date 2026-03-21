@@ -3274,20 +3274,24 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
 case "antorcha_de_fuego": {
   if (antorchaActiva.active && antorchaActiva.slotIndex === slotIndex) {
-    window.apagarAntorcha(false);
+    const colocada = window.colocarAntorchaSobreBloqueArcilla(slotIndex);
+
+    if (!colocada) {
+      window.apagarAntorcha(false);
+    }
   } else {
     window.activarAntorcha(slotIndex);
   }
 
-    closeInventarioPopup();
+  closeInventarioPopup();
 
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
   }
+
+  break;
+}
 
   case "pistola_lazer": {
     const item = window.equipSlots?.[slotIndex];
@@ -7443,6 +7447,47 @@ function decidirNuevaAccionEnemigo(enemy) {
   }
 }
 
+function buscarAntorchaSueloCercana(enemy, radioMax = 900) {
+  let mejor = null;
+  let mejorDist = Infinity;
+
+  for (const obj of (ambienteObjetos || [])) {
+    if (!obj || obj.subtipo !== "antorcha_suelo") continue;
+
+    const ex = enemy.x + enemy.w / 2;
+    const ey = enemy.y + enemy.h / 2;
+    const tx = obj.x + obj.w / 2;
+    const ty = obj.y + obj.h / 2;
+
+    const dist = Math.hypot(tx - ex, ty - ey);
+
+    if (dist < mejorDist && dist <= radioMax) {
+      mejor = obj;
+      mejorDist = dist;
+    }
+  }
+
+  return mejor;
+}
+
+function enemigoEstaCercaDeAntorcha(enemy, antorcha, rango = 42) {
+  if (!enemy || !antorcha) return false;
+
+  const cajaAntorcha = {
+    x: antorcha.x - rango,
+    y: antorcha.y - rango,
+    w: antorcha.w + rango * 2,
+    h: antorcha.h + rango * 2
+  };
+
+  return (
+    enemy.x < cajaAntorcha.x + cajaAntorcha.w &&
+    enemy.x + enemy.w > cajaAntorcha.x &&
+    enemy.y < cajaAntorcha.y + cajaAntorcha.h &&
+    enemy.y + enemy.h > cajaAntorcha.y
+  );
+}
+
 function decidirNuevaAccionNPCambiente(npc) {
   if (!npc) return;
 
@@ -7503,7 +7548,8 @@ function updateEnemigos(dtMs) {
       { x: player.x, y: player.y, w: HERO_DRAW_W, h: HERO_DRAW_H }
     );
 
-    const usuarioDentroVision = distancia <= enemy.radioVision;
+        const antorchaObjetivo = buscarAntorchaSueloCercana(enemy, enemy.radioVision + 250);
+    const usuarioDentroVision = !antorchaObjetivo && distancia <= enemy.radioVision;
 
     if (enemy.tipo === "jefe") {
   if (enemy.cooldownAtaqueEspecial > 0) {
@@ -7527,7 +7573,7 @@ function updateEnemigos(dtMs) {
   }
 }
 
-if (colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
+if (!antorchaObjetivo && colisionaEnemigoConJugador(enemy) && enemy.cooldownDano <= 0) {
 
   let danio = enemy.puntos_de_ataque;
 
@@ -7589,21 +7635,105 @@ if (escudosHierro.length > 0) {
   enemy.cooldownDano = 800;
 }
 
-if (usuarioDentroVision) {
+if (antorchaObjetivo || usuarioDentroVision) {
   enemy.persiguiendo = true;
 
-  const enemyCenter = obtenerCentroEntidad(enemy);
-  const playerCenter = {
-    x: player.x + HERO_DRAW_W / 2,
-    y: player.y + HERO_DRAW_H / 2
-  };
+  if (antorchaObjetivo) {
+    enemy.objetivoAntorcha = antorchaObjetivo.zona_id;
+  } else {
+    enemy.objetivoAntorcha = null;
+  }
 
-  const dx = playerCenter.x - enemyCenter.x;
-  const dy = playerCenter.y - enemyCenter.y;
+  const enemyCenter = obtenerCentroEntidad(enemy);
+
+  const objetivoCenter = antorchaObjetivo
+    ? {
+        x: antorchaObjetivo.x + antorchaObjetivo.w / 2,
+        y: antorchaObjetivo.y + antorchaObjetivo.h / 2
+      }
+    : {
+        x: player.x + HERO_DRAW_W / 2,
+        y: player.y + HERO_DRAW_H / 2
+      };
+
+  const dx = objetivoCenter.x - enemyCenter.x;
+  const dy = objetivoCenter.y - enemyCenter.y;
   const len = Math.hypot(dx, dy) || 1;
+
+if (
+  antorchaObjetivo &&
+  enemy.tipo !== "jefe" &&
+  enemigoEstaCercaDeAntorcha(enemy, antorchaObjetivo, 24)
+) {
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  enemy.isMoving = false;
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+
+  enemy.cooldownGolpeAntorcha = Number(enemy.cooldownGolpeAntorcha || 0) - dtMs;
+
+  const bloquePadre = (ambienteObjetos || []).find(obj =>
+    obj &&
+    obj.zona_id === antorchaObjetivo.bloque_padre_id &&
+    esBloqueArcilla(obj)
+  );
+
+  if (bloquePadre && enemy.cooldownGolpeAntorcha <= 0) {
+    aplicarDanioABloqueArcilla(
+      bloquePadre,
+      Number(enemy.puntos_de_ataque ?? 1) || 1,
+      bloquePadre.x + bloquePadre.w / 2,
+      bloquePadre.y + bloquePadre.h / 2
+    );
+
+    enemy.cooldownGolpeAntorcha = 650;
+  }
+
+  continue;
+}
 
   enemy.dirX = dx / len;
   enemy.dirY = dy / len;
+
+    if (antorchaObjetivo && enemy.tipo !== "jefe") {
+    const bloquePadre = (ambienteObjetos || []).find(obj =>
+      obj &&
+      obj.zona_id === antorchaObjetivo.bloque_padre_id &&
+      esBloqueArcilla(obj)
+    );
+
+    if (bloquePadre) {
+      const tocandoBloque =
+        enemy.x < bloquePadre.x + bloquePadre.w &&
+        enemy.x + enemy.w > bloquePadre.x &&
+        enemy.y < bloquePadre.y + bloquePadre.h &&
+        enemy.y + enemy.h > bloquePadre.y;
+
+      if (tocandoBloque) {
+        enemy.dirX = 0;
+        enemy.dirY = 0;
+        enemy.isMoving = false;
+        enemy.frame = 0;
+        enemy.frameTimer = 0;
+
+        enemy.cooldownGolpeAntorcha = Number(enemy.cooldownGolpeAntorcha || 0) - dtMs;
+
+        if (enemy.cooldownGolpeAntorcha <= 0) {
+          aplicarDanioABloqueArcilla(
+            bloquePadre,
+            Number(enemy.puntos_de_ataque ?? 1) || 1,
+            bloquePadre.x + bloquePadre.w / 2,
+            bloquePadre.y + bloquePadre.h / 2
+          );
+
+          enemy.cooldownGolpeAntorcha = 650;
+        }
+
+        continue;
+      }
+    }
+  }
 
   if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
     enemy.facing = enemy.dirX > 0 ? "right" : "left";
@@ -7616,6 +7746,15 @@ if (usuarioDentroVision) {
 
     if (enemy.tiempoCambioDecision <= 0) {
       decidirAccionEnemigoArmado(enemy);
+    }
+
+        if (antorchaObjetivo) {
+      enemy.modoCombate = "correr";
+    }
+
+        if (antorchaObjetivo) {
+      enemy.modoCombate = "correr";
+      enemy.disparoCooldown = Math.max(enemy.disparoCooldown || 0, 250);
     }
 
     if (enemy.modoCombate === "correr") {
@@ -9127,6 +9266,8 @@ if (player.blinkTimer > 0) {
     updateDisparosEnemigosArmados(dtMs);
 
     updateParticulasArcilla(dtMs);
+
+    limpiarAntorchasDeBloquesRotos();
   }
 
   /*----------------------------lógica jostic control para movile(Inicio)-------------------------------------- */
@@ -9621,7 +9762,7 @@ window.inventarioUser.push({
   imagen: "./assets/items/antorcha.svg",
   agotable: true,
   desaparece_al_agotarse: true,
-  cantidad: 1,
+  cantidad: 13,
   usos: 1,
   usos_maximos: 1
 });
@@ -10375,6 +10516,172 @@ function drawTorchHeld(ctx, layer = "front") {
   ctx.restore();
 }
 
+function obtenerBloqueArcillaEnContactoConJugador() {
+  const margen = 18;
+
+  const playerBox = {
+    x: player.x + PLAYER_OFFSET_X,
+    y: player.y + PLAYER_OFFSET_Y,
+    w: PLAYER_HIT_W,
+    h: PLAYER_HIT_H
+  };
+
+  let bloqueMasCercano = null;
+  let mejorDist = Infinity;
+
+  for (const obj of (ambienteObjetos || [])) {
+    if (!esBloqueArcilla(obj)) continue;
+
+    const bloqueExpandido = {
+      x: obj.x - margen,
+      y: obj.y - margen,
+      w: obj.w + margen * 2,
+      h: obj.h + margen * 2
+    };
+
+    const toca =
+      playerBox.x < bloqueExpandido.x + bloqueExpandido.w &&
+      playerBox.x + playerBox.w > bloqueExpandido.x &&
+      playerBox.y < bloqueExpandido.y + bloqueExpandido.h &&
+      playerBox.y + playerBox.h > bloqueExpandido.y;
+
+    if (!toca) continue;
+
+    const playerCx = playerBox.x + playerBox.w / 2;
+    const playerCy = playerBox.y + playerBox.h / 2;
+    const blockCx = obj.x + obj.w / 2;
+    const blockCy = obj.y + obj.h / 2;
+
+    const dist = Math.hypot(blockCx - playerCx, blockCy - playerCy);
+
+    if (dist < mejorDist) {
+      mejorDist = dist;
+      bloqueMasCercano = obj;
+    }
+  }
+
+  return bloqueMasCercano;
+}
+
+function existeAntorchaSobreBloque(bloque) {
+  return (ambienteObjetos || []).some(obj =>
+    obj &&
+    obj.subtipo === "antorcha_suelo" &&
+    obj.bloque_padre_id === bloque.zona_id
+  );
+}
+
+window.colocarAntorchaSobreBloqueArcilla = function(slotIndex) {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return false;
+  if (item.id !== "antorcha_de_fuego") return false;
+  if ((item.usos ?? 0) <= 0) return false;
+
+  const bloque = obtenerBloqueArcillaEnContactoConJugador();
+  if (!bloque) return false;
+  if (existeAntorchaSobreBloque(bloque)) return false;
+
+  const antorchaW = 20;
+  const antorchaH = 42;
+
+  ambienteObjetos.push({
+    zona_id: `antorcha_suelo_${Date.now()}_${Math.floor(Math.random() * 9999)}`,
+    tipo: "visual",
+    subtipo: "antorcha_suelo",
+    bloque_padre_id: bloque.zona_id,
+    x: bloque.x + (bloque.w / 2) - (antorchaW / 2),
+    y: bloque.y - antorchaH + 8,
+    w: antorchaW,
+    h: antorchaH,
+    luz_radio: 200,
+    llamaFija: true,
+    frameTimer: 0,
+    color: null,
+    imagen: null,
+    sprites_1x10: null,
+    velocidad_movimiento: null,
+    sonido_ambiente: null,
+    funcion: null
+  });
+
+  window.consumirItemEquipado(slotIndex, 1);
+  antorchaActiva.active = false;
+  antorchaActiva.slotIndex = -1;
+  antorchaActiva.timer = 0;
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  return true;
+};
+
+function drawAntorchaSuelo(ctx, obj) {
+  const t = performance.now() * 0.01;
+  const baseX = obj.x + obj.w / 2;
+  const baseY = obj.y + obj.h;
+
+  ctx.save();
+  ctx.translate(baseX, baseY);
+
+  // palo
+  ctx.fillStyle = "#7b3f00";
+  ctx.fillRect(-2, -26, 4, 24);
+
+  // soporte
+  ctx.fillStyle = "#4b2a12";
+  ctx.fillRect(-6, -3, 12, 3);
+
+  // brillo base
+  ctx.beginPath();
+  ctx.fillStyle = "rgba(255,180,60,0.28)";
+  ctx.shadowColor = "#ffb347";
+  ctx.shadowBlur = 20;
+  ctx.arc(0, -26, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  // fuego exterior
+  ctx.fillStyle = "#ff7a00";
+  ctx.beginPath();
+  ctx.moveTo(0, -48 - Math.sin(t) * 1.5);
+  ctx.quadraticCurveTo(10, -36, 2, -24);
+  ctx.quadraticCurveTo(-10, -34, 0, -48 - Math.sin(t) * 1.5);
+  ctx.fill();
+
+  // fuego medio
+  ctx.fillStyle = "#ffd400";
+  ctx.beginPath();
+  ctx.moveTo(0, -42 - Math.sin(t * 1.4) * 1.2);
+  ctx.quadraticCurveTo(7, -33, 2, -25);
+  ctx.quadraticCurveTo(-7, -31, 0, -42 - Math.sin(t * 1.4) * 1.2);
+  ctx.fill();
+
+  // núcleo
+  ctx.fillStyle = "#fff7b0";
+  ctx.beginPath();
+  ctx.moveTo(0, -35 - Math.sin(t * 1.8));
+  ctx.quadraticCurveTo(4, -29, 1, -24);
+  ctx.quadraticCurveTo(-4, -28, 0, -35 - Math.sin(t * 1.8));
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function limpiarAntorchasDeBloquesRotos() {
+  ambienteObjetos = (ambienteObjetos || []).filter(obj => {
+    if (!obj || obj.subtipo !== "antorcha_suelo") return true;
+
+    const bloqueExiste = ambienteObjetos.some(b =>
+      b &&
+      b.zona_id === obj.bloque_padre_id &&
+      esBloqueArcilla(b)
+    );
+
+    return bloqueExiste;
+  });
+}
+
 function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
   if (!mapaOscuro) return;
 
@@ -10450,6 +10757,17 @@ function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
   // bumerangs
   for (const b of (window.bumerangsActivos || [])) {
     abrirLuz(b.x, b.y, 34);
+  }
+
+    // antorchas de suelo
+  for (const obj of (ambienteObjetos || [])) {
+    if (!obj || obj.subtipo !== "antorcha_suelo") continue;
+
+    abrirLuz(
+      obj.x + obj.w / 2,
+      obj.y + obj.h * 0.25,
+      Number(obj.luz_radio || 200) || 200
+    );
   }
 
   // ataque especial de jefes
@@ -10571,6 +10889,9 @@ function drawAmbiente(ctx) {
           obj.audioPlaying = false;
         }
       }
+    }
+        if (obj.subtipo === "antorcha_suelo") {
+      drawAntorchaSuelo(ctx, obj);
     }
   }
 }
@@ -10757,8 +11078,10 @@ function aplicarDanioABloqueArcilla(obj, danio, impactoX, impactoY) {
 
   if (obj.pdr <= 0) {
     crearParticulasArcilla(obj.x + obj.w / 2, obj.y + obj.h / 2);
-    const idx = ambienteObjetos.indexOf(obj);
-    if (idx !== -1) ambienteObjetos.splice(idx, 1);
+
+    ambienteObjetos = ambienteObjetos.filter(el =>
+      el !== obj && el.bloque_padre_id !== obj.zona_id
+    );
   }
 
   return true;
