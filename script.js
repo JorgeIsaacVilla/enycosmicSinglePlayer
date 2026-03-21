@@ -3220,7 +3220,7 @@ function showCombinacionEstadoModal(tipo) {
 }
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -7789,8 +7789,13 @@ moverEntidadConColision(
     const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
     const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
 
-    enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
-    enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+    moverEntidadConColision(
+      enemy,
+      clamp(nextX, 0, WORLD_W - enemy.w),
+      clamp(nextY, 0, WORLD_H - enemy.h),
+      enemy.w,
+      enemy.h
+    );
 
     enemy.frameTimer += dtMs;
     while (enemy.frameTimer >= enemy.frameDurationMs) {
@@ -7815,8 +7820,13 @@ moverEntidadConColision(
         const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
         const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
 
-        enemy.x = clamp(nextX, 0, WORLD_W - enemy.w);
-        enemy.y = clamp(nextY, 0, WORLD_H - enemy.h);
+        moverEntidadConColision(
+          enemy,
+          clamp(nextX, 0, WORLD_W - enemy.w),
+          clamp(nextY, 0, WORLD_H - enemy.h),
+          enemy.w,
+          enemy.h
+        );
 
         if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
           enemy.facing = enemy.dirX > 0 ? "right" : "left";
