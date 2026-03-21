@@ -280,6 +280,9 @@ async function cargarAmbiente() {
 // 🌍 AMBIENTE SYSTEM (final)
 // =============================
 
+let darknessCanvas = null;
+let darknessCtx = null;
+
 // =============================
 // 🌍 LOGICA ITEM BLOQUES DE ARCILLA (inicio)
 // =============================
@@ -3216,6 +3219,21 @@ function showCombinacionEstadoModal(tipo) {
   );
 }
 
+//--Lógica de antorchas e iluminación de mapas oscuros (inicio)
+let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
+
+const TORCH_DURATION_MS = 30000;
+const TORCH_LIGHT_RADIUS = 200;
+
+let antorchaActiva = {
+  active: false,
+  slotIndex: -1,
+  timer: 0
+};
+
+let torchTrailParticles = [];
+//--Lógica de antorchas e iluminación de mapas oscuros (fin)
+
 function usarItemEquipadoDesdeHUD(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
@@ -3254,9 +3272,22 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
     break;
   }
 
-  case "antorcha_de_fuego":
-    console.log("El usuario usará este item: antorcha de fuego");
+case "antorcha_de_fuego": {
+  if (antorchaActiva.active && antorchaActiva.slotIndex === slotIndex) {
+    window.apagarAntorcha(false);
+  } else {
+    window.activarAntorcha(slotIndex);
+  }
+
+    closeInventarioPopup();
+
+    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+      const bodyEl = interfasEl.querySelector(".ui-body");
+      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    }
+
     break;
+  }
 
   case "pistola_lazer": {
     const item = window.equipSlots?.[slotIndex];
@@ -9026,6 +9057,22 @@ updateAtaquesEspecialesJefe(dtMs);
 updateParticulasVolcanJefe(dtMs);
 updateSkateParticles(dtMs);
 
+//--lógica de fuego y de antorcha, he iluminación de mapas oscuros (inicio)
+if (antorchaActiva.active) {
+  antorchaActiva.timer -= dtMs;
+
+  if (player.walking && Math.random() < 0.4) {
+    crearParticulaAntorchaRastro();
+  }
+
+  if (antorchaActiva.timer <= 0) {
+    window.apagarAntorcha(true);
+  }
+}
+
+updateTorchTrailParticles(dtMs);
+//--lógica de fuego y de antorcha, he iluminación de mapas oscuros (fin)
+
 if (shieldEffect.timer > 0) {
   shieldEffect.timer -= dtMs;
   if (shieldEffect.timer < 0) shieldEffect.timer = 0;
@@ -9566,27 +9613,31 @@ let hoveredItem = null;
 
 
 
-/*// 🔧 Items de prueba para el inventario
-window.inventarioUser.push(
-  {
-    id: "bateria",
-    nombre_item: "bateria",
-    imagen: "./assets/items/bateria.svg",
-    cantidad: 10
-  },
-  {
-    id: "palo_de_madera",
-    nombre_item: "palo de madera",
-    imagen: "./assets/items/paloMadera.svg",
-    cantidad: 10
-  },
-  {
-    id: "cable",
-    nombre_item: "cable",
-    imagen: "./assets/items/cable.svg",
-    cantidad: 20
-  },
-);*/
+/*// 🔧 Items de prueba para el inventario*/
+window.inventarioUser.push({
+  id: "antorcha_de_fuego",
+  nombre_item: "Antorcha de fuego",
+  tipo_item: "consumible",
+  imagen: "./assets/items/antorcha.svg",
+  agotable: true,
+  desaparece_al_agotarse: true,
+  cantidad: 1,
+  usos: 1,
+  usos_maximos: 1
+});
+
+window.inventarioUser.push({
+  id: "bloque_de_arcilla",
+  nombre_item: "Bloque de arcilla",
+  tipo_item: "consumible",
+  imagen: "./assets/items/bloqueArcilla.svg",
+  agotable: true,
+  desaparece_al_agotarse: true,
+  cantidad: 25,
+  usos: 1,
+  usos_maximos: 1
+});
+
 
 async function cargarItemsJSON(){
 
@@ -9723,87 +9774,7 @@ function agregarItemAlInventario(nuevoItem) {
 
         const restante = nuevaCantidad - aSumar;
         if (restante <= 0) return true;
-function agregarItemAlInventario(nuevoItem) {
-  const MAX_SLOTS = 16;
-  const MAX_STACK = 25;
 
-  if (!nuevoItem) return false;
-
-  const nuevoId = nuevoItem.id ?? nuevoItem.item_id;
-  const esBloqueArcilla = nuevoId === "bloque_de_arcilla";
-
-  const nuevoEsAgotable = nuevoItem.agotable === true;
-  const nuevoUsos = nuevoItem.usos ?? nuevoItem.cantidad_de_usos ?? null;
-  const nuevoUsosMaximos = nuevoItem.usos_maximos ?? nuevoItem.cantidad_de_usos ?? null;
-  const nuevaCantidad = Number(nuevoItem.cantidad || 1) || 1;
-
-  for (const slot of window.inventarioUser) {
-    if (!slot) continue;
-
-    const slotId = slot.id ?? slot.item_id;
-    const slotEsAgotable = slot.agotable === true;
-    const slotUsos = slot.usos ?? slot.cantidad_de_usos ?? null;
-    const slotUsosMaximos = slot.usos_maximos ?? slot.cantidad_de_usos ?? null;
-
-    const mismoItem = slotId === nuevoId;
-
-    let mismoEstadoDeUso = (
-      !nuevoEsAgotable ||
-      (
-        slotEsAgotable === nuevoEsAgotable &&
-        slotUsos === nuevoUsos &&
-        slotUsosMaximos === nuevoUsosMaximos
-      )
-    );
-
-    // bloque de arcilla siempre debe apilar por ID
-    if (esBloqueArcilla) {
-      mismoEstadoDeUso = true;
-    }
-
-    if (mismoItem && mismoEstadoDeUso) {
-      if (!slot.cantidad) slot.cantidad = 1;
-
-      if (slot.cantidad < MAX_STACK) {
-        const espacio = MAX_STACK - slot.cantidad;
-        const aSumar = Math.min(espacio, nuevaCantidad);
-
-        slot.cantidad += aSumar;
-
-        // si el item guarda usos por cantidad, los reseteamos para que no parta stacks
-        if (esBloqueArcilla) {
-          slot.usos = null;
-          slot.usos_maximos = null;
-        }
-
-        const restante = nuevaCantidad - aSumar;
-        if (restante <= 0) return true;
-
-        nuevoItem = {
-          ...nuevoItem,
-          cantidad: restante
-        };
-      }
-    }
-  }
-
-  if (window.inventarioUser.length >= MAX_SLOTS) {
-    return false;
-  }
-
-  window.inventarioUser.push({
-    ...nuevoItem,
-    id: nuevoId,
-    item_id: nuevoItem.item_id ?? nuevoId,
-    cantidad: Number(nuevoItem.cantidad || 1) || 1,
-    agotable: nuevoEsAgotable,
-    desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
-    usos: esBloqueArcilla ? null : nuevoUsos,
-    usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos
-  });
-
-  return true;
-}
         nuevoItem = {
           ...nuevoItem,
           cantidad: restante
@@ -10242,6 +10213,260 @@ function drawShieldEffect(ctx, layer = "front") {
     }
   });
 }
+
+//--Lógica de antorcha he iluminación de mapas oscuros (inicio)
+window.consumirItemEquipado = function(slotIndex, cantidad = 1) {
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+
+  item.usos = Math.max(0, (Number(item.usos ?? 1) || 1) - cantidad);
+
+  if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+    window.equipSlots[slotIndex] = null;
+  }
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+};
+
+window.apagarAntorcha = function(consumir = true) {
+  const slotIndex = antorchaActiva.slotIndex;
+
+  if (consumir && Number.isInteger(slotIndex) && slotIndex >= 0) {
+    window.consumirItemEquipado(slotIndex, 1);
+  }
+
+  antorchaActiva.active = false;
+  antorchaActiva.slotIndex = -1;
+  antorchaActiva.timer = 0;
+};
+
+window.activarAntorcha = function(slotIndex) {
+
+
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
+  if (item.id !== "antorcha_de_fuego") return;
+  if ((item.usos ?? 0) <= 0) return;
+
+  antorchaActiva.active = true;
+  antorchaActiva.slotIndex = slotIndex;
+  antorchaActiva.timer = TORCH_DURATION_MS;
+
+    console.log("Antorcha activada", slotIndex);
+};
+
+function getTorchAnchor() {
+  const facing = player.facing || "down";
+
+  if (facing === "up") {
+    return { x: player.x + 32, y: player.y + 22, angle: -0.18 };
+  }
+  if (facing === "down") {
+    return { x: player.x + 35, y: player.y + 30, angle: 0.12 };
+  }
+  if (facing === "left") {
+    return { x: player.x + 22, y: player.y + 28, angle: -0.35 };
+  }
+  return { x: player.x + 43, y: player.y + 28, angle: 0.35 };
+}
+
+function crearParticulaAntorchaRastro() {
+  const a = getTorchAnchor();
+
+  torchTrailParticles.push({
+    x: a.x + (Math.random() * 6 - 3),
+    y: a.y - 8 + (Math.random() * 6 - 3),
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: -0.35 - Math.random() * 0.55,
+    size: 2 + Math.random() * 3,
+    life: 180 + Math.random() * 180,
+    maxLife: 360,
+    color: Math.random() < 0.5 ? "#ffd400" : "#ff7a00"
+  });
+}
+
+function updateTorchTrailParticles(dtMs) {
+  for (let i = torchTrailParticles.length - 1; i >= 0; i--) {
+    const p = torchTrailParticles[i];
+
+    p.life -= dtMs;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.985;
+    p.vy *= 0.985;
+    p.size *= 0.987;
+
+    if (p.life <= 0 || p.size <= 0.2) {
+      torchTrailParticles.splice(i, 1);
+    }
+  }
+}
+
+function drawTorchTrailParticles(ctx) {
+  for (const p of torchTrailParticles) {
+    const alpha = Math.max(0, p.life / p.maxLife);
+
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.55;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawTorchHeld(ctx, layer = "front") {
+  if (!antorchaActiva.active) return;
+
+  const facing = player.facing || "down";
+  const drawBack = facing === "up";
+  if (layer === "back" && !drawBack) return;
+  if (layer === "front" && drawBack) return;
+
+  const a = getTorchAnchor();
+  const t = performance.now() * 0.01;
+
+  ctx.save();
+  ctx.translate(a.x, a.y);
+  ctx.rotate(a.angle);
+
+  // palo
+  ctx.fillStyle = "#7b3f00";
+  ctx.fillRect(-3, -18, 6, 26);
+
+  // brillo base
+  ctx.beginPath();
+  ctx.fillStyle = "rgba(255,180,60,0.28)";
+  ctx.shadowColor = "#ffb347";
+  ctx.shadowBlur = 22;
+  ctx.arc(0, -18, 11, 0, Math.PI * 2);
+  ctx.fill();
+
+  // fuego exterior
+  ctx.fillStyle = "#ff7a00";
+  ctx.beginPath();
+  ctx.moveTo(0, -42 - Math.sin(t) * 1.5);
+  ctx.quadraticCurveTo(12, -28, 2, -16);
+  ctx.quadraticCurveTo(-10, -26, 0, -42 - Math.sin(t) * 1.5);
+  ctx.fill();
+
+  // fuego medio
+  ctx.fillStyle = "#ffd400";
+  ctx.beginPath();
+  ctx.moveTo(0, -36 - Math.sin(t * 1.4) * 1.2);
+  ctx.quadraticCurveTo(8, -26, 2, -18);
+  ctx.quadraticCurveTo(-7, -24, 0, -36 - Math.sin(t * 1.4) * 1.2);
+  ctx.fill();
+
+  // núcleo
+  ctx.fillStyle = "#fff7b0";
+  ctx.beginPath();
+  ctx.moveTo(0, -29 - Math.sin(t * 1.8));
+  ctx.quadraticCurveTo(4, -23, 1, -17);
+  ctx.quadraticCurveTo(-4, -22, 0, -29 - Math.sin(t * 1.8));
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
+  if (!mapaOscuro) return;
+
+  if (!darknessCanvas) {
+    darknessCanvas = document.createElement("canvas");
+    darknessCtx = darknessCanvas.getContext("2d");
+  }
+
+  if (darknessCanvas.width !== canvas.width || darknessCanvas.height !== canvas.height) {
+    darknessCanvas.width = canvas.width;
+    darknessCanvas.height = canvas.height;
+  }
+
+  const dctx = darknessCtx;
+
+  dctx.setTransform(1, 0, 0, 1, 0, 0);
+  dctx.clearRect(0, 0, darknessCanvas.width, darknessCanvas.height);
+
+  dctx.save();
+
+  // MISMA cámara y MISMO zoom del mundo
+  dctx.translate(canvas.width / 2, canvas.height / 2);
+  dctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
+  dctx.translate(-camCenterX, -camCenterY);
+
+  const viewX = camCenterX - viewW / 2;
+  const viewY = camCenterY - viewH / 2;
+
+  // capa oscura solo en el área visible del mundo
+  dctx.fillStyle = "rgba(0,0,0,0.96)";
+  dctx.fillRect(viewX, viewY, viewW, viewH);
+
+  dctx.globalCompositeOperation = "destination-out";
+
+  function abrirLuz(worldX, worldY, radius) {
+    const grad = dctx.createRadialGradient(
+      worldX, worldY, 0,
+      worldX, worldY, radius
+    );
+
+    grad.addColorStop(0, "rgba(255,255,255,1)");
+    grad.addColorStop(0.35, "rgba(255,255,255,0.9)");
+    grad.addColorStop(0.7, "rgba(255,255,255,0.4)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+
+    dctx.fillStyle = grad;
+    dctx.beginPath();
+    dctx.arc(worldX, worldY, radius, 0, Math.PI * 2);
+    dctx.fill();
+  }
+
+  const luzX = player.x + HERO_DRAW_W / 2;
+  const luzY = player.y + HERO_DRAW_H / 2;
+
+  // luz base mínima del jugador
+  abrirLuz(luzX, luzY, 36);
+
+  // luz grande de antorcha
+  if (antorchaActiva.active) {
+    abrirLuz(luzX, luzY, TORCH_LIGHT_RADIUS);
+  }
+
+  // disparos del jugador
+  for (const d of (window.disparosLazerActivos || [])) {
+    abrirLuz(d.x, d.y, 40);
+  }
+
+  // disparos enemigos
+  for (const d of (window.disparosEnemigosArmadosActivos || [])) {
+    abrirLuz(d.x, d.y, 38);
+  }
+
+  // bumerangs
+  for (const b of (window.bumerangsActivos || [])) {
+    abrirLuz(b.x, b.y, 34);
+  }
+
+  // ataque especial de jefes
+  for (const atk of (window.ataquesEspecialesJefeActivos || [])) {
+    abrirLuz(atk.x, atk.y, Math.max(160, atk.radioActual + 20));
+  }
+
+  dctx.restore();
+
+  dctx.globalCompositeOperation = "source-over";
+
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(darknessCanvas, 0, 0);
+  ctx.restore();
+}
+//--Lógica de antorcha he iluminación de mapas oscuros (fin)
 
 // =======================================================================================
 // Lógica ambiente.jsons (inicio)
@@ -11106,10 +11331,6 @@ drawSkateParticles(ctx);
 pruebaDeItems();
 drawItems(ctx);
 
-// Dibujar NPCs
-drawNPCs(ctx);
-drawNPCsAmbiente(ctx);
-
 //Bloques de arcilla
 drawParticulasArcilla(ctx);
 
@@ -11117,13 +11338,15 @@ drawExplosionesJefe(ctx, "back");
 drawParticulasVolcanJefe(ctx, "back");
 drawAtaquesEspecialesJefeBack(ctx);
 
-//--Enemigos
+drawNPCs(ctx);
+drawNPCsAmbiente(ctx);
 drawEnemigos(ctx);
+drawDisparosEnemigosArmados(ctx);
 
 drawExplosionesJefe(ctx, "front");
 drawParticulasVolcanJefe(ctx, "front");
 drawAtaquesEspecialesJefeFront(ctx);
-drawDisparosEnemigosArmados(ctx);
+
 
 //--Efecto disparo lazer
 drawDisparosLazer(ctx);
@@ -11210,6 +11433,9 @@ const sy = row * HERO_H;
 
 drawShieldEffect(ctx, "back");
 
+drawTorchHeld(ctx, "back");
+drawTorchTrailParticles(ctx);
+
 if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
 ctx.drawImage(
   images.hero,
@@ -11219,13 +11445,12 @@ ctx.drawImage(
 );
 }
 
+drawTorchHeld(ctx, "front");
 drawShieldEffect(ctx, "front");
 
 //--Efectos bumerang
 drawParticulasBumerang(ctx);
 drawBumerangs(ctx);
-
-
 
 //--Efectp pico escabador
 drawParticulasPicoEscabador(ctx);
@@ -11247,8 +11472,11 @@ drawAmbiente(ctx);
 //Chispas disparo
 drawParticulasImpactoBloque(ctx);
 
+// oscuridad del mapa
+drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
 
-    ctx.restore();
+
+  ctx.restore();
 
     /*Sistema de muestreo de coordenadas en el mapá(inicio) */
     ctx.save();

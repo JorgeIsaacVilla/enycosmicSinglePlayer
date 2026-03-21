@@ -233,7 +233,7 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "plastico", "cantidad": 1 }
+        { "item_id": "plastico", "cantidad": 3 }
       ],
       "combinable": true
     },
@@ -314,7 +314,9 @@
       "cuanto_quita_de_vida_al_enemigo": 0,
       "desaparece_al_agotarse": true,
       "creable": false,
-      "materiales_requeridos_para_crear": [],
+      "materiales_requeridos_para_crear": [
+        { "item_id": "plastico", "cantidad": 1 }
+      ],
       "combinable": true
     },
     {
