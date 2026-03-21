@@ -2128,7 +2128,8 @@ function devolverItemDesdeEquipado(slotIndex) {
     desaparece_al_agotarse: item.desaparece_al_agotarse === true,
     usos: esBloqueArcilla ? null : (item.usos ?? null),
     usos_maximos: esBloqueArcilla ? null : (item.usos_maximos ?? null),
-    cantidad: esBloqueArcilla ? Math.max(1, usosActuales) : 1
+    cantidad: esBloqueArcilla ? Math.max(1, usosActuales) : 1,
+    cuanto_quita_de_vida_al_enemigo: Number(item.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
   });
 
   if (!agregado) {
@@ -9946,7 +9947,8 @@ function agregarItemAlInventario(nuevoItem) {
     agotable: nuevoEsAgotable,
     desaparece_al_agotarse: nuevoItem.desaparece_al_agotarse === true,
     usos: esBloqueArcilla ? null : nuevoUsos,
-    usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos
+    usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos,
+    cuanto_quita_de_vida_al_enemigo: Number(nuevoItem.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
   });
 
   return true;
