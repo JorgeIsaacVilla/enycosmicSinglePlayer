@@ -2271,6 +2271,266 @@ function equiparItemDelInventario(slotIndex) {
   }
 }
 
+function ensureCraftInfoPopupStyles() {
+  if (document.getElementById("craft-info-popup-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "craft-info-popup-styles";
+  style.innerHTML = `
+    #craft-info-popup-overlay{
+      position:absolute;
+      inset:0;
+      z-index:5000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:auto;
+    }
+
+    #craft-info-popup-box{
+      width:320px;
+      min-height:360px;
+      max-height:420px;
+      background:black;
+      color:#00ffcc;
+      border:3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 10px 30px rgba(0,0,0,0.45);
+      font-family:"arcade","monospace";
+      image-rendering:pixelated;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    #craft-info-popup-header{
+      height:42px;
+      min-height:42px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 8px;
+      background:#111;
+      border-bottom:2px solid #00ffcc;
+    }
+
+    #craft-info-popup-title{
+      font-size:12px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:240px;
+    }
+
+    #craft-info-popup-close{
+      width:30px;
+      height:30px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      font-size:14px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+    }
+
+    #craft-info-popup-body{
+      flex:1;
+      padding:12px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.05) 0px,
+          rgba(0,255,204,.05) 2px,
+          rgba(0,0,0,0) 2px,
+          rgba(0,0,0,0) 6px
+        );
+    }
+
+    .craft-info-main-image{
+      width:96px;
+      height:96px;
+      object-fit:contain;
+      image-rendering:pixelated;
+      display:block;
+      margin:0 auto;
+      border:2px solid rgba(0,255,204,.6);
+      background:rgba(0,255,204,.08);
+      padding:8px;
+      box-sizing:border-box;
+    }
+
+    .craft-info-section-title{
+      margin:0;
+      font-size:11px;
+      text-transform:uppercase;
+      text-align:center;
+      color:#fff799;
+    }
+
+    .craft-info-empty{
+      margin:0;
+      font-size:10px;
+      line-height:1.5;
+      text-align:center;
+      color:#00ffcc;
+    }
+
+    .craft-info-list{
+      display:grid;
+      gap:8px;
+    }
+
+    .craft-info-row{
+      border:2px solid rgba(0,255,204,.45);
+      background:rgba(0,255,204,.06);
+      padding:8px;
+      display:grid;
+      gap:6px;
+    }
+
+    .craft-info-product{
+      margin:0;
+      font-size:11px;
+      color:#fff;
+    }
+
+    .craft-info-recipe{
+      margin:0;
+      font-size:10px;
+      line-height:1.5;
+      color:#00ffcc;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function closeCraftInfoPopup() {
+  const old = document.getElementById("craft-info-popup-overlay");
+  if (old) old.remove();
+}
+
+function obtenerRecetasQueUsanItem(itemId) {
+  const listaItems = window.itemsData || [];
+  if (!Array.isArray(listaItems) || !itemId) return [];
+
+  const idBuscado = String(itemId).trim().toLowerCase();
+console.log("BUSCANDO RECETAS PARA:", idBuscado);
+  return listaItems.filter(producto => {
+    const materiales = Array.isArray(producto.materiales_requeridos_para_crear)
+      ? producto.materiales_requeridos_para_crear
+      : [];
+
+    return materiales.some(mat => {
+      const matId = String(
+        mat.item_id ?? mat.id ?? mat.material_id ?? ""
+      ).trim().toLowerCase();
+
+      return matId === idBuscado;
+    });
+  });
+}
+
+function construirTextoReceta(producto) {
+  const listaItems = window.itemsData || [];
+  const materiales = Array.isArray(producto.materiales_requeridos_para_crear)
+    ? producto.materiales_requeridos_para_crear
+    : [];
+
+  const partes = materiales.map(mat => {
+    const itemData = listaItems.find(i => i.id === mat.item_id);
+    const nombre = itemData?.nombre_item || mat.item_id;
+    const cantidad = Number(mat.cantidad || 0);
+    return `${nombre}(${cantidad})`;
+  });
+
+  return `${producto.nombre_item} = ${partes.join(" + ")}`;
+}
+
+function openCraftInfoPopup(item) {
+  if (!item) return;
+
+  ensureCraftInfoPopupStyles();
+  closeCraftInfoPopup();
+
+  const itemId = String(item.id ?? item.item_id ?? "").trim();
+  const itemNombre = item.nombre_item || item.nombre || itemId || "Item";
+  const itemImagen = item.imagen || "";
+
+  console.log("ITEM POPUP ID:", item.id, item.item_id);
+console.log("ITEMS DATA RECETAS:", window.itemsData);
+
+  const recetas = obtenerRecetasQueUsanItem(itemId);
+
+  const overlay = document.createElement("div");
+  overlay.id = "craft-info-popup-overlay";
+
+  const recetasHTML = recetas.length
+    ? `
+      <div class="craft-info-list">
+        ${recetas.map(producto => `
+          <div class="craft-info-row">
+            <p class="craft-info-product">${producto.nombre_item}</p>
+            <p class="craft-info-recipe">${construirTextoReceta(producto)}</p>
+          </div>
+        `).join("")}
+      </div>
+    `
+    : `
+      <p class="craft-info-empty">
+        Este item aún no participa en recetas registradas.
+      </p>
+    `;
+
+  overlay.innerHTML = `
+    <div id="craft-info-popup-box">
+      <div id="craft-info-popup-header">
+        <div id="craft-info-popup-title">${itemNombre}</div>
+        <button id="craft-info-popup-close" type="button">X</button>
+      </div>
+
+      <div id="craft-info-popup-body">
+        <img class="craft-info-main-image" src="${itemImagen}" alt="${itemNombre}">
+        <p class="craft-info-section-title">Materiales que puedes construir</p>
+        ${recetasHTML}
+      </div>
+    </div>
+  `;
+
+  wrapEl.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector("#craft-info-popup-close");
+
+  function cerrar() {
+    closeCraftInfoPopup();
+  }
+
+  closeBtn.addEventListener("click", cerrar);
+  closeBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    cerrar();
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      cerrar();
+    }
+  }, { passive: false });
+}
+
 function closeInventarioPopup() {
   const oldPopup = document.querySelector(".ui-inv-popup");
   if (oldPopup) oldPopup.remove();
@@ -3241,171 +3501,159 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
   switch (item.id) {
 
-  case "corazon":
-    pdv = PDV_MAX;
+    case "corazon":
+      pdv = PDV_MAX;
 
-    crearTextoDanio(
-      player.x + 32,
-      player.y - 10,
-      "+" + pdv,
-      "#00ffcc",
-      "#00ffcc"
-    );
+      crearTextoDanio(
+        player.x + 32,
+        player.y - 10,
+        "+" + pdv,
+        "#00ffcc",
+        "#00ffcc"
+      );
 
-    if (item.agotable === true) {
-      item.usos = Math.max(0, (item.usos ?? 1) - 1);
-    }
+      if (item.agotable === true) {
+        item.usos = Math.max(0, (item.usos ?? 1) - 1);
+      }
 
-    console.log("El usuario usará este item: corazon");
-    
-    break;
-
-  case "bloque_de_arcilla": {
-    window.colocarBloqueArcillaDesdeHUD(slotIndex);
-
-    closeInventarioPopup();
-
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
-  }
-
-case "antorcha_de_fuego": {
-  if (antorchaActiva.active && antorchaActiva.slotIndex === slotIndex) {
-    const colocada = window.colocarAntorchaSobreBloqueArcilla(slotIndex);
-
-    if (!colocada) {
-      window.apagarAntorcha(false);
-    }
-  } else {
-    window.activarAntorcha(slotIndex);
-  }
-
-  closeInventarioPopup();
-
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-  }
-
-  break;
-}
-
-  case "pistola_lazer": {
-    const item = window.equipSlots?.[slotIndex];
-    if (!item) return;
-
-    if ((item.usos ?? 0) <= 0) {
-      console.log("No quedan cargas de pistola lazer");
-      return;
-    }
-
-    window.lanzarDisparoLazer(item);
-    
-    item.usos -= 1;
-    if (item.usos < 0) item.usos = 0;
-
-    console.log("Usos restantes de Pistola Lazer:", item.usos);
-
-    if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
-      window.equipSlots[slotIndex] = null;
-    }
-
-    closeInventarioPopup();
-
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
-  }
-
-  case "espada_de_madera": {
-    const item = window.equipSlots?.[slotIndex];
-    if (!item) return;
-
-    if ((item.usos ?? 0) <= 0) {
-      console.log("La espada de madera está agotada");
-      return;
-    }
-
-    window.lanzarAtaqueEspadaMadera(slotIndex);
-
-    closeInventarioPopup();
-
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
-  }
-
-  case "escudo_de_madera":
-
-    //escudoMaderaActivo = true;
-    //activarEfectoEscudo("madera", player.facing === "up" ? "up" : "down");
-    console.log("El usuario usará este item: escudo de madera");
-
-    break;
-
-  case "bumerang": {
-    const item = window.equipSlots?.[slotIndex];
-    if (!item) return;
-
-    if ((item.usos ?? 0) <= 0) {
-      console.log("No quedan bumerangs");
-      return;
-    }
-
-    lanzarBumerang(item);
-
-    item.usos -= 1;
-    if (item.usos < 0) item.usos = 0;
-
-    console.log("Usos restantes del Bumerang:", item.usos);
-
-    if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
-      window.equipSlots[slotIndex] = null;
-    }
-
-    closeInventarioPopup();
-
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
-  }
-  case "pico_escabador": {
-    const item = window.equipSlots?.[slotIndex];
-    if (!item) return;
-
-    if ((item.usos ?? 0) <= 0) {
-      console.log("El pico escabador está agotado");
-      return;
-    }
-
-    window.lanzarAtaquePicoEscabador(slotIndex);
-
-    closeInventarioPopup();
-
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    }
-
-    break;
-  }
-
-    case "patines":
-      console.log("El usuario usará este item: patines");
+      console.log("El usuario usará este item: corazon");
       break;
+
+    case "bloque_de_arcilla": {
+      window.colocarBloqueArcillaDesdeHUD(slotIndex);
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
+
+    case "antorcha_de_fuego": {
+      if (antorchaActiva.active && antorchaActiva.slotIndex === slotIndex) {
+        const colocada = window.colocarAntorchaSobreBloqueArcilla(slotIndex);
+
+        if (!colocada) {
+          window.apagarAntorcha(false);
+        }
+      } else {
+        window.activarAntorcha(slotIndex);
+      }
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
+
+    case "pistola_lazer": {
+      const item = window.equipSlots?.[slotIndex];
+      if (!item) return;
+
+      if ((item.usos ?? 0) <= 0) {
+        console.log("No quedan cargas de pistola lazer");
+        return;
+      }
+
+      window.lanzarDisparoLazer(item);
+
+      item.usos -= 1;
+      if (item.usos < 0) item.usos = 0;
+
+      console.log("Usos restantes de Pistola Lazer:", item.usos);
+
+      if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+        window.equipSlots[slotIndex] = null;
+      }
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
+
+    case "espada_de_madera": {
+      const item = window.equipSlots?.[slotIndex];
+      if (!item) return;
+
+      if ((item.usos ?? 0) <= 0) {
+        console.log("La espada de madera está agotada");
+        return;
+      }
+
+      window.lanzarAtaqueEspadaMadera(slotIndex);
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
+
+    case "bumerang": {
+      const item = window.equipSlots?.[slotIndex];
+      if (!item) return;
+
+      if ((item.usos ?? 0) <= 0) {
+        console.log("No quedan bumerangs");
+        return;
+      }
+
+      lanzarBumerang(item);
+
+      item.usos -= 1;
+      if (item.usos < 0) item.usos = 0;
+
+      console.log("Usos restantes del Bumerang:", item.usos);
+
+      if (item.agotable === true && item.desaparece_al_agotarse === true && item.usos <= 0) {
+        window.equipSlots[slotIndex] = null;
+      }
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
+
+    case "pico_escabador": {
+      const item = window.equipSlots?.[slotIndex];
+      if (!item) return;
+
+      if ((item.usos ?? 0) <= 0) {
+        console.log("El pico escabador está agotado");
+        return;
+      }
+
+      window.lanzarAtaquePicoEscabador(slotIndex);
+
+      closeInventarioPopup();
+
+      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+        const bodyEl = interfasEl.querySelector(".ui-body");
+        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      }
+
+      break;
+    }
 
     case "espada_de_hierro": {
       const item = window.equipSlots?.[slotIndex];
@@ -3423,29 +3671,20 @@ case "antorcha_de_fuego": {
       break;
     }
 
+    case "escudo_de_madera":
+    case "patines":
     case "escudo_de_hierro":
-      //activarEfectoEscudo("hierro", player.facing === "up" ? "up" : "down");
-      console.log("El usuario usará este item: escudo de hierro");
-      break;
-
     case "bateria":
-      console.log("El usuario usará este item: bateria");
-      break;
-
     case "rueda":
-      console.log("El usuario usará este item: rueda");
-      break;
-
     case "cable":
-      console.log("El usuario usará este item: cable");
-      break;
-
     case "cuero":
-      console.log("El usuario usará este item: cuero");
+      console.log("El usuario usará este item:", item.nombre_item || item.id);
+      openCraftInfoPopup(item);
       break;
 
     default:
       console.log("El usuario usará este item:", item.nombre_item || item.id);
+      openCraftInfoPopup(item);
       break;
   }
 }
@@ -9853,6 +10092,7 @@ function getProfessionUI() {
 // Lógica de items/consumibles/armas (inicio)
 // =======================================================================================
 let itemsData = [];
+window.itemsData = itemsData;
 let items = [];// Prueba de items
 
 window.inventarioUser = []; //Sincronizar con base de datos wordpress
@@ -9894,6 +10134,8 @@ async function cargarItemsJSON(){
   const data = await res.json();
 
   itemsData = data.items;
+
+    window.itemsData = itemsData;
 
 }
 
