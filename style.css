@@ -1128,3 +1128,43 @@ body{
   object-fit: contain;
   image-rendering: pixelated;
 }
+
+/* =========================
+   SCROLLBAR UNIVERSAL ENYCOSMIC
+   ========================= */
+
+/* Firefox */
+*{
+  scrollbar-width: thin;
+  scrollbar-color: #00ffcc black;
+}
+
+/* Chrome / Edge / Safari */
+*::-webkit-scrollbar{
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track{
+  background: black;
+  border-left: 2px solid #00ffcc;
+}
+
+*::-webkit-scrollbar-thumb{
+  background: #00ffcc;
+  border: 2px solid black;
+}
+
+*::-webkit-scrollbar-thumb:hover{
+  background: #00ffd9;
+}
+
+*::-webkit-scrollbar-button{
+  background: black;
+  border: 2px solid #00ffcc;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-corner{
+  background: black;
+}

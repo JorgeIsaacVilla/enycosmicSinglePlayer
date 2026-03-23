@@ -433,5 +433,35 @@
   "sonido_ambiente": null,
   "pdr": 12,
   "pdr_max": 12
+},
+{
+  "zona_id": "tienda_items_colision",
+  "color": "red",
+  "tipo": "colisionables",
+  "funcion": null,
+  "x": 2890,
+  "y": 920,
+  "w": 80,
+  "h": 20,
+  "imagen": null,
+  "zIndexBase": 3300,
+  "sprites_1x10": null,
+  "velocidad_movimiento": null,
+  "sonido_ambiente": null
+},
+{
+  "zona_id": "tienda_items_visual",
+  "color": null,
+  "tipo": "visual cliqueable",
+  "funcion": "abrirTiendaDeITems",
+  "x": 2860,
+  "y": 860,
+  "w": 150,
+  "h": 110,
+  "imagen": "./assets/spriteAmbiente/vendedor.png",
+  "zIndexBase": 3300,
+  "sprites_1x10": null,
+  "velocidad_movimiento": null,
+  "sonido_ambiente": null
 }
 ]

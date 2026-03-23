@@ -2533,6 +2533,339 @@ console.log("ITEMS DATA RECETAS:", window.itemsData);
   }, { passive: false });
 }
 
+function ensureTiendaItemsStyles() {
+  if (document.getElementById("tienda-items-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "tienda-items-styles";
+  style.innerHTML = `
+    #tienda-items-overlay{
+      position:absolute;
+      inset:0;
+      z-index:5000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:auto;
+    }
+
+    #tienda-items-box{
+      width:360px;
+      max-height:460px;
+      background:black;
+      color:#00ffcc;
+      border:3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 10px 30px rgba(0,0,0,0.45);
+      font-family:"arcade","monospace";
+      image-rendering:pixelated;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    #tienda-items-header{
+      height:42px;
+      min-height:42px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 8px;
+      background:#111;
+      border-bottom:2px solid #00ffcc;
+    }
+
+    #tienda-items-title{
+      font-size:12px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    #tienda-items-close{
+      width:30px;
+      height:30px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      font-size:14px;
+      cursor:pointer;
+    }
+
+    #tienda-items-body{
+      flex:1;
+      overflow:auto;
+      padding:10px;
+      display:grid;
+      gap:10px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.05) 0px,
+          rgba(0,255,204,.05) 2px,
+          rgba(0,0,0,0) 2px,
+          rgba(0,0,0,0) 6px
+        );
+    }
+
+.tienda-vendedor-box{
+  position:relative;
+  border:2px solid rgba(0,255,204,.4);
+  background:rgba(0,255,204,.06);
+  padding:12px 10px 10px 110px; /* espacio a la izquierda para la imagen */
+  min-height:100px;
+}
+
+.tienda-vendedor-foto{
+  position:absolute;
+  top:10px;
+  left:10px;
+
+  width:90px;
+  height:90px;
+
+  object-fit:none;
+  image-rendering:pixelated;
+
+  /* 🔥 AQUÍ ESTÁ LA MAGIA (recorte) */
+  object-position: 32% 30%;
+
+  border:2px solid rgba(0,255,204,.45);
+  background:rgba(0,255,204,.08);
+  padding:4px;
+  box-sizing:border-box;
+
+  overflow:hidden;
+}
+
+    .tienda-vendedor-copy{
+      display:grid;
+      gap:6px;
+    }
+
+    .tienda-vendedor-copy p{
+      margin:0;
+      font-size:10px;
+      line-height:1.45;
+    }
+
+    .tienda-vendedor-copy .tienda-vendedor-pss{
+      color:#fff799;
+    }
+
+    .tienda-items-saldo{
+      border:2px solid rgba(0,255,204,.4);
+      padding:8px;
+      text-align:center;
+      font-size:11px;
+      color:#fff799;
+      background:rgba(0,255,204,.06);
+    }
+
+    .tienda-item-card{
+      border:2px solid rgba(0,255,204,.4);
+      background:rgba(0,255,204,.06);
+      padding:8px;
+      display:grid;
+      grid-template-columns:56px 1fr auto;
+      gap:8px;
+      align-items:center;
+    }
+
+    .tienda-item-img{
+      width:48px;
+      height:48px;
+      object-fit:contain;
+      image-rendering:pixelated;
+      display:block;
+      margin:auto;
+      border:2px solid rgba(0,255,204,.35);
+      background:rgba(0,255,204,.08);
+      padding:4px;
+      box-sizing:border-box;
+    }
+
+    .tienda-item-info{
+      display:grid;
+      gap:4px;
+    }
+
+    .tienda-item-name{
+      margin:0;
+      font-size:11px;
+      color:white;
+    }
+
+    .tienda-item-price{
+      margin:0;
+      font-size:10px;
+      color:#fff799;
+    }
+
+    .tienda-item-btn{
+      min-width:74px;
+      height:30px;
+      background:black;
+      color:#00ffcc;
+      border:2px solid #00ffcc;
+      font-family:"arcade","monospace";
+      font-size:10px;
+      cursor:pointer;
+      text-transform:uppercase;
+    }
+
+    .tienda-item-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .tienda-items-empty{
+      text-align:center;
+      font-size:11px;
+      padding:20px;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function closeTiendaDeItems() {
+  const old = document.getElementById("tienda-items-overlay");
+  if (old) old.remove();
+}
+
+function getItemsVendibles() {
+  const lista = window.itemsData || [];
+  if (!Array.isArray(lista)) return [];
+
+  return lista.filter(item => Number(item.precio_compra || 0) > 0);
+}
+
+function comprarItemDeTienda(itemId) {
+  const lista = window.itemsData || [];
+  const item = lista.find(i => i.id === itemId);
+  if (!item) return;
+
+  const precio = Number(item.precio_compra || 0);
+  if (precio <= 0) return;
+
+  if ((Number(cosmonedas) || 0) < precio) {
+    alert("No tienes suficientes cosmonedas");
+    return;
+  }
+
+  const agregado = agregarItemAlInventario({
+    ...item,
+    cantidad: 1,
+    usos: item.cantidad_de_usos ?? null,
+    usos_maximos: item.cantidad_de_usos ?? null,
+    agotable: item.agotable === true
+  });
+
+  if (!agregado) {
+    alert("Inventario lleno");
+    return;
+  }
+
+  cosmonedas -= precio;
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+  }
+
+  abrirTiendaDeITems();
+}
+
+function abrirTiendaDeITems() {
+  ensureTiendaItemsStyles();
+  closeTiendaDeItems();
+
+  const overlay = document.createElement("div");
+  overlay.id = "tienda-items-overlay";
+
+  const vendibles = getItemsVendibles();
+
+  const itemsHTML = vendibles.length
+    ? vendibles.map(item => {
+        const precio = Number(item.precio_compra || 0);
+        const puedeComprar = (Number(cosmonedas) || 0) >= precio;
+
+        return `
+          <div class="tienda-item-card">
+            <img class="tienda-item-img" src="${item.imagen || ""}" alt="${item.nombre_item || item.id}">
+            <div class="tienda-item-info">
+              <p class="tienda-item-name">${item.nombre_item || item.id}</p>
+              <p class="tienda-item-price">Precio: ${precio} cosmonedas</p>
+            </div>
+            <button
+              class="tienda-item-btn"
+              type="button"
+              data-item-id="${item.id}"
+              ${puedeComprar ? "" : "disabled"}
+            >
+              Comprar
+            </button>
+          </div>
+        `;
+      }).join("")
+    : `<div class="tienda-items-empty">No hay items en venta.</div>`;
+
+  overlay.innerHTML = `
+    <div id="tienda-items-box">
+      <div id="tienda-items-header">
+        <div id="tienda-items-title">Tienda de Items</div>
+        <button id="tienda-items-close" type="button">X</button>
+      </div>
+
+      <div id="tienda-items-body">
+        <div class="tienda-vendedor-box">
+          <img
+            class="tienda-vendedor-foto"
+            src="./assets/spriteAmbiente/vendedor.png"
+            alt="Vendedor"
+          >
+
+          <div class="tienda-vendedor-copy">
+            <p class="tienda-vendedor-pss">Pss..!! Acércate... Tengo cosas raras para ti.</p>
+            <p>Tengo piezas útiles, raras y algunas... mejor no preguntes de dónde salieron.</p>
+          </div>
+        </div>
+
+        <div class="tienda-items-saldo">Saldo: ${Number(cosmonedas) || 0} cosmonedas</div>
+        ${itemsHTML}
+      </div>
+    </div>
+  `;
+
+  wrapEl.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector("#tienda-items-close");
+
+  closeBtn.addEventListener("click", closeTiendaDeItems);
+  closeBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    closeTiendaDeItems();
+  }, { passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tienda-item-btn");
+    if (btn) {
+      const itemId = btn.dataset.itemId;
+      comprarItemDeTienda(itemId);
+      return;
+    }
+
+    if (e.target === overlay) {
+      closeTiendaDeItems();
+    }
+  });
+}
+
+window.abrirTiendaDeITems = abrirTiendaDeITems;
+
 function closeInventarioPopup() {
   const oldPopup = document.querySelector(".ui-inv-popup");
   if (oldPopup) oldPopup.remove();

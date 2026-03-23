@@ -11,7 +11,8 @@
   "desaparece_al_agotarse": false,
   "creable": false,
   "materiales_requeridos_para_crear": [],
-  "combinable": true
+  "combinable": true,
+  "precio_compra": 8
 },
 {
   "id": "bloque_de_arcilla",
@@ -27,7 +28,8 @@
     { "item_id": "baso_de_agua", "cantidad": 1 },
     { "item_id": "arcilla", "cantidad": 5 }
   ],
-  "combinable": false
+  "combinable": false,
+  "precio_compra": 8
 },
     {
       "id": "corazon",
@@ -44,7 +46,8 @@
         { "item_id": "sal", "cantidad": 1 },
         { "item_id": "baso_de_agua", "cantidad": 1 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "antorcha_de_fuego",
@@ -61,7 +64,8 @@
         { "item_id": "palo_de_madera", "cantidad": 1 },
         { "item_id": "cable", "cantidad": 2 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "pistola_lazer",
@@ -78,7 +82,8 @@
         { "item_id": "bateria", "cantidad": 1 },
         { "item_id": "cable", "cantidad": 2 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "espada_de_madera",
@@ -93,7 +98,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "madera", "cantidad": 3 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "escudo_de_madera",
@@ -108,7 +114,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "madera", "cantidad": 5 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "bumerang",
@@ -123,7 +130,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "madera", "cantidad": 2 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "pico_escabador",
@@ -139,7 +147,8 @@
         { "item_id": "madera", "cantidad": 1 },
         { "item_id": "hierro", "cantidad": 2 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "patines",
@@ -157,7 +166,8 @@
         { "item_id": "rueda", "cantidad": 2 },
         { "item_id": "madera", "cantidad": 2 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "espada_de_hierro",
@@ -172,7 +182,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "hierro", "cantidad": 180 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "escudo_de_hierro",
@@ -187,7 +198,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "hierro", "cantidad": 200 }
       ],
-      "combinable": false
+      "combinable": false,
+      "precio_compra": 8
     },
     {
       "id": "baso_de_agua",
@@ -203,7 +215,8 @@
         { "item_id": "baso", "cantidad": 1 },
         { "item_id": "agua", "cantidad": 1 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "bateria",
@@ -220,7 +233,8 @@
         { "item_id": "hierro", "cantidad": 1 },
         { "item_id": "cobre", "cantidad": 1 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "rueda",
@@ -235,7 +249,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "plastico", "cantidad": 3 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "cable",
@@ -250,7 +265,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "cobre", "cantidad": 3 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "cuero",
@@ -263,7 +279,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "diodo_lazer",
@@ -276,7 +293,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "limon",
@@ -289,7 +307,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "sal",
@@ -302,7 +321,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "baso",
@@ -317,7 +337,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "plastico", "cantidad": 1 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "agua",
@@ -330,7 +351,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "palo_de_madera",
@@ -345,7 +367,8 @@
       "materiales_requeridos_para_crear": [
         { "item_id": "madera", "cantidad": 1 }
       ],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "madera",
@@ -358,7 +381,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "hierro",
@@ -371,7 +395,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "cobre",
@@ -384,7 +409,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "plastico",
@@ -397,7 +423,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     },
     {
       "id": "balinera",
@@ -410,7 +437,8 @@
       "desaparece_al_agotarse": true,
       "creable": false,
       "materiales_requeridos_para_crear": [],
-      "combinable": true
+      "combinable": true,
+      "precio_compra": 8
     }
   ]
 }
