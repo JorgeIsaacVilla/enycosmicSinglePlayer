@@ -313,7 +313,7 @@
       "cantidad_de_usos": null,
       "cuanto_quita_de_vida_al_enemigo": 0,
       "desaparece_al_agotarse": true,
-      "creable": false,
+      "creable": true,
       "materiales_requeridos_para_crear": [
         { "item_id": "plastico", "cantidad": 1 }
       ],

@@ -10695,6 +10695,7 @@ function limpiarAntorchasDeBloquesRotos() {
 }
 
 function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
+  
   if (!mapaOscuro) return;
 
   if (!darknessCanvas) {
@@ -10890,27 +10891,214 @@ function drawAmbiente(ctx) {
     }
   }
 
-  // 1) bloques de arcilla
-  for (const obj of ambienteObjetos) {
+    const listaOrdenada = [...ambienteObjetos].sort((a, b) => {
+      const za = (a.y + a.h);
+      const zb = (b.y + b.h);
+      if (za !== zb) return za - zb;
+
+      const aEsAntorcha = a.subtipo === "antorcha_suelo";
+      const bEsAntorcha = b.subtipo === "antorcha_suelo";
+
+      if (aEsAntorcha && !bEsAntorcha) return -1;
+      if (!aEsAntorcha && bEsAntorcha) return 1;
+
+      return 0;
+    });
+
+  for (const obj of listaOrdenada) {
     if (!obj) continue;
-    if (!esBloqueArcilla(obj)) continue;
-    drawBaseObjeto(obj);
+
+    if (obj.subtipo === "antorcha_suelo") {
+      drawAntorchaSuelo(ctx, obj);
+    } else {
+      drawBaseObjeto(obj);
+    }
+  }
+}
+
+function objetoPuedeTaparJugador(obj) {
+  if (!obj) return false;
+
+  if (esBloqueArcilla(obj)) return false;
+  if (obj.subtipo === "antorcha_suelo") return false;
+
+  return true;
+}
+
+function objetoTapaAlJugador(obj) {
+  if (!objetoPuedeTaparJugador(obj)) return false;
+
+  const playerFeetX = heroDrawX + (HERO_DRAW_W / 2);
+  const playerFeetY = heroDrawY + HERO_DRAW_H;
+
+  const overlapX =
+    playerFeetX >= obj.x &&
+    playerFeetX <= obj.x + obj.w;
+
+  const jugadorDetras =
+    playerFeetY < (obj.y + obj.h);
+
+  return overlapX && jugadorDetras;
+}
+
+function drawBaseObjetoAmbiente(ctx, obj) {
+  if (obj.color) {
+    ctx.fillStyle = obj.color;
+    ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
   }
 
-  // 2) antorchas montadas en bloques
-  for (const obj of ambienteObjetos) {
-    if (!obj) continue;
-    if (obj.subtipo !== "antorcha_suelo") continue;
-    drawAntorchaSuelo(ctx, obj);
+  if (obj.imagen) {
+    if (!ambienteImagenesCache[obj.imagen]) {
+      const img = new Image();
+      img.onload = () => console.log("Imagen ambiente cargada:", obj.imagen);
+      img.onerror = () => console.warn("No cargó imagen ambiente:", obj.imagen);
+      img.src = obj.imagen;
+      ambienteImagenesCache[obj.imagen] = img;
+    }
+
+    const img = ambienteImagenesCache[obj.imagen];
+
+    if (img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
+    }
   }
 
-  // 3) resto de objetos ambiente
+  if (obj.sprites_1x10) {
+    if (!ambienteImagenesCache[obj.sprites_1x10]) {
+      const img = new Image();
+      img.onload = () => console.log("Sprite ambiente cargado:", obj.sprites_1x10);
+      img.onerror = () => console.warn("No cargó sprite ambiente:", obj.sprites_1x10);
+      img.src = obj.sprites_1x10;
+      ambienteImagenesCache[obj.sprites_1x10] = img;
+    }
+
+    const img = ambienteImagenesCache[obj.sprites_1x10];
+
+    if (img.complete && img.naturalWidth > 0) {
+      const FRAME_W = 120;
+      const FRAME_H = 120;
+      const TOTAL_FRAMES = 10;
+
+      obj.frameTimer += 16;
+
+      const speed = Number(obj.velocidad_movimiento) || 1;
+
+      if (obj.frameTimer >= (obj.frameDuration / speed)) {
+        obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
+        obj.frameTimer = 0;
+      }
+
+      const sx = obj.frameActual * FRAME_W;
+
+      ctx.drawImage(
+        img,
+        sx, 0, FRAME_W, FRAME_H,
+        obj.x, obj.y, obj.w, obj.h
+      );
+    }
+  }
+
+  if (obj.sonido_ambiente) {
+    const dx = (player.x + 32) - (obj.x + obj.w / 2);
+    const dy = (player.y + 32) - (obj.y + obj.h / 2);
+    const dist = Math.hypot(dx, dy);
+
+    if (!ambienteAudioCache[obj.sonido_ambiente]) {
+      const audio = new Audio(obj.sonido_ambiente);
+      audio.loop = true;
+      ambienteAudioCache[obj.sonido_ambiente] = audio;
+    }
+
+    const audio = ambienteAudioCache[obj.sonido_ambiente];
+
+    if (dist < 500) {
+      audio.volume = Math.max(0, 1 - (dist / 500));
+
+      if (!obj.audioPlaying) {
+        audio.play().catch(() => {});
+        obj.audioPlaying = true;
+      }
+    } else {
+      if (obj.audioPlaying) {
+        audio.pause();
+        obj.audioPlaying = false;
+      }
+    }
+  }
+}
+
+function drawAmbienteCapa(ctx, capa) {
+  if (!ambienteObjetos || !ambienteObjetos.length) return;
+
   for (const obj of ambienteObjetos) {
     if (!obj) continue;
+
     if (esBloqueArcilla(obj)) continue;
     if (obj.subtipo === "antorcha_suelo") continue;
 
-    drawBaseObjeto(obj);
+    const tapaJugador = objetoTapaAlJugador(obj);
+
+    if (capa === "back" && tapaJugador) continue;
+    if (capa === "front" && !tapaJugador) continue;
+
+    drawBaseObjetoAmbiente(ctx, obj);
+  }
+}
+
+function bloqueArcillaVaDetrasDeObjeto(obj, bloqueRef) {
+  if (!obj || !bloqueRef) return false;
+  if (esBloqueArcilla(obj)) return false;
+  if (obj.subtipo === "antorcha_suelo") return false;
+
+  const overlapX =
+    bloqueRef.x < obj.x + obj.w &&
+    bloqueRef.x + bloqueRef.w > obj.x;
+
+  if (!overlapX) return false;
+
+  const bloqueBaseY = bloqueRef.y + bloqueRef.h;
+  const objBaseY = obj.y + obj.h;
+
+  return bloqueBaseY < objBaseY;
+}
+
+function drawArcillaCapa(ctx, capa) {
+  if (!ambienteObjetos || !ambienteObjetos.length) return;
+
+  const objetosArcilla = ambienteObjetos.filter(obj =>
+    obj &&
+    (esBloqueArcilla(obj) || obj.subtipo === "antorcha_suelo")
+  );
+
+  for (const obj of objetosArcilla) {
+    let bloqueRef = null;
+
+    if (esBloqueArcilla(obj)) {
+      bloqueRef = obj;
+    } else if (obj.subtipo === "antorcha_suelo") {
+      bloqueRef = ambienteObjetos.find(o =>
+        o &&
+        o.zona_id === obj.bloque_padre_id &&
+        esBloqueArcilla(o)
+      ) || null;
+    }
+
+    if (!bloqueRef) continue;
+
+    const vaDetras = ambienteObjetos.some(amb =>
+      amb &&
+      amb !== obj &&
+      bloqueArcillaVaDetrasDeObjeto(amb, bloqueRef)
+    );
+
+    if (capa === "back" && !vaDetras) continue;
+    if (capa === "front" && vaDetras) continue;
+
+    if (obj.subtipo === "antorcha_suelo") {
+      drawAntorchaSuelo(ctx, obj);
+    } else {
+      drawBaseObjetoAmbiente(ctx, obj);
+    }
   }
 }
 
@@ -11278,18 +11466,55 @@ function proyectilColisionaAmbiente(x, y, w = 10, h = 10) {
 // =======================================================================================
 // Lógica ambiente.jsons (fin)
 // =======================================================================================
+function drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy) {
+  ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
 
+  ctx.save();
+  ctx.fillStyle = "transparent";
+  ctx.fillRect(
+    heroDrawX + PLAYER_OFFSET_X,
+    heroDrawY + PLAYER_OFFSET_Y,
+    PLAYER_HIT_W,
+    PLAYER_HIT_H
+  );
+  ctx.restore();
+
+  drawShieldEffect(ctx, "back");
+  drawTorchHeld(ctx, "back");
+  drawTorchTrailParticles(ctx);
+
+  if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
+    ctx.drawImage(
+      images.hero,
+      sx, sy, HERO_W, HERO_H,
+      heroDrawX, heroDrawY,
+      HERO_DRAW_W, HERO_DRAW_H
+    );
+  }
+
+  drawTorchHeld(ctx, "front");
+  drawShieldEffect(ctx, "front");
+
+  drawParticulasBumerang(ctx);
+  drawBumerangs(ctx);
+
+  drawParticulasPicoEscabador(ctx);
+  drawAtaquesPicoEscabador(ctx);
+
+  drawParticulasEspadaMadera(ctx);
+  drawAtaquesEspadaMadera(ctx);
+  drawParticulasEspadaHierro(ctx);
+  drawAtaquesEspadaHierro(ctx);
+  
+}
 // =======================================================================================
 // Lógica de pintura en canvas (inicio)
 // =======================================================================================
 
 function draw(images) {
-  // =============================
-// ✨ Brillo global del juego
-// =============================
-//ctx.shadowColor = "#00ffcc";
-ctx.shadowColor = "black";
-ctx.shadowBlur = 3;
+
+  ctx.shadowColor = "black";
+  ctx.shadowBlur = 3;
 
   // reset
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -11308,7 +11533,7 @@ ctx.shadowBlur = 3;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     return;
   }
-  
+
   // 🟡 MODO CHECKING
   if (gameMode === "checking") {
     ctx.fillStyle = "black";
@@ -11446,15 +11671,12 @@ ctx.shadowBlur = 3;
 
       const current = professions[professionIndex];
 
-      // ✅ Caja + flechas desde UNA sola fuente (getProfessionUI)
       const ui = getProfessionUI();
       const { boxX, boxY, boxW, boxH, btnSize, leftX, leftY, rightX, rightY } = ui;
 
-      // Caja principal
       ctx.strokeStyle = "white";
       ctx.strokeRect(boxX, boxY, boxW, boxH);
 
-      // Flechas
       ctx.fillStyle = "white";
       ctx.fillRect(leftX, leftY, btnSize, btnSize);
       ctx.fillRect(rightX, rightY, btnSize, btnSize);
@@ -11465,25 +11687,21 @@ ctx.shadowBlur = 3;
       ctx.fillText("◀", leftX + btnSize / 2, leftY + 22);
       ctx.fillText("▶", rightX + btnSize / 2, rightY + 22);
 
-      // Indicador centro
       ctx.fillStyle = "white";
       ctx.fillText(`${professionIndex + 1}/${professions.length}`, boxX + boxW / 2, leftY + 12);
       ctx.textAlign = "start";
 
-      // Contenido dentro del cuadro (clip + scroll)
       const pad = 8;
       const contentX = boxX + pad;
       const contentY = boxY + pad;
       const contentW = boxW - pad * 2;
       const contentH = boxH - pad * 2;
 
-      // título
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       ctx.fillText(current.name, boxX + boxW / 2, contentY - 20);
       ctx.textAlign = "start";
 
-      // clip
       ctx.save();
       ctx.beginPath();
       ctx.rect(contentX, contentY, contentW, contentH - 14);
@@ -11507,7 +11725,6 @@ ctx.shadowBlur = 3;
 
       ctx.restore();
 
-      // ===== Botón volver (profesiones) =====
       ctx.save();
 
       ctx.font = `${PROF_BACK_FONT_SIZE}px ${PROF_BACK_FONT_FAMILY}`;
@@ -11535,7 +11752,6 @@ ctx.shadowBlur = 3;
 
       ctx.restore();
 
-      // ===== Botón CONTINUAR (profesiones) =====
       ctx.save();
 
       const continueW = PROF_CONT_W;
@@ -11548,7 +11764,6 @@ ctx.shadowBlur = 3;
       const continueY = LOGICAL_H - continueH - PROF_CONT_BOTTOM_MARGIN;
 
       if (PROF_CONT_SHOW_HITBOX) {
-        //ctx.fillStyle = "rgba(255,0,0,0.5)";
         ctx.fillRect(continueX, continueY, continueW, continueH);
       }
 
@@ -11566,7 +11781,6 @@ ctx.shadowBlur = 3;
 
       ctx.restore();
 
-      // guarda hitbox exacto para el click
       window.__profContinueHit = { x: continueX, y: continueY, w: continueW, h: continueH };
 
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -11580,78 +11794,67 @@ ctx.shadowBlur = 3;
   // 🟢 MODO PLAYING
   if (gameMode === "playing") {
 
-        if (gameOverActive) {
+    if (gameOverActive) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawGameOverScreen();
       return;
     }
+
     setGameState("gamePlay");
-if (!gameAssetsLoaded) {
 
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!gameAssetsLoaded) {
 
-  // Animación suave de barra
-  loadingProgress += (loadingTarget - loadingProgress) * 0.08;
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      loadingProgress += (loadingTarget - loadingProgress) * 0.08;
 
-// 🔵 LOGO CENTRADO ARRIBA DE LA BARRA
-if (logoImg) {
+      if (logoImg) {
+        const logoMaxWidth = 220;
+        const logoRatio = logoImg.height / logoImg.width;
 
-  const logoMaxWidth = 220;  // puedes ajustar tamaño aquí
-  const logoRatio = logoImg.height / logoImg.width;
+        const logoW = logoMaxWidth;
+        const logoH = logoW * logoRatio;
 
-  const logoW = logoMaxWidth;
-  const logoH = logoW * logoRatio;
+        const logoX = (canvas.width - logoW) / 2;
+        const barY = canvas.height / 2 + 40;
+        const logoY = barY - logoH - 40;
 
-  const logoX = (canvas.width - logoW) / 2;
+        ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+      }
 
-  // La barra está en:
+      const barWidth = 300;
+      const barHeight = 18;
 
-  const barY = canvas.height / 2 + 40;
+      const barX = (canvas.width - barWidth) / 2;
+      const barY = canvas.height / 2 + 40;
 
-  // Colocamos el logo arriba de la barra
-  const logoY = barY - logoH - 40;
+      ctx.fillStyle = "#222";
+      ctx.fillRect(barX, barY, barWidth, barHeight);
 
-  ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
-}
-  // 🔵 BARRA DE CARGA
-  const barWidth = 300;
-  const barHeight = 18;
+      ctx.shadowColor = "#00ffcc";
+      ctx.fillStyle = "#00ffcc";
+      ctx.fillRect(barX, barY, barWidth * loadingProgress, barHeight);
 
-  const barX = (canvas.width - barWidth) / 2;
-  const barY = canvas.height / 2 + 40;
+      ctx.strokeStyle = "white";
+      ctx.strokeRect(barX, barY, barWidth, barHeight);
 
-  // Fondo barra
-  ctx.fillStyle = "#222";
-  ctx.fillRect(barX, barY, barWidth, barHeight);
+      ctx.fillStyle = "white";
+      ctx.font = "16px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        Math.floor(loadingProgress * 100) + "%",
+        canvas.width / 2,
+        barY + barHeight + 25
+      );
 
-  // Progreso
-  ctx.shadowColor = "#00ffcc";
-  ctx.fillStyle = "#00ffcc";
-  ctx.fillRect(barX, barY, barWidth * loadingProgress, barHeight);
-
-  // Borde
-  ctx.strokeStyle = "white";
-  ctx.strokeRect(barX, barY, barWidth, barHeight);
-
-  // Texto %
-  ctx.fillStyle = "white";
-  ctx.font = "16px monospace";
-  ctx.textAlign = "center";
-  ctx.fillText(
-    Math.floor(loadingProgress * 100) + "%",
-    canvas.width / 2,
-    barY + barHeight + 25
-  );
-
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  if (gameOverActive) {
-  drawGameOverScreen();
-}
-  return; 
-}
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      if (gameOverActive) {
+        drawGameOverScreen();
+      }
+      return;
+    }
 
     const viewW = canvas.width / CAMERA_ZOOM;
     const viewH = canvas.height / CAMERA_ZOOM;
@@ -11670,162 +11873,109 @@ if (logoImg) {
     ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
     ctx.translate(-camCenterX, -camCenterY);
 
-ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
-drawSkateParticles(ctx);
+    ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
+    drawSkateParticles(ctx);
 
-// Dibujar items
-pruebaDeItems();
-drawItems(ctx);
+    pruebaDeItems();
+    drawItems(ctx);
 
-//Bloques de arcilla
-drawParticulasArcilla(ctx);
+    drawParticulasArcilla(ctx);
 
-drawExplosionesJefe(ctx, "back");
-drawParticulasVolcanJefe(ctx, "back");
-drawAtaquesEspecialesJefeBack(ctx);
+    drawExplosionesJefe(ctx, "back");
+    drawParticulasVolcanJefe(ctx, "back");
+    drawAtaquesEspecialesJefeBack(ctx);
 
-drawNPCs(ctx);
-drawNPCsAmbiente(ctx);
-drawEnemigos(ctx);
-drawDisparosEnemigosArmados(ctx);
+    drawNPCs(ctx);
+    drawNPCsAmbiente(ctx);
+    drawEnemigos(ctx);
 
-drawExplosionesJefe(ctx, "front");
-drawParticulasVolcanJefe(ctx, "front");
-drawAtaquesEspecialesJefeFront(ctx);
+    drawDisparosEnemigosArmados(ctx);
 
+    drawExplosionesJefe(ctx, "front");
+    drawParticulasVolcanJefe(ctx, "front");
+    drawAtaquesEspecialesJefeFront(ctx);
 
-//--Efecto disparo lazer
-drawDisparosLazer(ctx);
+    drawDisparosLazer(ctx);
 
+    for (let i = skateParticles.length - 1; i >= 0; i--) {
+      const p = skateParticles[i];
 
+      p.life -= 16;
+      p.x += p.vx;
+      p.y += p.vy;
 
-//--Efecto Skeit de patines
-for (let i = skateParticles.length - 1; i >= 0; i--) {
+      const alpha = p.life / 500;
 
-  const p = skateParticles[i];
+      ctx.save();
+      ctx.globalAlpha = alpha;
 
-  p.life -= 16;
-  p.x += p.vx;
-  p.y += p.vy;
+      ctx.fillStyle = "#00ffcc";
+      ctx.shadowColor = "#00ffcc";
+      ctx.shadowBlur = 12;
 
-  const alpha = p.life / 500;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
 
-  ctx.save();
-  ctx.globalAlpha = alpha;
+      ctx.restore();
 
-  ctx.fillStyle = "#00ffcc";
-  ctx.shadowColor = "#00ffcc";
-  ctx.shadowBlur = 12;
+      if (p.life <= 0) {
+        skateParticles.splice(i,1);
+      }
+    }
 
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-  ctx.fill();
+    const heroDrawX = player.x + (espadaMaderaLunge.offsetX || 0);
+    const heroDrawY = player.y + (espadaMaderaLunge.offsetY || 0);
 
-  ctx.restore();
+    window.heroDrawX = heroDrawX;
+    window.heroDrawY = heroDrawY;
 
-  if (p.life <= 0) {
-    skateParticles.splice(i,1);
-  }
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const t = floatingTexts[i];
 
-}
+      ctx.save();
+      ctx.fillStyle = t.color || "#ff1a1a";
+      ctx.shadowColor = t.glow || "#ff0000";
+      ctx.shadowBlur = 16;
+      ctx.font = "20px arcade";
+      ctx.textAlign = "center";
+      ctx.fillText(t.valor, t.x, t.y);
+      ctx.restore();
 
-// Dibujar avatar
-const heroDrawX = player.x + (espadaMaderaLunge.offsetX || 0);
-const heroDrawY = player.y + (espadaMaderaLunge.offsetY || 0);
+      t.y -= 0.4;
+      t.vida -= 16;
 
-ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
+      if (t.vida <= 0) {
+        floatingTexts.splice(i, 1);
+      }
+    }
 
-// 🔶 DEBUG BLOQUE JUGADOR (debajo del sprite)
-ctx.save();
-//ctx.fillStyle = "rgba(255,255,0,0.35)";
-ctx.fillStyle = "transparent";
-ctx.fillRect(
-  heroDrawX + PLAYER_OFFSET_X,
-  heroDrawY + PLAYER_OFFSET_Y,
-  PLAYER_HIT_W,
-  PLAYER_HIT_H
-);
-ctx.restore();
+    const row = rowForFacing(player.facing);
+    const frameToDraw = espadaMaderaFrameOverride.active
+      ? espadaMaderaFrameOverride.frame
+      : player.frame;
 
-//--Visual de vida restada o sumada (inicio)
-for (let i = floatingTexts.length - 1; i >= 0; i--) {
-  const t = floatingTexts[i];
+    const sx = frameToDraw * HERO_W;
+    const sy = row * HERO_H;
 
-  ctx.save();
-  ctx.fillStyle = t.color || "#ff1a1a";
-  ctx.shadowColor = t.glow || "#ff0000";
-  ctx.shadowBlur = 16;
-  ctx.font = "20px arcade";
-  ctx.textAlign = "center";
-  ctx.fillText(t.valor, t.x, t.y);
-  ctx.restore();
+drawArcillaCapa(ctx, "back");
+drawAmbienteCapa(ctx, "back");
 
-  t.y -= 0.4;
-  t.vida -= 16;
+drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy);
 
-  if (t.vida <= 0) {
-    floatingTexts.splice(i, 1);
-  }
-}
-//--Visual de vida restada o sumada (fin)
+drawAmbienteCapa(ctx, "front");
+drawArcillaCapa(ctx, "front");
 
-const row = rowForFacing(player.facing);
-const frameToDraw = espadaMaderaFrameOverride.active
-  ? espadaMaderaFrameOverride.frame
-  : player.frame;
+    drawBubblesNPCsAmbiente(ctx);
+    drawBubblesEnemigos(ctx);
 
-const sx = frameToDraw * HERO_W;
-const sy = row * HERO_H;
+    drawParticulasImpactoBloque(ctx);
 
-drawShieldEffect(ctx, "back");
-
-drawTorchHeld(ctx, "back");
-drawTorchTrailParticles(ctx);
-
-if (player.blinkTimer <= 0 || Math.floor(player.blinkTimer / 60) % 2 === 0) {
-ctx.drawImage(
-  images.hero,
-  sx, sy, HERO_W, HERO_H,
-  heroDrawX, heroDrawY,
-  HERO_DRAW_W, HERO_DRAW_H
-);
-}
-
-drawTorchHeld(ctx, "front");
-drawShieldEffect(ctx, "front");
-
-//--Efectos bumerang
-drawParticulasBumerang(ctx);
-drawBumerangs(ctx);
-
-//--Efectp pico escabador
-drawParticulasPicoEscabador(ctx);
-drawAtaquesPicoEscabador(ctx);
-
-//--Efecto Espadas (dibujar espadazo)
-drawParticulasEspadaMadera(ctx);
-drawAtaquesEspadaMadera(ctx);
-drawParticulasEspadaHierro(ctx);
-drawAtaquesEspadaHierro(ctx);
-
-//Elementos ambientes dinamicos ambiente.json
-drawAmbiente(ctx);
-
-
-// Dibujar globos de chat de NPC ambiente después del jugador
-drawBubblesNPCsAmbiente(ctx);
-drawBubblesEnemigos(ctx);
-
-//Chispas disparo
-drawParticulasImpactoBloque(ctx);
-
-// oscuridad del mapa
+    // oscuridad del mapa
 drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
 
+    ctx.restore();
 
-  ctx.restore();
-
-    /*Sistema de muestreo de coordenadas en el mapá(inicio) */
     ctx.save();
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
@@ -11835,158 +11985,135 @@ drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
     ctx.fillStyle = "lime";
     ctx.font = "18px arcade";
     ctx.textAlign = "start";
-    ctx.fillText(`X:${Math.floor(player.x)} Y:${Math.floor(player.y)}`, 24, 34); // posición de coordenadas en canvas
+    ctx.fillText(`X:${Math.floor(player.x)} Y:${Math.floor(player.y)}`, 24, 34);
 
     ctx.restore();
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-  /* lógica cosmoneda (Inicio+)*/
-// =============================
-// 💰 HUD Cosmonedas (icono + valor)
-// =============================
-if (cosmonedaImg) {
-  ctx.save();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (cosmonedaImg) {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-  const size = 32;
-  const margin = 12;
-  const spacing = 8;
+      const size = 32;
+      const margin = 12;
+      const spacing = 8;
 
-  ctx.font = "18px arcade";
-  ctx.textBaseline = "middle";
+      ctx.font = "18px arcade";
+      ctx.textBaseline = "middle";
 
-  const valueText = String(cosmonedas);
-  const textWidth = ctx.measureText(valueText).width;
+      const valueText = String(cosmonedas);
+      const textWidth = ctx.measureText(valueText).width;
 
-  // Ancho total del bloque (icono + espacio + texto)
-  const totalWidth = size + spacing + textWidth;
+      const totalWidth = size + spacing + textWidth;
+      const startX = canvas.width - totalWidth - margin;
+      const centerY = margin + size / 2;
 
-  // Posición inicial del bloque completo
-  const startX = canvas.width - totalWidth - margin;
-  const centerY = margin + size / 2;
+      ctx.drawImage(cosmonedaImg, startX, margin, size, size);
 
-  // Dibujar icono primero
-  ctx.drawImage(cosmonedaImg, startX, margin, size, size);
+      ctx.fillStyle = "yellow";
+      ctx.textAlign = "left";
+      ctx.fillText(valueText, startX + size + spacing, centerY);
 
-  // Dibujar número después del icono
-  ctx.fillStyle = "yellow";
-  ctx.textAlign = "left";
-  ctx.fillText(valueText, startX + size + spacing, centerY);
-
-  ctx.restore();
-}
-/* lógica cosmoneda (Fin+)*/
-
-drawLifeBar(ctx, canvas, pdv, PDV_MAX);//Lógica de vida
-
-// =============================
-// ⚔️ HUD Equipamiento (inicio)
-// =============================
-if (window.equipSlots && window.equipSlots.length) {
-  ctx.save();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.imageSmoothingEnabled = false;
-
-  const barWidth = 18;
-  const barHeight = 140;
-  const marginLeft = 12;
-
-  const barX = marginLeft;
-  const barY = (canvas.height / 2) - (barHeight / 2);
-
-  const slotSize = 42; // más grande para dedo
-  const slotGap = 10;
-
-  const startX = barX;
-  const totalHudHeight = (slotSize * window.equipSlots.length) + (slotGap * (window.equipSlots.length - 1));
-  const startY = barY - totalHudHeight - 14;
-
-  window.hudEquipHitboxes = [];
-
-  window.equipSlots.forEach((item, i) => {
-    const x = startX;
-    const y = startY + i * (slotSize + slotGap);
-
-    window.hudEquipHitboxes.push({
-      slotIndex: i,
-      x,
-      y,
-      w: slotSize,
-      h: slotSize
-    });
-
-    // fondo del slot
-    ctx.fillStyle = "#111";
-    ctx.fillRect(x, y, slotSize, slotSize);
-
-    ctx.strokeStyle = "#00ffcc";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, slotSize, slotSize);
-
-    if (!item) return;
-
-    if (!item._hudImg) {
-      item._hudImg = new Image();
-      item._hudImg.src = item.imagen;
+      ctx.restore();
     }
 
-    if (item._hudImg.complete && item._hudImg.naturalWidth > 0) {
-      ctx.drawImage(item._hudImg, x + 3, y + 3, slotSize - 6, slotSize - 6);
+    drawLifeBar(ctx, canvas, pdv, PDV_MAX);
+
+    if (window.equipSlots && window.equipSlots.length) {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+
+      const barWidth = 18;
+      const barHeight = 140;
+      const marginLeft = 12;
+
+      const barX = marginLeft;
+      const barY = (canvas.height / 2) - (barHeight / 2);
+
+      const slotSize = 42;
+      const slotGap = 10;
+
+      const startX = barX;
+      const totalHudHeight = (slotSize * window.equipSlots.length) + (slotGap * (window.equipSlots.length - 1));
+      const startY = barY - totalHudHeight - 14;
+
+      window.hudEquipHitboxes = [];
+
+      window.equipSlots.forEach((item, i) => {
+        const x = startX;
+        const y = startY + i * (slotSize + slotGap);
+
+        window.hudEquipHitboxes.push({
+          slotIndex: i,
+          x,
+          y,
+          w: slotSize,
+          h: slotSize
+        });
+
+        ctx.fillStyle = "#111";
+        ctx.fillRect(x, y, slotSize, slotSize);
+
+        ctx.strokeStyle = "#00ffcc";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, slotSize, slotSize);
+
+        if (!item) return;
+
+        if (!item._hudImg) {
+          item._hudImg = new Image();
+          item._hudImg.src = item.imagen;
+        }
+
+        if (item._hudImg.complete && item._hudImg.naturalWidth > 0) {
+          ctx.drawImage(item._hudImg, x + 3, y + 3, slotSize - 6, slotSize - 6);
+        }
+
+        const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
+        const usosMaximos = item.usos_maximos ?? usosActuales;
+        const esAgotable = item.agotable === true;
+
+        if (esAgotable && usosMaximos > 0) {
+          const barraX = x + 2;
+          const barraY = y - 7;
+          const barraW = slotSize - 4;
+          const barraH = 5;
+          const progreso = Math.max(0, Math.min(1, usosActuales / usosMaximos));
+
+          ctx.fillStyle = "#222";
+          ctx.fillRect(barraX, barraY, barraW, barraH);
+
+          ctx.fillStyle = "#00ffcc";
+          ctx.fillRect(barraX, barraY, barraW * progreso, barraH);
+
+          ctx.strokeStyle = "white";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(barraX, barraY, barraW, barraH);
+
+          ctx.fillStyle = "black";
+          ctx.fillRect(x + slotSize - 18, y + slotSize - 14, 16, 12);
+
+          ctx.fillStyle = "white";
+          ctx.font = "10px arcade";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(String(usosActuales), x + slotSize - 10, y + slotSize - 8);
+        }
+      });
+
+      ctx.restore();
+    } else {
+      window.hudEquipHitboxes = [];
     }
-
-const usosActuales = item.usos ?? item.usos_restantes ?? item.cantidad ?? 1;
-const usosMaximos = item.usos_maximos ?? usosActuales;
-const esAgotable = item.agotable === true;
-
-if (esAgotable && usosMaximos > 0) {
-  const barraX = x + 2;
-  const barraY = y - 7;
-  const barraW = slotSize - 4;
-  const barraH = 5;
-  const progreso = Math.max(0, Math.min(1, usosActuales / usosMaximos));
-
-  // fondo barra
-  ctx.fillStyle = "#222";
-  ctx.fillRect(barraX, barraY, barraW, barraH);
-
-  // progreso
-  ctx.fillStyle = "#00ffcc";
-  ctx.fillRect(barraX, barraY, barraW * progreso, barraH);
-
-  // borde
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(barraX, barraY, barraW, barraH);
-
-  // contador solo para items agotables
-  ctx.fillStyle = "black";
-  ctx.fillRect(x + slotSize - 18, y + slotSize - 14, 16, 12);
-
-  ctx.fillStyle = "white";
-  ctx.font = "10px arcade";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(String(usosActuales), x + slotSize - 10, y + slotSize - 8);
-}
-  });
-
-  ctx.restore();
-} else {
-  window.hudEquipHitboxes = [];
-}
-// =============================
-// ⚔️ HUD Equipamiento (fin)
-// =============================
 
     return;
-    /*Sistema de muestreo de coordenadas en el mapá(fin) */
-    
   }
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-
 }
+
 
 // =======================================================================================
 // Lógica de pintura en canvas (fin)

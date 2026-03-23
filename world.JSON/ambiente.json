@@ -9,6 +9,22 @@
     "w": 120,
     "h": 40,
     "imagen": null,
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+    {
+    "zona_id": "rectangulo_rojo_02",
+    "color": "red",
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 3400,
+    "y": 1100,
+    "w": 280,
+    "h": 15,
+    "imagen": null,
+    "zIndexBase": 3300,
     "sprites_1x10": null,
     "velocidad_movimiento": null,
     "sonido_ambiente": null
@@ -20,9 +36,10 @@
     "funcion": null,
     "x": 3400,
     "y": 1000,
-    "w": 180,
+    "w": 280,
     "h": 120,
     "imagen": "./assets/spriteAmbiente/paredLaboratorio.png",
+    "zIndexBase": 3300,
     "sprites_1x10": null,
     "velocidad_movimiento": null,
     "sonido_ambiente": null
@@ -37,6 +54,7 @@
     "w": 140,
     "h": 140,
     "imagen": null,
+    "zIndexBase": 3300,
     "sprites_1x10": "./assets/spriteAmbiente/sprites ambiente.png",
     "velocidad_movimiento": 1.1,
     "sonido_ambiente": null
@@ -51,6 +69,7 @@
     "w": 120,
     "h": 120,
     "imagen": "./assets/spriteAmbiente/nucleo.png",
+    "zIndexBase": 3300,
     "sprites_1x10": null,
     "velocidad_movimiento": null,
     "sonido_ambiente": null

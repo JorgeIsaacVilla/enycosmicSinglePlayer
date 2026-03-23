@@ -1445,135 +1445,101 @@ objetos visibles como cofres, botones, consolas
 
 Ambos casos ejecutan acciones al hacer clic.
 
-Ejemplo de uso ambiente.json:
+REGLAS DE USO PARA SISTEMAS DE BLOQUE:
+Todos los mapas tienen las 4 reglas de la fisica del juego por defecto:
+1. mapa oscuro (lógicas de modo Oscuro universales)
+2. sistema de coliciones
+3. activación de funciones segun clic a sistema de bloques cliqueables (vacio/ ideal para crear nuevas fisicas según se necesite en cada mapa individual)
+4. sprites_1x4 para movimiento de elmentos visuales
 
-{
-  "objetos": [
+todos los mapas tendran estas lógicas como fisicas del juego, el cual se deben combinar para crear nuevas funciones según se necesite en cada mapa o mini-mapa. un ejemplo es: (Activación de botones en el suelo, para abrir puertas) - Esta fisica no está desarrollada en el protomapa (sistema de mapa universal, maqueta principal para nuevos mapas) pero sin embargo, esta función se puede crear espesificamente en el mapa que se necesite, ya que los estandares de bloque permiten crear y usar ese tipo de funciones.
+
+Reglas:
+
+1- Al combinar una pared sistema visual no cliqueable, con un bloque colicionador no cliqueable para delimitación de zonas, pero esta imagen tiene ventanas, Entonces el bloque colicionador, tiene que ser de minimo h:20, para de esta manera no permitir la puesta de bloques de arcila por pate del usuario
+
+2- el zIndexBase es para determinar el rango de la lógica de poner adelante o detras del objeto. el estandar es 3300, pero se puede calcular el minimo con (y+h)*1.25
+
+3- Absolutamente todos los mapas principales deben tener una tienda de ITEMS. esta tienda se llamará con los 3 tipos de bloques, activando la función universal de tienda con toda su interfaz.
+- bloque visual de vendedor
+- bloque colicionable con ratio de h:20 w:el tamaño_de_w_de_la_tienda
+- bloque cliqueable, para llamar la funcion de tienda de items
+
+Ejemplo de uso ambiente.json:
+[
+  {
+    "zona_id": "rectangulo_rojo_01",
+    "color": "red",
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 3260,
+    "y": 1030,
+    "w": 120,
+    "h": 40,
+    "imagen": null,
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
     {
-      "zona_id": "pared_laberinto_01",
-      "color": "red",
-      "tipo": "colisionable",
-      "funcion": null,
-      "x": 3001,
-      "y": 4875,
-      "w": 380,
-      "h": 20,
-      "imagen": null,
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": null
-    },
+    "zona_id": "rectangulo_rojo_02",
+    "color": "red",
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 3400,
+    "y": 1100,
+    "w": 180,
+    "h": 15,
+    "imagen": null,
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+  {
+    "zona_id": "pared_laboratorio_01",
+    "color": null,
+    "tipo": "visual",
+    "funcion": null,
+    "x": 3400,
+    "y": 1000,
+    "w": 180,
+    "h": 120,
+    "imagen": "./assets/spriteAmbiente/paredLaboratorio.png",
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+  {
+    "zona_id": "fuente_laberinto_01",
+    "color": null,
+    "tipo": "visual",
+    "funcion": null,
+    "x": 3180,
+    "y": 1160,
+    "w": 140,
+    "h": 140,
+    "imagen": null,
+    "zIndexBase": 3300,
+    "sprites_1x10": "./assets/spriteAmbiente/sprites ambiente.png",
+    "velocidad_movimiento": 1.1,
+    "sonido_ambiente": null
+  },
     {
-      "zona_id": "roca_decorativa_01",
-      "color": null,
-      "tipo": "visual",
-      "funcion": null,
-      "x": 2870,
-      "y": 4780,
-      "w": 64,
-      "h": 64,
-      "imagen": "./assets/ambiente/roca_01.svg",
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": null
-    },
-    {
-      "zona_id": "terminal_mision_01",
-      "color": null,
-      "tipo": "cliqueable",
-      "funcion": "activarTerminalMision01",
-      "x": 3120,
-      "y": 4820,
-      "w": 48,
-      "h": 48,
-      "imagen": "./assets/ambiente/terminal_01.svg",
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": null
-    },
-    {
-      "zona_id": "arbusto_bloqueo_01",
-      "color": null,
-      "tipo": "colisionable_visual",
-      "funcion": null,
-      "x": 2940,
-      "y": 4910,
-      "w": 96,
-      "h": 64,
-      "imagen": "./assets/ambiente/arbusto_grande.svg",
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": null
-    },
-    {
-      "zona_id": "agua_animada_01",
-      "color": null,
-      "tipo": "visual",
-      "funcion": null,
-      "x": 3200,
-      "y": 4700,
-      "w": 128,
-      "h": 128,
-      "imagen": null,
-      "sprites_1x4": "./assets/ambiente/agua_animada_1x4.svg",
-      "velocidad_movimiento": 1.1,
-      "sonido_ambiente": "./assets/audio/agua_suave.mp3"
-    },
-    {
-      "zona_id": "zona_dialogo_invisible_01",
-      "color": "rgba(255,255,0,0.25)",
-      "tipo": "cliqueable",
-      "funcion": "activarDialogoZona01",
-      "x": 3050,
-      "y": 4760,
-      "w": 140,
-      "h": 90,
-      "imagen": null,
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": null
-    },
-    {
-      "zona_id": "puerta_bunker_01",
-      "color": null,
-      "tipo": "colisionable_cliqueable_visual",
-      "funcion": "abrirPuertaBunker01",
-      "x": 3340,
-      "y": 4860,
-      "w": 80,
-      "h": 120,
-      "imagen": "./assets/ambiente/puerta_bunker.svg",
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": "./assets/audio/puerta_metalica.mp3"
-    },
-    {
-      "zona_id": "arbol_animado_bloqueo_01",
-      "color": null,
-      "tipo": "colisionable_visual",
-      "funcion": null,
-      "x": 2760,
-      "y": 4680,
-      "w": 96,
-      "h": 128,
-      "imagen": null,
-      "sprites_1x4": "./assets/ambiente/arbol_viento_1x4.svg",
-      "velocidad_movimiento": 0.8,
-      "sonido_ambiente": "./assets/audio/viento_hojas.mp3"
-    },
-    {
-      "zona_id": "altar_portal_01",
-      "color": null,
-      "tipo": "cliqueable_visual",
-      "funcion": "activarPortalProtoMapa01",
-      "x": 3480,
-      "y": 4720,
-      "w": 96,
-      "h": 96,
-      "imagen": "./assets/ambiente/altar_portal.svg",
-      "sprites_1x4": null,
-      "velocidad_movimiento": null,
-      "sonido_ambiente": "./assets/audio/zumbido_portal.mp3"
+    "zona_id": "portal_dimensional_01",
+    "color": null,
+    "tipo": "cliqueable",
+    "funcion": "portalDimencional",
+    "x": 3470,
+    "y": 1180,
+    "w": 120,
+    "h": 120,
+    "imagen": "./assets/spriteAmbiente/nucleo.png",
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
     }
-  ]
-}
+]
