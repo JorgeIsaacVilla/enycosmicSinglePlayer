@@ -3483,7 +3483,7 @@ function showCombinacionEstadoModal(tipo) {
 }
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -6296,6 +6296,76 @@ function drawEnemigos(ctx) {
     );
     ctx.textAlign = "start";
   }
+}
+
+function entidadEstaEnZonaIluminada(entidad) {
+  if (!mapaOscuro) return true;
+  if (!entidad) return false;
+
+  const cx = entidad.x + entidad.w / 2;
+  const cy = entidad.y + entidad.h * 0.34;
+
+  // luz de la antorcha en mano del jugador
+  if (antorchaActiva?.active) {
+    const a = getTorchAnchor();
+    const dx = cx - a.x;
+    const dy = cy - (a.y - 18);
+    const dist = Math.hypot(dx, dy);
+
+    if (dist <= TORCH_LIGHT_RADIUS) {
+      return true;
+    }
+  }
+
+  // luz de antorchas colocadas en el suelo
+  for (const obj of (ambienteObjetos || [])) {
+    if (!obj || obj.subtipo !== "antorcha_suelo") continue;
+
+    const luzX = obj.x + obj.w / 2;
+    const luzY = obj.y + obj.h - 26;
+    const radio = Number(obj.radioLuz || TORCH_LIGHT_RADIUS);
+
+    const dx = cx - luzX;
+    const dy = cy - luzY;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist <= radio) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function drawOjosDemoniacos(ctx, entidad) {
+  if (!mapaOscuro) return;
+  if (!entidad) return;
+
+  // si la entidad ya está en una zona iluminada, no dibujar ojos
+  if (entidadEstaEnZonaIluminada(entidad)) return;
+
+  const cx = entidad.x + entidad.w / 2;
+  const eyeY = entidad.y + entidad.h * 0.34;
+  const separacion = entidad.w * 0.12;
+  const radio = Math.max(2.5, entidad.w * 0.045);
+
+  const pulse = 0.72 + ((Math.sin(performance.now() * 0.012) + 1) * 0.14);
+
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  ctx.fillStyle = "#ff0033";
+  ctx.shadowColor = "#ff0033";
+  ctx.shadowBlur = 18;
+
+  ctx.beginPath();
+  ctx.arc(cx - separacion, eyeY, radio, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx + separacion, eyeY, radio, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
 }
 
 function drawBubbleEnemigo(ctx, enemy) {
@@ -10305,7 +10375,8 @@ async function cargarItemsJSON(){
  cargarItemsEnMapa();
 }
 
-/*
+/* para cargar todos los items hasta que se acaben. hay que descomentar el pruebaDeItems() para que funcione de manera automatica
+
 function pruebaDeItems(){
 
   if(items.length > 0 || itemsData.length === 0) return;
@@ -10336,11 +10407,10 @@ img.src = randomItem.imagen;
 
   }
 
-}
-  */
+}*/
 
+//AL MATAR JEFES SE LLAMA LA FUNCIÓN NUEVA DE pruebaDeItems() PARA DESPLEGAR ITEMS MENOS ESPADA, Y ESCUDO DE HIERRO.
 
-//AL MATAR JEFES
 function dropItemsJefe(enemy){
   console.log("💀 Jefe derrotado → generando items");
   pruebaDeItems();
@@ -13011,6 +13081,19 @@ drawArcillaCapa(ctx, "front");
 
     // oscuridad del mapa
 drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
+
+//Ojos demoniacos encima de la oscuridad
+for (const npc of npcs || []) {
+  drawOjosDemoniacos(ctx, npc);
+}
+
+for (const npc of npcsAmbiente || []) {
+  drawOjosDemoniacos(ctx, npc);
+}
+
+for (const enemy of enemigos || []) {
+  drawOjosDemoniacos(ctx, enemy);
+}
 
     ctx.restore();
 
