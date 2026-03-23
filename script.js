@@ -9105,7 +9105,7 @@ function eliminarEnemigoPorDerrota(enemy) {
 
   if (enemy.ejecucion_script && enemy.ejecucion_script.al_morir) {
     const script = enemy.ejecucion_script.al_morir;
-
+    soltarItemPorMuerte(enemy);
     if (typeof window[script] === "function") {
       window[script](enemy);
     }
@@ -9929,7 +9929,41 @@ img.src = randomItem.imagen;
 
 }
 
+function soltarItemPorMuerte(enemy) {
+  if (!itemsData || itemsData.length === 0) return;
 
+  const random = Math.random();
+
+  let itemElegido = null;
+
+  if (random <= 0.60) {
+    itemElegido = itemsData.find(i => i.id === "cuero");
+  } else if (random <= 0.90) {
+    itemElegido = itemsData.find(i => i.id === "diodo_laser");
+  } else if (random <= 0.95) {
+    itemElegido = itemsData.find(i => i.id === "pistola_laser");
+  }
+
+  if (!itemElegido) return;
+
+  const img = new Image();
+  img.onload = () => {};
+  img.onerror = () => {
+    console.warn("No cargó la imagen del item:", itemElegido.imagen);
+  };
+  img.src = itemElegido.imagen;
+
+  const offsetX = (Math.random() - 0.5) * 60;
+  const offsetY = (Math.random() - 0.5) * 60;
+
+  items.push({
+    ...itemElegido,
+    x: enemy.x + offsetX,
+    y: enemy.y + offsetY,
+    img: img,
+    size: 32
+  });
+}
 
 //función para dibujar items
 
