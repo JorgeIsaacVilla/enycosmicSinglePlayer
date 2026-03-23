@@ -269,7 +269,7 @@
         "y": 118
       },
       "ejecucion_script": {
-        "al_morir": "bossDragonDeComodoDefeated"
+        "al_morir": "dropItemsJefe"
       }
     }
   ]

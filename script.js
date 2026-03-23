@@ -10305,6 +10305,7 @@ async function cargarItemsJSON(){
  cargarItemsEnMapa();
 }
 
+/*
 function pruebaDeItems(){
 
   if(items.length > 0 || itemsData.length === 0) return;
@@ -10321,6 +10322,58 @@ img.onerror = () => {
   console.warn("No cargó la imagen del item:", randomItem.imagen);
 };
 img.src = randomItem.imagen;
+
+    const offsetX = (Math.random() - 0.5) * radius;
+    const offsetY = (Math.random() - 0.5) * radius;
+
+    items.push({
+      ...randomItem,
+      x: player.x + offsetX,
+      y: player.y + offsetY,
+      img: img,
+      size: 32
+    });
+
+  }
+
+}
+  */
+
+
+//AL MATAR JEFES
+function dropItemsJefe(enemy){
+  console.log("💀 Jefe derrotado → generando items");
+  pruebaDeItems();
+}
+
+window.dropItemsJefe = dropItemsJefe;
+
+window.pruebaDeItems = pruebaDeItems;
+//llamar al matar jefe o abrir cofres
+ function pruebaDeItems(){
+
+  if (!window.itemsData || itemsData.length === 0) return;
+
+  const radius = 300;
+
+  // ❌ EXCLUIR ITEMS NO DESEADOS
+  const itemsFiltrados = itemsData.filter(item =>
+    item.id !== "espada_de_hierro" &&
+    item.id !== "escudo_de_hierro"
+  );
+
+  for(let i = 0; i < 10; i++){
+
+    const randomItem = itemsFiltrados[Math.floor(Math.random() * itemsFiltrados.length)];
+
+    if (!randomItem) continue;
+
+    const img = new Image();
+    img.onload = () => {};
+    img.onerror = () => {
+      console.warn("No cargó la imagen del item:", randomItem.imagen);
+    };
+    img.src = randomItem.imagen;
 
     const offsetX = (Math.random() - 0.5) * radius;
     const offsetY = (Math.random() - 0.5) * radius;
@@ -12859,7 +12912,7 @@ function draw(images) {
     ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
     drawSkateParticles(ctx);
 
-    pruebaDeItems();
+    //pruebaDeItems();
     drawItems(ctx);
 
     drawParticulasArcilla(ctx);
