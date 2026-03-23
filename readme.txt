@@ -1465,6 +1465,8 @@ Reglas:
 - bloque colicionable con ratio de h:20 w:el tamaño_de_w_de_la_tienda
 - bloque cliqueable, para llamar la funcion de tienda de items
 
+4- los laterales de las paredes tambien deben estar delimitado por los bloques colicionadores. los espacios laterales no pueden quedar abiertos, si se requiere, lo mejor será usar una pared muy larga. tampoco pueden quedar brechas de espacio sin son un conjunto de varias paredes. lo mejor es crear un solo bloque .svg o .png y escribirlo en el .json si se requieren paredes x-distantes en la misma linea del eje x.
+
 Ejemplo de uso ambiente.json:
 [
   {

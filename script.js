@@ -4999,48 +4999,60 @@ async function cargarNPCsAmbiente() {
 
   const lista = Array.isArray(data) ? data : (data.npcs || []);
 
-return lista.map((npc, index) => ({
-  id: npc.id || `npc_amb_${index}`,
-  nombre: npc.nombre || `NPC-${index + 1}`,
-  imageSrc: npc.imagen,
-  img: null,
+  return lista.map((npc, index) => ({
+    id: npc.id || `npc_amb_${index}`,
+    nombre: npc.nombre || `NPC-${index + 1}`,
+    imageSrc: npc.imagen,
+    img: null,
 
-  x: Number(npc.x) || 0,
-  y: Number(npc.y) || 0,
-  baseX: Number(npc.x) || 0,
-  baseY: Number(npc.y) || 0,
+    x: Number(npc.x) || 0,
+    y: Number(npc.y) || 0,
+    baseX: Number(npc.x) || 0,
+    baseY: Number(npc.y) || 0,
 
-  w: Number(npc.w) || 64,
-  h: Number(npc.h) || 64,
+    w: Number(npc.w) || 64,
+    h: Number(npc.h) || 64,
 
-  velocidad: Number(npc.velocidad) || 1,
- dialogos_automaticos: Array.isArray(npc.dialogos_automaticos) ? npc.dialogos_automaticos : [],
-dialogos_miedo: Array.isArray(npc.dialogos_miedo) ? npc.dialogos_miedo : [],
-  dirX: 0,
-  dirY: 0,
-  isMoving: false,
-  pasosRestantes: 0,
-  tiempoCambioDecision: 0,
-  tiempoMaxDecision: 12000,
-  tiempoMinDecision: 1500,
+    velocidad: Number(npc.velocidad) || 1,
+    dialogos_automaticos: Array.isArray(npc.dialogos_automaticos) ? npc.dialogos_automaticos : [],
+    dialogos_miedo: Array.isArray(npc.dialogos_miedo) ? npc.dialogos_miedo : [],
 
-  bubbleText: "",
-  bubbleTimer: 0,
-  bubbleMaxTime: 2600,
+    dirX: 0,
+    dirY: 0,
+    isMoving: false,
+    pasosRestantes: 0,
+    tiempoCambioDecision: 0,
+    tiempoMaxDecision: 12000,
+    tiempoMinDecision: 1500,
 
-  tiempoHablaCooldown: 0,
-  tiempoMinHabla: 4000,
-  tiempoMaxHabla: 12000,
+    bubbleText: "",
+    bubbleTimer: 0,
+    bubbleMaxTime: 2600,
 
-  facing: "down",
-  frame: 0,
-  frameTimer: 0,
-  frameDurationMs: 160,
-  frameWidth: 64,
-  frameHeight: 64,
-  totalFrames: 4
-}));
+    tiempoHablaCooldown: 0,
+    tiempoMinHabla: 4000,
+    tiempoMaxHabla: 12000,
 
+    facing: "down",
+    frame: 0,
+    frameTimer: 0,
+    frameDurationMs: 170,
+    frameWidth: 64,
+    frameHeight: 64,
+    totalFrames: 4,
+
+    miedoActivo: false,
+
+    rodeando: false,
+    ladoRodeo: null,
+    rodeoDirOriginalX: 0,
+    rodeoDirOriginalY: 0,
+    rodeoDirX: 0,
+    rodeoDirY: 0,
+    rodeoTimer: 0,
+    rodeoIntentos: 0,
+    ultimoObstaculoId: null
+  }));
 }
 //--Lógica Valiente
 function algoritmoValiente(npc, dtMs) {
@@ -7865,18 +7877,17 @@ moverEntidadConColision(
 //--NPC'sambiente (Inicio)
 function updateNPCsAmbiente(dtMs) {
   for (const npc of npcsAmbiente) {
-
-const enemigoCerca = buscarEnemigoCercano(npc);
-
-if (enemigoCerca) {
-  huirDeEnemigo(npc, enemigoCerca);
-
-  if (npc.tiempoHablaCooldown <= 0) {
-    hacerHablarNPCambiente(npc, "miedo");
-  }
-}
-
     if (!npc) continue;
+
+    const enemigoCerca = buscarEnemigoCercano(npc);
+
+    if (enemigoCerca) {
+      huirDeEnemigo(npc, enemigoCerca);
+
+      if (npc.tiempoHablaCooldown <= 0) {
+        hacerHablarNPCambiente(npc, "miedo");
+      }
+    }
 
     if (npc.bubbleTimer > 0) {
       npc.bubbleTimer -= dtMs;
@@ -7894,49 +7905,46 @@ if (enemigoCerca) {
     npc.tiempoCambioDecision -= dtMs;
 
     if (npc.tiempoCambioDecision <= 0 || (npc.isMoving && npc.pasosRestantes <= 0)) {
+      npc.rodeando = false;
+      npc.ladoRodeo = null;
+      npc.rodeoDirOriginalX = 0;
+      npc.rodeoDirOriginalY = 0;
+      npc.rodeoDirX = 0;
+      npc.rodeoDirY = 0;
+      npc.rodeoTimer = 0;
+      npc.rodeoIntentos = 0;
+      npc.ultimoObstaculoId = null;
+
       decidirNuevaAccionNPCambiente(npc);
     }
 
     if (npc.isMoving && npc.pasosRestantes > 0) {
-      const delta = dtMs / 16.6667;
-      const nextX = npc.x + (npc.dirX * npc.velocidad * delta);
-      const nextY = npc.y + (npc.dirY * npc.velocidad * delta);
+      const seMovio = moverNPCambienteConRodeo(npc, dtMs, WORLD_W, WORLD_H);
 
-      const limiteIzq = 0;
-      const limiteArr = 0;
-      const limiteDer = WORLD_W - npc.w;
-      const limiteAbj = WORLD_H - npc.h;
+      if (seMovio) {
+        npc.frameTimer += dtMs;
+        while (npc.frameTimer >= npc.frameDurationMs) {
+          npc.frameTimer -= npc.frameDurationMs;
+          npc.frame = (npc.frame + 1) % npc.totalFrames;
+        }
 
-moverEntidadConColision(
-  npc,
-  clamp(nextX, limiteIzq, limiteDer),
-  clamp(nextY, limiteArr, limiteAbj),
-  npc.w,
-  npc.h
-);
-
-      if (npc.dirX > 0) npc.facing = "right";
-      else if (npc.dirX < 0) npc.facing = "left";
-      else if (npc.dirY > 0) npc.facing = "down";
-      else if (npc.dirY < 0) npc.facing = "up";
-
-      npc.frameTimer += dtMs;
-      while (npc.frameTimer >= npc.frameDurationMs) {
-        npc.frameTimer -= npc.frameDurationMs;
-        npc.frame = (npc.frame + 1) % npc.totalFrames;
+        npc.pasosRestantes -= 1;
+      } else {
+        npc.frame = 0;
+        npc.frameTimer = 0;
       }
 
-      npc.pasosRestantes -= 1;
-
       const pegoBorde =
-        npc.x <= limiteIzq ||
-        npc.x >= limiteDer ||
-        npc.y <= limiteArr ||
-        npc.y >= limiteAbj;
+        npc.x <= 0 ||
+        npc.x >= WORLD_W - npc.w ||
+        npc.y <= 0 ||
+        npc.y >= WORLD_H - npc.h;
 
       if (pegoBorde) {
         npc.pasosRestantes = 0;
         npc.isMoving = false;
+        npc.rodeando = false;
+        npc.rodeoTimer = 0;
       }
     } else {
       npc.frame = 0;
@@ -7944,7 +7952,6 @@ moverEntidadConColision(
     }
   }
 }
-
 //--NPC'sambiente (Fin)
 
 //--Ataques especiales jefe
@@ -11332,6 +11339,7 @@ function procesarImpactoEnemigoContraBloque(enemy, nextX, nextY) {
 }
 //-- lógica arcilla (fin)
 
+/*
 function colisionAmbiente(x, y, w, h) {
 
   for (const obj of ambienteObjetos) {
@@ -11350,6 +11358,8 @@ function colisionAmbiente(x, y, w, h) {
 
   return false;
 }
+
+*/
 
 // =============================
 // funciones ambientes.json elementos cliqueables (inicio)
@@ -11440,6 +11450,135 @@ function colisionAmbiente(x, y, w, h) {
   }
 
   return null;
+}
+
+function obtenerBloqueoNPCambiente(x, y, w, h) {
+  const hitbox = { x, y, w, h };
+
+  for (const obj of (ambienteObjetos || [])) {
+    if (!obj) continue;
+    if (!String(obj.tipo || "").includes("colisionables")) continue;
+
+    const bloque = {
+      x: Number(obj.x) || 0,
+      y: Number(obj.y) || 0,
+      w: Number(obj.w) || 0,
+      h: Number(obj.h) || 0
+    };
+
+    if (rectsOverlap(hitbox, bloque)) {
+      return obj;
+    }
+  }
+
+  return null;
+}
+
+function elegirLadoRodeoNPC(dirX, dirY) {
+  const izquierda = { x: -dirY, y: dirX };
+  const derecha   = { x:  dirY, y: -dirX };
+
+  return Math.random() < 0.5 ? izquierda : derecha;
+}
+
+function iniciarRodeoNPCambiente(npc, obstaculo) {
+  const lado = elegirLadoRodeoNPC(npc.dirX, npc.dirY);
+
+  npc.rodeando = true;
+  npc.rodeoDirOriginalX = npc.dirX;
+  npc.rodeoDirOriginalY = npc.dirY;
+  npc.rodeoDirX = lado.x;
+  npc.rodeoDirY = lado.y;
+  npc.ladoRodeo = (lado.x === -npc.dirY && lado.y === npc.dirX) ? "izquierda" : "derecha";
+  npc.rodeoTimer = 0;
+  npc.rodeoIntentos = (npc.rodeoIntentos || 0) + 1;
+  npc.ultimoObstaculoId = obstaculo?.zona_id || obstaculo?.id || "obstaculo";
+}
+
+function alternarLadoRodeoNPCambiente(npc) {
+  const nuevoX = -npc.rodeoDirX;
+  const nuevoY = -npc.rodeoDirY;
+
+  npc.rodeoDirX = nuevoX;
+  npc.rodeoDirY = nuevoY;
+  npc.ladoRodeo = npc.ladoRodeo === "izquierda" ? "derecha" : "izquierda";
+  npc.rodeoTimer = 0;
+}
+
+function actualizarFacingNPCambiente(npc, dirX, dirY) {
+  if (Math.abs(dirX) > Math.abs(dirY)) {
+    npc.facing = dirX > 0 ? "right" : "left";
+  } else if (dirY !== 0) {
+    npc.facing = dirY > 0 ? "down" : "up";
+  }
+}
+
+function moverNPCambienteConRodeo(npc, dtMs, worldW, worldH) {
+  const delta = dtMs / 16.6667;
+  const limiteIzq = 0;
+  const limiteArr = 0;
+  const limiteDer = worldW - npc.w;
+  const limiteAbj = worldH - npc.h;
+
+  const velocidadPaso = npc.velocidad * delta;
+
+  const dirFrontalX = npc.rodeando ? npc.rodeoDirOriginalX : npc.dirX;
+  const dirFrontalY = npc.rodeando ? npc.rodeoDirOriginalY : npc.dirY;
+
+  const dirMovimientoX = npc.rodeando ? npc.rodeoDirX : npc.dirX;
+  const dirMovimientoY = npc.rodeando ? npc.rodeoDirY : npc.dirY;
+
+  const probeX = clamp(npc.x + (dirMovimientoX * velocidadPaso), limiteIzq, limiteDer);
+  const probeY = clamp(npc.y + (dirMovimientoY * velocidadPaso), limiteArr, limiteAbj);
+  const obstaculoMovimiento = obtenerBloqueoNPCambiente(probeX, probeY, npc.w, npc.h);
+
+  if (!npc.rodeando) {
+    if (obstaculoMovimiento) {
+      iniciarRodeoNPCambiente(npc, obstaculoMovimiento);
+      return false;
+    }
+
+    npc.x = probeX;
+    npc.y = probeY;
+    actualizarFacingNPCambiente(npc, dirMovimientoX, dirMovimientoY);
+    return true;
+  }
+
+  npc.rodeoTimer += dtMs;
+
+  const frenteX = clamp(npc.x + (dirFrontalX * velocidadPaso), limiteIzq, limiteDer);
+  const frenteY = clamp(npc.y + (dirFrontalY * velocidadPaso), limiteArr, limiteAbj);
+  const obstaculoFrente = obtenerBloqueoNPCambiente(frenteX, frenteY, npc.w, npc.h);
+
+  if (!obstaculoFrente) {
+    npc.rodeando = false;
+    npc.dirX = npc.rodeoDirOriginalX;
+    npc.dirY = npc.rodeoDirOriginalY;
+    npc.rodeoDirX = 0;
+    npc.rodeoDirY = 0;
+    npc.rodeoTimer = 0;
+    npc.ultimoObstaculoId = null;
+
+    npc.x = frenteX;
+    npc.y = frenteY;
+    actualizarFacingNPCambiente(npc, npc.dirX, npc.dirY);
+    return true;
+  }
+
+  if (obstaculoMovimiento) {
+    alternarLadoRodeoNPCambiente(npc);
+    return false;
+  }
+
+  npc.x = probeX;
+  npc.y = probeY;
+  actualizarFacingNPCambiente(npc, dirMovimientoX, dirMovimientoY);
+
+  if (npc.rodeoTimer >= 1400) {
+    alternarLadoRodeoNPCambiente(npc);
+  }
+
+  return true;
 }
 
 function moverEntidadConColision(entidad, nextX, nextY, w, h) {
