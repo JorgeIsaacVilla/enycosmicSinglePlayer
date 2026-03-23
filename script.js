@@ -259,6 +259,8 @@ let ambienteAudioCache = {};
 let ambienteViewX = 0;
 let ambienteViewY = 0;
 
+
+
 async function cargarAmbiente() {
   const res = await fetch("./world.JSON/ambiente.json");
   const data = await res.json();
@@ -4895,7 +4897,7 @@ function tomarItemSeleccionado(itemTomado) {
 
   console.log("El usuario tomó el ITEM:", itemTomado.nombre_item);
 
-  
+  const ultimaInstanciaRecogida = itemTomado.instancia_id || null;
 
   items = items.filter(i => i !== itemTomado);
 
@@ -4904,9 +4906,16 @@ function tomarItemSeleccionado(itemTomado) {
   }
 
   const activeMissionId = window.missionSystem.activeMissionId;
-if (activeMissionId) {
-  validarPasoRecolectarItems(activeMissionId);
-}
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+
+  if (items.length === 0) {
+    cargarItemsEnMapa({
+      excluirInstanciaId: ultimaInstanciaRecogida,
+      limpiarAntes: false
+    });
+  }
 
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
@@ -10098,8 +10107,59 @@ function getProfessionUI() {
 // Lógica de items/consumibles/armas (inicio)
 // =======================================================================================
 let itemsData = [];
+
 window.itemsData = itemsData;
 let items = [];// Prueba de items
+
+//Items escondidos en mapa
+let itemsEnMapaConfig = [
+  { instancia_id: "itm_mapa_01", item_id: "cuero", x: 1800, y: 950 },
+  { instancia_id: "itm_mapa_02", item_id: "diodo_lazer", x: 2000, y: 1100 },
+  { instancia_id: "itm_mapa_03", item_id: "pistola_lazer", x: 2200, y: 1000 }
+];
+
+function cargarItemsEnMapa(opciones = {}) {
+  const { excluirInstanciaId = null, limpiarAntes = false } = opciones;
+
+  if (!window.itemsData || !Array.isArray(window.itemsData)) return;
+  if (!Array.isArray(items)) return;
+
+  if (limpiarAntes) {
+    items.length = 0;
+  }
+
+  for (let i = 0; i < itemsEnMapaConfig.length; i++) {
+    const config = itemsEnMapaConfig[i];
+    const instanciaId = config.instancia_id || `map_item_${i}`;
+
+    if (excluirInstanciaId && instanciaId === excluirInstanciaId) continue;
+
+    const yaExiste = items.some(it => it && it.instancia_id === instanciaId);
+    if (yaExiste) continue;
+
+    const baseItem = window.itemsData.find(i => i.id === config.item_id);
+    if (!baseItem) {
+      console.warn("Item no encontrado en JSON:", config.item_id);
+      continue;
+    }
+
+    const img = new Image();
+    img.onload = () => {};
+    img.onerror = () => {
+      console.warn("No cargó la imagen del item:", baseItem.imagen);
+    };
+    img.src = baseItem.imagen;
+
+    items.push({
+      ...baseItem,
+      instancia_id: instanciaId,
+      x: config.x,
+      y: config.y,
+      img: img,
+      size: 32
+    });
+  }
+}
 
 window.inventarioUser = []; //Sincronizar con base de datos wordpress
 
@@ -10242,7 +10302,7 @@ async function cargarItemsJSON(){
   itemsData = data.items;
 
     window.itemsData = itemsData;
-
+ cargarItemsEnMapa();
 }
 
 function pruebaDeItems(){
