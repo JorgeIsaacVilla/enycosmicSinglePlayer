@@ -4917,12 +4917,18 @@ if (activeMissionId) {
 // Mouse hover en desktop
 canvas.addEventListener("mousemove", (e) => {
   if (gameMode !== "playing") return;
+
   hoveredItem = getItemAtCanvasPosition(e.clientX, e.clientY);
+  hoveredCanvasInteractive = getHoveredCanvasInteractive(e.clientX, e.clientY);
+
+  canvas.style.cursor = hoveredCanvasInteractive ? "pointer" : "default";
 });
 
 // Salir del canvas limpia hover
 canvas.addEventListener("mouseleave", () => {
   hoveredItem = null;
+  hoveredCanvasInteractive = null;
+  canvas.style.cursor = "default";
 });
 
 // Click mouse desktop
@@ -10100,7 +10106,107 @@ window.inventarioUser = []; //Sincronizar con base de datos wordpress
 
 let hoveredItem = null;
 
+let hoveredCanvasInteractive = null;
 
+function getCanvasPointerInfo(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+
+  const screenX = clientX - rect.left;
+  const screenY = clientY - rect.top;
+
+  const worldX = (screenX / scale) + camera.x;
+  const worldY = (screenY / scale) + camera.y;
+
+  return { screenX, screenY, worldX, worldY };
+}
+
+function getHoveredCanvasInteractive(clientX, clientY) {
+  const { screenX, screenY, worldX, worldY } = getCanvasPointerInfo(clientX, clientY);
+
+  const hudHitboxes = window.hudEquipHitboxes || [];
+  for (const hb of hudHitboxes) {
+    if (
+      screenX >= hb.x &&
+      screenX <= hb.x + hb.w &&
+      screenY >= hb.y &&
+      screenY <= hb.y + hb.h
+    ) {
+      return {
+        tipo: "hud-equip",
+        x: hb.x,
+        y: hb.y,
+        w: hb.w,
+        h: hb.h
+      };
+    }
+  }
+
+  for (const obj of (ambienteObjetos || [])) {
+    if (!obj) continue;
+    if (!String(obj.tipo || "").includes("cliqueable")) continue;
+
+    if (
+      worldX >= obj.x &&
+      worldX <= obj.x + obj.w &&
+      worldY >= obj.y &&
+      worldY <= obj.y + obj.h
+    ) {
+      return {
+        tipo: "world-cliqueable",
+        x: obj.x,
+        y: obj.y,
+        w: obj.w,
+        h: obj.h
+      };
+    }
+  }
+
+  return null;
+}
+
+function drawHoverCanvasInteractive(ctx, timeNow = performance.now()) {
+  if (!hoveredCanvasInteractive) return;
+
+  const pulse = 0.55 + ((Math.sin(timeNow * 0.008) + 1) * 0.225);
+
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  ctx.strokeStyle = "#00ffcc";
+  ctx.lineWidth = 3;
+  ctx.shadowColor = "#00ffcc";
+  ctx.shadowBlur = 14;
+
+  if (hoveredCanvasInteractive.tipo === "hud-equip") {
+    ctx.restore();
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = pulse;
+    ctx.strokeStyle = "#00ffcc";
+    ctx.lineWidth = 3;
+    ctx.shadowColor = "#00ffcc";
+    ctx.shadowBlur = 14;
+
+    ctx.strokeRect(
+      hoveredCanvasInteractive.x - 2,
+      hoveredCanvasInteractive.y - 2,
+      hoveredCanvasInteractive.w + 4,
+      hoveredCanvasInteractive.h + 4
+    );
+
+    ctx.restore();
+    return;
+  }
+
+  ctx.strokeRect(
+    hoveredCanvasInteractive.x - 2,
+    hoveredCanvasInteractive.y - 2,
+    hoveredCanvasInteractive.w + 4,
+    hoveredCanvasInteractive.h + 4
+  );
+
+  ctx.restore();
+}
 
 /*// 🔧 Items de prueba para el inventario*/
 window.inventarioUser.push({
@@ -12713,6 +12819,8 @@ function draw(images) {
     drawAtaquesEspecialesJefeFront(ctx);
 
     drawDisparosLazer(ctx);
+
+    drawHoverCanvasInteractive(ctx);
 
     for (let i = skateParticles.length - 1; i >= 0; i--) {
       const p = skateParticles[i];
