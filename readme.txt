@@ -1545,3 +1545,23 @@ Ejemplo de uso ambiente.json:
     "sonido_ambiente": null
     }
 ]
+
+//-- Para agregar bloques de arcilla por defecto al juego
+{
+  "zona_id": "test_arcilla_e2_16",
+  "color": null,
+  "tipo": "colisionables",
+  "subtipo": "bloque_arcilla",
+  "funcion": null,
+  "x": 1728,
+  "y": 1216,
+  "w": 64,
+  "h": 64,
+  "imagen": "./assets/items/bloqueArcilla.svg",
+  "zIndexBase": 3300,
+  "sprites_1x10": null,
+  "velocidad_movimiento": null,
+  "sonido_ambiente": null,
+  "pdr": 12,
+  "pdr_max": 12
+},

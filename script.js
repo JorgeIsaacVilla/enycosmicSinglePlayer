@@ -4914,6 +4914,7 @@ let npcsAmbiente = [];
 window.npcsAmbiente = npcsAmbiente;
 
 //--Enemigos
+//--Enemigos
 async function cargarEnemigos() {
   const response = await fetch("./world.JSON/enemy.json");
   const data = await response.json();
@@ -4954,7 +4955,7 @@ async function cargarEnemigos() {
     tiempoMaxDecision: 12000,
 
     persiguiendo: false,
-    radioVision: Number(enemy.radioVision) || 500, //radio vision enemigo
+    radioVision: Number(enemy.radioVision) || 500,
     cooldownDano: 0,
 
     modoCombate: "correr",
@@ -4979,16 +4980,36 @@ async function cargarEnemigos() {
     frameHeight: 64,
     totalFrames: 4,
 
-// =============================
-// 🔥 ATAQUE ESPECIAL JEFE
-// =============================
-cooldownAtaqueEspecial: enemy.tipo === "jefe" ? (2200 + Math.random() * 2400) : 0,
-ataqueEspecialPreparando: false,
-ataqueEspecialActivo: false,
-ataqueEspecialHitAplicado: false,
-ataqueEspecialDecisionMin: 1800,
-ataqueEspecialDecisionMax: 4200,
-ataqueEspecialProbabilidad: 0.38
+    rodeando: false,
+    ladoRodeo: null,
+    rodeoDirOriginalX: 0,
+    rodeoDirOriginalY: 0,
+    rodeoDirX: 0,
+    rodeoDirY: 0,
+    rodeoTimer: 0,
+    rodeoIntentos: 0,
+    ultimoObstaculoId: null,
+
+    modoEscape: "normal",
+    arcillaObjetivoId: null,
+    cooldownGolpeEscape: 0,
+    tiempoEncerrado: 0,
+    encierroCheckTimer: 0,
+    encierroCheckX: Number(enemy.posicion?.x ?? enemy.x) || 0,
+    encierroCheckY: Number(enemy.posicion?.y ?? enemy.y) || 0,
+    encierroOrigenX: Number(enemy.posicion?.x ?? enemy.x) || 0,
+    encierroOrigenY: Number(enemy.posicion?.y ?? enemy.y) || 0,
+
+    // =============================
+    // 🔥 ATAQUE ESPECIAL JEFE
+    // =============================
+    cooldownAtaqueEspecial: enemy.tipo === "jefe" ? (2200 + Math.random() * 2400) : 0,
+    ataqueEspecialPreparando: false,
+    ataqueEspecialActivo: false,
+    ataqueEspecialHitAplicado: false,
+    ataqueEspecialDecisionMin: 1800,
+    ataqueEspecialDecisionMax: 4200,
+    ataqueEspecialProbabilidad: 0.38
   }));
 }
 
@@ -7654,10 +7675,16 @@ if (antorchaObjetivo || usuarioDentroVision) {
   if (antorchaObjetivo) {
     enemy.objetivoAntorcha = antorchaObjetivo.zona_id;
   } else {
-    enemy.objetivoAntorcha = null;
-  }
+      enemy.objetivoAntorcha = null;
+    }
 
-  const enemyCenter = obtenerCentroEntidad(enemy);
+    actualizarEstadoEncierroEnemigo(enemy, dtMs);
+
+    if (!antorchaObjetivo && procesarEscapeArcillaEnemigo(enemy, dtMs)) {
+      continue;
+    }
+
+    const enemyCenter = obtenerCentroEntidad(enemy);
 
   const objetivoCenter = antorchaObjetivo
     ? {
@@ -7754,72 +7781,60 @@ if (
     enemy.facing = enemy.dirY > 0 ? "down" : "up";
   }
 
-  if (enemy.tipo === "armado") {
-    enemy.tiempoCambioDecision -= dtMs;
+if (enemy.tipo === "armado") {
+  enemy.tiempoCambioDecision -= dtMs;
 
-    if (enemy.tiempoCambioDecision <= 0) {
-      decidirAccionEnemigoArmado(enemy);
-    }
+  if (enemy.tiempoCambioDecision <= 0) {
+    decidirAccionEnemigoArmado(enemy);
+  }
 
-        if (antorchaObjetivo) {
-      enemy.modoCombate = "correr";
-    }
+  if (antorchaObjetivo) {
+    enemy.modoCombate = "correr";
+    enemy.disparoCooldown = Math.max(enemy.disparoCooldown || 0, 250);
+  }
 
-        if (antorchaObjetivo) {
-      enemy.modoCombate = "correr";
-      enemy.disparoCooldown = Math.max(enemy.disparoCooldown || 0, 250);
-    }
+  if (enemy.modoCombate === "correr") {
+    enemy.isMoving = true;
 
-    if (enemy.modoCombate === "correr") {
-      enemy.isMoving = true;
+    const seMovio = moverEnemigoConRodeo(enemy, dtMs, enemy.dirX, enemy.dirY);
 
-      const delta = dtMs / 16.6667;
-      const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
-      const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
-
-moverEntidadConColision(
-  enemy,
-  clamp(nextX, 0, WORLD_W - enemy.w),
-  clamp(nextY, 0, WORLD_H - enemy.h),
-  enemy.w,
-  enemy.h
-);
-
+    if (seMovio) {
       enemy.frameTimer += dtMs;
       while (enemy.frameTimer >= enemy.frameDurationMs) {
         enemy.frameTimer -= enemy.frameDurationMs;
         enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
       }
     } else {
-      enemy.isMoving = false;
       enemy.frame = 0;
       enemy.frameTimer = 0;
     }
   } else {
-    enemy.isMoving = true;
+    resetRodeoEnemigo(enemy);
+    enemy.isMoving = false;
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
+  }
+} else {
+  enemy.isMoving = true;
 
-    const delta = dtMs / 16.6667;
-    const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
-    const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
+  const seMovio = moverEnemigoConRodeo(enemy, dtMs, enemy.dirX, enemy.dirY);
 
-    moverEntidadConColision(
-      enemy,
-      clamp(nextX, 0, WORLD_W - enemy.w),
-      clamp(nextY, 0, WORLD_H - enemy.h),
-      enemy.w,
-      enemy.h
-    );
-
+  if (seMovio) {
     enemy.frameTimer += dtMs;
     while (enemy.frameTimer >= enemy.frameDurationMs) {
       enemy.frameTimer -= enemy.frameDurationMs;
       enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
     }
-
-    if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
-      hacerHablarEnemigo(enemy, "ataque");
-    }
+  } else {
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
   }
+
+  if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
+    hacerHablarEnemigo(enemy, "ataque");
+  }
+}
+
 } else {
       enemy.persiguiendo = false;
       enemy.tiempoCambioDecision -= dtMs;
@@ -7828,47 +7843,26 @@ moverEntidadConColision(
         decidirNuevaAccionEnemigo(enemy);
       }
 
-      if (enemy.isMoving && enemy.pasosRestantes > 0) {
-        const delta = dtMs / 16.6667;
-        const nextX = enemy.x + (enemy.dirX * enemy.velocidad * delta);
-        const nextY = enemy.y + (enemy.dirY * enemy.velocidad * delta);
+if (enemy.isMoving && enemy.pasosRestantes > 0) {
+  const seMovio = moverEnemigoConRodeo(enemy, dtMs, enemy.dirX, enemy.dirY);
 
-        moverEntidadConColision(
-          enemy,
-          clamp(nextX, 0, WORLD_W - enemy.w),
-          clamp(nextY, 0, WORLD_H - enemy.h),
-          enemy.w,
-          enemy.h
-        );
+  if (seMovio) {
+    enemy.frameTimer += dtMs;
+    while (enemy.frameTimer >= enemy.frameDurationMs) {
+      enemy.frameTimer -= enemy.frameDurationMs;
+      enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+    }
 
-        if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
-          enemy.facing = enemy.dirX > 0 ? "right" : "left";
-        } else if (enemy.dirY !== 0) {
-          enemy.facing = enemy.dirY > 0 ? "down" : "up";
-        }
-
-        enemy.frameTimer += dtMs;
-        while (enemy.frameTimer >= enemy.frameDurationMs) {
-          enemy.frameTimer -= enemy.frameDurationMs;
-          enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
-        }
-
-        enemy.pasosRestantes -= 1;
-
-        const pegoBorde =
-          enemy.x <= 0 ||
-          enemy.x >= WORLD_W - enemy.w ||
-          enemy.y <= 0 ||
-          enemy.y >= WORLD_H - enemy.h;
-
-        if (pegoBorde) {
-          enemy.pasosRestantes = 0;
-          enemy.isMoving = false;
-        }
-      } else {
-        enemy.frame = 0;
-        enemy.frameTimer = 0;
-      }
+    enemy.pasosRestantes -= 1;
+  } else {
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
+  }
+} else {
+  resetRodeoEnemigo(enemy);
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+}
     }
   }
 }
@@ -11576,6 +11570,318 @@ function moverNPCambienteConRodeo(npc, dtMs, worldW, worldH) {
 
   if (npc.rodeoTimer >= 1400) {
     alternarLadoRodeoNPCambiente(npc);
+  }
+
+  return true;
+}
+
+function elegirLadoRodeoEnemigo(dirX, dirY) {
+  const izquierda = { x: -dirY, y: dirX };
+  const derecha   = { x:  dirY, y: -dirX };
+  return Math.random() < 0.5 ? izquierda : derecha;
+}
+
+function iniciarRodeoEnemigo(enemy, obstaculo) {
+  const lado = elegirLadoRodeoEnemigo(enemy.dirX, enemy.dirY);
+
+  enemy.rodeando = true;
+  enemy.rodeoDirOriginalX = enemy.dirX;
+  enemy.rodeoDirOriginalY = enemy.dirY;
+  enemy.rodeoDirX = lado.x;
+  enemy.rodeoDirY = lado.y;
+  enemy.ladoRodeo = (lado.x === -enemy.dirY && lado.y === enemy.dirX) ? "izquierda" : "derecha";
+  enemy.rodeoTimer = 0;
+  enemy.rodeoIntentos = (enemy.rodeoIntentos || 0) + 1;
+  enemy.ultimoObstaculoId = obstaculo?.zona_id || obstaculo?.id || "obstaculo";
+}
+
+function alternarLadoRodeoEnemigo(enemy) {
+  enemy.rodeoDirX = -enemy.rodeoDirX;
+  enemy.rodeoDirY = -enemy.rodeoDirY;
+  enemy.ladoRodeo = enemy.ladoRodeo === "izquierda" ? "derecha" : "izquierda";
+  enemy.rodeoTimer = 0;
+}
+
+function actualizarFacingEnemigo(enemy, dirX, dirY) {
+  if (Math.abs(dirX) > Math.abs(dirY)) {
+    enemy.facing = dirX > 0 ? "right" : "left";
+  } else if (dirY !== 0) {
+    enemy.facing = dirY > 0 ? "down" : "up";
+  }
+}
+
+function moverEnemigoConRodeo(enemy, dtMs, objetivoDirX = null, objetivoDirY = null) {
+  const delta = dtMs / 16.6667;
+  const velocidadPaso = enemy.velocidad * delta;
+
+  const dirBaseX = objetivoDirX ?? enemy.dirX;
+  const dirBaseY = objetivoDirY ?? enemy.dirY;
+
+  if (!enemy.rodeando && (dirBaseX !== enemy.dirX || dirBaseY !== enemy.dirY)) {
+    enemy.dirX = dirBaseX;
+    enemy.dirY = dirBaseY;
+  }
+
+  const dirFrontalX = enemy.rodeando ? enemy.rodeoDirOriginalX : dirBaseX;
+  const dirFrontalY = enemy.rodeando ? enemy.rodeoDirOriginalY : dirBaseY;
+
+  const dirMovimientoX = enemy.rodeando ? enemy.rodeoDirX : dirBaseX;
+  const dirMovimientoY = enemy.rodeando ? enemy.rodeoDirY : dirBaseY;
+
+  const nextX = clamp(enemy.x + (dirMovimientoX * velocidadPaso), 0, WORLD_W - enemy.w);
+  const nextY = clamp(enemy.y + (dirMovimientoY * velocidadPaso), 0, WORLD_H - enemy.h);
+  const obstaculoMovimiento = colisionAmbiente(nextX, nextY, enemy.w, enemy.h);
+
+  if (!enemy.rodeando) {
+    if (obstaculoMovimiento) {
+      iniciarRodeoEnemigo(enemy, obstaculoMovimiento);
+      return false;
+    }
+
+    enemy.x = nextX;
+    enemy.y = nextY;
+    actualizarFacingEnemigo(enemy, dirMovimientoX, dirMovimientoY);
+    return true;
+  }
+
+  enemy.rodeoTimer += dtMs;
+
+  const frenteX = clamp(enemy.x + (dirFrontalX * velocidadPaso), 0, WORLD_W - enemy.w);
+  const frenteY = clamp(enemy.y + (dirFrontalY * velocidadPaso), 0, WORLD_H - enemy.h);
+  const obstaculoFrente = colisionAmbiente(frenteX, frenteY, enemy.w, enemy.h);
+
+  if (!obstaculoFrente) {
+    enemy.rodeando = false;
+    enemy.dirX = dirFrontalX;
+    enemy.dirY = dirFrontalY;
+    enemy.rodeoDirX = 0;
+    enemy.rodeoDirY = 0;
+    enemy.rodeoTimer = 0;
+    enemy.ultimoObstaculoId = null;
+
+    enemy.x = frenteX;
+    enemy.y = frenteY;
+    actualizarFacingEnemigo(enemy, enemy.dirX, enemy.dirY);
+    return true;
+  }
+
+  if (obstaculoMovimiento) {
+    alternarLadoRodeoEnemigo(enemy);
+    return false;
+  }
+
+  enemy.x = nextX;
+  enemy.y = nextY;
+  actualizarFacingEnemigo(enemy, dirMovimientoX, dirMovimientoY);
+
+  if (enemy.rodeoTimer >= 1200) {
+    alternarLadoRodeoEnemigo(enemy);
+  }
+
+  return true;
+}
+
+function resetRodeoEnemigo(enemy) {
+  enemy.rodeando = false;
+  enemy.ladoRodeo = null;
+  enemy.rodeoDirOriginalX = 0;
+  enemy.rodeoDirOriginalY = 0;
+  enemy.rodeoDirX = 0;
+  enemy.rodeoDirY = 0;
+  enemy.rodeoTimer = 0;
+  enemy.rodeoIntentos = 0;
+  enemy.ultimoObstaculoId = null;
+  enemy.encierroCheckX = enemy.x;
+  enemy.encierroCheckY = enemy.y;
+
+  enemy.encierroOrigenX = enemy.x;
+  enemy.encierroOrigenY = enemy.y;
+}
+
+function obtenerBloquesArcillaActivos() {
+  return (ambienteObjetos || []).filter(obj => obj && esBloqueArcilla(obj));
+}
+
+function buscarBloqueArcillaMasCercano(enemy) {
+  const bloques = obtenerBloquesArcillaActivos();
+  if (!bloques.length) return null;
+
+  const enemyCx = enemy.x + enemy.w / 2;
+  const enemyCy = enemy.y + enemy.h / 2;
+
+  let mejor = null;
+  let mejorDist = Infinity;
+
+  for (const bloque of bloques) {
+    const bx = bloque.x + bloque.w / 2;
+    const by = bloque.y + bloque.h / 2;
+    const dist = Math.hypot(bx - enemyCx, by - enemyCy);
+
+    if (dist < mejorDist) {
+      mejorDist = dist;
+      mejor = bloque;
+    }
+  }
+
+  return mejor;
+}
+
+function resetEscapeArcillaEnemigo(enemy) {
+  enemy.modoEscape = "normal";
+  enemy.arcillaObjetivoId = null;
+  enemy.cooldownGolpeEscape = 0;
+}
+
+function enemigoEstaCercaDeBloqueArcilla(enemy, bloque, margen = 18) {
+  if (!enemy || !bloque) return false;
+
+  return (
+    enemy.x < bloque.x + bloque.w + margen &&
+    enemy.x + enemy.w > bloque.x - margen &&
+    enemy.y < bloque.y + bloque.h + margen &&
+    enemy.y + enemy.h > bloque.y - margen
+  );
+}
+
+function actualizarEstadoEncierroEnemigo(enemy, dtMs) {
+  if (!enemy) return;
+
+  const RADIO_ESCAPE_ENCIERRO = 160;
+
+  const estaEnConflicto =
+    enemy.rodeando === true ||
+    enemy.modoEscape === "buscar_arcilla" ||
+    enemy.modoEscape === "romper_arcilla";
+
+  if (!estaEnConflicto) {
+    enemy.tiempoEncerrado = 0;
+    enemy.encierroCheckTimer = 0;
+    enemy.encierroOrigenX = enemy.x;
+    enemy.encierroOrigenY = enemy.y;
+    return;
+  }
+
+  if (
+    typeof enemy.encierroOrigenX !== "number" ||
+    typeof enemy.encierroOrigenY !== "number"
+  ) {
+    enemy.encierroOrigenX = enemy.x;
+    enemy.encierroOrigenY = enemy.y;
+  }
+
+  const dxEscape = enemy.x - enemy.encierroOrigenX;
+  const dyEscape = enemy.y - enemy.encierroOrigenY;
+  const distanciaEscape = Math.hypot(dxEscape, dyEscape);
+
+  if (distanciaEscape >= RADIO_ESCAPE_ENCIERRO) {
+    enemy.tiempoEncerrado = 0;
+    enemy.encierroCheckTimer = 0;
+    enemy.encierroOrigenX = enemy.x;
+    enemy.encierroOrigenY = enemy.y;
+    return;
+  }
+
+  enemy.tiempoEncerrado = Number(enemy.tiempoEncerrado || 0) + dtMs;
+  enemy.encierroCheckTimer = Number(enemy.encierroCheckTimer || 0) + dtMs;
+}
+
+function intentarActivarEscapeArcillaEnemigo(enemy) {
+  if (!enemy) return false;
+  if (enemy.tipo === "jefe") return false;
+  const TIEMPO_ENCIERRO_MAX = 1000; //Tiempo de espera para que el enemigo ataque la arcilla para salir del encierro 15000 son 15segundos
+  
+
+if ((enemy.tiempoEncerrado || 0) < TIEMPO_ENCIERRO_MAX) return false;
+
+// 🔒 NUEVA CONDICIÓN CLAVE
+if (!enemy.rodeando) return false; 
+  if (enemy.modoEscape === "buscar_arcilla" || enemy.modoEscape === "romper_arcilla") return true;
+
+  const bloque = buscarBloqueArcillaMasCercano(enemy);
+  console.log("BLOQUE ARCILLA:", bloque);
+  if (!bloque) return false;
+
+  enemy.modoEscape = "buscar_arcilla";
+  enemy.arcillaObjetivoId = bloque.zona_id;
+  enemy.cooldownGolpeEscape = 0;
+  enemy.tiempoEncerrado = 0;
+  resetRodeoEnemigo(enemy);
+console.log("ENCERRADO:", enemy.tiempoEncerrado);
+
+  return true;
+}
+
+function procesarEscapeArcillaEnemigo(enemy, dtMs) {
+  if (!enemy) return false;
+
+  const activo = intentarActivarEscapeArcillaEnemigo(enemy);
+  if (!activo && enemy.modoEscape === "normal") return false;
+
+  const bloque = (ambienteObjetos || []).find(obj =>
+    obj &&
+    obj.zona_id === enemy.arcillaObjetivoId &&
+    esBloqueArcilla(obj)
+  );
+
+  if (!bloque) {
+    resetEscapeArcillaEnemigo(enemy);
+    return false;
+  }
+
+  const enemyCenterX = enemy.x + enemy.w / 2;
+  const enemyCenterY = enemy.y + enemy.h / 2;
+  const bloqueCenterX = bloque.x + bloque.w / 2;
+  const bloqueCenterY = bloque.y + bloque.h / 2;
+
+  const dx = bloqueCenterX - enemyCenterX;
+  const dy = bloqueCenterY - enemyCenterY;
+  const len = Math.hypot(dx, dy) || 1;
+
+  enemy.dirX = dx / len;
+  enemy.dirY = dy / len;
+
+  if (enemigoEstaCercaDeBloqueArcilla(enemy, bloque, 14)) {
+    enemy.modoEscape = "romper_arcilla";
+    enemy.dirX = 0;
+    enemy.dirY = 0;
+    enemy.isMoving = false;
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
+
+    enemy.cooldownGolpeEscape = Number(enemy.cooldownGolpeEscape || 0) - dtMs;
+
+    if (enemy.cooldownGolpeEscape <= 0) {
+      aplicarDanioABloqueArcilla(
+        bloque,
+        Number(enemy.puntos_de_ataque ?? 1) || 1,
+        bloqueCenterX,
+        bloqueCenterY
+      );
+
+      enemy.cooldownGolpeEscape = 650;
+
+      if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.45) {
+        hacerHablarEnemigo(enemy, "ataque");
+      }
+    }
+
+    return true;
+  }
+
+  enemy.modoEscape = "buscar_arcilla";
+  enemy.isMoving = true;
+
+  const seMovio = moverEnemigoConRodeo(enemy, dtMs, enemy.dirX, enemy.dirY);
+
+  if (seMovio) {
+    enemy.frameTimer += dtMs;
+    while (enemy.frameTimer >= enemy.frameDurationMs) {
+      enemy.frameTimer -= enemy.frameDurationMs;
+      enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+    }
+  } else {
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
   }
 
   return true;

@@ -136,40 +136,40 @@
         "al_morir": "dropConsumibleBasico"
       }
     },
-    {
-      "id": "enemy_centinela_reptiliano_armado_02",
-      "nombre": "Comandante reptiliano",
-      "tipo": "armado",
-      "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
-      "puntos_de_vida": 30,
-      "puntos_de_ataque": 4,
-      "atackAnimation": "ataqueEnemigoArmado",
-      "Speed_enemy": 1.8,
-      "radioVision": 400,
-      "dialogos": [
-        "grr...!!",
-        "Zona restringida",
-        "La base será defendida",
-        "Nadie entrará vivo"
-      ],
-      "dialogos_Atack": [
-        "¡Fuego!",
-        "¡Eliminar al intruso!",
-        "¡Te destruiré!",
-        "¡Defiendan la base!"
-      ],
-      "tamano": {
-        "w": 64,
-        "h": 64
-      },
-      "posicion": {
-        "x": 1860,
-        "y": 1080
-      },
-      "ejecucion_script": {
-        "al_morir": "dropConsumibleBasico"
-      }
-    },
+{
+  "id": "enemy_centinela_reptiliano_armado_02",
+  "nombre": "Comandante reptiliano",
+  "tipo": "armado",
+  "imagen": "./assets/avatares/enemy/centinela-reptiliano-armado.png",
+  "puntos_de_vida": 30,
+  "puntos_de_ataque": 4,
+  "atackAnimation": "ataqueEnemigoArmado",
+  "Speed_enemy": 1.8,
+  "radioVision": 400,
+  "dialogos": [
+    "grr...!!",
+    "Zona restringida",
+    "La base será defendida",
+    "Nadie entrará vivo"
+  ],
+  "dialogos_Atack": [
+    "¡Fuego!",
+    "¡Eliminar al intruso!",
+    "¡Te destruiré!",
+    "¡Defiendan la base!"
+  ],
+  "tamano": {
+    "w": 64,
+    "h": 64
+  },
+  "posicion": {
+    "x": 1856,
+    "y": 1088
+  },
+  "ejecucion_script": {
+    "al_morir": "dropConsumibleBasico"
+  }
+},
     {
       "id": "enemy_reptiliano_volador_01",
       "nombre": "Reptiliano Volador",
