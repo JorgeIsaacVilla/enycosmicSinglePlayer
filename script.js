@@ -7365,6 +7365,61 @@ function distanciaEntreEntidades(a, b) {
   return Math.hypot(dx, dy);
 }
 
+function bloqueaVisionEnemiga(obj) {
+  if (!obj) return false;
+
+  if (!String(obj.tipo || "").includes("colisionables")) return false;
+  if (esBloqueArcilla(obj)) return false;
+
+  return true;
+}
+
+function lineaIntersecaRect(x1, y1, x2, y2, rect) {
+  const pasos = Math.max(12, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 16));
+
+  for (let i = 0; i <= pasos; i++) {
+    const t = i / pasos;
+    const px = x1 + (x2 - x1) * t;
+    const py = y1 + (y2 - y1) * t;
+
+    if (
+      px >= rect.x &&
+      px <= rect.x + rect.w &&
+      py >= rect.y &&
+      py <= rect.y + rect.h
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function enemigoTieneLineaDeVision(enemy, objetivo) {
+  if (!enemy || !objetivo) return false;
+  if (enemy.tipo === "jefe") return true;
+
+  const origen = obtenerCentroEntidad(enemy);
+  const destino = obtenerCentroEntidad(objetivo);
+
+  for (const obj of (ambienteObjetos || [])) {
+    if (!bloqueaVisionEnemiga(obj)) continue;
+
+    const rect = {
+      x: Number(obj.x) || 0,
+      y: Number(obj.y) || 0,
+      w: Number(obj.w) || 0,
+      h: Number(obj.h) || 0
+    };
+
+    if (lineaIntersecaRect(origen.x, origen.y, destino.x, destino.y, rect)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function colisionaEnemigoConJugador(enemy) {
   return (
     player.x < enemy.x + enemy.w &&
@@ -7577,13 +7632,32 @@ function updateEnemigos(dtMs) {
       if (enemy.tiempoHablaCooldown < 0) enemy.tiempoHablaCooldown = 0;
     }
 
-    const distancia = distanciaEntreEntidades(
-      { x: enemy.x, y: enemy.y, w: enemy.w, h: enemy.h },
-      { x: player.x, y: player.y, w: HERO_DRAW_W, h: HERO_DRAW_H }
-    );
+    const distanciaJugador = distanciaEntreEntidades(
+  { x: enemy.x, y: enemy.y, w: enemy.w, h: enemy.h },
+  { x: player.x, y: player.y, w: HERO_DRAW_W, h: HERO_DRAW_H }
+);
 
-        const antorchaObjetivo = buscarAntorchaSueloCercana(enemy, enemy.radioVision + 250);
-    const usuarioDentroVision = !antorchaObjetivo && distancia <= enemy.radioVision;
+const jugadorComoObjetivo = {
+  x: player.x,
+  y: player.y,
+  w: HERO_DRAW_W,
+  h: HERO_DRAW_H
+};
+
+const puedeVerJugador = enemigoTieneLineaDeVision(enemy, jugadorComoObjetivo);
+
+const antorchaObjetivo = buscarAntorchaSueloCercana(enemy, enemy.radioVision + 250);
+
+const jugadorDetectado =
+  enemy.tipo === "jefe"
+    ? (distanciaJugador <= enemy.radioVision)
+    : (distanciaJugador <= enemy.radioVision && puedeVerJugador);
+
+if (!antorchaObjetivo) {
+  enemy.persiguiendo = jugadorDetectado;
+}
+
+const usuarioDentroVision = !antorchaObjetivo && jugadorDetectado;
 
     if (enemy.tipo === "jefe") {
   if (enemy.cooldownAtaqueEspecial > 0) {
@@ -7684,21 +7758,43 @@ if (antorchaObjetivo || usuarioDentroVision) {
       continue;
     }
 
-    const enemyCenter = obtenerCentroEntidad(enemy);
+const enemyCenter = obtenerCentroEntidad(enemy);
 
-  const objetivoCenter = antorchaObjetivo
-    ? {
-        x: antorchaObjetivo.x + antorchaObjetivo.w / 2,
-        y: antorchaObjetivo.y + antorchaObjetivo.h / 2
-      }
-    : {
-        x: player.x + HERO_DRAW_W / 2,
-        y: player.y + HERO_DRAW_H / 2
-      };
+const jugadorComoObjetivo = {
+  x: player.x,
+  y: player.y,
+  w: HERO_DRAW_W,
+  h: HERO_DRAW_H
+};
 
-  const dx = objetivoCenter.x - enemyCenter.x;
-  const dy = objetivoCenter.y - enemyCenter.y;
-  const len = Math.hypot(dx, dy) || 1;
+const puedeVerJugador = enemigoTieneLineaDeVision(enemy, jugadorComoObjetivo);
+const distanciaJugador = distanciaEntreEntidades(
+  enemy,
+  jugadorComoObjetivo
+);
+
+const jugadorDetectado =
+  enemy.tipo === "jefe"
+    ? (distanciaJugador <= enemy.radioVision)
+    : (distanciaJugador <= enemy.radioVision && puedeVerJugador);
+
+if (!antorchaObjetivo) {
+  enemy.persiguiendo = jugadorDetectado;
+}
+
+const objetivoCenter = antorchaObjetivo
+  ? {
+      x: antorchaObjetivo.x + antorchaObjetivo.w / 2,
+      y: antorchaObjetivo.y + antorchaObjetivo.h / 2
+    }
+  : {
+      x: player.x + HERO_DRAW_W / 2,
+      y: player.y + HERO_DRAW_H / 2
+    };
+
+const dx = objetivoCenter.x - enemyCenter.x;
+const dy = objetivoCenter.y - enemyCenter.y;
+const len = Math.hypot(dx, dy) || 1;
 
 if (
   antorchaObjetivo &&
