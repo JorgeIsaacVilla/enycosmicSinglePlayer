@@ -58,7 +58,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 30; //0 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 300; //0 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -5366,7 +5366,7 @@ async function cargarIlumSistemaMapa() {
 }
 
 async function preloadIlumSistemaMapa() {
-  console.log("Preload ilumSystem iniciado. Objetos:", ilumSistemaMapa);
+  //console.log("Preload ilumSystem iniciado. Objetos:", ilumSistemaMapa);
 
   await Promise.all(
     ilumSistemaMapa.map(obj => new Promise((resolve) => {
@@ -5377,33 +5377,25 @@ async function preloadIlumSistemaMapa() {
         return;
       }
 
-      if (ilumSistemaMapaImgs[obj.imagen]) {
-        console.log("Imagen en caché:", obj.imagen);
-        obj.img = ilumSistemaMapaImgs[obj.imagen];
-        resolve();
-        return;
-      }
-
       const img = new Image();
 
       img.onload = () => {
-        console.log("Imagen ilumSystem cargada OK:", obj.imagen);
-        ilumSistemaMapaImgs[obj.imagen] = img;
+        console.log("Imagen asignada a:", obj.nombre_id, "=>", obj.imagen);
         obj.img = img;
         resolve();
       };
 
       img.onerror = () => {
-        console.warn("No cargó imagen ilumSistemMapa:", obj.imagen);
+        console.warn("No cargó imagen ilumSistemMapa:", obj.nombre_id, obj.imagen);
         obj.img = null;
         resolve();
       };
 
-      img.src = obj.imagen;
+      img.src = obj.imagen + "?v=" + encodeURIComponent(obj.nombre_id);
     }))
   );
 
-  console.log("Preload ilumSystem finalizado:", ilumSistemaMapa);
+  //console.log("Preload ilumSystem finalizado:", ilumSistemaMapa);
 }
 
 function getRectIlumObjeto(obj) {
@@ -13885,10 +13877,10 @@ drawArcillaCapa(ctx, "back");
 drawAmbienteCapa(ctx, "back");
 
 drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy);
-drawIlumSistemaMapa(ctx);
 
 drawAmbienteCapa(ctx, "front");
 drawArcillaCapa(ctx, "front");
+drawIlumSistemaMapa(ctx);
 
     drawBubblesNPCsAmbiente(ctx);
     drawBubblesEnemigos(ctx);

@@ -1565,3 +1565,17 @@ Ejemplo de uso ambiente.json:
   "pdr": 12,
   "pdr_max": 12
 },
+
+
+// SISTEMAS DE ANTORCHAS Y CHIMENEAS
+los sistemas de antorchas y chimeneas son sistemas de iluminación de zonas oscuras implicitos en el mapa. las medidas estandares son
+
+para chimeneas
+    "w": 120,
+    "h": 120,
+
+para antorchas
+    "w": 60,
+    "h": 60,
+
+pero estos valores son modificables segun se necesiten. además tienen que estar complementadas con bloques colicionables en su base, y está proivido poner elementos encima de las antorchas. tienen que ser solitarias en el mapa
