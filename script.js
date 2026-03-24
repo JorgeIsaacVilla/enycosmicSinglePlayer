@@ -5614,7 +5614,13 @@ function getLucesIlumSistemaMapa() {
 
 /*Sistemas de antorchas y chimeneas (fin) */
 function updateGameplayUIVisibility() {
-  if (gameState === "gamePlay" && gameAssetsLoaded && !gameAssetsLoading) {
+  const mostrarUI =
+    gameState === "gamePlay" &&
+    gameAssetsLoaded &&
+    !gameAssetsLoading &&
+    !gameOverActive;
+
+  if (mostrarUI) {
     joy.style.display = "block";
     boxButtonsITems.style.display = "flex";
     metafonButton.style.display = "block";
@@ -8428,6 +8434,7 @@ function colisionaEnemigoConJugador(enemy) {
 
 function activarGameOver() {
   gameOverActive = true;
+  updateGameplayUIVisibility();
   held.length = 0;
   player.walking = false;
 }
@@ -8443,6 +8450,7 @@ function continuarTrasGameOver() {
   player.blinkTimer = 0;
 
   gameOverActive = false;
+  updateGameplayUIVisibility();
 }
 //===========================================
 /*Dibujar NPC (fin) */
