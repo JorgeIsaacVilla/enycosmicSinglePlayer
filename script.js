@@ -3823,7 +3823,7 @@ function showCombinacionEstadoModal(tipo) {
 }
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -6938,6 +6938,15 @@ function entidadEstaEnZonaIluminada(entidad) {
 
   const cx = entidad.x + entidad.w / 2;
   const cy = entidad.y + entidad.h * 0.34;
+  
+  // luz mínima por cercanía directa al jugador, incluso sin antorcha
+const playerLightX = player.x + HERO_DRAW_W / 2;
+const playerLightY = player.y + HERO_DRAW_H * 0.38;
+const playerNearLightRadius = 38;
+
+if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
+  return true;
+}
 
   // luz de la antorcha en mano del jugador
   if (antorchaActiva?.active) {
