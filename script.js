@@ -3830,6 +3830,17 @@ let antorchaActiva = {
 let torchTrailParticles = [];
 //--Lógica de antorchas e iluminación de mapas oscuros (fin)
 
+// =============================
+// ILUM SISTEM MAPA (antorchas y chimeneas independientes)
+// =============================
+let ilumSistemaMapa = [];
+let ilumSistemaMapaImgs = {};
+
+const ILUM_FUEGO_PDR_MAX = 1;
+const ILUM_CHIMENEA_LIGHT_RADIUS = 240;
+const ILUM_ANTORCHA_LIGHT_RADIUS = TORCH_LIGHT_RADIUS;
+const ILUM_ENEMY_OFF_RADIUS = 90;
+
 function usarItemEquipadoDesdeHUD(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
@@ -5326,6 +5337,281 @@ function setGameState(next) {
   resizeFullscreen(); // solo cuando cambia
 }
 
+/*Sistema de antorchas y chimeneas (inicio) */
+
+async function cargarIlumSistemaMapa() {
+  const res = await fetch("./world.JSON/ilumSistemMapa.json");
+  const data = await res.json();
+
+  const lista = Array.isArray(data) ? data : (data.objetos || []);
+
+  ilumSistemaMapa = lista.map((obj, index) => ({
+    nombre_id: obj.nombre_id || `ilum_${index}`,
+    tipo: obj.tipo || "antorcha",
+    imagen: obj.imagen || "",
+    h: Number(obj.h) || (obj.tipo === "chimenea" ? 120 : 60),
+    w: Number(obj.w) || (obj.tipo === "chimenea" ? 120 : 60),
+    x: Number(obj.x) || 0,
+    y: Number(obj.y) || 0,
+    color: obj.color ?? null,
+    function: obj.function || null,
+
+    encendida: false,
+    pdr_fuego: 0,
+    fuegoAnim: Math.random() * Math.PI * 2,
+    img: null
+  }));
+
+  console.log("IlumSystem cargado:", ilumSistemaMapa);
+}
+
+async function preloadIlumSistemaMapa() {
+  console.log("Preload ilumSystem iniciado. Objetos:", ilumSistemaMapa);
+
+  await Promise.all(
+    ilumSistemaMapa.map(obj => new Promise((resolve) => {
+      if (!obj.imagen) {
+        console.warn("Objeto sin imagen:", obj.nombre_id);
+        obj.img = null;
+        resolve();
+        return;
+      }
+
+      if (ilumSistemaMapaImgs[obj.imagen]) {
+        console.log("Imagen en caché:", obj.imagen);
+        obj.img = ilumSistemaMapaImgs[obj.imagen];
+        resolve();
+        return;
+      }
+
+      const img = new Image();
+
+      img.onload = () => {
+        console.log("Imagen ilumSystem cargada OK:", obj.imagen);
+        ilumSistemaMapaImgs[obj.imagen] = img;
+        obj.img = img;
+        resolve();
+      };
+
+      img.onerror = () => {
+        console.warn("No cargó imagen ilumSistemMapa:", obj.imagen);
+        obj.img = null;
+        resolve();
+      };
+
+      img.src = obj.imagen;
+    }))
+  );
+
+  console.log("Preload ilumSystem finalizado:", ilumSistemaMapa);
+}
+
+function getRectIlumObjeto(obj) {
+  return {
+    x: obj.x,
+    y: obj.y,
+    w: obj.w,
+    h: obj.h
+  };
+}
+
+function getPlayerRectIlum() {
+  return {
+    x: player.x + PLAYER_OFFSET_X,
+    y: player.y + PLAYER_OFFSET_Y,
+    w: PLAYER_HIT_W,
+    h: PLAYER_HIT_H
+  };
+}
+
+function encenderObjetoIlumMapa(obj) {
+  if (!obj || obj.encendida) return;
+
+  obj.encendida = true;
+  obj.pdr_fuego = ILUM_FUEGO_PDR_MAX;
+
+  if (obj.function && typeof window[obj.function] === "function") {
+    window[obj.function](obj);
+  }
+}
+
+function apagarObjetoIlumMapa(obj) {
+  if (!obj) return;
+  obj.encendida = false;
+  obj.pdr_fuego = 0;
+}
+
+function enemigoCercaDeIlum(obj) {
+  const listaEnemigos = window.enemigos || [];
+
+  const luzX = obj.x + obj.w / 2;
+  const luzY = obj.tipo === "chimenea"
+    ? (obj.y + obj.h * 0.78)
+    : (obj.y + obj.h * 0.18);
+
+  for (const enemy of listaEnemigos) {
+    if (!enemy) continue;
+    if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+
+    const ex = enemy.x + enemy.w / 2;
+    const ey = enemy.y + enemy.h / 2;
+
+    const dist = Math.hypot(ex - luzX, ey - luzY);
+    if (dist <= ILUM_ENEMY_OFF_RADIUS) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function updateIlumSistemaMapa(dtMs) {
+  for (const obj of ilumSistemaMapa) {
+    if (!obj) continue;
+
+    obj.fuegoAnim += dtMs * 0.01;
+
+    const playerCenterX = player.x + HERO_DRAW_W / 2;
+    const playerCenterY = player.y + HERO_DRAW_H / 2;
+
+    const objCenterX = obj.x + obj.w / 2;
+    const objCenterY = obj.y + obj.h / 2;
+
+    const distanciaJugador = Math.hypot(
+      playerCenterX - objCenterX,
+      playerCenterY - objCenterY
+    );
+
+    const radioActivacion = obj.tipo === "chimenea" ? 90 : 55;
+
+    const puedeEncender =
+      antorchaActiva?.active === true &&
+      antorchaActiva?.slotIndex >= 0;
+
+    if (!obj.encendida && puedeEncender && distanciaJugador <= radioActivacion) {
+      encenderObjetoIlumMapa(obj);
+    }
+
+    if (obj.encendida && enemigoCercaDeIlum(obj)) {
+      apagarObjetoIlumMapa(obj);
+    }
+  }
+}
+
+function drawFuegoIlumMapa(ctx, obj) {
+  const t = performance.now() * 0.01 + obj.fuegoAnim;
+
+  const fx = obj.x + obj.w / 2;
+  const fy = obj.tipo === "chimenea"
+    ? (obj.y + obj.h * 0.78)
+    : (obj.y + obj.h * 0.16);
+
+  const baseW = obj.tipo === "chimenea" ? 20 : 12;
+  const baseH = obj.tipo === "chimenea" ? 30 : 20;
+
+  ctx.save();
+  ctx.translate(fx, fy);
+
+  // fuego exterior
+  ctx.fillStyle = "#ff6a00";
+  ctx.shadowColor = "#ff7b00";
+  ctx.shadowBlur = 20;
+  ctx.beginPath();
+  ctx.moveTo(0, -baseH - Math.sin(t) * 1.5);
+  ctx.quadraticCurveTo(baseW, -baseH * 0.4, 0, 0);
+  ctx.quadraticCurveTo(-baseW, -baseH * 0.45, 0, -baseH - Math.sin(t) * 1.5);
+  ctx.fill();
+
+  // fuego medio
+  ctx.fillStyle = "#ffd400";
+  ctx.beginPath();
+  ctx.moveTo(0, -baseH * 0.8 - Math.sin(t * 1.4) * 1.2);
+  ctx.quadraticCurveTo(baseW * 0.55, -baseH * 0.28, 0, -1);
+  ctx.quadraticCurveTo(-baseW * 0.55, -baseH * 0.34, 0, -baseH * 0.8 - Math.sin(t * 1.4) * 1.2);
+  ctx.fill();
+
+  // núcleo
+  ctx.fillStyle = "#fff7b0";
+  ctx.beginPath();
+  ctx.moveTo(0, -baseH * 0.62 - Math.sin(t * 1.8));
+  ctx.quadraticCurveTo(baseW * 0.25, -baseH * 0.22, 0, -3);
+  ctx.quadraticCurveTo(-baseW * 0.25, -baseH * 0.26, 0, -baseH * 0.62 - Math.sin(t * 1.8));
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawIlumSistemaMapa(ctx) {
+  for (const obj of ilumSistemaMapa) {
+    if (!obj) continue;
+
+    const imgOk =
+      obj.img &&
+      obj.img.complete &&
+      obj.img.naturalWidth > 0 &&
+      obj.img.naturalHeight > 0;
+
+if (imgOk) {
+  drawImageCover(ctx, obj.img, obj.x, obj.y, obj.w, obj.h);
+} else {
+  ctx.strokeStyle = obj.color || "#00ffcc";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
+}
+
+    if (obj.encendida && obj.pdr_fuego > 0) {
+      drawFuegoIlumMapa(ctx, obj);
+    }
+  }
+}
+
+function drawImageCover(ctx, img, dx, dy, dw, dh) {
+  if (!img || !img.complete || img.naturalWidth <= 0 || img.naturalHeight <= 0) {
+    return;
+  }
+
+  const sw = img.naturalWidth;
+  const sh = img.naturalHeight;
+
+  const scale = Math.max(dw / sw, dh / sh);
+
+  const rw = sw * scale;
+  const rh = sh * scale;
+
+  const sx = (dw - rw) / 2;
+  const sy = (dh - rh) / 2;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(dx, dy, dw, dh);
+  ctx.clip();
+
+  ctx.drawImage(
+    img,
+    dx + sx,
+    dy + sy,
+    rw,
+    rh
+  );
+
+  ctx.restore();
+}
+
+function getLucesIlumSistemaMapa() {
+  return ilumSistemaMapa
+    .filter(obj => obj && obj.encendida && obj.pdr_fuego > 0)
+    .map(obj => ({
+      x: obj.x + obj.w / 2,
+      y: obj.tipo === "chimenea"
+        ? (obj.y + obj.h * 0.78)
+        : (obj.y + obj.h * 0.16),
+      radius: obj.tipo === "chimenea"
+        ? ILUM_CHIMENEA_LIGHT_RADIUS
+        : ILUM_ANTORCHA_LIGHT_RADIUS
+    }));
+}
+
+/*Sistemas de antorchas y chimeneas (fin) */
 
 function resizeFullscreen() {
   const rect = wrap.getBoundingClientRect();
@@ -5501,7 +5787,6 @@ let npcsAmbiente = [];
 window.npcsAmbiente = npcsAmbiente;
 
 //--Enemigos
-//--Enemigos
 async function cargarEnemigos() {
   const response = await fetch("./world.JSON/enemy.json");
   const data = await response.json();
@@ -5586,6 +5871,9 @@ async function cargarEnemigos() {
     encierroCheckY: Number(enemy.posicion?.y ?? enemy.y) || 0,
     encierroOrigenX: Number(enemy.posicion?.x ?? enemy.x) || 0,
     encierroOrigenY: Number(enemy.posicion?.y ?? enemy.y) || 0,
+
+    objetivoFuegoId: null,
+    modoObjetivoTemporal: null,
 
     // =============================
     // 🔥 ATAQUE ESPECIAL JEFE
@@ -6662,6 +6950,51 @@ function entidadEstaEnZonaIluminada(entidad) {
     const dy = cy - luzY;
     const dist = Math.hypot(dx, dy);
 
+    if (dist <= radio) {
+      return true;
+    }
+  }
+
+  // luz de antorchas y chimeneas del mapa
+  for (const luz of getLucesIlumSistemaMapa()) {
+    const dx = cx - luz.x;
+    const dy = cy - luz.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist <= luz.radius) {
+      return true;
+    }
+  }
+
+  // luz de disparos del jugador
+  for (const d of (window.disparosLazerActivos || [])) {
+    const dist = Math.hypot(cx - d.x, cy - d.y);
+    if (dist <= 40) return true;
+  }
+
+  // luz de disparos enemigos
+  for (const d of (window.disparosEnemigosArmadosActivos || [])) {
+    const dist = Math.hypot(cx - d.x, cy - d.y);
+    if (dist <= 38) return true;
+  }
+
+  // luz de bumerangs
+  for (const b of (window.bumerangsActivos || [])) {
+    const dist = Math.hypot(cx - b.x, cy - b.y);
+    if (dist <= 34) return true;
+  }
+
+  // luz del ataque especial del jefe
+  for (const atk of (window.ataquesEspecialesJefeActivos || [])) {
+    if (!atk) continue;
+
+    const radio =
+      Number(atk.radioLuz) ||
+      Number(atk.radius) ||
+      Number(atk.radio) ||
+      120;
+
+    const dist = Math.hypot(cx - atk.x, cy - atk.y);
     if (dist <= radio) {
       return true;
     }
@@ -8258,6 +8591,73 @@ function decidirNuevaAccionNPCambiente(npc) {
     hacerHablarNPCambiente(npc);
   }
 }
+function intentarApagarFuenteDeFuego(enemy, obj) {
+  if (!enemy || !obj) return false;
+  if (!obj.encendida) return false;
+
+  const ex = enemy.x + enemy.w / 2;
+  const ey = enemy.y + enemy.h / 2;
+
+  const fx = obj.x + obj.w / 2;
+  const fy = obj.tipo === "chimenea"
+    ? (obj.y + obj.h * 0.78)
+    : (obj.y + obj.h * 0.16);
+
+  const dist = Math.hypot(fx - ex, fy - ey);
+
+  if (dist <= 40) {
+    apagarObjetoIlumMapa(obj);
+    enemy.objetivoFuegoId = null;
+    enemy.modoObjetivoTemporal = null;
+    return true;
+  }
+
+  return false;
+}
+
+function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
+  if (!enemy || !obj) return false;
+  if (!obj.encendida) return false;
+
+  const targetX = obj.x + obj.w / 2 - enemy.w / 2;
+  const targetY = (
+    obj.tipo === "chimenea"
+      ? (obj.y + obj.h * 0.78)
+      : (obj.y + obj.h * 0.16)
+  ) - enemy.h / 2;
+
+  let dx = targetX - enemy.x;
+  let dy = targetY - enemy.y;
+
+  const dist = Math.hypot(dx, dy);
+  if (dist <= 1) {
+    intentarApagarFuenteDeFuego(enemy, obj);
+    return true;
+  }
+
+  dx /= dist;
+  dy /= dist;
+
+  enemy.dirX = dx;
+  enemy.dirY = dy;
+  enemy.isMoving = true;
+
+  const seMovio = moverEnemigoConRodeo(enemy, dtMs, dx, dy);
+
+  if (seMovio) {
+    enemy.frameTimer += dtMs;
+    while (enemy.frameTimer >= enemy.frameDurationMs) {
+      enemy.frameTimer -= enemy.frameDurationMs;
+      enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
+    }
+  } else {
+    enemy.frame = 0;
+    enemy.frameTimer = 0;
+  }
+
+  intentarApagarFuenteDeFuego(enemy, obj);
+  return seMovio;
+}
 
 //--Enemigos (inicio)
 function updateEnemigos(dtMs) {
@@ -8300,6 +8700,15 @@ const jugadorComoObjetivo = {
   w: HERO_DRAW_W,
   h: HERO_DRAW_H
 };
+
+const fuegoObjetivo = buscarFuenteDeFuegoCercana(enemy, 320);
+
+if (fuegoObjetivo) {
+  enemy.objetivoFuegoId = fuegoObjetivo.nombre_id || fuegoObjetivo.id || null;
+  enemy.modoObjetivoTemporal = "fuego";
+  moverEnemigoHaciaFuego(enemy, fuegoObjetivo, dtMs);
+  continue;
+}
 
 const puedeVerJugador = enemigoTieneLineaDeVision(enemy, jugadorComoObjetivo);
 
@@ -9960,6 +10369,8 @@ updateEnemigos(dtMs);
 updateAtaquesEspecialesJefe(dtMs);
 updateParticulasVolcanJefe(dtMs);
 updateSkateParticles(dtMs);
+
+updateIlumSistemaMapa(dtMs);
 
 //--lógica de fuego y de antorcha, he iluminación de mapas oscuros (inicio)
 if (antorchaActiva.active) {
@@ -11752,6 +12163,12 @@ function drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH) {
     abrirLuz(luzX, luzY, TORCH_LIGHT_RADIUS);
   }
 
+const lucesIlumMapa = getLucesIlumSistemaMapa();
+
+for (const luz of lucesIlumMapa) {
+  abrirLuz(luz.x, luz.y, luz.radius);
+}
+
   // disparos del jugador
   for (const d of (window.disparosLazerActivos || [])) {
     abrirLuz(d.x, d.y, 40);
@@ -12304,6 +12721,68 @@ function danarBloqueArcillaEnRect(x, y, w, h, danio, impactoX, impactoY) {
     impactoX ?? (x + w / 2),
     impactoY ?? (y + h / 2)
   );
+}
+
+function buscarFuenteDeFuegoCercana(enemy, radioBusqueda = 320) {
+  if (!enemy) return null;
+
+  let mejor = null;
+  let mejorDist = Infinity;
+
+  for (const obj of ilumSistemaMapa || []) {
+    if (!obj) continue;
+    if (!obj.encendida) continue;
+    if ((obj.pdr_fuego ?? 0) <= 0) continue;
+
+    const fx = obj.x + obj.w / 2;
+    const fy = obj.tipo === "chimenea"
+      ? (obj.y + obj.h * 0.78)
+      : (obj.y + obj.h * 0.16);
+
+    const ex = enemy.x + enemy.w / 2;
+    const ey = enemy.y + enemy.h / 2;
+
+    const dist = Math.hypot(fx - ex, fy - ey);
+    if (dist > radioBusqueda) continue;
+
+    if (dist < mejorDist) {
+      mejorDist = dist;
+      mejor = obj;
+    }
+  }
+
+  return mejor;
+}
+
+function buscarFuenteDeFuegoCercana(enemy, radioBusqueda = 320) {
+  if (!enemy) return null;
+
+  let mejor = null;
+  let mejorDist = Infinity;
+
+  for (const obj of ilumSistemaMapa || []) {
+    if (!obj) continue;
+    if (!obj.encendida) continue;
+    if ((obj.pdr_fuego ?? 0) <= 0) continue;
+
+    const fx = obj.x + obj.w / 2;
+    const fy = obj.tipo === "chimenea"
+      ? (obj.y + obj.h * 0.78)
+      : (obj.y + obj.h * 0.16);
+
+    const ex = enemy.x + enemy.w / 2;
+    const ey = enemy.y + enemy.h / 2;
+
+    const dist = Math.hypot(fx - ex, fy - ey);
+    if (dist > radioBusqueda) continue;
+
+    if (dist < mejorDist) {
+      mejorDist = dist;
+      mejor = obj;
+    }
+  }
+
+  return mejor;
 }
 
 function procesarImpactoEnemigoContraBloque(enemy, nextX, nextY) {
@@ -13313,6 +13792,7 @@ function draw(images) {
     ctx.translate(-camCenterX, -camCenterY);
 
     ctx.drawImage(images.map, 0, 0, WORLD_W, WORLD_H);
+    
     drawSkateParticles(ctx);
 
     //pruebaDeItems();
@@ -13336,6 +13816,8 @@ function draw(images) {
 
     drawDisparosLazer(ctx);
 
+    
+    
     drawHoverCanvasInteractive(ctx);
 
     for (let i = skateParticles.length - 1; i >= 0; i--) {
@@ -13403,6 +13885,7 @@ drawArcillaCapa(ctx, "back");
 drawAmbienteCapa(ctx, "back");
 
 drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy);
+drawIlumSistemaMapa(ctx);
 
 drawAmbienteCapa(ctx, "front");
 drawArcillaCapa(ctx, "front");
@@ -13410,22 +13893,30 @@ drawArcillaCapa(ctx, "front");
     drawBubblesNPCsAmbiente(ctx);
     drawBubblesEnemigos(ctx);
 
+
     drawParticulasImpactoBloque(ctx);
 
     // oscuridad del mapa
 drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
 
 //Ojos demoniacos encima de la oscuridad
+// Ojos demoniacos encima de la oscuridad
 for (const npc of npcs || []) {
-  drawOjosDemoniacos(ctx, npc);
+  if (!entidadEstaEnZonaIluminada(npc)) {
+    drawOjosDemoniacos(ctx, npc);
+  }
 }
 
 for (const npc of npcsAmbiente || []) {
-  drawOjosDemoniacos(ctx, npc);
+  if (!entidadEstaEnZonaIluminada(npc)) {
+    drawOjosDemoniacos(ctx, npc);
+  }
 }
 
-for (const enemy of enemigos || []) {
-  drawOjosDemoniacos(ctx, enemy);
+for (const enemy of (window.enemigos || [])) {
+  if (!entidadEstaEnZonaIluminada(enemy)) {
+    drawOjosDemoniacos(ctx, enemy);
+  }
 }
 
     ctx.restore();
@@ -13714,10 +14205,23 @@ async function initNPCs() {
   await preloadNPCs(npcs);
 }
 
-initNPCs();
-initNPCsAmbiente();
-initEnemigos(); //--Enemigos
-cargarAmbiente(); // Sistemas ambinte.json
+(async () => {
+  await initNPCs();
+  await initNPCsAmbiente();
+  await initEnemigos();
+  await cargarAmbiente();
+
+  await cargarIlumSistemaMapa();
+  await preloadIlumSistemaMapa();
+
+  console.log("Carga inicial completa de ilumSystem:", ilumSistemaMapa);
+})();
+
+(async () => {
+  await cargarIlumSistemaMapa();
+  await preloadIlumSistemaMapa();
+  console.log("IlumSystem imágenes listas:", ilumSistemaMapa);
+})();
 
 //--Dibujar elementos ambiente.json (inicio)
 canvas.addEventListener("pointerdown", function (e) {
