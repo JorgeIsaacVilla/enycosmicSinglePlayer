@@ -820,6 +820,12 @@ function render() {
     }
   });
 
+  window.addEventListener("load", () => {
+    document.querySelector(".box-buttons-items").style.display = "block";
+    document.getElementById("metafon").style.display = "block";
+    document.querySelector(".joystick").style.display = "block";
+  });
+
   window.addEventListener("resize", () => {
     if (!document.getElementById("metamap-overlay")) return;
     fitMapToViewport();
@@ -3742,8 +3748,9 @@ function isUIInteractiveTarget(t) {
 
 
 const LOGO_SRC = "./assets/src/logo.png";
-let logoImg = null;
 
+let logoImg = new Image();
+logoImg.src = LOGO_SRC;
 
 /*-----------------------Saldo Cosmonedas (Inicio)------------------------------------*/
 const COSMONEDA_SRC = "./assets/src/cosmoneda.svg";
@@ -4072,6 +4079,7 @@ async function loadGameAssets() {
         metafonButton.style.display = "none";
 
   gameAssetsLoading = true;
+  updateGameplayUIVisibility();
   loadingProgress = 0;
   loadingTarget = 0;
 
@@ -4079,46 +4087,46 @@ async function loadGameAssets() {
     const heroSrc = getHeroSrc();
 
     const assetsToLoad = [
-      ASSETS.map,
-      heroSrc,
-      ASSETS.shadow,
-      LOGO_SRC,
-      COSMONEDA_SRC
-    ];
+  ASSETS.map,
+  heroSrc,
+  ASSETS.shadow,
+  COSMONEDA_SRC,
+  CORAZON_SRC
+];
 
-    const total = assetsToLoad.length;
-    let loaded = 0;
+const total = assetsToLoad.length;
+let loaded = 0;
 
-    function loadWithProgress(src) {
-      return loadImage(src).then(img => {
-        loaded++;
-        loadingTarget = loaded / total;
-        return img;
-      });
-    }
+function loadWithProgress(src) {
+  return loadImage(src).then(img => {
+    loaded++;
+    loadingTarget = loaded / total;
+    return img;
+  });
+}
 
-    const mapImg     = await loadWithProgress(ASSETS.map);
-    const heroImg    = await loadWithProgress(heroSrc);
-    const shadowImg  = await loadWithProgress(ASSETS.shadow);
-    const loadedLogo = await loadWithProgress(LOGO_SRC);
-    const loadedCoin = await loadWithProgress(COSMONEDA_SRC);
-    const loadedHeart = await loadWithProgress(CORAZON_SRC);
+const mapImg      = await loadWithProgress(ASSETS.map);
+const heroImg     = await loadWithProgress(heroSrc);
+const shadowImg   = await loadWithProgress(ASSETS.shadow);
+const loadedCoin  = await loadWithProgress(COSMONEDA_SRC);
+const loadedHeart = await loadWithProgress(CORAZON_SRC);
 
-    corazonImg = loadedHeart;
+corazonImg = loadedHeart;
 
-    images.map = mapImg;
-    images.hero = heroImg;
-    images.shadow = shadowImg;
-    logoImg = loadedLogo;
-    cosmonedaImg = loadedCoin;
+images.map = mapImg;
+images.hero = heroImg;
+images.shadow = shadowImg;
+cosmonedaImg = loadedCoin;
 
     gameAssetsLoaded = true;
+    resizeFullscreen();
 
   } catch (err) {
     console.error("Error cargando assets:", err);
     gameMode = "error";
   } finally {
     gameAssetsLoading = false;
+    updateGameplayUIVisibility();
   }
 }
 
@@ -5334,7 +5342,8 @@ canvas.addEventListener("pointercancel", () => { touchStartY = null; });
 function setGameState(next) {
   if (gameState === next) return;
   gameState = next;
-  resizeFullscreen(); // solo cuando cambia
+  resizeFullscreen();
+  updateGameplayUIVisibility();
 }
 
 /*Sistema de antorchas y chimeneas (inicio) */
@@ -5604,6 +5613,17 @@ function getLucesIlumSistemaMapa() {
 }
 
 /*Sistemas de antorchas y chimeneas (fin) */
+function updateGameplayUIVisibility() {
+  if (gameState === "gamePlay" && gameAssetsLoaded && !gameAssetsLoading) {
+    joy.style.display = "block";
+    boxButtonsITems.style.display = "flex";
+    metafonButton.style.display = "block";
+  } else {
+    joy.style.display = "none";
+    boxButtonsITems.style.display = "none";
+    metafonButton.style.display = "none";
+  }
+}
 
 function resizeFullscreen() {
   const rect = wrap.getBoundingClientRect();
@@ -5637,19 +5657,14 @@ function resizeFullscreen() {
       canvas.style.height = "400px";
       break;
 
-    case "gamePlay":
-    default:
+case "gamePlay":
+default:
+  canvas.width = rect.width;
+  canvas.height = rect.height;
 
-        joy.style.display = "block";
-        boxButtonsITems.style.display = "flex";
-        metafonButton.style.display = "block";
-
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-
-      canvas.style.width = rect.width + "px";
-      canvas.style.height = rect.height + "px";
-      break;
+  canvas.style.width = rect.width + "px";
+  canvas.style.height = rect.height + "px";
+  break;
   }
 
   camera.w = canvas.width;
@@ -13721,7 +13736,7 @@ function draw(images) {
       loadingProgress += (loadingTarget - loadingProgress) * 0.08;
 
       if (logoImg) {
-        const logoMaxWidth = 220;
+        const logoMaxWidth = 180;
         const logoRatio = logoImg.height / logoImg.width;
 
         const logoW = logoMaxWidth;
@@ -14288,141 +14303,3 @@ function resetPlayerProfile() {
 }
 
 resetPlayerProfile() */
-
-//------Prueba de items-----
-//Prueba de escudo:
-/*   
-function pruebaQuitarUsoEscudo() {
-  if (!window.equipSlots) return;
-
-  const escudo = window.equipSlots.find(item =>
-    item && item.id === "escudo_de_madera"
-  );
-
-  if (!escudo) {
-    console.log("No hay escudo equipado");
-    return;
-  }
-
-  escudo.usos -= 3;
-
-  if (escudo.usos < 0) {
-    escudo.usos = 0;
-  }
-
-  console.log("Usos restantes del escudo:", escudo.usos);
-}
-
-function pruebaUsarCorazon() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "corazon");
-
-  if (!item) {
-    console.log("No hay Corazon equipado");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes del Corazon:", item.usos);
-}
-
-function pruebaUsarAntorcha() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "antorcha_de_fuego");
-
-  if (!item) {
-    console.log("No hay Antorcha equipada");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes de la Antorcha:", item.usos);
-}
-
-function pruebaUsarPistolaLazer() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "pistola_lazer");
-
-  if (!item) {
-    console.log("No hay Pistola Lazer equipada");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes de la Pistola:", item.usos);
-}
-
-function pruebaUsarEspadaMadera() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "espada_de_madera");
-
-  if (!item) {
-    console.log("No hay Espada de madera equipada");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes de la Espada de madera:", item.usos);
-}
-
-function pruebaUsarBumerang() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "bumerang");
-
-  if (!item) {
-    console.log("No hay Bumerang equipado");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes del Bumerang:", item.usos);
-}
-
-function pruebaUsarPico() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "pico_escabador");
-
-  if (!item) {
-    console.log("No hay Pico equipado");
-    return;
-  }
-
-  item.usos -= 1;
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes del Pico:", item.usos);
-}
-
-function pruebaUsarEscudoHierro() {
-  if (!window.equipSlots) return;
-
-  const item = window.equipSlots.find(i => i && i.id === "escudo_de_hierro");
-
-  if (!item) {
-    console.log("No hay Escudo de hierro equipado");
-    return;
-  }
-
-  item.usos -= 3;
-
-  if (item.usos < 0) item.usos = 0;
-
-  console.log("Usos restantes del Escudo de hierro:", item.usos);
-}
-*/
