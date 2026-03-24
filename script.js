@@ -306,9 +306,10 @@ function openMetaMap() {
   if (document.getElementById("metamap-overlay")) return;
 
   const MAP_SRC = "./assets/mapas/mapa1-5000x5000.svg";
+  /*
   const WORLD_W = 5000;
   const WORLD_H = 5000;
-
+*/
 
   const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
   const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
@@ -3823,7 +3824,7 @@ function showCombinacionEstadoModal(tipo) {
 }
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -4140,6 +4141,73 @@ const camera = { x: 0, y: 0, w: LOGICAL_W, h: LOGICAL_H };
   //dimenciones del mapa
 const WORLD_W = 5000;
 const WORLD_H = 5000;
+
+//--CARGAR ELEMENTOS DEL RATIO VISUAL SOLAMENTE (INICIO)
+//const VISUAL_CULL_MARGIN = -100; // calculo de ratio visual
+const VISUAL_CULL_MARGIN = 200;
+
+const DEBUG_VISUAL_CULL = true;
+
+function getCameraViewBounds() {
+  return {
+    left: camera.x - VISUAL_CULL_MARGIN,
+    top: camera.y - VISUAL_CULL_MARGIN,
+    right: camera.x + camera.w + VISUAL_CULL_MARGIN,
+    bottom: camera.y + camera.h + VISUAL_CULL_MARGIN
+  };
+}
+
+function drawCameraCullingDebug(ctx) {
+  if (!DEBUG_VISUAL_CULL) return;
+
+  const view = getCameraViewBounds();
+
+  ctx.save();
+
+  ctx.strokeStyle = "lime";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 6]);
+  ctx.strokeRect(
+    view.left,
+    view.top,
+    view.right - view.left,
+    view.bottom - view.top
+  );
+
+  ctx.setLineDash([]);
+  ctx.fillStyle = "lime";
+  ctx.font = "10px arcade";
+  ctx.fillText("CULL AREA", view.left + 8, view.top + 14);
+
+  ctx.restore();
+}
+
+function rectIntersectsCamera(x, y, w, h) {
+  const view = getCameraViewBounds();
+
+  return !(
+    x + w < view.left ||
+    x > view.right ||
+    y + h < view.top ||
+    y > view.bottom
+  );
+}
+
+function entityIsVisible(entity) {
+  if (!entity) return false;
+
+  const w = Number(entity.w || entity.width || 0);
+  const h = Number(entity.h || entity.height || 0);
+  const x = Number(entity.x || 0);
+  const y = Number(entity.y || 0);
+
+  return rectIntersectsCamera(x, y, w, h);
+}
+
+function pointIsVisible(x, y, pad = 48) {
+  return rectIntersectsCamera(x - pad, y - pad, pad * 2, pad * 2);
+}
+//--CARGAR ELEMENTOS DEL RATIO VISUAL SOLAMENTE (FIN)
 
   // Personaje (2x2 tiles => 32x32)
   const HERO_W = 64;
@@ -5545,7 +5613,7 @@ function drawFuegoIlumMapa(ctx, obj) {
 function drawIlumSistemaMapa(ctx) {
   for (const obj of ilumSistemaMapa) {
     if (!obj) continue;
-
+    if (!rectIntersectsCamera(obj.x, obj.y, obj.w, obj.h)) continue;
     const imgOk =
       obj.img &&
       obj.img.complete &&
@@ -6836,6 +6904,7 @@ function drawBubbleNPCambiente(ctx, npc) {
 function drawNPCsAmbiente(ctx) {
   for (const npc of npcsAmbiente) {
     if (!npc) continue;
+    if (!entityIsVisible(npc)) continue;
 
     const imgOk =
       npc.img &&
@@ -6880,6 +6949,7 @@ function drawNPCsAmbiente(ctx) {
 function drawBubblesNPCsAmbiente(ctx) {
   for (const npc of npcsAmbiente) {
     if (!npc) continue;
+    if (!entityIsVisible(npc)) continue;
     drawBubbleNPCambiente(ctx, npc);
   }
 }
@@ -6891,6 +6961,7 @@ function drawEnemigos(ctx) {
 
   for (const enemy of listaEnemigos) {
     if (!enemy) continue;
+    if (!entityIsVisible(enemy)) continue;
 
     const imgOk =
       enemy.img &&
@@ -7126,6 +7197,7 @@ function drawBubblesEnemigos(ctx) {
 
   for (const enemy of listaEnemigos) {
     if (!enemy) continue;
+    if (!entityIsVisible(enemy)) continue;
     drawBubbleEnemigo(ctx, enemy);
   }
 }
@@ -7149,6 +7221,9 @@ function drawNPCs(ctx) {
       : null;
 
   for (const npc of npcs) {
+    if (!npc) continue;
+    if (!entityIsVisible(npc)) continue;
+
     const imgOk =
       npc.img &&
       npc.img.complete &&
@@ -11266,9 +11341,10 @@ function soltarItemPorMuerte(enemy) {
 
 //función para dibujar items
 
-function drawItems(ctx){
-
-  for(const item of items){
+function drawItems(ctx) {
+  for (const item of items) {
+    if (!item) continue;
+    if (!rectIntersectsCamera(item.x, item.y, item.size, item.size)) continue;
 
     const imgOk =
       item.img &&
@@ -11276,7 +11352,7 @@ function drawItems(ctx){
       item.img.naturalWidth > 0 &&
       item.img.naturalHeight > 0;
 
-    if(imgOk){
+    if (imgOk) {
       ctx.drawImage(item.img, item.x, item.y, item.size, item.size);
     } else {
       ctx.strokeStyle = "red";
@@ -11284,23 +11360,20 @@ function drawItems(ctx){
       ctx.strokeRect(item.x, item.y, item.size, item.size);
     }
 
-    if(item === hoveredItem){
-
+    if (item === hoveredItem) {
       const label = item.nombre_item || item.id || "item";
 
-      ctx.fillStyle = "transparent"; //Color de barra de letras de items tirados en el suelo
+      ctx.fillStyle = "transparent";
       ctx.fillRect(item.x - 4, item.y - 20, 120, 16);
 
       ctx.fillStyle = "white";
       ctx.font = "12px arcade";
       ctx.textAlign = "left";
       ctx.fillText(label, item.x, item.y - 8);
-
     }
-
   }
-
 }
+
 function agregarItemAlInventario(nuevoItem) {
   const MAX_SLOTS = 16;
   const MAX_STACK = 25;
@@ -12466,19 +12539,20 @@ function drawBaseObjetoAmbiente(ctx, obj) {
 function drawAmbienteCapa(ctx, capa) {
   if (!ambienteObjetos || !ambienteObjetos.length) return;
 
-  for (const obj of ambienteObjetos) {
-    if (!obj) continue;
+for (const obj of ambienteObjetos) {
+  if (!obj) continue;
+  if (!entityIsVisible(obj)) continue;
 
-    if (esBloqueArcilla(obj)) continue;
-    if (obj.subtipo === "antorcha_suelo") continue;
+  if (esBloqueArcilla(obj)) continue;
+  if (obj.subtipo === "antorcha_suelo") continue;
 
-    const tapaJugador = objetoTapaAlJugador(obj);
+  const tapaJugador = objetoTapaAlJugador(obj);
 
-    if (capa === "back" && tapaJugador) continue;
-    if (capa === "front" && !tapaJugador) continue;
+  if (capa === "back" && tapaJugador) continue;
+  if (capa === "front" && !tapaJugador) continue;
 
-    drawBaseObjetoAmbiente(ctx, obj);
-  }
+  drawBaseObjetoAmbiente(ctx, obj);
+}
 }
 
 function bloqueArcillaVaDetrasDeObjeto(obj, bloqueRef) {
@@ -12520,6 +12594,7 @@ function drawArcillaCapa(ctx, capa) {
     }
 
     if (!bloqueRef) continue;
+    if (!entityIsVisible(bloqueRef)) continue;
 
     const vaDetras = ambienteObjetos.some(amb =>
       amb &&
@@ -13924,24 +13999,28 @@ drawIlumSistemaMapa(ctx);
 drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
 
 //Ojos demoniacos encima de la oscuridad
-// Ojos demoniacos encima de la oscuridad
 for (const npc of npcs || []) {
+  if (!entityIsVisible(npc)) continue;
   if (!entidadEstaEnZonaIluminada(npc)) {
     drawOjosDemoniacos(ctx, npc);
   }
 }
 
 for (const npc of npcsAmbiente || []) {
+  if (!entityIsVisible(npc)) continue;
   if (!entidadEstaEnZonaIluminada(npc)) {
     drawOjosDemoniacos(ctx, npc);
   }
 }
 
 for (const enemy of (window.enemigos || [])) {
+  if (!entityIsVisible(enemy)) continue;
   if (!entidadEstaEnZonaIluminada(enemy)) {
     drawOjosDemoniacos(ctx, enemy);
   }
 }
+
+drawCameraCullingDebug(ctx);
 
     ctx.restore();
 
