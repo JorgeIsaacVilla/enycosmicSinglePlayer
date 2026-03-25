@@ -6,25 +6,6 @@
   -> Creación de estados de misiones y de items de mapa, y sincronización a bases de datos. todos los items se renuevan cada 24 horas, y las misiones cada 3 día
   
   //-------------------Fases de desarrollo Etapa 5.-----------
-  1.	Integración de NPC para sistema de misiones 
-
-  2.	Integración de enemigos 
-
-    2.1.	percepción del enemigo al usuario 
-    2.2.	Ataques del enemigo y afectación a sistema de vida usuario 
-    2.3.	respuesta ataque y defensa de usuario a enemigo 
-
-  3.	Integración de NPC ambiente (Caminando y hablando lanzando pistas por el mapa.
-
-  4.	sistemas visuales y de bloques de colisión (No interactivo) para delimitación de área
-
-    4.1.	colisión de usuario 
-    4.2.	Colisión de enemigos 
-    4.3.	colisión de npc deambulantes 
-    4.4.	colisión de disparo
-
-  5.	sistemas colacionables y cliqueables (Interactivo) 
-
   6.	Estados de mapa 
 
   7.	desarrollo de nuevo índex. para empezar el juego 
@@ -32,6 +13,11 @@
   8.	reorganización de carpetas y recursos 
 
   9.	Prueba inicial sincronización con WordPress solo con mapa 1
+
+  10. Moverlos const TOP15_PLAYER a un .json global para hacer un solo documento para todos los mapas
+
+  11. mover const NOVEDADES  a un .json para hacr un solo documento blobal para todso los mapas
+
   */
 
 // =======================================================================================
@@ -58,47 +44,40 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 300; //0 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 300; //50 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
 // Solo nombre, avatarId, iq
 // =============================
-const TOP15_PLAYERS = [
-  { name: "AstraNova", avatarId: "f1", iq: 18 },
-  { name: "ProtaX", avatarId: "m6", iq: 15 },
-  { name: "LunaByte", avatarId: "f7", iq: 21 },
-  { name: "KairoZen", avatarId: "m3", iq: 31 },
-  { name: "NebuLyn", avatarId: "f9", iq: 34 },
-  { name: "OrionD", avatarId: "m1", iq: 9 },
-  { name: "VegaPulse", avatarId: "f1", iq: 9 },
-  { name: "MikaCore", avatarId: "f8", iq: 10 },
-  { name: "AriaFlux", avatarId: "f4", iq: 12 },
-  { name: "DarioQ", avatarId: "m2", iq: 4 },
-  { name: "CleoStar", avatarId: "f3", iq: 6 },
-  { name: "FreyaWave", avatarId: "f6", iq: 8 },
-  { name: "NovaRift", avatarId: "f9", iq: 3 },
-  { name: "KenzoLab", avatarId: "m3", iq: 5 },
-  { name: "ZaneVoid", avatarId: "m9", iq: 5 },
-];
+let TOP15_PLAYERS = [];
+
+async function cargarTopPlayers() {
+  try {
+    const res = await fetch("./top15players.json");
+    TOP15_PLAYERS = await res.json();
+  } catch (err) {
+    console.error("Error cargando TOP15:", err);
+  }
+}
+cargarTopPlayers();
 
 // =============================
 // NOVEDADES (MVP FRONTEND) anejo incial de forma manual
 // =============================
-const NOVEDADES = [
-  { tag: "Proximamente", text: "Nueva zona Sector -3 con puertas cifradas y niebla." },
-  { tag: "Actualizacion", text: "Optimización del joystick para reducir latencia en móviles." },
-  { tag: "Premios", text: "Premio semanal: 200 cosmonedas por completar 3 misiones." },
-  { tag: "Proximamente", text: "Sistema de inventario 3x3 con trajes y mejoras básicas." },
-  { tag: "Actualizacion", text: "Barra de vida mejorada con efectos y alertas de peligro." },
-  { tag: "Premios", text: "Logro: Explorador Alfa. Recompensa: insignia y 50 IQ." },
-  { tag: "Proximamente", text: "Metafon: acceso rápido a mapa, notas y calculadora." },
-  { tag: "Actualizacion", text: "Mejoras en carga de assets y transición al gameplay." },
-  { tag: "Proximamente", text: "Ranking de IQ en tiempo real para usuarios activos." },
-  { tag: "Premios", text: "Evento de bienvenida: 100 cosmonedas por crear profesión." },
-  { tag: "Actualizacion", text: "Correcciones visuales del canvas y bordes pixel perfect." },
-  { tag: "Proximamente", text: "Misiones diarias con rutas ocultas y secretos del mapa." },
-];
+let NOVEDADES = [];
+
+async function cargarNovedades() {
+  try {
+    const res = await fetch("./novedades.json");
+    NOVEDADES = await res.json();
+
+    setNovedadesCount(NOVEDADES.length, { animate: true });
+  } catch (err) {
+    console.error("Error cargando novedades:", err);
+  }
+}
+cargarNovedades()
 
 // =======================================================================================
 // Variables a sincronizar con base de datos Wordpress (Fin)
@@ -180,6 +159,11 @@ const FRASES_VALIENTES = [
   "¡Aquí termina tu invasión!"
 ];
 
+//Mapa del juego
+const globalMap = "./assets/mapas/mapa1-5000x5000.svg"
+const WORLD_W_GLOBAL = 5000
+const WORLD_H_GLOBAL = 5000
+
 let escudoMaderaActivo = false;
 let skateParticles = [];
 
@@ -255,7 +239,11 @@ function drawSkateParticles(ctx) {
 // =============================
 let ambienteObjetos = [];
 let ambienteImagenesCache = {};
+const AMBIENTE_IMG_CACHE_MAX = 60;
+const AMBIENTE_IMG_CACHE_TTL = 30000; // 30 segundos sin uso
 let ambienteAudioCache = {};
+const AMBIENTE_AUDIO_CACHE_MAX = 20;
+const AMBIENTE_AUDIO_CACHE_TTL = 45000; // 45 segundos sin uso
 let ambienteViewX = 0;
 let ambienteViewY = 0;
 
@@ -305,11 +293,11 @@ function openMetaMap() {
 
   if (document.getElementById("metamap-overlay")) return;
 
-  const MAP_SRC = "./assets/mapas/mapa1-5000x5000.svg";
-  /*
-  const WORLD_W = 5000;
-  const WORLD_H = 5000;
-*/
+  const MAP_SRC = globalMap;
+  
+  const WORLD_W = WORLD_W_GLOBAL;
+  const WORLD_H = WORLD_H_GLOBAL;
+
 
   const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
   const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
@@ -542,9 +530,17 @@ function openMetaMap() {
     playerY
   };
 
-  function closeMetaMap() {
-    overlay.remove();
+function closeMetaMap() {
+  if (metaMapRafId !== null) {
+    cancelAnimationFrame(metaMapRafId);
+    metaMapRafId = null;
   }
+
+  window.removeEventListener("keydown", escHandler);
+  window.removeEventListener("resize", resizeHandler);
+
+  overlay.remove();
+}
 
   function clampOffsets() {
     const scaledW = state.mapBaseW * state.zoom;
@@ -814,31 +810,34 @@ function render() {
     }
   }, { passive: false });
 
-  window.addEventListener("keydown", function escHandler(e) {
-    if (e.key === "Escape") {
-      closeMetaMap();
-      window.removeEventListener("keydown", escHandler);
-    }
-  });
+let metaMapRafId = null;
 
-  window.addEventListener("load", () => {
-    document.querySelector(".box-buttons-items").style.display = "block";
-    document.getElementById("metafon").style.display = "block";
-    document.querySelector(".joystick").style.display = "block";
-  });
+function escHandler(e) {
+  if (e.key === "Escape") {
+    closeMetaMap();
+  }
+}
 
-  window.addEventListener("resize", () => {
-    if (!document.getElementById("metamap-overlay")) return;
-    fitMapToViewport();
-  });
+function resizeHandler() {
+  if (!document.getElementById("metamap-overlay")) return;
+  fitMapToViewport();
+}
 
-  function metaMapLoop() {
-    if (!document.getElementById("metamap-overlay")) return;
-    render();
-    requestAnimationFrame(metaMapLoop);
+function metaMapLoop() {
+  if (!document.getElementById("metamap-overlay")) {
+    metaMapRafId = null;
+    return;
   }
 
-  requestAnimationFrame(metaMapLoop);
+  render();
+  metaMapRafId = requestAnimationFrame(metaMapLoop);
+}
+
+window.addEventListener("keydown", escHandler);
+window.addEventListener("resize", resizeHandler);
+
+metaMapRafId = requestAnimationFrame(metaMapLoop);
+  
 }
 // ===============================
 //-----MetaMap (fin)
@@ -1829,24 +1828,9 @@ function setNovedadesCount(count, { animate = false } = {}) {
   }
 }
 
-// Badge inicial (12) + animación en primera carga
-(() => {
-  const count = NOVEDADES.length;
-
-  // animar una sola vez por sesión
-  const key = "eny_novedades_pop_shown";
-  const already = sessionStorage.getItem(key) === "1";
-
-  setNovedadesCount(count, { animate: !already });
-
-  if (!already && count > 0) {
-    sessionStorage.setItem(key, "1");
-  }
-})();
 //-----------------------------------------------------------------------------
 //lógica para las notificaciones (fin)
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 //lógica Visual de Setting (inicio)
@@ -4046,7 +4030,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 (() => {
   
   const ASSETS = {
-    map: "./assets/mapas/mapa1-5000x5000.svg", //mapa
+    map: globalMap, //mapa
     hero: null, //Personaje
     shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
   };
@@ -4139,8 +4123,8 @@ cosmonedaImg = loadedCoin;
 const camera = { x: 0, y: 0, w: LOGICAL_W, h: LOGICAL_H };
 
   //dimenciones del mapa
-const WORLD_W = 5000;
-const WORLD_H = 5000;
+const WORLD_W = WORLD_W_GLOBAL;
+const WORLD_H = WORLD_H_GLOBAL;
 
 //--CARGAR ELEMENTOS DEL RATIO VISUAL SOLAMENTE (INICIO)
 //const VISUAL_CULL_MARGIN = -100; // calculo de ratio visual
@@ -8893,15 +8877,16 @@ if (escudosHierro.length > 0) {
     }
   }
 
-  // retroceso del jugador
-  const dx = player.x - enemy.x;
-  const dy = player.y - enemy.y;
-  const dist = Math.hypot(dx, dy) || 1;
+// retroceso del jugador
+const dx = player.x - enemy.x;
+const dy = player.y - enemy.y;
+const dist = Math.hypot(dx, dy) || 1;
 
-  const push = 32;
+const push = 32;
+const pushX = (dx / dist) * push;
+const pushY = (dy / dist) * push;
 
-  player.x += (dx / dist) * push;
-  player.y += (dy / dist) * push;
+empujarJugadorConColision(pushX, pushY);
 
   player.blinkTimer = 300;
 
@@ -10470,6 +10455,8 @@ updateParticulasVolcanJefe(dtMs);
 updateSkateParticles(dtMs);
 
 updateIlumSistemaMapa(dtMs);
+limpiarCacheImagenesAmbiente();
+limpiarCacheAudioAmbiente();
 
 //--lógica de fuego y de antorcha, he iluminación de mapas oscuros (inicio)
 if (antorchaActiva.active) {
@@ -12450,76 +12437,186 @@ function objetoTapaAlJugador(obj) {
   return overlapX && jugadorDetras;
 }
 
+function getImagenAmbienteCache(src) {
+  if (!src) return null;
+
+  let entry = ambienteImagenesCache[src];
+
+  if (!entry) {
+    const img = new Image();
+    img.onload = () => console.log("Imagen ambiente cargada:", src);
+    img.onerror = () => console.warn("No cargó imagen ambiente:", src);
+    img.src = src;
+
+    entry = {
+      img,
+      lastUsed: performance.now()
+    };
+
+    ambienteImagenesCache[src] = entry;
+  } else {
+    entry.lastUsed = performance.now();
+  }
+
+  return entry.img;
+}
+
+function limpiarCacheImagenesAmbiente() {
+  const now = performance.now();
+  const keys = Object.keys(ambienteImagenesCache);
+
+  for (const key of keys) {
+    const entry = ambienteImagenesCache[key];
+    if (!entry) continue;
+
+    const idleTime = now - entry.lastUsed;
+
+    if (idleTime > AMBIENTE_IMG_CACHE_TTL) {
+      delete ambienteImagenesCache[key];
+    }
+  }
+
+  const remainingKeys = Object.keys(ambienteImagenesCache);
+
+  if (remainingKeys.length > AMBIENTE_IMG_CACHE_MAX) {
+    remainingKeys
+      .sort((a, b) => ambienteImagenesCache[a].lastUsed - ambienteImagenesCache[b].lastUsed)
+      .slice(0, remainingKeys.length - AMBIENTE_IMG_CACHE_MAX)
+      .forEach(key => {
+        delete ambienteImagenesCache[key];
+      });
+  }
+}
+
+function getAudioAmbienteCache(src) {
+  if (!src) return null;
+
+  let entry = ambienteAudioCache[src];
+
+  if (!entry) {
+    const audio = new Audio(src);
+    audio.loop = true;
+    audio.preload = "auto";
+
+    entry = {
+      audio,
+      lastUsed: performance.now(),
+      activeCount: 0
+    };
+
+    ambienteAudioCache[src] = entry;
+  } else {
+    entry.lastUsed = performance.now();
+  }
+
+  return entry.audio;
+}
+
+function marcarUsoAudioAmbiente(src, activo) {
+  const entry = ambienteAudioCache[src];
+  if (!entry) return;
+
+  entry.lastUsed = performance.now();
+
+  if (activo) {
+    entry.activeCount = Math.max(1, entry.activeCount || 0);
+  } else {
+    entry.activeCount = 0;
+  }
+}
+
+function limpiarCacheAudioAmbiente() {
+  const now = performance.now();
+  const keys = Object.keys(ambienteAudioCache);
+
+  for (const key of keys) {
+    const entry = ambienteAudioCache[key];
+    if (!entry) continue;
+
+    const idleTime = now - entry.lastUsed;
+    const isPlaying = !!entry.activeCount;
+
+    if (!isPlaying && idleTime > AMBIENTE_AUDIO_CACHE_TTL) {
+      try {
+        entry.audio.pause();
+        entry.audio.src = "";
+        entry.audio.load();
+      } catch (err) {}
+
+      delete ambienteAudioCache[key];
+    }
+  }
+
+  const remainingKeys = Object.keys(ambienteAudioCache);
+
+  if (remainingKeys.length > AMBIENTE_AUDIO_CACHE_MAX) {
+    remainingKeys
+      .sort((a, b) => ambienteAudioCache[a].lastUsed - ambienteAudioCache[b].lastUsed)
+      .slice(0, remainingKeys.length - AMBIENTE_AUDIO_CACHE_MAX)
+      .forEach(key => {
+        const entry = ambienteAudioCache[key];
+        if (!entry || entry.activeCount > 0) return;
+
+        try {
+          entry.audio.pause();
+          entry.audio.src = "";
+          entry.audio.load();
+        } catch (err) {}
+
+        delete ambienteAudioCache[key];
+      });
+  }
+}
+
 function drawBaseObjetoAmbiente(ctx, obj) {
   if (obj.color) {
     ctx.fillStyle = obj.color;
     ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
   }
 
-  if (obj.imagen) {
-    if (!ambienteImagenesCache[obj.imagen]) {
-      const img = new Image();
-      img.onload = () => console.log("Imagen ambiente cargada:", obj.imagen);
-      img.onerror = () => console.warn("No cargó imagen ambiente:", obj.imagen);
-      img.src = obj.imagen;
-      ambienteImagenesCache[obj.imagen] = img;
-    }
+if (obj.imagen) {
+  const img = getImagenAmbienteCache(obj.imagen);
 
-    const img = ambienteImagenesCache[obj.imagen];
-
-    if (img.complete && img.naturalWidth > 0) {
-      ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
-    }
+  if (img && img.complete && img.naturalWidth > 0) {
+    ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
   }
+}
 
-  if (obj.sprites_1x10) {
-    if (!ambienteImagenesCache[obj.sprites_1x10]) {
-      const img = new Image();
-      img.onload = () => console.log("Sprite ambiente cargado:", obj.sprites_1x10);
-      img.onerror = () => console.warn("No cargó sprite ambiente:", obj.sprites_1x10);
-      img.src = obj.sprites_1x10;
-      ambienteImagenesCache[obj.sprites_1x10] = img;
+if (obj.sprites_1x10) {
+  const img = getImagenAmbienteCache(obj.sprites_1x10);
+
+  if (img && img.complete && img.naturalWidth > 0) {
+    const FRAME_W = 120;
+    const FRAME_H = 120;
+    const TOTAL_FRAMES = 10;
+
+    obj.frameTimer += 16;
+
+    const speed = Number(obj.velocidad_movimiento) || 1;
+
+    if (obj.frameTimer >= (obj.frameDuration / speed)) {
+      obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
+      obj.frameTimer = 0;
     }
 
-    const img = ambienteImagenesCache[obj.sprites_1x10];
+    const sx = obj.frameActual * FRAME_W;
 
-    if (img.complete && img.naturalWidth > 0) {
-      const FRAME_W = 120;
-      const FRAME_H = 120;
-      const TOTAL_FRAMES = 10;
-
-      obj.frameTimer += 16;
-
-      const speed = Number(obj.velocidad_movimiento) || 1;
-
-      if (obj.frameTimer >= (obj.frameDuration / speed)) {
-        obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
-        obj.frameTimer = 0;
-      }
-
-      const sx = obj.frameActual * FRAME_W;
-
-      ctx.drawImage(
-        img,
-        sx, 0, FRAME_W, FRAME_H,
-        obj.x, obj.y, obj.w, obj.h
-      );
-    }
+    ctx.drawImage(
+      img,
+      sx, 0, FRAME_W, FRAME_H,
+      obj.x, obj.y, obj.w, obj.h
+    );
   }
+}
 
-  if (obj.sonido_ambiente) {
-    const dx = (player.x + 32) - (obj.x + obj.w / 2);
-    const dy = (player.y + 32) - (obj.y + obj.h / 2);
-    const dist = Math.hypot(dx, dy);
+if (obj.sonido_ambiente) {
+  const dx = (player.x + 32) - (obj.x + obj.w / 2);
+  const dy = (player.y + 32) - (obj.y + obj.h / 2);
+  const dist = Math.hypot(dx, dy);
 
-    if (!ambienteAudioCache[obj.sonido_ambiente]) {
-      const audio = new Audio(obj.sonido_ambiente);
-      audio.loop = true;
-      ambienteAudioCache[obj.sonido_ambiente] = audio;
-    }
+  const audio = getAudioAmbienteCache(obj.sonido_ambiente);
 
-    const audio = ambienteAudioCache[obj.sonido_ambiente];
-
+  if (audio) {
     if (dist < 500) {
       audio.volume = Math.max(0, 1 - (dist / 500));
 
@@ -12527,13 +12624,18 @@ function drawBaseObjetoAmbiente(ctx, obj) {
         audio.play().catch(() => {});
         obj.audioPlaying = true;
       }
+
+      marcarUsoAudioAmbiente(obj.sonido_ambiente, true);
     } else {
       if (obj.audioPlaying) {
         audio.pause();
         obj.audioPlaying = false;
       }
+
+      marcarUsoAudioAmbiente(obj.sonido_ambiente, false);
     }
   }
+}
 }
 
 function drawAmbienteCapa(ctx, capa) {
@@ -13457,6 +13559,44 @@ function procesarEscapeArcillaEnemigo(enemy, dtMs) {
   }
 
   return true;
+}
+
+function empujarJugadorConColision(pushX, pushY) {
+  let xFinal = player.x;
+  let yFinal = player.y;
+
+  const nextX = player.x + pushX;
+  const nextY = player.y + pushY;
+
+  const hitX = colisionAmbiente(
+    nextX + PLAYER_OFFSET_X,
+    player.y + PLAYER_OFFSET_Y,
+    PLAYER_HIT_W,
+    PLAYER_HIT_H
+  );
+
+  if (!hitX) {
+    xFinal = nextX;
+  }
+
+  const hitY = colisionAmbiente(
+    xFinal + PLAYER_OFFSET_X,
+    nextY + PLAYER_OFFSET_Y,
+    PLAYER_HIT_W,
+    PLAYER_HIT_H
+  );
+
+  if (!hitY) {
+    yFinal = nextY;
+  }
+
+  const leftLimit = 0;
+  const topLimit = 0;
+  const rightLimit = WORLD_W - HERO_W;
+  const bottomLimit = WORLD_H - HERO_H;
+
+  player.x = clamp(xFinal, leftLimit, rightLimit);
+  player.y = clamp(yFinal, topLimit, bottomLimit);
 }
 
 function moverEntidadConColision(entidad, nextX, nextY, w, h) {

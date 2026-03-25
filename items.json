@@ -424,7 +424,7 @@
       "creable": false,
       "materiales_requeridos_para_crear": [],
       "combinable": true,
-      "precio_compra": 0
+      "precio_compra": 1
     },
     {
       "id": "balinera",
