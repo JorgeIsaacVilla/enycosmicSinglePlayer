@@ -3909,6 +3909,105 @@ function ensureStyleDOMCSS() {
   document.head.appendChild(link);
 }
 ensureStyleDOMCSS();
+
+function removeGameOverDOMOverlay() {
+  const old = document.getElementById("game-over-dom-overlay");
+  if (old) old.remove();
+}
+
+function openGameOverDOMOverlay() {
+  ensureStyleDOMCSS();
+  removeGameOverDOMOverlay();
+
+  const wrap = document.getElementById("wrap");
+  if (!wrap) return;
+
+  const heroSrc =
+  (window.player && window.player.spriteSrc) ||
+  localStorage.getItem("avatar") ||
+  "./assets/avatares/default.png";
+  const guardSrc = "./assets/avatares/enemy/centinela-reptiliano-armado.png";
+
+  const overlay = document.createElement("div");
+  overlay.id = "game-over-dom-overlay";
+
+overlay.innerHTML = `
+  <div id="game-over-dom-panel">
+    <div id="game-over-guard-left" class="game-over-dom-sprite-frame">
+      <img class="game-over-dom-sprite-sheet" src="${guardSrc}" alt="Centinela izquierdo">
+    </div>
+
+    <div id="game-over-player" class="game-over-dom-sprite-frame">
+      <img class="game-over-dom-sprite-sheet" src="${heroSrc}" alt="Jugador">
+    </div>
+
+    <div id="game-over-guard-right" class="game-over-dom-sprite-frame">
+      <img class="game-over-dom-sprite-sheet" src="${guardSrc}" alt="Centinela derecho">
+    </div>
+
+    <div id="game-over-dom-title">GAME OVER</div>
+    <div id="game-over-dom-line-1" class="game-over-dom-line">Te atraparon los reptilianos</div>
+    <div id="game-over-dom-line-2" class="game-over-dom-line">Para continuar</div>
+    <div id="game-over-dom-line-3" class="game-over-dom-line">tendras que pagar 3 cosmonedas</div>
+
+    <button id="game-over-dom-continue" type="button">CONTINUAR</button>
+  </div>
+`;
+
+  wrap.appendChild(overlay);
+
+  const btn = overlay.querySelector("#game-over-dom-continue");
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    continuarTrasGameOver();
+  });
+
+  btn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { passive: false });
+
+  
+}
+function continuarTrasGameOver() {
+  if (cosmonedas < 3) {
+    showPopupFeedback({
+      title: "Sin cosmonedas",
+      message: "Necesitas 3 cosmonedas para continuar.",
+      type: "warning",
+      duration: 10000
+    });
+    return;
+  }
+
+  cosmonedas -= 3;
+
+  removeGameOverDOMOverlay();
+
+  pdv = Math.floor(PDV_MAX / 2);
+  gameOverActive = false;
+
+  player.x = PLAYER_SPAWN_X;
+  player.y = PLAYER_SPAWN_Y;
+  player.walking = false;
+  player.blinkTimer = 0;
+
+  hoveredItem = null;
+  hoveredCanvasInteractive = null;
+
+  if (joy) joy.style.display = "block";
+  if (boxButtonsITems) boxButtonsITems.style.display = "flex";
+  if (metafonButton) metafonButton.style.display = "block";
+}
 //Estilos del DOM globales (fin)
 (() => {
   
@@ -8037,21 +8136,17 @@ function activarGameOver() {
   updateGameplayUIVisibility();
   held.length = 0;
   player.walking = false;
-}
+  hoveredItem = null;
+  hoveredCanvasInteractive = null;
+  canvas.style.cursor = "default";
 
-function continuarTrasGameOver() {
-  if (cosmonedas >= 3) {
-    cosmonedas -= 3;
+  if (typeof resetJoy === "function") {
+    resetJoy();
   }
 
-  pdv = Math.floor(PDV_MAX / 2);
-  player.x = PLAYER_SPAWN_X;
-  player.y = PLAYER_SPAWN_Y;
-  player.blinkTimer = 0;
-
-  gameOverActive = false;
-  updateGameplayUIVisibility();
+  openGameOverDOMOverlay();
 }
+
 //===========================================
 /*Dibujar NPC (fin) */
 //===========================================
@@ -13543,12 +13638,10 @@ function draw(images) {
   // 🟢 MODO PLAYING
   if (gameMode === "playing") {
 
-    if (gameOverActive) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawGameOverScreen();
-      return;
-    }
+  if (gameOverActive) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return;
+  }
 
     setGameState("gamePlay");
 
