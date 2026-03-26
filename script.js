@@ -1674,7 +1674,12 @@ async function toggleFullscreen() {
       if (req) {
         await req.call(el);
       } else {
-        alert("Pantalla completa no disponible en este navegador.");
+        showPopupFeedback({
+          title: "No disponible",
+          message: "Pantalla completa no disponible en este navegador.",
+          type: "warning",
+          duration: 6000
+        });
       }
     } else {
       const exit =
@@ -1687,11 +1692,16 @@ async function toggleFullscreen() {
         await exit.call(document);
       }
     }
-  } catch (e) {
-    // iOS Safari puede limitar fullscreen real (depende versión)
-    console.warn("Fullscreen error:", e);
-    //alert("Pantalla completa limitada en este dispositivo/navegador.");
-  }
+  }catch (e) {
+  console.warn("Fullscreen error:", e);
+
+  showPopupFeedback({
+    title: "Pantalla completa",
+    message: "Función limitada en este dispositivo o navegador.",
+    type: "warning",
+    duration: 6000
+  });
+}
 }
 
 // Render Setting raíz
@@ -1848,6 +1858,8 @@ function devolverItemDesdeEquipado(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
 
+  const scrollInventario = getElementScrollState("#container-interfas .ui-body");
+
   const itemId = item.id ?? item.item_id;
   const esBloqueArcilla = itemId === "bloque_de_arcilla";
 
@@ -1855,13 +1867,13 @@ function devolverItemDesdeEquipado(slotIndex) {
   const desapareceAlAgotarse = item.desaparece_al_agotarse === true;
   const esAgotable = item.agotable === true;
 
-  // Si ya se agotó y debe desaparecer, se elimina por completo
   if (esAgotable && usosActuales <= 0 && desapareceAlAgotarse) {
     window.equipSlots[slotIndex] = null;
 
     if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
       const bodyEl = interfasEl.querySelector(".ui-body");
       if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+      restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
     }
     return;
   }
@@ -1890,6 +1902,7 @@ function devolverItemDesdeEquipado(slotIndex) {
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
     if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
   }
 }
 
@@ -1898,6 +1911,8 @@ window.devolverItemDesdeEquipado = devolverItemDesdeEquipado;
 function equiparItemDelInventario(slotIndex) {
   const item = window.inventarioUser?.[slotIndex];
   if (!item) return;
+
+  const scrollInventario = getInventarioScrollState();
 
   const tipoRaw =
     item.tipo_item ??
@@ -1933,7 +1948,6 @@ function equiparItemDelInventario(slotIndex) {
   const esBloqueArcilla = itemId === "bloque_de_arcilla";
   const cantidadInventario = Number(item.cantidad || 1) || 1;
 
-  // si ya hay bloque de arcilla equipado, se suma ahí
   if (esBloqueArcilla) {
     const slotExistente = window.equipSlots.findIndex(
       slot => slot && (slot.id === "bloque_de_arcilla" || slot.item_id === "bloque_de_arcilla")
@@ -1953,6 +1967,7 @@ function equiparItemDelInventario(slotIndex) {
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
         if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+        restoreInventarioScrollState(scrollInventario);
       }
       return;
     }
@@ -2016,6 +2031,7 @@ function equiparItemDelInventario(slotIndex) {
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
     if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    restoreInventarioScrollState(scrollInventario);
   }
 }
 
@@ -2162,10 +2178,18 @@ function comprarItemDeTienda(itemId) {
   const precio = Number(item.precio_compra || 0);
   if (precio <= 0) return;
 
-  if ((Number(cosmonedas) || 0) < precio) {
-    alert("No tienes suficientes cosmonedas");
-    return;
-  }
+if ((Number(cosmonedas) || 0) < precio) {
+  showPopupFeedback({
+    title: "Compra fallida",
+    message: "No tienes suficientes cosmonedas.",
+    type: "warning",
+    duration: 10000
+  });
+  return;
+}
+
+  const scrollTienda = getElementScrollState("#tienda-items-body");
+  const scrollInventario = getElementScrollState("#container-interfas .ui-body");
 
   const agregado = agregarItemAlInventario({
     ...item,
@@ -2175,16 +2199,22 @@ function comprarItemDeTienda(itemId) {
     agotable: item.agotable === true
   });
 
-  if (!agregado) {
-    alert("Inventario lleno");
-    return;
-  }
+if (!agregado) {
+  showPopupFeedback({
+    title: "Inventario lleno",
+    message: "No puedes agregar más items.",
+    type: "warning",
+    duration: 10000
+  });
+  return;
+}
 
   cosmonedas -= precio;
 
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
     if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
   }
 
   showPopupFeedback({
@@ -2195,6 +2225,7 @@ function comprarItemDeTienda(itemId) {
   });
 
   abrirTiendaDeITems();
+  restoreElementScrollState("#tienda-items-body", scrollTienda);
 }
 
 function abrirTiendaDeITems() {
@@ -3574,6 +3605,48 @@ const icon = type === "warning"
 }
 /*Funciones Pop Up (fin) */
 
+function getElementScrollState(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return null;
+
+  return {
+    top: el.scrollTop,
+    left: el.scrollLeft
+  };
+}
+
+function restoreElementScrollState(selector, scrollState) {
+  if (!scrollState) return;
+
+  const el = document.querySelector(selector);
+  if (!el) return;
+
+  el.scrollTop = scrollState.top || 0;
+  el.scrollLeft = scrollState.left || 0;
+}
+
+function getInventarioScrollState() {
+  return {
+    panel: getElementScrollState("#container-interfas"),
+    body: getElementScrollState("#container-interfas .ui-body"),
+    gridWrap: getElementScrollState("#container-interfas .ui-inv-grid-wrap")
+  };
+}
+
+function restoreInventarioScrollState(scrollState) {
+  if (!scrollState) return;
+
+  restoreElementScrollState("#container-interfas", scrollState.panel);
+  restoreElementScrollState("#container-interfas .ui-body", scrollState.body);
+  restoreElementScrollState("#container-interfas .ui-inv-grid-wrap", scrollState.gridWrap);
+
+  requestAnimationFrame(() => {
+    restoreElementScrollState("#container-interfas", scrollState.panel);
+    restoreElementScrollState("#container-interfas .ui-body", scrollState.body);
+    restoreElementScrollState("#container-interfas .ui-inv-grid-wrap", scrollState.gridWrap);
+  });
+}
+
 // =============================
 // ILUM SISTEM MAPA (antorchas y chimeneas independientes)
 // =============================
@@ -3616,8 +3689,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3637,8 +3712,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3667,8 +3744,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3688,8 +3767,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3718,8 +3799,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3739,8 +3822,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -3755,8 +3840,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
 
       break;
     }
@@ -4314,8 +4401,10 @@ function updateAtaquesPicoEscabador(dtMs) {
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
     }
 
     ataque.yaDesgasto = true;
@@ -10914,6 +11003,8 @@ function agregarItemACombinacionDesdeInventario(slotIndex) {
   const item = window.inventarioUser[slotIndex];
   if (!item) return;
 
+  const scrollInventario = getInventarioScrollState();
+
   const slotMismoItem = combinacionSlots.findIndex(
     s =>
       s &&
@@ -10950,17 +11041,8 @@ function agregarItemACombinacionDesdeInventario(slotIndex) {
 
   if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
     const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) {
-      bodyEl.innerHTML = buildInventarioHTML();
-
-      const combineSection = bodyEl.querySelector(".ui-inv-combine-wrap");
-      if (combineSection) {
-        combineSection.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest"
-        });
-      }
-    }
+    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
+    restoreInventarioScrollState(scrollInventario);
   }
 }
 
@@ -11074,8 +11156,10 @@ const agregado = agregarItemAlInventario({
 
       if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
         const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      }
+if (bodyEl) {
+  bodyEl.innerHTML = buildInventarioHTML();
+  restoreInventarioScrollState(scrollInventario);
+}}
       return;
     }
 
