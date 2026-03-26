@@ -1,0 +1,730 @@
+:root{
+  --dom-width: 320px;
+  --dom-bg: #000000;
+  --dom-bg-soft: #111111;
+  --dom-text: #00ffcc;
+  --dom-text-soft: #fff799;
+  --dom-border: #00ffcc;
+  --dom-border-soft: rgba(0,255,204,.35);
+  --dom-shadow-1: #0b3d35;
+  --dom-shadow-2: rgba(0,0,0,.45);
+
+  --dom-font: "arcade","monospace";
+
+  --dom-radius: 0px;
+  --dom-header-h: 42px;
+  --dom-close-w: 30px;
+  --dom-close-h: 30px;
+  --dom-btn-h: 30px;
+
+  --dom-pad-xs: 6px;
+  --dom-pad-sm: 8px;
+  --dom-pad-md: 10px;
+  --dom-pad-lg: 14px;
+
+  --dom-gap-xs: 4px;
+  --dom-gap-sm: 6px;
+  --dom-gap-md: 8px;
+  --dom-gap-lg: 10px;
+
+  --dom-font-xs: 10px;
+  --dom-font-sm: 11px;
+  --dom-font-md: 12px;
+  --dom-font-lg: 14px;
+  --dom-line: 1.35;
+}
+
+/* =========================
+   BASE MODAL / PANEL SYSTEM
+   ========================= */
+
+.dom-overlay,
+#npc-dialog-overlay,
+#mission-reward-overlay,
+#craft-info-popup-overlay,
+#tienda-items-overlay,
+#reto-popup-overlay,
+#metamap-overlay{
+  position:absolute;
+  inset:0;
+  z-index:4000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:auto;
+}
+
+.dom-panel,
+#npc-dialog-panel,
+#mission-reward-box,
+#craft-info-popup-box,
+#tienda-items-box,
+#reto-popup-box,
+#metamap-panel{
+  width:var(--dom-width);
+  max-width:var(--dom-width);
+  background:var(--dom-bg);
+  color:var(--dom-text);
+  /*border:3px solid var(--dom-border);*/
+  box-shadow:
+    0 0 0 2px var(--dom-shadow-1),
+    0 0 0 4px var(--dom-border),
+    0 10px 30px var(--dom-shadow-2);
+  font-family:var(--dom-font);
+  image-rendering:pixelated;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+.dom-panel--h-320,
+#npc-dialog-panel,
+#reto-popup-box,
+#metamap-panel{
+  height:320px;
+}
+
+.dom-panel--min-320,
+#mission-reward-box{
+  min-height:320px;
+}
+
+.dom-panel--min-360,
+#craft-info-popup-box{
+  min-height:360px;
+  max-height:420px;
+}
+
+.dom-panel--max-460,
+#tienda-items-box{
+  max-height:460px;
+}
+
+.dom-header,
+#npc-dialog-header,
+#craft-info-popup-header,
+#tienda-items-header,
+#metamap-header,
+.reto-popup-header{
+  height:var(--dom-header-h);
+  min-height:var(--dom-header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 var(--dom-pad-sm);
+  background:var(--dom-bg-soft);
+  border-bottom:2px solid var(--dom-border);
+  box-sizing:border-box;
+}
+
+.dom-title,
+#npc-dialog-title,
+#craft-info-popup-title,
+#tienda-items-title,
+#metamap-title,
+.reto-popup-title{
+  font-size:var(--dom-font-md);
+  letter-spacing:1px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.dom-close,
+#npc-dialog-close,
+#craft-info-popup-close,
+#tienda-items-close,
+#metamap-close,
+.reto-popup-close{
+  width:var(--dom-close-w);
+  height:var(--dom-close-h);
+  background:var(--dom-bg);
+  color:var(--dom-text);
+  border:2px solid var(--dom-border);
+  font-family:var(--dom-font);
+  font-size:var(--dom-font-lg);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-sizing:border-box;
+}
+
+.dom-close:active,
+#npc-dialog-close:active,
+#craft-info-popup-close:active,
+#tienda-items-close:active,
+#metamap-close:active,
+.reto-popup-close:active,
+.dom-btn:active,
+.npc-dialog-btn:active,
+.mission-reward-btn:active,
+.tienda-item-btn:active,
+.metamap-btn:active{
+  transform:translateY(1px);
+}
+
+.dom-body{
+  padding:var(--dom-pad-lg);
+  box-sizing:border-box;
+}
+
+.dom-scroll-body,
+#craft-info-popup-body,
+#tienda-items-body{
+  flex:1;
+  overflow:auto;
+  padding:var(--dom-pad-md);
+  box-sizing:border-box;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,255,204,.05) 0px,
+      rgba(0,255,204,.05) 2px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0) 6px
+    );
+}
+
+.dom-btn,
+.npc-dialog-btn,
+.mission-reward-btn,
+.tienda-item-btn,
+.metamap-btn,
+.reto-popup-pass{
+  min-width:74px;
+  min-height:var(--dom-btn-h);
+  padding:0 8px;
+  background:var(--dom-bg);
+  color:var(--dom-text);
+  border:2px solid var(--dom-border);
+  font-family:var(--dom-font);
+  font-size:var(--dom-font-xs);
+  cursor:pointer;
+  text-transform:uppercase;
+  box-sizing:border-box;
+}
+
+.dom-btn:disabled,
+.tienda-item-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.dom-copy{
+  margin:0;
+  font-size:var(--dom-font-sm);
+  line-height:var(--dom-line);
+  color:var(--dom-text);
+}
+
+.dom-copy--soft{
+  color:var(--dom-text-soft);
+}
+
+.dom-copy--white{
+  color:#ffffff;
+}
+
+.dom-block{
+  border:2px solid rgba(0,255,204,.45);
+  background:rgba(0,255,204,.06);
+  padding:8px;
+  display:grid;
+  gap:6px;
+  box-sizing:border-box;
+}
+
+/* =========================
+   NPC DIALOG
+   ========================= */
+
+#npc-dialog-panel{
+  display:flex;
+  flex-direction:column;
+}
+
+#npc-dialog-portrait-wrap{
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  background:
+    radial-gradient(circle at center, rgba(0,255,204,.12), rgba(0,0,0,0) 65%);
+}
+
+#npc-dialog-portrait{
+  width:96px;
+  height:120px;
+  image-rendering:pixelated;
+  object-fit:contain;
+  display:block;
+  zoom:2.4;
+  padding-top:8px;
+}
+
+#npc-dialog-footer{
+  height:80px;
+  min-height:80px;
+  border-top:2px solid var(--dom-border-soft);
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:8px;
+  box-sizing:border-box;
+}
+
+#npc-dialog-line{
+  margin:0;
+  font-size:var(--dom-font-sm);
+  line-height:var(--dom-line);
+  min-height:28px;
+  color:var(--dom-text);
+  overflow:hidden;
+}
+
+#npc-dialog-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  flex-wrap:wrap;
+}
+
+/* =========================
+   MISSION UI
+   ========================= */
+
+.ui-missions-root{
+  display:grid;
+  gap:10px;
+  color:var(--dom-text);
+  font-family:var(--dom-font);
+}
+
+.ui-mission-card{
+  border:1px solid var(--dom-border);
+  background:rgba(0,255,204,.06);
+  box-shadow:0 0 0 2px rgba(0,0,0,.35);
+  padding:10px;
+  display:grid;
+  gap:8px;
+  cursor:pointer;
+  box-sizing:border-box;
+}
+
+.ui-mission-title{
+  margin:0;
+  font-size:12px;
+  text-transform:uppercase;
+}
+
+.ui-mission-title-active{
+  color:yellow;
+}
+
+.ui-mission-step{
+  margin:0;
+  font-size:11px;
+  line-height:1.35;
+}
+
+.ui-mission-step-box{
+  border:1px solid rgba(0,255,204,.35);
+  padding:8px;
+  display:grid;
+  gap:6px;
+  background:rgba(0,0,0,.25);
+}
+
+.ui-mission-step-done{
+  opacity:.9;
+}
+
+.ui-mission-coords{
+  margin:0;
+  font-size:10px;
+  color:#fff;
+  opacity:.9;
+}
+
+.ui-mission-done{
+  color:#fff799;
+}
+
+.ui-mission-card-completed{
+  opacity:.9;
+}
+
+#mission-reward-box{
+  padding:14px;
+  display:grid;
+  gap:12px;
+  text-align:center;
+}
+
+.mission-reward-title{
+  font-size:12px;
+  text-transform:uppercase;
+  line-height:1.5;
+}
+
+.mission-reward-line{
+  font-size:11px;
+  line-height:1.35;
+}
+
+.mission-reward-items-title{
+  font-size:11px;
+  color:#fff799;
+}
+
+.mission-reward-items{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.mission-reward-item{
+  border:2px solid rgba(0,255,204,.4);
+  background:rgba(0,255,204,.06);
+  padding:8px;
+  display:grid;
+  gap:6px;
+  justify-items:center;
+}
+
+.mission-reward-item img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+/* =========================
+   CRAFT POPUP
+   ========================= */
+
+#craft-info-popup-box{
+  display:flex;
+  flex-direction:column;
+}
+
+#craft-info-popup-body{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.craft-info-main-image{
+  width:96px;
+  height:96px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  display:block;
+  margin:0 auto;
+  border:2px solid rgba(0,255,204,.6);
+  background:rgba(0,255,204,.08);
+  padding:8px;
+  box-sizing:border-box;
+}
+
+.craft-info-section-title{
+  margin:0;
+  font-size:11px;
+  text-transform:uppercase;
+  text-align:center;
+  color:#fff799;
+}
+
+.craft-info-empty{
+  margin:0;
+  font-size:10px;
+  line-height:1.5;
+  text-align:center;
+  color:#00ffcc;
+}
+
+.craft-info-list{
+  display:grid;
+  gap:8px;
+}
+
+.craft-info-row{
+  border:2px solid rgba(0,255,204,.45);
+  background:rgba(0,255,204,.06);
+  padding:8px;
+  display:grid;
+  gap:6px;
+}
+
+.craft-info-product{
+  margin:0;
+  font-size:11px;
+  color:#fff;
+}
+
+.craft-info-recipe{
+  margin:0;
+  font-size:10px;
+  line-height:1.5;
+  color:#00ffcc;
+}
+
+/* =========================
+   TIENDA
+   ========================= */
+
+#tienda-items-box{
+  display:flex;
+  flex-direction:column;
+}
+
+#tienda-items-body{
+  display:grid;
+  gap:10px;
+}
+
+.tienda-vendedor-box{
+  position:relative;
+  border:2px solid rgba(0,255,204,.4);
+  background:rgba(0,255,204,.06);
+  padding:12px 10px 10px 110px;
+  min-height:100px;
+  box-sizing:border-box;
+}
+
+.tienda-vendedor-foto{
+  position:absolute;
+  top:10px;
+  left:10px;
+  width:90px;
+  height:90px;
+  object-fit:none;
+  object-position:32% 30%;
+  image-rendering:pixelated;
+  border:2px solid rgba(0,255,204,.45);
+  background:rgba(0,255,204,.08);
+  padding:4px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+.tienda-vendedor-copy{
+  display:grid;
+  gap:6px;
+}
+
+.tienda-vendedor-copy p{
+  margin:0;
+  font-size:10px;
+  line-height:1.45;
+}
+
+.tienda-vendedor-copy .tienda-vendedor-pss{
+  color:#fff799;
+}
+
+.tienda-items-saldo{
+  border:2px solid rgba(0,255,204,.4);
+  padding:8px;
+  text-align:center;
+  font-size:11px;
+  color:#fff799;
+  background:rgba(0,255,204,.06);
+}
+
+.tienda-item-card{
+  border:2px solid rgba(0,255,204,.4);
+  background:rgba(0,255,204,.06);
+  padding:8px;
+  display:grid;
+  grid-template-columns:56px 1fr auto;
+  gap:8px;
+  align-items:center;
+  box-sizing:border-box;
+}
+
+.tienda-item-img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  display:block;
+  margin:auto;
+  border:2px solid rgba(0,255,204,.35);
+  background:rgba(0,255,204,.08);
+  padding:4px;
+  box-sizing:border-box;
+}
+
+.tienda-item-info{
+  display:grid;
+  gap:4px;
+}
+
+.tienda-item-name{
+  margin:0;
+  font-size:11px;
+  color:white;
+}
+
+.tienda-item-price{
+  margin:0;
+  font-size:10px;
+  color:#fff799;
+}
+
+.tienda-items-empty{
+  text-align:center;
+  font-size:11px;
+  padding:20px;
+}
+
+/* =========================
+   RETO POPUP
+   ========================= */
+
+#reto-popup-box{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:14px;
+  text-align:center;
+}
+
+.reto-popup-header{
+  border-bottom:2px solid rgba(0,255,204,.35);
+  padding-bottom:8px;
+  height:auto;
+  min-height:auto;
+  background:transparent;
+}
+
+.reto-popup-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
+
+.reto-popup-message{
+  font-size:12px;
+  line-height:1.5;
+  text-transform:uppercase;
+  margin:0;
+}
+
+.reto-popup-pass{
+  min-width:160px;
+  min-height:44px;
+  padding:8px 14px;
+}
+
+/* =========================
+   METAMAP
+   ========================= */
+
+#metamap-panel{
+  position:absolute;
+  touch-action:none;
+}
+
+#metamap-header-right{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+#metamap-viewport{
+  position:relative;
+  width:100%;
+  height:calc(100% - 42px);
+  overflow:hidden;
+  background:black;
+  touch-action:none;
+  cursor:grab;
+}
+
+#metamap-viewport.dragging{
+  cursor:grabbing;
+}
+
+#metamap-canvas{
+  position:absolute;
+  left:0;
+  top:0;
+  image-rendering:pixelated;
+  transform-origin:top left;
+  will-change:transform;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+
+#metamap-player{
+  position:absolute;
+  width:18px;
+  height:18px;
+  pointer-events:none;
+  transform-origin:center center;
+}
+
+#metamap-player::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:0;
+  height:0;
+  transform:translate(-50%, -60%);
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-bottom:14px solid #00ffcc;
+  filter:drop-shadow(0 0 2px rgba(0,255,204,0.6));
+}
+
+#metamap-player::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:4px;
+  height:4px;
+  background:black;
+  transform:translate(-50%, -20%);
+}
+
+#metamap-mission,
+.metamap-starter-marker{
+  position:absolute;
+  width:20px;
+  height:20px;
+  pointer-events:none;
+  display:none;
+  transform-origin:center center;
+  font-family:"arcade","monospace";
+  font-size:18px;
+  line-height:20px;
+  text-align:center;
+  text-shadow:
+    1px 0 0 black,
+    -1px 0 0 black,
+    0 1px 0 black,
+    0 -1px 0 black;
+}
+
+#metamap-mission{
+  color:#ff2b2b;
+}
+
+.metamap-starter-marker{
+  color:yellow;
+}

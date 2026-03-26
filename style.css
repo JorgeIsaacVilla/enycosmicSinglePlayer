@@ -235,7 +235,7 @@ body{
   color: #00ffcc;
 
   /* borde estilo “pixel” */
-  border: 3px solid #00ffcc;
+  /*border: 3px solid #00ffcc;*/
   box-shadow:
     0 0 0 2px #0b3d35,
     0 0 0 4px #00ffcc,

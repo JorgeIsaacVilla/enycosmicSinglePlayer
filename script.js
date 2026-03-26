@@ -288,223 +288,60 @@ const BLOQUE_ARCILLA_PDR = 12;
 // ===============================
 //-----MetaMap (inicio)
 // ===============================
+function ensureMetaMapCSS() {
+  if (document.getElementById("metamap-style-link")) return;
+
+  const link = document.createElement("link");
+  link.id = "metamap-style-link";
+  link.rel = "stylesheet";
+  link.href = "./styles/metaMapStyle.css";
+
+  document.head.appendChild(link);
+}
+
 function openMetaMap() {
+  ensureMetaMapCSS();
   console.log("Abrir MetaMap en index.html");
 
   if (document.getElementById("metamap-overlay")) return;
 
   const MAP_SRC = globalMap;
-  
   const WORLD_W = WORLD_W_GLOBAL;
   const WORLD_H = WORLD_H_GLOBAL;
-
 
   const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
   const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
 
-  if (!document.getElementById("metamap-styles")) {
-    const style = document.createElement("style");
-    style.id = "metamap-styles";
-    style.textContent = `
-      #metamap-overlay{
-        position:absolute;
-        inset:0;
-        z-index:3000;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        pointer-events:auto;
-      }
+  wrapEl.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div id="metamap-overlay">
+        <div id="metamap-panel">
+          <div id="metamap-header">
+            <div id="metamap-title">MetaMap</div>
+            <div id="metamap-header-right">
+              <button id="metamap-zoom-out" class="metamap-btn" type="button" aria-label="Alejar">-</button>
+              <button id="metamap-zoom-in" class="metamap-btn" type="button" aria-label="Acercar">+</button>
+              <button id="metamap-close" class="metamap-btn" type="button" aria-label="Cerrar">✕</button>
+            </div>
+          </div>
 
-      #metamap-panel{
-        position:absolute;
-        width:320px;
-        height:320px;
-        background:black;
-        border:3px solid #00ffcc;
-        box-shadow:
-          0 0 0 2px #0b3d35,
-          0 0 0 4px #00ffcc,
-          0 10px 30px rgba(0,0,0,0.45);
-        color:#00ffcc;
-        font-family:"arcade","monospace";
-        image-rendering:pixelated;
-        overflow:hidden;
-        touch-action:none;
-      }
-
-      #metamap-header{
-        height:42px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:0 8px;
-        background:#111;
-        border-bottom:2px solid #00ffcc;
-      }
-
-      #metamap-title{
-        font-size:12px;
-        letter-spacing:1px;
-        text-transform:uppercase;
-      }
-
-      #metamap-header-right{
-        display:flex;
-        gap:6px;
-        align-items:center;
-      }
-
-      .metamap-btn{
-        width:28px;
-        height:28px;
-        background:black;
-        color:#00ffcc;
-        border:2px solid #00ffcc;
-        font-family:"arcade","monospace";
-        font-size:14px;
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        padding:0;
-      }
-
-      .metamap-btn:active{
-        transform:translateY(1px);
-      }
-
-      #metamap-viewport{
-        position:relative;
-        width:100%;
-        height:calc(100% - 42px);
-        overflow:hidden;
-        background:black;
-        touch-action:none;
-        cursor:grab;
-      }
-
-      #metamap-viewport.dragging{
-        cursor:grabbing;
-      }
-
-      #metamap-canvas{
-        position:absolute;
-        left:0;
-        top:0;
-        image-rendering:pixelated;
-        transform-origin:top left;
-        will-change:transform;
-        user-select:none;
-        -webkit-user-drag:none;
-        pointer-events:none;
-      }
-
-      #metamap-player{
-        position:absolute;
-        width:18px;
-        height:18px;
-        pointer-events:none;
-        transform-origin:center center;
-      }
-
-      #metamap-player::before{
-        content:"";
-        position:absolute;
-        left:50%;
-        top:50%;
-        width:0;
-        height:0;
-        transform:translate(-50%, -60%);
-        border-left:8px solid transparent;
-        border-right:8px solid transparent;
-        border-bottom:14px solid #00ffcc;
-        filter:drop-shadow(0 0 2px rgba(0,255,204,0.6));
-      }
-
-      #metamap-player::after{
-        content:"";
-        position:absolute;
-        left:50%;
-        top:50%;
-        width:4px;
-        height:4px;
-        background:black;
-        transform:translate(-50%, -20%);
-      }
-
-      #metamap-mission{
-        position:absolute;
-        width:20px;
-        height:20px;
-        pointer-events:none;
-        display:none;
-        transform-origin:center center;
-        color:#ff2b2b;
-        font-family:"arcade","monospace";
-        font-size:18px;
-        line-height:20px;
-        text-align:center;
-        text-shadow:
-          1px 0 0 black,
-          -1px 0 0 black,
-          0 1px 0 black,
-          0 -1px 0 black;
-      }
-
-      .metamap-starter-marker{
-        position:absolute;
-        width:20px;
-        height:20px;
-        pointer-events:none;
-        display:none;
-        color:yellow;
-        font-family:"arcade","monospace";
-        font-size:18px;
-        line-height:20px;
-        text-align:center;
-        text-shadow:
-          1px 0 0 black,
-          -1px 0 0 black,
-          0 1px 0 black,
-          0 -1px 0 black;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  const overlay = document.createElement("div");
-  overlay.id = "metamap-overlay";
-
-  const panel = document.createElement("div");
-  panel.id = "metamap-panel";
-
-  panel.innerHTML = `
-    <div id="metamap-header">
-      <div id="metamap-title">MetaMap</div>
-      <div id="metamap-header-right">
-        <button id="metamap-zoom-out" class="metamap-btn" type="button" aria-label="Alejar">-</button>
-        <button id="metamap-zoom-in" class="metamap-btn" type="button" aria-label="Acercar">+</button>
-        <button id="metamap-close" class="metamap-btn" type="button" aria-label="Cerrar">✕</button>
+          <div id="metamap-viewport">
+            <img id="metamap-canvas" src="${MAP_SRC}" alt="Mapa del mundo">
+            <div id="metamap-player"></div>
+            <div id="metamap-mission">➤</div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="metamap-viewport">
-      <img id="metamap-canvas" src="${MAP_SRC}" alt="Mapa del mundo">
-      <div id="metamap-player"></div>
-    </div>
-  `;
+    `
+  );
 
-  overlay.appendChild(panel);
-  document.getElementById("wrap").appendChild(overlay);
-
-  const viewport = panel.querySelector("#metamap-viewport");
-  const mapEl = panel.querySelector("#metamap-canvas");
-  const playerEl = panel.querySelector("#metamap-player");
-
-  const missionEl = document.createElement("div");
-  missionEl.id = "metamap-mission";
-  missionEl.textContent = "➤";
-  viewport.appendChild(missionEl);
+  const overlay = document.getElementById("metamap-overlay");
+  const panel = document.getElementById("metamap-panel");
+  const viewport = document.getElementById("metamap-viewport");
+  const mapEl = document.getElementById("metamap-canvas");
+  const playerEl = document.getElementById("metamap-player");
+  const missionEl = document.getElementById("metamap-mission");
 
   const starterMarkers = [];
 
@@ -530,17 +367,17 @@ function openMetaMap() {
     playerY
   };
 
-function closeMetaMap() {
-  if (metaMapRafId !== null) {
-    cancelAnimationFrame(metaMapRafId);
-    metaMapRafId = null;
+  function closeMetaMap() {
+    if (metaMapRafId !== null) {
+      cancelAnimationFrame(metaMapRafId);
+      metaMapRafId = null;
+    }
+
+    window.removeEventListener("keydown", escHandler);
+    window.removeEventListener("resize", resizeHandler);
+
+    overlay.remove();
   }
-
-  window.removeEventListener("keydown", escHandler);
-  window.removeEventListener("resize", resizeHandler);
-
-  overlay.remove();
-}
 
   function clampOffsets() {
     const scaledW = state.mapBaseW * state.zoom;
@@ -564,21 +401,25 @@ function closeMetaMap() {
     const starters = npcList.filter(n => n.missionStarter);
 
     for (const npc of starters) {
-      const marker = document.createElement("div");
-      marker.className = "metamap-starter-marker";
-      const missionStarter = window.missionsData?.missions?.find(
-  m => m.pasos?.[0]?.npcId === npc.id
-);
+      viewport.insertAdjacentHTML(
+        "beforeend",
+        `<div class="metamap-starter-marker">${(() => {
+          const missionStarter = window.missionsData?.missions?.find(
+            m => m.pasos?.[0]?.npcId === npc.id
+          );
 
-if (
-  missionStarter &&
-  window.missionSystem?.completedMissionIds?.includes(missionStarter.id)
-) {
-  marker.textContent = "⚝";
-} else {
-  marker.textContent = "?";
-}
-      viewport.appendChild(marker);
+          if (
+            missionStarter &&
+            window.missionSystem?.completedMissionIds?.includes(missionStarter.id)
+          ) {
+            return "⚝";
+          }
+
+          return "?";
+        })()}</div>`
+      );
+
+      const marker = viewport.querySelector(".metamap-starter-marker:last-of-type");
 
       starterMarkers.push({
         el: marker,
@@ -646,48 +487,48 @@ if (
     };
   }
 
-function render() {
-  mapEl.style.width = `${state.mapBaseW}px`;
-  mapEl.style.height = `${state.mapBaseH}px`;
-  mapEl.style.transform = `translate(${state.offsetX}px, ${state.offsetY}px) scale(${state.zoom})`;
+  function render() {
+    mapEl.style.width = `${state.mapBaseW}px`;
+    mapEl.style.height = `${state.mapBaseH}px`;
+    mapEl.style.transform = `translate(${state.offsetX}px, ${state.offsetY}px) scale(${state.zoom})`;
 
-  const pos = getPlayerMarkerPos();
-  playerEl.style.transform = `translate(${pos.x - 9}px, ${pos.y - 9}px)`;
+    const pos = getPlayerMarkerPos();
+    playerEl.style.transform = `translate(${pos.x - 9}px, ${pos.y - 9}px)`;
 
-  const missionPos = getMissionMarkerPos();
+    const missionPos = getMissionMarkerPos();
 
-  if (missionPos) {
-    missionEl.style.display = "block";
-    missionEl.style.transform = `translate(${missionPos.x - 10}px, ${missionPos.y - 10}px) rotate(90deg)`;
-  } else {
-    missionEl.style.display = "none";
-  }
-
-  if (!window.missionSystem?.activeMissionId && starterMarkers.length === 0 && (window.npcs || []).length > 0) {
-    syncStarterMissionMarkers();
-  }
-
-  const hasActiveMission = !!window.missionSystem?.activeMissionId;
-
-  for (const markerObj of starterMarkers) {
-    const npc = markerObj.npc;
-    const markerEl = markerObj.el;
-
-    if (hasActiveMission) {
-      markerEl.style.display = "none";
-      continue;
+    if (missionPos) {
+      missionEl.style.display = "block";
+      missionEl.style.transform = `translate(${missionPos.x - 10}px, ${missionPos.y - 10}px) rotate(90deg)`;
+    } else {
+      missionEl.style.display = "none";
     }
 
-    const px = (npc.x / WORLD_W) * state.mapBaseW;
-    const py = (npc.y / WORLD_H) * state.mapBaseH;
+    if (!window.missionSystem?.activeMissionId && starterMarkers.length === 0 && (window.npcs || []).length > 0) {
+      syncStarterMissionMarkers();
+    }
 
-    const x = state.offsetX + (px * state.zoom);
-    const y = state.offsetY + (py * state.zoom);
+    const hasActiveMission = !!window.missionSystem?.activeMissionId;
 
-    markerEl.style.display = "block";
-    markerEl.style.transform = `translate(${x - 10}px, ${y - 10}px)`;
+    for (const markerObj of starterMarkers) {
+      const npc = markerObj.npc;
+      const markerEl = markerObj.el;
+
+      if (hasActiveMission) {
+        markerEl.style.display = "none";
+        continue;
+      }
+
+      const px = (npc.x / WORLD_W) * state.mapBaseW;
+      const py = (npc.y / WORLD_H) * state.mapBaseH;
+
+      const x = state.offsetX + (px * state.zoom);
+      const y = state.offsetY + (py * state.zoom);
+
+      markerEl.style.display = "block";
+      markerEl.style.transform = `translate(${x - 10}px, ${y - 10}px)`;
+    }
   }
-}
 
   function fitMapToViewport() {
     const vw = viewport.clientWidth;
@@ -810,34 +651,33 @@ function render() {
     }
   }, { passive: false });
 
-let metaMapRafId = null;
+  let metaMapRafId = null;
 
-function escHandler(e) {
-  if (e.key === "Escape") {
-    closeMetaMap();
-  }
-}
-
-function resizeHandler() {
-  if (!document.getElementById("metamap-overlay")) return;
-  fitMapToViewport();
-}
-
-function metaMapLoop() {
-  if (!document.getElementById("metamap-overlay")) {
-    metaMapRafId = null;
-    return;
+  function escHandler(e) {
+    if (e.key === "Escape") {
+      closeMetaMap();
+    }
   }
 
-  render();
+  function resizeHandler() {
+    if (!document.getElementById("metamap-overlay")) return;
+    fitMapToViewport();
+  }
+
+  function metaMapLoop() {
+    if (!document.getElementById("metamap-overlay")) {
+      metaMapRafId = null;
+      return;
+    }
+
+    render();
+    metaMapRafId = requestAnimationFrame(metaMapLoop);
+  }
+
+  window.addEventListener("keydown", escHandler);
+  window.addEventListener("resize", resizeHandler);
+
   metaMapRafId = requestAnimationFrame(metaMapLoop);
-}
-
-window.addEventListener("keydown", escHandler);
-window.addEventListener("resize", resizeHandler);
-
-metaMapRafId = requestAnimationFrame(metaMapLoop);
-  
 }
 // ===============================
 //-----MetaMap (fin)
@@ -846,8 +686,8 @@ metaMapRafId = requestAnimationFrame(metaMapLoop);
 //================================
 //-----CamaraAR (inicio)
 //================================
-
 function openCameraAR() {
+  ensureMetaMapCSS();
   console.log("Abrir Cámara AR en index.html");
 
   if (document.getElementById("camera-ar-overlay")) return;
@@ -856,127 +696,40 @@ function openCameraAR() {
   const gameCanvas = document.getElementById("game");
   const previousGameCanvasVisibility = gameCanvas ? gameCanvas.style.visibility : "";
 
-  if (!document.getElementById("camera-ar-styles")) {
-    const style = document.createElement("style");
-    style.id = "camera-ar-styles";
-    style.textContent = `
-      #camera-ar-overlay{
-        position:absolute;
-        width:95%;
-        height:95%;
-        top:50%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        z-index:1000;
-        display:flex;
-        flex-direction:column;
-        border:3px solid #00ffcc;
-        box-shadow:
-          0 0 0 2px #0b3d35,
-          0 0 0 4px #00ffcc,
-          0 10px 30px rgba(0,0,0,0.45);
-        overflow:hidden;
-        touch-action:none;
-        background:transparent;
-      }
+  wrap.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div id="camera-ar-overlay">
+        <div class="camera-ar-header">
+          <div class="camera-ar-title">MetaCam AR</div>
+          <button class="camera-ar-close" type="button" aria-label="Cerrar">✕</button>
+        </div>
 
-      .camera-ar-header{
-        height:42px;
-        min-height:42px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:0 8px;
-        background:black;
-        border-bottom:2px solid #00ffcc;
-        color:#00ffcc;
-        font-family:"arcade","monospace";
-        z-index:5;
-      }
+        <div class="camera-ar-stage" id="camera-ar-stage">
+          <div class="camera-ar-info" id="camera-ar-info">
+            Apunta la cámara a tu marcador para ver el video en AR.<br>
+            (Toca la pantalla una vez si el video no arranca).
+          </div>
 
-      .camera-ar-title{
-        font-size:12px;
-        letter-spacing:1px;
-        text-transform:uppercase;
-      }
-
-      .camera-ar-close{
-        width:32px;
-        height:30px;
-        background:black;
-        color:#00ffcc;
-        border:2px solid #00ffcc;
-        font-family:"arcade","monospace";
-        font-size:14px;
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        padding:0;
-      }
-
-      .camera-ar-close:active{
-        transform:translateY(1px);
-      }
-
-      .camera-ar-stage{
-        position:relative;
-        flex:1;
-        width:100%;
-        height:calc(100% - 42px);
-        overflow:hidden;
-        background:transparent;
-      }
-
-      .camera-ar-info{
-        position:absolute;
-        top:10px;
-        left:10px;
-        padding:6px 10px;
-        background:rgba(0,0,0,0.55);
-        color:#fff;
-        z-index:4;
-        font-size:14px;
-        font-family:system-ui,sans-serif;
-      }
-
-      .camera-ar-video-source{
-        display:none;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  const overlay = document.createElement("div");
-  overlay.id = "camera-ar-overlay";
-  overlay.innerHTML = `
-    <div class="camera-ar-header">
-      <div class="camera-ar-title">MetaCam AR</div>
-      <button class="camera-ar-close" type="button" aria-label="Cerrar">✕</button>
-    </div>
-    <div class="camera-ar-stage" id="camera-ar-stage">
-      <div class="camera-ar-info" id="camera-ar-info">
-        Apunta la cámara a tu marcador para ver el video en AR.<br>
-        (Toca la pantalla una vez si el video no arranca).
+          <video
+            id="camera-ar-video-source"
+            class="camera-ar-video-source"
+            src="./interactions/MetaCamAR/src/render.mp4"
+            loop
+            muted
+            playsinline
+            webkit-playsinline
+          ></video>
+        </div>
       </div>
-      <video
-        id="camera-ar-video-source"
-        class="camera-ar-video-source"
-        src="./interactions/MetaCamAR/src/render.mp4"
-        loop
-        muted
-        playsinline
-        webkit-playsinline
-      ></video>
-    </div>
-  `;
-
-  wrap.appendChild(overlay);
+    `
+  );
 
   if (gameCanvas) {
     gameCanvas.style.visibility = "hidden";
   }
 
+  const overlay = document.getElementById("camera-ar-overlay");
   const stage = overlay.querySelector("#camera-ar-stage");
   const infoEl = overlay.querySelector("#camera-ar-info");
   const closeBtn = overlay.querySelector(".camera-ar-close");
@@ -1361,12 +1114,6 @@ function bindUIOpen(btn, type) {
 
 function buildInterfas(type) {
   const title = UI_TITLES[type] || "Panel";
-
-  const el = document.createElement("div");
-  el.id = "container-interfas";
-  el.className = "container-interfas";
-  el.dataset.panel = type;
-
   let bodyHTML = "";
 
   switch (type) {
@@ -1390,66 +1137,43 @@ function buildInterfas(type) {
       bodyHTML = window.buildMissionsHTML();
       break;
 
-default:
-  bodyHTML = `
-    <div class="ui-chip">Panel: ${title}</div>
-    <div class="ui-content">
-      <div class="ui-text">
-        Aquí va tu UI real (listas, tabs, cards, etc.)
-      </div>
-      <div class="ui-box">
-        <div class="ui-box-title">Próximamente</div>
-        <div class="ui-box-text">
-          Este panel estará en estilo pixel y modular.
+    default:
+      bodyHTML = `
+        <div class="ui-chip">Panel: ${title}</div>
+        <div class="ui-content">
+          <div class="ui-text">
+            Aquí va tu UI real (listas, tabs, cards, etc.)
+          </div>
+          <div class="ui-box">
+            <div class="ui-box-title">Próximamente</div>
+            <div class="ui-box-text">
+              Este panel estará en estilo pixel y modular.
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  `;
-  break;
+      `;
+      break;
   }
 
-  el.innerHTML = `
-    <div class="ui-header">
-      <div class="ui-title">${title}</div>
-      <button class="ui-close" type="button" aria-label="Cerrar">X</button>
-    </div>
+  return `
+    <div
+      id="container-interfas"
+      class="container-interfas"
+      data-panel="${type}"
+    >
+      <div class="ui-header">
+        <div class="ui-title">${title}</div>
+        <button class="ui-close" type="button" aria-label="Cerrar">X</button>
+      </div>
 
-    <div class="ui-body">
-      ${bodyHTML}
+      <div class="ui-body">
+        ${bodyHTML}
+      </div>
     </div>
   `;
-
-  // cerrar
-  const closeBtn = el.querySelector(".ui-close");
-
-  closeBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    closeInterfas();
-  });
-
-  closeBtn.addEventListener(
-    "pointerdown",
-    (e) => {
-      if (e.pointerType === "mouse") return;
-      e.preventDefault();
-      closeInterfas();
-    },
-    { passive: false }
-  );
-
-  el.addEventListener(
-    "pointerdown",
-    (e) => {
-      e.stopPropagation();
-    },
-    { passive: true }
-  );
-
-  return el;
 }
 
 function openInterfas(type) {
-  // Si ya está abierto, solo cambia contenido
   if (interfaceOpen && interfasEl) {
     interfasEl.dataset.panel = type;
 
@@ -1462,44 +1186,44 @@ function openInterfas(type) {
     if (bodyEl) {
       let bodyHTML = "";
 
-switch (type) {
-case "misions":
-  bodyHTML = window.buildMissionsHTML();
-  break;
+      switch (type) {
+        case "misions":
+          bodyHTML = window.buildMissionsHTML();
+          break;
 
-  case "novedades":
-    bodyHTML = buildNovedadesHTML(NOVEDADES);
-    break;
+        case "novedades":
+          bodyHTML = buildNovedadesHTML(NOVEDADES);
+          break;
 
-  case "setting":
-    bodyHTML = buildSettingHTML();
-    break;
+        case "setting":
+          bodyHTML = buildSettingHTML();
+          break;
 
-  case "inventario":
-    bodyHTML = buildInventarioHTML();
-    break;
+        case "inventario":
+          bodyHTML = buildInventarioHTML();
+          break;
 
-  case "iq":
-    bodyHTML = buildIQPanelHTML();
-    break;
+        case "iq":
+          bodyHTML = buildIQPanelHTML();
+          break;
 
-  default:
-    bodyHTML = `
-      <div class="ui-chip">Panel: ${title}</div>
-      <div class="ui-content">
-        <div class="ui-text">
-          Aquí va tu UI real (listas, tabs, cards, etc.)
-        </div>
-        <div class="ui-box">
-          <div class="ui-box-title">Próximamente</div>
-          <div class="ui-box-text">
-            Este panel estará en estilo pixel y modular.
-          </div>
-        </div>
-      </div>
-    `;
-    break;
-}
+        default:
+          bodyHTML = `
+            <div class="ui-chip">Panel: ${title}</div>
+            <div class="ui-content">
+              <div class="ui-text">
+                Aquí va tu UI real (listas, tabs, cards, etc.)
+              </div>
+              <div class="ui-box">
+                <div class="ui-box-title">Próximamente</div>
+                <div class="ui-box-text">
+                  Este panel estará en estilo pixel y modular.
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+      }
 
       bodyEl.innerHTML = bodyHTML;
     }
@@ -1508,8 +1232,39 @@ case "misions":
   }
 
   interfaceOpen = true;
-  interfasEl = buildInterfas(type);
-  wrapEl.appendChild(interfasEl);
+
+  wrapEl.insertAdjacentHTML("beforeend", buildInterfas(type));
+  interfasEl = document.getElementById("container-interfas");
+
+  if (!interfasEl) {
+    interfaceOpen = false;
+    return;
+  }
+
+  const closeBtn = interfasEl.querySelector(".ui-close");
+
+  closeBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeInterfas();
+  });
+
+  closeBtn?.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      closeInterfas();
+    },
+    { passive: false }
+  );
+
+  interfasEl.addEventListener(
+    "pointerdown",
+    (e) => {
+      e.stopPropagation();
+    },
+    { passive: true }
+  );
 }
 
 function closeInterfas() {
@@ -2265,148 +2020,7 @@ function equiparItemDelInventario(slotIndex) {
 }
 
 function ensureCraftInfoPopupStyles() {
-  if (document.getElementById("craft-info-popup-styles")) return;
-
-  const style = document.createElement("style");
-  style.id = "craft-info-popup-styles";
-  style.innerHTML = `
-    #craft-info-popup-overlay{
-      position:absolute;
-      inset:0;
-      z-index:5000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      pointer-events:auto;
-    }
-
-    #craft-info-popup-box{
-      width:320px;
-      min-height:360px;
-      max-height:420px;
-      background:black;
-      color:#00ffcc;
-      border:3px solid #00ffcc;
-      box-shadow:
-        0 0 0 2px #0b3d35,
-        0 0 0 4px #00ffcc,
-        0 10px 30px rgba(0,0,0,0.45);
-      font-family:"arcade","monospace";
-      image-rendering:pixelated;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    #craft-info-popup-header{
-      height:42px;
-      min-height:42px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 8px;
-      background:#111;
-      border-bottom:2px solid #00ffcc;
-    }
-
-    #craft-info-popup-title{
-      font-size:12px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:240px;
-    }
-
-    #craft-info-popup-close{
-      width:30px;
-      height:30px;
-      background:black;
-      color:#00ffcc;
-      border:2px solid #00ffcc;
-      font-family:"arcade","monospace";
-      font-size:14px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:0;
-    }
-
-    #craft-info-popup-body{
-      flex:1;
-      padding:12px;
-      overflow:auto;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(0,255,204,.05) 0px,
-          rgba(0,255,204,.05) 2px,
-          rgba(0,0,0,0) 2px,
-          rgba(0,0,0,0) 6px
-        );
-    }
-
-    .craft-info-main-image{
-      width:96px;
-      height:96px;
-      object-fit:contain;
-      image-rendering:pixelated;
-      display:block;
-      margin:0 auto;
-      border:2px solid rgba(0,255,204,.6);
-      background:rgba(0,255,204,.08);
-      padding:8px;
-      box-sizing:border-box;
-    }
-
-    .craft-info-section-title{
-      margin:0;
-      font-size:11px;
-      text-transform:uppercase;
-      text-align:center;
-      color:#fff799;
-    }
-
-    .craft-info-empty{
-      margin:0;
-      font-size:10px;
-      line-height:1.5;
-      text-align:center;
-      color:#00ffcc;
-    }
-
-    .craft-info-list{
-      display:grid;
-      gap:8px;
-    }
-
-    .craft-info-row{
-      border:2px solid rgba(0,255,204,.45);
-      background:rgba(0,255,204,.06);
-      padding:8px;
-      display:grid;
-      gap:6px;
-    }
-
-    .craft-info-product{
-      margin:0;
-      font-size:11px;
-      color:#fff;
-    }
-
-    .craft-info-recipe{
-      margin:0;
-      font-size:10px;
-      line-height:1.5;
-      color:#00ffcc;
-    }
-  `;
-  document.head.appendChild(style);
+  ensureStyleDOMCSS();
 }
 
 function closeCraftInfoPopup() {
@@ -2525,200 +2139,7 @@ console.log("ITEMS DATA RECETAS:", window.itemsData);
 }
 
 function ensureTiendaItemsStyles() {
-  if (document.getElementById("tienda-items-styles")) return;
-
-  const style = document.createElement("style");
-  style.id = "tienda-items-styles";
-  style.innerHTML = `
-    #tienda-items-overlay{
-      position:absolute;
-      inset:0;
-      z-index:5000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      pointer-events:auto;
-    }
-
-    #tienda-items-box{
-      width:360px;
-      max-height:460px;
-      background:black;
-      color:#00ffcc;
-      border:3px solid #00ffcc;
-      box-shadow:
-        0 0 0 2px #0b3d35,
-        0 0 0 4px #00ffcc,
-        0 10px 30px rgba(0,0,0,0.45);
-      font-family:"arcade","monospace";
-      image-rendering:pixelated;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    #tienda-items-header{
-      height:42px;
-      min-height:42px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 8px;
-      background:#111;
-      border-bottom:2px solid #00ffcc;
-    }
-
-    #tienda-items-title{
-      font-size:12px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-    }
-
-    #tienda-items-close{
-      width:30px;
-      height:30px;
-      background:black;
-      color:#00ffcc;
-      border:2px solid #00ffcc;
-      font-family:"arcade","monospace";
-      font-size:14px;
-      cursor:pointer;
-    }
-
-    #tienda-items-body{
-      flex:1;
-      overflow:auto;
-      padding:10px;
-      display:grid;
-      gap:10px;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(0,255,204,.05) 0px,
-          rgba(0,255,204,.05) 2px,
-          rgba(0,0,0,0) 2px,
-          rgba(0,0,0,0) 6px
-        );
-    }
-
-.tienda-vendedor-box{
-  position:relative;
-  border:2px solid rgba(0,255,204,.4);
-  background:rgba(0,255,204,.06);
-  padding:12px 10px 10px 110px; /* espacio a la izquierda para la imagen */
-  min-height:100px;
-}
-
-.tienda-vendedor-foto{
-  position:absolute;
-  top:10px;
-  left:10px;
-
-  width:90px;
-  height:90px;
-
-  object-fit:none;
-  image-rendering:pixelated;
-
-  /* 🔥 AQUÍ ESTÁ LA MAGIA (recorte) */
-  object-position: 32% 30%;
-
-  border:2px solid rgba(0,255,204,.45);
-  background:rgba(0,255,204,.08);
-  padding:4px;
-  box-sizing:border-box;
-
-  overflow:hidden;
-}
-
-    .tienda-vendedor-copy{
-      display:grid;
-      gap:6px;
-    }
-
-    .tienda-vendedor-copy p{
-      margin:0;
-      font-size:10px;
-      line-height:1.45;
-    }
-
-    .tienda-vendedor-copy .tienda-vendedor-pss{
-      color:#fff799;
-    }
-
-    .tienda-items-saldo{
-      border:2px solid rgba(0,255,204,.4);
-      padding:8px;
-      text-align:center;
-      font-size:11px;
-      color:#fff799;
-      background:rgba(0,255,204,.06);
-    }
-
-    .tienda-item-card{
-      border:2px solid rgba(0,255,204,.4);
-      background:rgba(0,255,204,.06);
-      padding:8px;
-      display:grid;
-      grid-template-columns:56px 1fr auto;
-      gap:8px;
-      align-items:center;
-    }
-
-    .tienda-item-img{
-      width:48px;
-      height:48px;
-      object-fit:contain;
-      image-rendering:pixelated;
-      display:block;
-      margin:auto;
-      border:2px solid rgba(0,255,204,.35);
-      background:rgba(0,255,204,.08);
-      padding:4px;
-      box-sizing:border-box;
-    }
-
-    .tienda-item-info{
-      display:grid;
-      gap:4px;
-    }
-
-    .tienda-item-name{
-      margin:0;
-      font-size:11px;
-      color:white;
-    }
-
-    .tienda-item-price{
-      margin:0;
-      font-size:10px;
-      color:#fff799;
-    }
-
-    .tienda-item-btn{
-      min-width:74px;
-      height:30px;
-      background:black;
-      color:#00ffcc;
-      border:2px solid #00ffcc;
-      font-family:"arcade","monospace";
-      font-size:10px;
-      cursor:pointer;
-      text-transform:uppercase;
-    }
-
-    .tienda-item-btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
-
-    .tienda-items-empty{
-      text-align:center;
-      font-size:11px;
-      padding:20px;
-    }
-  `;
-  document.head.appendChild(style);
+  ensureStyleDOMCSS();
 }
 
 function closeTiendaDeItems() {
@@ -2877,18 +2298,22 @@ function openInventarioPopup(slotEl, item) {
   const bodyEl = panel.querySelector(".ui-body");
   if (!bodyEl) return;
 
-  const popup = document.createElement("div");
-  popup.className = "ui-inv-popup";
-  popup.innerHTML = `
-    <div class="ui-inv-popup-title">${item.nombre_item}</div>
-    <div class="ui-inv-popup-actions">
-      <button class="ui-inv-popup-btn" type="button" data-inv-action="destruir">Destruir</button>
-      <button class="ui-inv-popup-btn" type="button" data-inv-action="equipar">Equipar</button>
-      <button class="ui-inv-popup-btn" type="button" data-inv-action="combinar">Combinar</button>
-    </div>
-  `;
+  bodyEl.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div class="ui-inv-popup">
+        <div class="ui-inv-popup-title">${item.nombre_item}</div>
+        <div class="ui-inv-popup-actions">
+          <button class="ui-inv-popup-btn" type="button" data-inv-action="destruir">Destruir</button>
+          <button class="ui-inv-popup-btn" type="button" data-inv-action="equipar">Equipar</button>
+          <button class="ui-inv-popup-btn" type="button" data-inv-action="combinar">Combinar</button>
+        </div>
+      </div>
+    `
+  );
 
-  bodyEl.appendChild(popup);
+  const popup = bodyEl.querySelector(".ui-inv-popup:last-of-type");
+  if (!popup) return;
 
   const bodyRect = bodyEl.getBoundingClientRect();
   const slotRect = slotEl.getBoundingClientRect();
@@ -3169,85 +2594,57 @@ document.addEventListener("mouseout", (e) => {
 // Funciones adicionales para escichar el mause arrba de los items (Fin)
 
 document.addEventListener("click", (e) => {
-  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
 
-  if (slotEl) {
-    const item = getInventarioSlotItem(slotEl);
-    if (!item) return;
+  const action = btn.dataset.npcAction;
 
-    e.preventDefault();
-    e.stopPropagation();
-    openInventarioPopup(slotEl, item);
+  if (action === "close" || action === "reject") {
+    closeNPCDialog();
     return;
   }
 
-  const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
-  if (actionBtn) {
-    const accion = actionBtn.dataset.invAction || "";
-    const activeSlotEl = document.querySelector(
-      "#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']"
-    );
-    const slotIndex = Number(activeSlotEl?.dataset.slotIndex);
-
-    if (!Number.isInteger(slotIndex)) {
-      closeInventarioPopup();
-      return;
-    }
-
-    if (accion === "destruir") {
-      window.destruirItemDelInventario(slotIndex);
-      return;
-    }
-
-    if (accion === "combinar") {
-      window.agregarItemACombinacionDesdeInventario(slotIndex);
-      return;
-    }
-
-    if (accion === "equipar") {
-      equiparItemDelInventario(slotIndex);
-      return;
-    }
-
+  if (action === "prev") {
+    npcDialogState.lineIndex--;
+    renderNPCDialog();
     return;
   }
 
-  const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
-  if (equipSlotEl) {
-    const equipIndex = Number(equipSlotEl.dataset.equipSlot);
-
-    if (Number.isInteger(equipIndex)) {
-      e.preventDefault();
-      e.stopPropagation();
-      window.devolverItemDesdeEquipado(equipIndex);
-      return;
-    }
-  }
-
-  const combineSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item");
-  if (combineSlotEl) {
-    const combineIndex = Number(combineSlotEl.dataset.combineSlot);
-
-    if (Number.isInteger(combineIndex)) {
-      e.preventDefault();
-      e.stopPropagation();
-      window.devolverItemDesdeCombinacion(combineIndex);
-      return;
-    }
-  }
-
-  const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
-  if (resultEl) {
-    e.preventDefault();
-    e.stopPropagation();
-    window.intentarCrearItemFinal();
+  if (action === "next") {
+    npcDialogState.lineIndex++;
+    renderNPCDialog();
     return;
   }
 
-  if (!e.target.closest?.(".ui-inv-popup")) {
-    closeInventarioPopup();
+  if (action === "accept-mission") {
+    acceptMission(npcDialogState.missionId);
+    return;
+  }
+
+  if (action === "continue-mission") {
+    const ok = continueActiveMissionFromNPC(npcDialogState.npc.id);
+
+    if (!ok) {
+      console.log("No se pudo continuar la misión con este NPC:", npcDialogState.npc.id);
+      closeNPCDialog();
+    }
+    return;
+  }
+
+  if (action === "finish-mission") {
+    finalizeActiveMissionFromNPC(npcDialogState.npc.id);
   }
 }, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  e.preventDefault();
+  btn.click();
+}, { capture: true, passive: false });
 
 document.addEventListener("pointerdown", (e) => {
   if (e.pointerType === "mouse") return;
@@ -3268,7 +2665,6 @@ initSettingsDelegation();
 //-----------------------------------------------------------------------------
 //lógica Visual de Setting (fin)
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 //Puntos de vida (inicio)
@@ -3776,27 +3172,29 @@ function showCombinacionEstadoModal(tipo) {
       ? "Combinación exitosa"
       : "Combinación de ITEMS fallido";
 
-  const modal = document.createElement("div");
-  modal.id = "ui-combine-status-modal";
-  modal.innerHTML = `
-    <div class="ui-combine-status-backdrop"></div>
-    <div class="ui-combine-status-box">
-      <div class="ui-combine-status-title">${mensaje}</div>
-      <button class="ui-combine-status-btn" type="button">Aceptar</button>
-    </div>
-  `;
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+      <div id="ui-combine-status-modal">
+        <div class="ui-combine-status-backdrop"></div>
+        <div class="ui-combine-status-box">
+          <div class="ui-combine-status-title">${mensaje}</div>
+          <button class="ui-combine-status-btn" type="button">Aceptar</button>
+        </div>
+      </div>
+    `
+  );
 
-  document.body.appendChild(modal);
-
-  const btn = modal.querySelector(".ui-combine-status-btn");
+  const modal = document.getElementById("ui-combine-status-modal");
+  const btn = modal?.querySelector(".ui-combine-status-btn");
 
   function closeModal() {
-    modal.remove();
+    modal?.remove();
   }
 
-  btn.addEventListener("click", closeModal);
+  btn?.addEventListener("click", closeModal);
 
-  btn.addEventListener(
+  btn?.addEventListener(
     "pointerdown",
     (e) => {
       if (e.pointerType === "mouse") return;
@@ -4027,6 +3425,18 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
   }
 }
 
+//Estilos del DOM globales (inicio)
+function ensureStyleDOMCSS() {
+  if (document.getElementById("style-dom-css-link")) return;
+
+  const link = document.createElement("link");
+  link.id = "style-dom-css-link";
+  link.rel = "stylesheet";
+  link.href = "./styles/styleDOM.css";
+  document.head.appendChild(link);
+}
+ensureStyleDOMCSS();
+//Estilos del DOM globales (fin)
 (() => {
   
   const ASSETS = {
@@ -6167,119 +5577,41 @@ function isMissionAccepted(missionId) {
 
 //------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
 function openRetoPopup(retoId, onComplete) {
+  ensureStyleDOMCSS();
+
   const oldPopup = document.getElementById("reto-popup-overlay");
   if (oldPopup) oldPopup.remove();
 
   const overlay = document.createElement("div");
   overlay.id = "reto-popup-overlay";
+  overlay.className = "dom-overlay";
 
   overlay.innerHTML = `
-    <div
-      style="
-        position:absolute;
-        inset:0;
-        z-index:6000;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      "
-    >
-      <div
-        style="
-          width:320px;
-          height:320px;
-          background:black;
-          color:#00ffcc;
-          border:3px solid #00ffcc;
-          box-shadow:
-            0 0 0 2px #0b3d35,
-            0 0 0 4px #00ffcc,
-            0 10px 30px rgba(0,0,0,0.45);
-          font-family:'arcade','monospace';
-          image-rendering:pixelated;
-          display:flex;
-          flex-direction:column;
-          justify-content:space-between;
-          padding:14px;
-          box-sizing:border-box;
-          text-align:center;
-        "
-      >
-        <div
-          style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            border-bottom:2px solid rgba(0,255,204,.35);
-            padding-bottom:8px;
-          "
+    <div id="reto-popup-box" class="dom-panel dom-panel--h-320">
+      <div class="reto-popup-header">
+        <div class="reto-popup-title">Reto</div>
+        <button
+          id="reto-popup-close"
+          class="reto-popup-close"
+          type="button"
+          aria-label="Cerrar"
         >
-          <div
-            style="
-              font-size:12px;
-              text-transform:uppercase;
-            "
-          >
-            Reto
-          </div>
+          X
+        </button>
+      </div>
 
-          <button
-            id="reto-popup-close"
-            type="button"
-            style="
-              width:36px;
-              height:36px;
-              background:black;
-              color:#00ffcc;
-              border:2px solid #00ffcc;
-              font-family:'arcade','monospace';
-              font-size:14px;
-              cursor:pointer;
-            "
-          >
-            X
-          </button>
-        </div>
+      <div class="reto-popup-body">
+        <p class="reto-popup-message">
+          Presiona el botón para pasar el reto
+        </p>
 
-        <div
-          style="
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            gap:18px;
-          "
+        <button
+          id="reto-popup-pass"
+          class="reto-popup-pass"
+          type="button"
         >
-          <div
-            style="
-              font-size:12px;
-              line-height:1.5;
-              text-transform:uppercase;
-            "
-          >
-            Presiona el botón para pasar el reto
-          </div>
-
-          <button
-            id="reto-popup-pass"
-            type="button"
-            style="
-              min-width:160px;
-              min-height:44px;
-              padding:8px 14px;
-              background:black;
-              color:#00ffcc;
-              border:2px solid #00ffcc;
-              font-family:'arcade','monospace';
-              font-size:12px;
-              cursor:pointer;
-              text-transform:uppercase;
-            "
-          >
-            Pasar reto
-          </button>
-        </div>
+          Pasar reto
+        </button>
       </div>
     </div>
   `;
@@ -6294,6 +5626,11 @@ function openRetoPopup(retoId, onComplete) {
   }
 
   closeBtn.addEventListener("click", closeRetoPopup);
+  closeBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    closeRetoPopup();
+  }, { passive: false });
 
   passBtn.addEventListener("click", () => {
     if (typeof onComplete === "function") {
@@ -6301,6 +5638,23 @@ function openRetoPopup(retoId, onComplete) {
     }
     closeRetoPopup();
   });
+
+  passBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+
+    if (typeof onComplete === "function") {
+      onComplete(retoId);
+    }
+    closeRetoPopup();
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      closeRetoPopup();
+    }
+  }, { passive: false });
 }
 
 function completarRetoMission(retoId) {
@@ -7299,303 +6653,11 @@ let npcDialogState = {
 };
 
 function ensureNPCDialogStyles() {
-  if (document.getElementById("npc-dialog-styles")) return;
-
-  const style = document.createElement("style");
-  style.id = "npc-dialog-styles";
-  style.textContent = `
-    #npc-dialog-overlay{
-      position:absolute;
-      inset:0;
-      z-index:4000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      pointer-events:auto;
-    }
-
-    #npc-dialog-panel{
-      width:320px;
-      height:320px;
-      background:black;
-      color:#00ffcc;
-      border:3px solid #00ffcc;
-      box-shadow:
-        0 0 0 2px #0b3d35,
-        0 0 0 4px #00ffcc,
-        0 10px 30px rgba(0,0,0,0.45);
-      font-family:"arcade","monospace";
-      image-rendering:pixelated;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    #npc-dialog-header{
-      height:42px;
-      min-height:42px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 8px;
-      background:#111;
-      border-bottom:2px solid #00ffcc;
-    }
-
-    #npc-dialog-title{
-      font-size:12px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:240px;
-    }
-
-    #npc-dialog-close{
-      width:30px;
-      height:30px;
-      background:black;
-      color:#00ffcc;
-      border:2px solid #00ffcc;
-      font-family:"arcade","monospace";
-      font-size:14px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:0;
-    }
-
-    #npc-dialog-close:active{
-      transform:translateY(1px);
-    }
-
-    #npc-dialog-portrait-wrap{
-      flex:1;
-      min-height:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:10px;
-      background:
-        radial-gradient(circle at center, rgba(0,255,204,.12), rgba(0,0,0,0) 65%);
-    }
-
-#npc-dialog-portrait {
-    width: 96px;
-    height: 120px;
-    image-rendering: pixelated;
-    object-fit: contain;
-    display: block;
-    zoom: 2.4;
-    padding-top: 8px;
-}
-
-    #npc-dialog-footer{
-      height:80px;
-      min-height:80px;
-      border-top:2px solid rgba(0,255,204,.35);
-      padding:8px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:8px;
-      background:black;
-    }
-
-    #npc-dialog-line{
-      margin:0;
-      font-size:11px;
-      line-height:1.35;
-      min-height:28px;
-      color:#00ffcc;
-      overflow:hidden;
-    }
-
-    #npc-dialog-actions{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:3px;
-      flex-wrap:wrap;
-    }
-
-    .npc-dialog-btn{
-      min-width:74px;
-      height:28px;
-      padding:0 8px;
-      background:black;
-      color:#00ffcc;
-      border:2px solid #00ffcc;
-      font-family:"arcade","monospace";
-      font-size:10px;
-      cursor:pointer;
-      text-transform:uppercase;
-    }
-
-    .npc-dialog-btn:active{
-      transform:translateY(1px);
-    }
-  `;
-  document.head.appendChild(style);
+  ensureStyleDOMCSS();
 }
 
 function ensureMissionUIStyles() {
-  if (document.getElementById("mission-reward-styles")) return;
-
-  const style = document.createElement("style");
-  style.id = "mission-reward-styles";
-style.textContent = `
-  .ui-missions-root{
-    display:grid;
-    gap:10px;
-    color:#00ffcc;
-    font-family:"arcade","monospace";
-  }
-
-  .ui-mission-card{
-    border:1px solid #00ffcc;
-    background:rgba(0,255,204,.06);
-    box-shadow:0 0 0 2px rgba(0,0,0,.35);
-    padding:10px;
-    display:grid;
-    gap:8px;
-    cursor:pointer;
-  }
-
-  .ui-mission-title{
-    margin:0;
-    font-size:12px;
-    text-transform:uppercase;
-  }
-
-  .ui-mission-title-active{
-    color:yellow;
-  }
-
-  .ui-mission-step{
-    margin:0;
-    font-size:18px;
-    line-height:1.35;
-  }
-
-  .ui-mission-step-box{
-    border:1px solid rgba(0,255,204,.35);
-    padding:8px;
-    display:grid;
-    gap:6px;
-    background:rgba(0,0,0,.25);
-  }
-
-  .ui-mission-step-done{
-    opacity:.9;
-  }
-
-  .ui-mission-coords{
-    margin:0;
-    font-size:10px;
-    color:#fff;
-    opacity:.9;
-  }
-
-  .ui-mission-done{
-    color:#fff799;
-  }
-
-  .ui-mission-card-completed{
-    opacity:.9;
-  }
-
-  #mission-reward-overlay{
-    position:absolute;
-    inset:0;
-    z-index:4500;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  #mission-reward-box{
-    width:320px;
-    min-height:320px;
-    background:black;
-    color:#00ffcc;
-    border:3px solid #00ffcc;
-    box-shadow:
-      0 0 0 2px #0b3d35,
-      0 0 0 4px #00ffcc,
-      0 10px 30px rgba(0,0,0,0.45);
-    font-family:"arcade","monospace";
-    image-rendering:pixelated;
-    padding:14px;
-    box-sizing:border-box;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    justify-content:space-between;
-    text-align:center;
-  }
-
-  .mission-reward-title{
-    font-size:13px;
-    line-height:1.5;
-    text-transform:uppercase;
-  }
-
-  .mission-reward-line{
-    font-size:11px;
-    line-height:1.5;
-  }
-
-  .mission-reward-items-title{
-    font-size:11px;
-    text-transform:uppercase;
-  }
-
-  .mission-reward-items{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-
-  .mission-reward-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-    width:56px;
-  }
-
-  .mission-reward-item img{
-    width:32px;
-    height:32px;
-    object-fit:contain;
-    image-rendering:pixelated;
-    display:block;
-  }
-
-  .mission-reward-item span{
-    font-size:9px;
-    line-height:1.2;
-  }
-
-  .mission-reward-btn{
-    min-width:140px;
-    height:32px;
-    margin:0 auto;
-    background:black;
-    color:#00ffcc;
-    border:2px solid #00ffcc;
-    font-family:"arcade","monospace";
-    font-size:10px;
-    cursor:pointer;
-    text-transform:uppercase;
-  }
-`;
-  document.head.appendChild(style);
+  ensureStyleDOMCSS();
 }
 
 function buildMissionsHTML() {
@@ -7816,69 +6878,51 @@ document.addEventListener("pointerdown", (e) => {
 }, { capture: true, passive: false });
 
 function createNPCDialogDOM() {
-  if (document.getElementById("npc-dialog-overlay")) return document.getElementById("npc-dialog-overlay");
+  const old = document.getElementById("npc-dialog-overlay");
+  if (old) return old;
 
   ensureNPCDialogStyles();
 
   const overlay = document.createElement("div");
   overlay.id = "npc-dialog-overlay";
 
-  const panel = document.createElement("div");
-  panel.id = "npc-dialog-panel";
+  overlay.innerHTML = `
+    <div id="npc-dialog-panel">
+      <div id="npc-dialog-header">
+        <div id="npc-dialog-title">NPC</div>
+        <button id="npc-dialog-close" type="button">X</button>
+      </div>
 
-  const header = document.createElement("div");
-  header.id = "npc-dialog-header";
+      <div id="npc-dialog-portrait-wrap">
+        <img id="npc-dialog-portrait" src="" alt="NPC">
+      </div>
 
-  const title = document.createElement("div");
-  title.id = "npc-dialog-title";
+      <div id="npc-dialog-footer">
+        <p id="npc-dialog-line">...</p>
+        <div id="npc-dialog-actions"></div>
+      </div>
+    </div>
+  `;
 
-  const closeBtn = document.createElement("button");
-  closeBtn.id = "npc-dialog-close";
-  closeBtn.type = "button";
-  closeBtn.textContent = "X";
-
-  const portraitWrap = document.createElement("div");
-  portraitWrap.id = "npc-dialog-portrait-wrap";
-
-  const portrait = document.createElement("img");
-  portrait.id = "npc-dialog-portrait";
-  portrait.alt = "NPC";
-
-  const footer = document.createElement("div");
-  footer.id = "npc-dialog-footer";
-
-  const line = document.createElement("p");
-  line.id = "npc-dialog-line";
-
-  const actions = document.createElement("div");
-  actions.id = "npc-dialog-actions";
-
-  header.appendChild(title);
-  header.appendChild(closeBtn);
-
-  portraitWrap.appendChild(portrait);
-
-  footer.appendChild(line);
-  footer.appendChild(actions);
-
-  panel.appendChild(header);
-  panel.appendChild(portraitWrap);
-  panel.appendChild(footer);
-
-  overlay.appendChild(panel);
   wrapEl.appendChild(overlay);
 
-  closeBtn.addEventListener("click", closeNPCDialog);
+  const closeBtn = overlay.querySelector("#npc-dialog-close");
+
+  function cerrarDialogo() {
+    closeNPCDialog();
+  }
+
+  closeBtn.addEventListener("click", cerrarDialogo);
   closeBtn.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "mouse") return;
     e.preventDefault();
-    closeNPCDialog();
+    cerrarDialogo();
   }, { passive: false });
 
   overlay.addEventListener("pointerdown", (e) => {
     if (e.target === overlay) {
       e.preventDefault();
-      closeNPCDialog();
+      cerrarDialogo();
     }
   }, { passive: false });
 
@@ -8178,100 +7222,93 @@ for (const missionLoop of window.missionsData.missions) {
 
 function buildNPCDialogButtons() {
   const actionsEl = npcDialogEl.querySelector("#npc-dialog-actions");
-  actionsEl.innerHTML = "";
+  if (!actionsEl) return;
 
   const total = npcDialogState.lines.length;
   const idx = npcDialogState.lineIndex;
   const atFirst = idx <= 0;
   const atLast = idx >= total - 1;
 
-  function makeBtn(text, onClick) {
-    const btn = document.createElement("button");
-    btn.className = "npc-dialog-btn";
-    btn.type = "button";
-    btn.textContent = text;
-
-    btn.addEventListener("click", onClick);
-    btn.addEventListener("pointerdown", (e) => {
-      if (e.pointerType === "mouse") return;
-      e.preventDefault();
-      onClick();
-    }, { passive: false });
-
-    return btn;
-  }
+  let buttonsHTML = "";
 
   if (npcDialogState.mode === "default") {
-    actionsEl.appendChild(makeBtn("Cerrar", closeNPCDialog));
+    buttonsHTML = `
+      <button class="npc-dialog-btn" type="button" data-npc-action="close">Cerrar</button>
+    `;
+    actionsEl.innerHTML = buttonsHTML;
     return;
   }
 
   if (!atLast) {
     if (!atFirst) {
-      actionsEl.appendChild(makeBtn("Anterior", () => {
-        npcDialogState.lineIndex--;
-        renderNPCDialog();
-      }));
+      buttonsHTML += `
+        <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
+      `;
     }
 
-    actionsEl.appendChild(makeBtn("Siguiente", () => {
-      npcDialogState.lineIndex++;
-      renderNPCDialog();
-    }));
+    buttonsHTML += `
+      <button class="npc-dialog-btn" type="button" data-npc-action="next">Siguiente</button>
+    `;
+
+    actionsEl.innerHTML = buttonsHTML;
     return;
   }
+
   if (npcDialogState.mode === "mission_locked_progress") {
-  actionsEl.appendChild(makeBtn("Cerrar", closeNPCDialog));
-  return;
-}
+    buttonsHTML = `
+      <button class="npc-dialog-btn" type="button" data-npc-action="close">Cerrar</button>
+    `;
+    actionsEl.innerHTML = buttonsHTML;
+    return;
+  }
 
   if (npcDialogState.mode === "mission_start") {
     if (!atFirst) {
-      actionsEl.appendChild(makeBtn("Anterior", () => {
-        npcDialogState.lineIndex--;
-        renderNPCDialog();
-      }));
+      buttonsHTML += `
+        <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
+      `;
     }
 
-    actionsEl.appendChild(makeBtn("No aceptar", closeNPCDialog));
+    buttonsHTML += `
+      <button class="npc-dialog-btn" type="button" data-npc-action="reject">No aceptar</button>
+      <button class="npc-dialog-btn" type="button" data-npc-action="accept-mission">Aceptar misión</button>
+    `;
 
-    actionsEl.appendChild(makeBtn("Aceptar misión", () => {
-      acceptMission(npcDialogState.missionId);
-    }));
+    actionsEl.innerHTML = buttonsHTML;
     return;
   }
 
-if (npcDialogState.mode === "mission_progress") {
-  if (!atFirst) {
-    actionsEl.appendChild(makeBtn("Anterior", () => {
-      npcDialogState.lineIndex--;
-      renderNPCDialog();
-    }));
-  }
-
-  actionsEl.appendChild(makeBtn("Continuar misión", () => {
-    const ok = continueActiveMissionFromNPC(npcDialogState.npc.id);
-
-    if (!ok) {
-      console.log("No se pudo continuar la misión con este NPC:", npcDialogState.npc.id);
-      closeNPCDialog();
+  if (npcDialogState.mode === "mission_progress") {
+    if (!atFirst) {
+      buttonsHTML += `
+        <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
+      `;
     }
-  }));
-  return;
-}
+
+    buttonsHTML += `
+      <button class="npc-dialog-btn" type="button" data-npc-action="continue-mission">Continuar misión</button>
+    `;
+
+    actionsEl.innerHTML = buttonsHTML;
+    return;
+  }
 
   if (npcDialogState.mode === "mission_finish") {
     if (!atFirst) {
-      actionsEl.appendChild(makeBtn("Anterior", () => {
-        npcDialogState.lineIndex--;
-        renderNPCDialog();
-      }));
+      buttonsHTML += `
+        <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
+      `;
     }
 
-    actionsEl.appendChild(makeBtn("Finalizar misión", () => {
-      finalizeActiveMissionFromNPC(npcDialogState.npc.id);
-    }));
+    buttonsHTML += `
+      <button class="npc-dialog-btn" type="button" data-npc-action="finish-mission">Finalizar misión</button>
+    `;
+
+    actionsEl.innerHTML = buttonsHTML;
+    return;
   }
+
+  actionsEl.innerHTML = "";
 }
 
 function renderNPCDialog() {
