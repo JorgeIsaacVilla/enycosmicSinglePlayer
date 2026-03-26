@@ -76,10 +76,15 @@ NOTA: Las clasificaciones aún no han sido desarrolladas ni utilizadas en el alg
 1- Aperturas dentro del mismo mapa, con una sola entrada y salida, de almenos 120x120px
 2- Submaás dentro del mapa principal: una casa o una cueva. no hay exceso de ninguna manera, de los enemys de afuero, a no ser que existan enemigos internos en el submapa
 
+--> El movimiento entre portales será linea a diferentes mundos será linea. No se permiten poner en un mapa dos portales. solo se puede pasar al siguiente nivel, y retroceder de manera linea.
+
+--> No se puede habilitar el portal hasta que las misiones de ese mapa estén al 100%
+
 NOTA: Se recomienda un máximo de 12 misiones por mapa:
 -> 7 diarias (Formato combersacional)
 -> 4 segundarias (Formato combersacional - validación de inventario)
 -> 1 principal correspondiente al 3er formato de misiones  (Formato combersacional - llamamiento de funciones)
+
 
 
 
@@ -1583,3 +1588,360 @@ para antorchas
     "h": 60,
 
 pero estos valores son modificables segun se necesiten. además tienen que estar complementadas con bloques colicionables en su base, y está proivido poner elementos encima de las antorchas. tienen que ser solitarias en el mapa
+
+=======================================================================================
+MANUAL DE FUNCIONES GLOBALES - ENYCOSMIC
+=======================================================================================
+
+Este sistema permite extender el juego sin modificar el script principal de cada mapa.
+
+La idea es simple:
+- Cada mapa usa el mismo motor base
+- Las nuevas funciones se agregan como módulos independientes
+- Estos módulos se cargan dinámicamente desde /globalScripts
+
+Esto permite escalar el juego a 10, 50 o 1000 mapas sin duplicar código.
+
+
+=======================================================================================
+1. CONCEPTO GENERAL
+=======================================================================================
+
+Un "globalScript" es un módulo que:
+
+- Se registra en el sistema global
+- Escucha eventos del juego (hooks)
+- Puede modificar comportamiento del juego
+- Puede dibujar elementos nuevos
+- Puede interactuar con el motor mediante el bridge
+
+NO modifica directamente el core del juego.
+
+
+=======================================================================================
+2. ESTRUCTURA DE UN MÓDULO
+=======================================================================================
+
+Cada archivo en /globalScripts debe tener esta forma:
+
+(function () {
+
+  const MODULE_ID = "nombre_unico";
+
+  function getInitialState() {
+    return {
+      // variables internas del módulo
+    };
+  }
+
+  function onInit() {}
+
+  function beforeUpdate({ dt, player }) {}
+
+  function afterDrawWorld({ ctx }) {}
+
+  window.registerGlobalModule(MODULE_ID, {
+    getInitialState,
+    onInit,
+    beforeUpdate,
+    afterDrawWorld
+  });
+
+})();
+
+IMPORTANTE:
+- MODULE_ID debe ser único
+- No usar variables globales externas innecesarias
+- Todo el estado debe vivir dentro del módulo
+
+
+=======================================================================================
+3. CICLO DE VIDA (HOOKS)
+=======================================================================================
+
+Estos son los puntos donde puedes intervenir el juego:
+
+
+---------------------------------------------------------------------------------------
+onInit()
+---------------------------------------------------------------------------------------
+Se ejecuta una sola vez al iniciar el mapa
+
+Uso:
+- cargar imágenes
+- inicializar variables
+- preparar estados
+
+
+---------------------------------------------------------------------------------------
+beforeUpdate({ dt, player, enemigos })
+---------------------------------------------------------------------------------------
+Se ejecuta cada frame ANTES del render
+
+Uso:
+- IA
+- movimiento
+- combate
+- lógica general
+
+
+---------------------------------------------------------------------------------------
+afterUpdate(...)
+---------------------------------------------------------------------------------------
+Después de la lógica (opcional)
+
+
+---------------------------------------------------------------------------------------
+afterDrawWorld({ ctx })
+---------------------------------------------------------------------------------------
+Render dentro del mundo (usa cámara)
+
+Uso:
+- aliados
+- enemigos personalizados
+- proyectiles
+- efectos en el mapa
+
+IMPORTANTE:
+- Aquí se dibuja en coordenadas del mundo
+
+
+---------------------------------------------------------------------------------------
+afterDraw({ ctx, canvas })
+---------------------------------------------------------------------------------------
+Render en pantalla (UI)
+
+Uso:
+- botones
+- HUD
+- overlays
+
+IMPORTANTE:
+- NO usa coordenadas del mundo
+
+
+---------------------------------------------------------------------------------------
+Hooks avanzados:
+---------------------------------------------------------------------------------------
+
+beforeEntityMove
+afterEntityMove
+
+beforeProjectileCollision
+afterProjectileCollision
+
+Permiten modificar:
+- física
+- colisiones
+- comportamiento interno
+
+
+=======================================================================================
+4. ENYGAMEBRIDGE (COMUNICACIÓN CON EL MOTOR)
+=======================================================================================
+
+Todos los módulos deben usar:
+
+window.enyGameBridge
+
+Esto evita romper el core del juego.
+
+
+---------------------------------------------------------------------------------------
+Funciones disponibles:
+---------------------------------------------------------------------------------------
+
+getPlayer()
+getCanvas()
+getCtx()
+
+moveEntityWithCollision(entidad, x, y, w, h)
+
+projectileHitsEnvironment(x, y, w, h)
+
+damageClayBlock(x, y, w, h, damage, impactX, impactY)
+
+killEnemyWithEffects(enemy)
+
+
+---------------------------------------------------------------------------------------
+Ejemplo:
+---------------------------------------------------------------------------------------
+
+const player = window.enyGameBridge.getPlayer();
+
+
+=======================================================================================
+5. EJEMPLOS PRÁCTICOS
+=======================================================================================
+
+
+---------------------------------------------------------------------------------------
+Dibujar algo en el mundo
+---------------------------------------------------------------------------------------
+
+function afterDrawWorld({ ctx }) {
+  ctx.fillStyle = "red";
+  ctx.fillRect(100, 100, 50, 50);
+}
+
+
+---------------------------------------------------------------------------------------
+Mover entidad con colisión
+---------------------------------------------------------------------------------------
+
+moveWithCollision(state, nextX, nextY);
+
+
+---------------------------------------------------------------------------------------
+Crear disparo
+---------------------------------------------------------------------------------------
+
+state.shots.push({
+  x, y,
+  vx, vy,
+  life: 1000,
+  damage: 5
+});
+
+
+---------------------------------------------------------------------------------------
+Detectar colisión con entorno
+---------------------------------------------------------------------------------------
+
+bridge.projectileHitsEnvironment(x, y, w, h);
+
+
+=======================================================================================
+6. CAPACIDADES ACTUALES DEL SISTEMA
+=======================================================================================
+
+Este sistema YA permite:
+
+✔ Crear aliados con IA  
+✔ Crear enemigos personalizados  
+✔ Disparos con físicas  
+✔ Colisiones con entorno  
+✔ Daño a enemigos  
+✔ Knockback (retroceso)  
+✔ Daño a bloques de arcilla  
+✔ Activar partículas y drops  
+✔ Evitar obstáculos (algoritmo lateral/diagonal)  
+✔ HUD dinámico  
+✔ Módulos reutilizables en todos los mapas  
+✔ Separación total del core  
+
+En resumen:
+Es un mini motor modular dentro del juego.
+
+
+=======================================================================================
+7. LIMITACIONES ACTUALES
+=======================================================================================
+
+El sistema aún NO incluye:
+
+✖ Pathfinding avanzado (A*)  
+✖ Navegación compleja en laberintos  
+✖ Multijugador  
+✖ Persistencia global automática  
+✖ Sistema de layers/z-index avanzado  
+✖ IA con memoria compleja  
+✖ Predicción avanzada de colisiones  
+
+IMPORTANTE:
+El sistema es reactivo, no planificado.
+
+
+=======================================================================================
+8. BUENAS PRÁCTICAS
+=======================================================================================
+
+✔ Usar siempre getInitialState()  
+✔ No usar variables globales innecesarias  
+✔ Usar enyGameBridge en vez de funciones internas  
+✔ Separar lógica y render  
+✔ Mantener módulos independientes  
+✔ Evitar modificar arrays globales directamente  
+
+REGLA DE ORO:
+El módulo no debe romper el juego si se elimina.
+
+
+=======================================================================================
+9. POSIBLES COMBINACIONES FUTURAS
+=======================================================================================
+
+Este sistema permite crear:
+
+
+---------------------------------------------------------------------------------------
+IA avanzada
+---------------------------------------------------------------------------------------
+- aliados que flanquean
+- enemigos que huyen
+- comportamiento táctico
+
+
+---------------------------------------------------------------------------------------
+Sistema de armas
+---------------------------------------------------------------------------------------
+- drones
+- torretas
+- habilidades especiales
+
+
+---------------------------------------------------------------------------------------
+Poderes
+---------------------------------------------------------------------------------------
+- invisibilidad
+- visión nocturna
+- manipulación del tiempo
+
+
+---------------------------------------------------------------------------------------
+Entorno
+---------------------------------------------------------------------------------------
+- destrucción dinámica
+- trampas
+- mecanismos
+
+
+---------------------------------------------------------------------------------------
+Social
+---------------------------------------------------------------------------------------
+- múltiples aliados
+- invocaciones
+- mascotas
+
+
+=======================================================================================
+10. SIGUIENTE NIVEL (EVOLUCIÓN DEL SISTEMA)
+=======================================================================================
+
+Cuando el proyecto crezca, se recomienda:
+
+- Sistema de prioridades de IA
+- Pathfinding por nodos
+- Event Bus global
+- ECS (Entity Component System)
+- Pool de proyectiles (optimización)
+- Plugins instalables
+
+
+=======================================================================================
+CONCLUSIÓN
+=======================================================================================
+
+Este sistema convierte Enycosmic en:
+
+- Escalable ✔
+- Modular ✔
+- Reutilizable ✔
+- Extensible ✔
+
+Ya no dependes del script de cada mapa.
+
+Ahora tienes una base real de motor de juego.
+
+=======================================================================================

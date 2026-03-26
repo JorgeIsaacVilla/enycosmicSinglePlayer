@@ -3065,7 +3065,123 @@ function wrapText(ctx, text, maxWidth) {
 }
 /*Función para que el texto no salga del cuadro en la selección de profesiones (fin) */
 
+// =======================================================
+// GLOBAL SCRIPTS SYSTEM (inicio)
+// =======================================================
 
+const GLOBAL_SCRIPTS = [
+  //"./globalScripts/linterna.js",
+  "./globalScripts/aliado.js"
+];
+
+window.enyGlobalModules = {
+  loaded: {},
+hooks: {
+  onInit: [],
+  beforeUpdate: [],
+  afterUpdate: [],
+  beforeDraw: [],
+  afterDraw: [],
+  afterDrawWorld: [],
+  beforeDarkness: [],
+  afterDarkness: [],
+  onIsEntityLit: [],
+  beforeEntityMove: [],
+  afterEntityMove: [],
+  beforeProjectileCollision: [],
+  afterProjectileCollision: []
+},
+  state: {}
+};
+
+window.registerGlobalModule = function registerGlobalModule(moduleId, moduleConfig) {
+  if (!moduleId || !moduleConfig) return;
+
+  if (window.enyGlobalModules.loaded[moduleId]) {
+    console.warn("Módulo global ya registrado:", moduleId);
+    return;
+  }
+
+  window.enyGlobalModules.loaded[moduleId] = moduleConfig;
+
+  for (const hookName of Object.keys(window.enyGlobalModules.hooks)) {
+    if (typeof moduleConfig[hookName] === "function") {
+      window.enyGlobalModules.hooks[hookName].push(moduleConfig[hookName]);
+    }
+  }
+
+  if (typeof moduleConfig.getInitialState === "function") {
+    window.enyGlobalModules.state[moduleId] = moduleConfig.getInitialState();
+  } else {
+    window.enyGlobalModules.state[moduleId] = {};
+  }
+
+  console.log("Módulo global registrado:", moduleId);
+};
+
+async function loadGlobalScripts() {
+  for (const src of GLOBAL_SCRIPTS) {
+    const already = document.querySelector(`script[data-global-script="${src}"]`);
+    if (already) continue;
+
+    await new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.async = true;
+      s.dataset.globalScript = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error(`No se pudo cargar ${src}`));
+      document.head.appendChild(s);
+    });
+  }
+}
+
+function runGlobalHook(hookName, payload = {}) {
+  const hooks = window.enyGlobalModules?.hooks?.[hookName] || [];
+
+  for (const fn of hooks) {
+    try {
+      fn(payload);
+    } catch (err) {
+      console.error(`Error en hook global ${hookName}:`, err);
+    }
+  }
+}
+
+function runGlobalFilterHook(hookName, payload = {}, initialValue = null) {
+  const hooks = window.enyGlobalModules?.hooks?.[hookName] || [];
+  let value = initialValue;
+
+  for (const fn of hooks) {
+    try {
+      const result = fn({ ...payload, currentValue: value });
+      if (result !== undefined) value = result;
+    } catch (err) {
+      console.error(`Error en hook filtro global ${hookName}:`, err);
+    }
+  }
+
+  return value;
+}
+
+function runGlobalBooleanHook(hookName, payload = {}) {
+  const hooks = window.enyGlobalModules?.hooks?.[hookName] || [];
+
+  for (const fn of hooks) {
+    try {
+      const result = fn(payload);
+      if (result === true) return true;
+    } catch (err) {
+      console.error(`Error en hook booleano global ${hookName}:`, err);
+    }
+  }
+
+  return false;
+}
+
+// =======================================================
+// GLOBAL SCRIPTS SYSTEM (fin)
+// =======================================================
 
 (() => {
   // 1) Evita menú contextual (long-press) en móviles
@@ -3204,6 +3320,48 @@ function showCombinacionEstadoModal(tipo) {
     { passive: false }
   );
 }
+
+window.enyGameBridge = {
+  getMapaOscuro: () => mapaOscuro,
+  setMapaOscuro: (value) => {
+    mapaOscuro = !!value;
+  },
+  getPlayer: () => player,
+  getCanvas: () => canvas,
+  getCtx: () => ctx,
+
+  moveEntityWithCollision: (entidad, nextX, nextY, w, h) => {
+    if (typeof window._enyMoveEntityWithCollision === "function") {
+      return window._enyMoveEntityWithCollision(entidad, nextX, nextY, w, h);
+    }
+
+    entidad.x = nextX;
+    entidad.y = nextY;
+  },
+
+  projectileHitsEnvironment: (x, y, w = 10, h = 10) => {
+    if (typeof window._enyProjectileHitsEnvironment === "function") {
+      return window._enyProjectileHitsEnvironment(x, y, w, h);
+    }
+
+    return false;
+  },
+
+  damageClayBlock: (x, y, w = 10, h = 10, damage = 1, impactX = x, impactY = y) => {
+  if (typeof window._enyDamageClayBlock === "function") {
+    return window._enyDamageClayBlock(x, y, w, h, damage, impactX, impactY);
+  }
+  return false;
+},
+
+killEnemyWithEffects: (enemy) => {
+  if (typeof window._enyKillEnemyWithEffects === "function") {
+    return window._enyKillEnemyWithEffects(enemy);
+  }
+},
+
+  
+};
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
 let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
@@ -6347,17 +6505,31 @@ function entidadEstaEnZonaIluminada(entidad) {
 
   const cx = entidad.x + entidad.w / 2;
   const cy = entidad.y + entidad.h * 0.34;
-  
-  // luz mínima por cercanía directa al jugador, incluso sin antorcha
-const playerLightX = player.x + HERO_DRAW_W / 2;
-const playerLightY = player.y + HERO_DRAW_H * 0.38;
-const playerNearLightRadius = 38;
 
-if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
-  return true;
-}
+  if (
+    runGlobalBooleanHook("onIsEntityLit", {
+      entidad,
+      x: cx,
+      y: cy,
+      player,
+      mapaOscuro,
+      ambienteObjetos,
+      enemigos: window.enemigos || [],
+      npcs,
+      npcsAmbiente
+    })
+  ) {
+    return true;
+  }
 
-  // luz de la antorcha en mano del jugador
+  const playerLightX = player.x + HERO_DRAW_W / 2;
+  const playerLightY = player.y + HERO_DRAW_H * 0.38;
+  const playerNearLightRadius = 38;
+
+  if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
+    return true;
+  }
+
   if (antorchaActiva?.active) {
     const a = getTorchAnchor();
     const dx = cx - a.x;
@@ -6369,7 +6541,6 @@ if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
     }
   }
 
-  // luz de antorchas colocadas en el suelo
   for (const obj of (ambienteObjetos || [])) {
     if (!obj || obj.subtipo !== "antorcha_suelo") continue;
 
@@ -6386,7 +6557,6 @@ if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
     }
   }
 
-  // luz de antorchas y chimeneas del mapa
   for (const luz of getLucesIlumSistemaMapa()) {
     const dx = cx - luz.x;
     const dy = cy - luz.y;
@@ -6397,25 +6567,21 @@ if (Math.hypot(cx - playerLightX, cy - playerLightY) <= playerNearLightRadius) {
     }
   }
 
-  // luz de disparos del jugador
   for (const d of (window.disparosLazerActivos || [])) {
     const dist = Math.hypot(cx - d.x, cy - d.y);
     if (dist <= 40) return true;
   }
 
-  // luz de disparos enemigos
   for (const d of (window.disparosEnemigosArmadosActivos || [])) {
     const dist = Math.hypot(cx - d.x, cy - d.y);
     if (dist <= 38) return true;
   }
 
-  // luz de bumerangs
   for (const b of (window.bumerangsActivos || [])) {
     const dist = Math.hypot(cx - b.x, cy - b.y);
     if (dist <= 34) return true;
   }
 
-  // luz del ataque especial del jefe
   for (const atk of (window.ataquesEspecialesJefeActivos || [])) {
     if (!atk) continue;
 
@@ -9304,6 +9470,8 @@ function eliminarEnemigoPorDerrota(enemy) {
   }
 }
 
+window._enyKillEnemyWithEffects = eliminarEnemigoPorDerrota;
+
 function crearExplosionBumerang(x, y) {
 
   for (let i = 0; i < 20; i++) {
@@ -11961,6 +12129,8 @@ function danarBloqueArcillaEnRect(x, y, w, h, danio, impactoX, impactoY) {
   );
 }
 
+window._enyDamageClayBlock = danarBloqueArcillaEnRect;
+
 function buscarFuenteDeFuegoCercana(enemy, radioBusqueda = 320) {
   if (!enemy) return null;
 
@@ -12637,26 +12807,76 @@ function empujarJugadorConColision(pushX, pushY) {
 }
 
 function moverEntidadConColision(entidad, nextX, nextY, w, h) {
+  const before = runGlobalFilterHook(
+    "beforeEntityMove",
+    {
+      entidad,
+      nextX,
+      nextY,
+      w,
+      h,
+      player,
+      mapaOscuro
+    },
+    { nextX, nextY, w, h }
+  ) || { nextX, nextY, w, h };
+
   let xFinal = entidad.x;
   let yFinal = entidad.y;
 
-  const hitX = colisionAmbiente(nextX, entidad.y, w, h);
+  const hitX = colisionAmbiente(before.nextX, entidad.y, before.w, before.h);
   if (!hitX) {
-    xFinal = nextX;
+    xFinal = before.nextX;
   }
 
-  const hitY = colisionAmbiente(xFinal, nextY, w, h);
+  const hitY = colisionAmbiente(xFinal, before.nextY, before.w, before.h);
   if (!hitY) {
-    yFinal = nextY;
+    yFinal = before.nextY;
   }
 
   entidad.x = xFinal;
   entidad.y = yFinal;
+
+  runGlobalHook("afterEntityMove", {
+    entidad,
+    nextX: before.nextX,
+    nextY: before.nextY,
+    finalX: entidad.x,
+    finalY: entidad.y,
+    w: before.w,
+    h: before.h,
+    hitX,
+    hitY,
+    player,
+    mapaOscuro
+  });
 }
 
+window._enyMoveEntityWithCollision = moverEntidadConColision;
+
 function proyectilColisionaAmbiente(x, y, w = 10, h = 10) {
-  return !!colisionAmbiente(x, y, w, h);
+  const before = runGlobalFilterHook(
+    "beforeProjectileCollision",
+    { x, y, w, h, player, mapaOscuro },
+    { x, y, w, h }
+  ) || { x, y, w, h };
+
+  const result = !!colisionAmbiente(before.x, before.y, before.w, before.h);
+
+  runGlobalHook("afterProjectileCollision", {
+    x: before.x,
+    y: before.y,
+    w: before.w,
+    h: before.h,
+    result,
+    player,
+    mapaOscuro
+  });
+
+  return result;
 }
+
+window._enyMoveEntityWithCollision = moverEntidadConColision;
 // =======================================================================================
 // Lógica ambiente.jsons (fin)
 // =======================================================================================
@@ -12713,6 +12933,17 @@ function draw(images) {
   // reset
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  runGlobalHook("beforeDraw", {
+  ctx,
+  canvas,
+  images,
+  player,
+  mapaOscuro,
+  npcs,
+  npcsAmbiente,
+  enemigos: window.enemigos || [],
+  ambienteObjetos
+});
 
   // 🔴 MODO ERROR
   if (gameMode === "error") {
@@ -13162,6 +13393,33 @@ drawAmbienteCapa(ctx, "back");
 
 drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy);
 
+
+//Elementos dibujados de manera dinamica por scripts Externos (inicio)
+runGlobalHook("afterDrawWorld", {
+  ctx,
+  canvas,
+  images,
+  player,
+  mapaOscuro,
+  npcs,
+  npcsAmbiente,
+  enemigos: window.enemigos || [],
+  ambienteObjetos
+});
+    drawCameraCullingDebug(ctx);
+    runGlobalHook("afterDraw", {
+      ctx,
+      canvas,
+      images,
+      player,
+      mapaOscuro,
+      npcs,
+      npcsAmbiente,
+      enemigos: window.enemigos || [],
+      ambienteObjetos
+    });
+//Elementos dibujados de manera dinamica por scripts Externos (inicio)
+
 drawAmbienteCapa(ctx, "front");
 drawArcillaCapa(ctx, "front");
 drawIlumSistemaMapa(ctx);
@@ -13172,8 +13430,30 @@ drawIlumSistemaMapa(ctx);
 
     drawParticulasImpactoBloque(ctx);
 
+    runGlobalHook("beforeDarkness", {
+  ctx,
+  canvas,
+  images,
+  player,
+  mapaOscuro,
+  npcs,
+  npcsAmbiente,
+  enemigos: window.enemigos || [],
+  ambienteObjetos
+});
     // oscuridad del mapa
 drawDarknessOverlay(camCenterX, camCenterY, viewW, viewH);
+runGlobalHook("afterDarkness", {
+  ctx,
+  canvas,
+  images,
+  player,
+  mapaOscuro,
+  npcs,
+  npcsAmbiente,
+  enemigos: window.enemigos || [],
+  ambienteObjetos
+});
 
 //Ojos demoniacos encima de la oscuridad
 for (const npc of npcs || []) {
@@ -13328,10 +13608,12 @@ drawCameraCullingDebug(ctx);
         }
       });
 
+      
       ctx.restore();
     } else {
       window.hudEquipHitboxes = [];
     }
+
 
     return;
   }
@@ -13440,15 +13722,53 @@ function drawGameOverScreen() {
   ctx.restore();
 }
 
-function start() {
+async function start() {
+  await loadGlobalScripts();
+
+  runGlobalHook("onInit", {
+    player,
+    ctx,
+    canvas,
+    images
+  });
+
   let last = performance.now();
+
   function loop(now) {
     const dt = now - last;
     last = now;
+
+    runGlobalHook("beforeUpdate", {
+      dt,
+      player,
+      ctx,
+      canvas,
+      images,
+      npcs,
+      npcsAmbiente,
+      enemigos: window.enemigos || [],
+      ambienteObjetos
+    });
+
     update(dt);
-    draw(images); // images está en el mismo scope
+
+    runGlobalHook("afterUpdate", {
+      dt,
+      player,
+      ctx,
+      canvas,
+      images,
+      npcs,
+      npcsAmbiente,
+      enemigos: window.enemigos || [],
+      ambienteObjetos
+    });
+
+    draw(images);
+
     requestAnimationFrame(loop);
   }
+
   requestAnimationFrame(loop);
 }
 
@@ -13539,7 +13859,9 @@ checkUserProfile();
 
 // arranca el loop
 //ensureMissionUIStyles();
-start();
+start().catch(err => {
+  console.error("Error iniciando juego con globalScripts:", err);
+});
 
 // si al recargar ya tiene perfil completo, carga assets de una vez
 if (gameMode === "playing") {
@@ -13550,6 +13872,12 @@ if (gameMode === "playing") {
   });
 }
 })();
+
+/*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
+//En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas. 
+
+
+/*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (FIN) */
 
 //--------------------------------------------------------------
 /*--------Resetear datios de juego para pruebas (Inicio)
