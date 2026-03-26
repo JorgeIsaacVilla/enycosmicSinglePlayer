@@ -2187,6 +2187,13 @@ function comprarItemDeTienda(itemId) {
     if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
   }
 
+  showPopupFeedback({
+    title: "Compra realizada",
+    message: `Haz comprado ${item.nombre_item || item.nombre || "este item"}.`,
+    type: "success",
+    duration: 10000
+  });
+
   abrirTiendaDeITems();
 }
 
@@ -3500,6 +3507,73 @@ let antorchaActiva = {
 let torchTrailParticles = [];
 //--Lógica de antorchas e iluminación de mapas oscuros (fin)
 
+/*Funciones pop Up (inicio) */
+function ensurePopUpCSS() {
+  if (document.getElementById("popup-feedback-css-link")) return;
+
+  const link = document.createElement("link");
+  link.id = "popup-feedback-css-link";
+  link.rel = "stylesheet";
+  link.href = "./styles/popUp.css";
+  document.head.appendChild(link);
+}
+
+let popupFeedbackTimer = null;
+
+function closePopupFeedback() {
+  const popup = document.getElementById("popup-feedback");
+  if (!popup) return;
+
+  popup.classList.add("popup-feedback--closing");
+
+  setTimeout(() => {
+    popup.remove();
+  }, 220);
+}
+
+function showPopupFeedback({
+  title = "Notificación",
+  message = "",
+  type = "success",
+  duration = 10000
+} = {}) {
+  ensurePopUpCSS();
+
+  if (popupFeedbackTimer) {
+    clearTimeout(popupFeedbackTimer);
+    popupFeedbackTimer = null;
+  }
+
+  const oldPopup = document.getElementById("popup-feedback");
+  if (oldPopup) oldPopup.remove();
+
+const icon = type === "warning"
+  ? "⛔"
+  : `<img src="https://art.pixilart.com/thumb/sr5z082f4e339daws3.png" style="width:100%;height:100%;image-rendering:pixelated;" />`;
+
+  const popup = document.createElement("div");
+  popup.id = "popup-feedback";
+  popup.className = `popup-feedback popup-feedback--${type}`;
+
+  popup.innerHTML = `
+    <div class="popup-feedback__box">
+      <div class="popup-feedback__icon">${icon}</div>
+      <div class="popup-feedback__content">
+        <p class="popup-feedback__title">${title}</p>
+        <p class="popup-feedback__message">${message}</p>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  popupFeedbackTimer = setTimeout(() => {
+    closePopupFeedback();
+    popupFeedbackTimer = null;
+  }, duration);
+}
+/*Funciones Pop Up (fin) */
+
 // =============================
 // ILUM SISTEM MAPA (antorchas y chimeneas independientes)
 // =============================
@@ -3688,19 +3762,51 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
     }
 
     case "escudo_de_madera":
+       break;
     case "patines":
+      break;
     case "escudo_de_hierro":
+      break;
     case "bateria":
+            showPopupFeedback({
+        title: item.nombre_item || "Item",
+        message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
+        type: "warning",
+        duration: 10000
+      });
+      break;
     case "rueda":
+            showPopupFeedback({
+        title: item.nombre_item || "Item",
+        message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
+        type: "warning",
+        duration: 10000
+      });
+      break;
     case "cable":
+            showPopupFeedback({
+        title: item.nombre_item || "Item",
+        message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
+        type: "warning",
+        duration: 10000
+      });
+      break;
     case "cuero":
-      console.log("El usuario usará este item:", item.nombre_item || item.id);
-      openCraftInfoPopup(item);
+      showPopupFeedback({
+        title: item.nombre_item || "Item",
+        message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
+        type: "warning",
+        duration: 10000
+      });
       break;
 
     default:
-      console.log("El usuario usará este item:", item.nombre_item || item.id);
-      openCraftInfoPopup(item);
+      showPopupFeedback({
+        title: "Item no utilizable",
+        message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
+        type: "warning",
+        duration: 10000
+      });
       break;
   }
 }
