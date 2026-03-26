@@ -1,14 +1,14 @@
 [
-  { "tag": "Proximamente", "text": "Nueva zona Sector -3 con puertas cifradas y niebla." },
-  { "tag": "Actualizacion", "text": "Optimización del joystick para reducir latencia en móviles." },
-  { "tag": "Premios", "text": "Premio semanal: 200 cosmonedas por completar 3 misiones." },
-  { "tag": "Proximamente", "text": "Sistema de inventario 3x3 con trajes y mejoras básicas." },
-  { "tag": "Actualizacion", "text": "Barra de vida mejorada con efectos y alertas de peligro." },
-  { "tag": "Premios", "text": "Logro: Explorador Alfa. Recompensa: insignia y 50 IQ." },
-  { "tag": "Proximamente", "text": "Metafon: acceso rápido a mapa, notas y calculadora." },
-  { "tag": "Actualizacion", "text": "Mejoras en carga de assets y transición al gameplay." },
-  { "tag": "Proximamente", "text": "Ranking de IQ en tiempo real para usuarios activos." },
-  { "tag": "Premios", "text": "Evento de bienvenida: 100 cosmonedas por crear profesión." },
-  { "tag": "Actualizacion", "text": "Correcciones visuales del canvas y bordes pixel perfect." },
-  { "tag": "Proximamente", "text": "Misiones diarias con rutas ocultas y secretos del mapa." }
+  { "image": null, "tag": "Proximamente", "text": "Nueva zona Sector -3 con puertas cifradas y niebla." },
+  { "image": null, "tag": "Actualizacion", "text": "Optimización del joystick para reducir latencia en móviles." },
+  { "image": null, "tag": "Premios", "text": "Premio semanal: 200 cosmonedas por completar 3 misiones." },
+  { "image": null, "tag": "Proximamente", "text": "Sistema de inventario 3x3 con trajes y mejoras básicas." },
+  { "image": null, "tag": "Actualizacion", "text": "Barra de vida mejorada con efectos y alertas de peligro." },
+  { "image": null, "tag": "Premios", "text": "Logro: Explorador Alfa. Recompensa: insignia y 50 IQ." },
+  { "image": null, "tag": "Proximamente", "text": "Metafon: acceso rápido a mapa, notas y calculadora." },
+  { "image": null, "tag": "Actualizacion", "text": "Mejoras en carga de assets y transición al gameplay." },
+  { "image": null, "tag": "Proximamente", "text": "Ranking de IQ en tiempo real para usuarios activos." },
+  { "image": null, "tag": "Premios", "text": "Evento de bienvenida: 100 cosmonedas por crear profesión." },
+  { "image": null, "tag": "Actualizacion", "text": "Correcciones visuales del canvas y bordes pixel perfect." },
+  { "image": null, "tag": "Proximamente", "text": "Misiones diarias con rutas ocultas y secretos del mapa." }
 ]

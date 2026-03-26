@@ -72,6 +72,10 @@ NOTA: Las clasificaciones aún no han sido desarrolladas ni utilizadas en el alg
 
 -->Relación de NPC por mapa: Total NPCs designado a misiones 36 por mapa de 5000x5000<--
 
+--> todos los mapas tendra´n zonas seguras. al menos 3. existen 2 tipos de zonas seguras
+1- Aperturas dentro del mismo mapa, con una sola entrada y salida, de almenos 120x120px
+2- Submaás dentro del mapa principal: una casa o una cueva. no hay exceso de ninguna manera, de los enemys de afuero, a no ser que existan enemigos internos en el submapa
+
 NOTA: Se recomienda un máximo de 12 misiones por mapa:
 -> 7 diarias (Formato combersacional)
 -> 4 segundarias (Formato combersacional - validación de inventario)
