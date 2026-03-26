@@ -193,7 +193,7 @@
 .tienda-item-btn,
 .metamap-btn,
 .reto-popup-pass{
-  min-width:74px;
+  min-width:30px;
   min-height:var(--dom-btn-h);
   padding:0 8px;
   background:var(--dom-bg);
