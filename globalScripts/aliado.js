@@ -3,7 +3,7 @@
 
 (function () {
   const MODULE_ID = "aliado_reptiliano_test";
-  const SPRITE_SRC = "./assets/avatares/enemy/centinela-reptiliano-armado.png";
+  const SPRITE_SRC = "./assets/avatares/armaduras/armadura1.svg";
 
   const FRAME_W = 64;
   const FRAME_H = 64;
@@ -12,7 +12,7 @@
 
   const FOLLOW_DISTANCE = 100;
   const TELEPORT_DISTANCE = 500;
-  const MOVE_SPEED = 1.4;
+  const MOVE_SPEED = 1.8;
   const SNAP_DISTANCE = 2;
 
 const ATTACK_DAMAGE = 8;
@@ -155,7 +155,7 @@ function moveTowards(state, targetX, targetY, dt) {
     state.avoidanceLockMs = Math.max(0, state.avoidanceLockMs - dt);
   }
 
-  const step = MOVE_SPEED * dt * 0.06;
+  const step = MOVE_SPEED * dt * 0.08;
   const ratio = Math.min(1, step / dist);
 
   const prevX = state.posX;

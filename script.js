@@ -2600,39 +2600,39 @@ document.addEventListener("click", (e) => {
   const action = btn.dataset.npcAction;
 
   if (action === "close" || action === "reject") {
-    closeNPCDialog();
+    window.closeNPCDialog();
     return;
   }
 
   if (action === "prev") {
-    npcDialogState.lineIndex--;
-    renderNPCDialog();
+    window.npcDialogState.lineIndex--;
+    window.renderNPCDialog();
     return;
   }
 
   if (action === "next") {
-    npcDialogState.lineIndex++;
-    renderNPCDialog();
+    window.npcDialogState.lineIndex++;
+    window.renderNPCDialog();
     return;
   }
 
   if (action === "accept-mission") {
-    acceptMission(npcDialogState.missionId);
+    acceptMission(window.npcDialogState.missionId);
     return;
   }
 
   if (action === "continue-mission") {
-    const ok = continueActiveMissionFromNPC(npcDialogState.npc.id);
+    const ok = continueActiveMissionFromNPC(window.npcDialogState.npc.id);
 
     if (!ok) {
-      console.log("No se pudo continuar la misión con este NPC:", npcDialogState.npc.id);
-      closeNPCDialog();
+      console.log("No se pudo continuar la misión con este NPC:", window.npcDialogState.npc.id);
+      window.closeNPCDialog();
     }
     return;
   }
 
   if (action === "finish-mission") {
-    finalizeActiveMissionFromNPC(npcDialogState.npc.id);
+    finalizeActiveMissionFromNPC(window.npcDialogState.npc.id);
   }
 }, true);
 
@@ -2646,18 +2646,140 @@ document.addEventListener("pointerdown", (e) => {
   btn.click();
 }, { capture: true, passive: false });
 
+document.addEventListener("click", (e) => {
+  const root = document.getElementById("container-interfas");
+  if (!root || root.dataset.panel !== "inventario") return;
+
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (slotEl) {
+    const item = getInventarioSlotItem(slotEl);
+    if (!item) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    openInventarioPopup(slotEl, item);
+    return;
+  }
+
+  const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
+  if (actionBtn) {
+    const accion = actionBtn.dataset.invAction || "";
+    const activeSlotEl = document.querySelector(
+      "#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']"
+    );
+    const slotIndex = Number(activeSlotEl?.dataset.slotIndex);
+
+    if (!Number.isInteger(slotIndex)) {
+      closeInventarioPopup();
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (accion === "destruir") {
+      window.destruirItemDelInventario(slotIndex);
+      return;
+    }
+
+    if (accion === "combinar") {
+      window.agregarItemACombinacionDesdeInventario(slotIndex);
+      return;
+    }
+
+    if (accion === "equipar") {
+      equiparItemDelInventario(slotIndex);
+      return;
+    }
+
+    return;
+  }
+
+  const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
+  if (equipSlotEl) {
+    const equipIndex = Number(equipSlotEl.dataset.equipSlot);
+
+    if (Number.isInteger(equipIndex)) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.devolverItemDesdeEquipado(equipIndex);
+      return;
+    }
+  }
+
+  const combineSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item");
+  if (combineSlotEl) {
+    const combineIndex = Number(combineSlotEl.dataset.combineSlot);
+
+    if (Number.isInteger(combineIndex)) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.devolverItemDesdeCombinacion(combineIndex);
+      return;
+    }
+  }
+
+  const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
+  if (resultEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.intentarCrearItemFinal();
+    return;
+  }
+
+  if (!e.target.closest?.(".ui-inv-popup")) {
+    closeInventarioPopup();
+  }
+}, true);
+
 document.addEventListener("pointerdown", (e) => {
   if (e.pointerType === "mouse") return;
 
+  const root = document.getElementById("container-interfas");
+  if (!root || root.dataset.panel !== "inventario") return;
+
   const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (!slotEl) return;
+  if (slotEl) {
+    const item = getInventarioSlotItem(slotEl);
+    if (!item) return;
 
-  const item = getInventarioSlotItem(slotEl);
-  if (!item) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openInventarioPopup(slotEl, item);
+    return;
+  }
 
-  e.preventDefault();
-  e.stopPropagation();
-  openInventarioPopup(slotEl, item);
+  const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
+  if (actionBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    actionBtn.click();
+    return;
+  }
+
+  const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
+  if (equipSlotEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    equipSlotEl.click();
+    return;
+  }
+
+  const combineSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item");
+  if (combineSlotEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    combineSlotEl.click();
+    return;
+  }
+
+  const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
+  if (resultEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    resultEl.click();
+    return;
+  }
 }, { capture: true, passive: false });
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
@@ -6021,6 +6143,8 @@ function acceptMission(missionId) {
   closeNPCDialog();
 }
 
+window.acceptMission = acceptMission;
+
 function contarItemEnInventario(itemId) {
   let total = 0;
 
@@ -6148,6 +6272,8 @@ if (stepPrev?.tipo === "recolectar_items" && missionStepRecolectadoOK(missionId)
   return false;
 }
 
+window.continueActiveMissionFromNPC = continueActiveMissionFromNPC;
+
 function finalizeActiveMissionFromNPC(npcId) {
   const mission = getActiveMission();
   if (!mission) return false;
@@ -6202,6 +6328,8 @@ if (step.tipo === "hablar_npc_entrega" && Array.isArray(step.entregaItems)) {
 
   return true;
 }
+
+window.finalizeActiveMissionFromNPC = finalizeActiveMissionFromNPC;
 
 function getMissionStarterNPCId(mission) {
   return mission?.pasos?.[0]?.npcId || null;
@@ -6809,13 +6937,14 @@ function drawNPCs(ctx) {
 // SISTEMA DE CONVERSACIÓN NPC CON MANIPULACIÓN DEL DOM (inicio)
 // =======================================================
 
-let npcDialogOpen = false;
-let npcDialogEl = null;
-let npcDialogState = {
+window.npcDialogOpen = false;
+window.npcDialogEl = null;
+window.npcDialogState = {
   npc: null,
-  mode: "default", // default | mission_start | mission_progress
+  mode: "default",
   lines: [],
-  lineIndex: 0
+  lineIndex: 0,
+  missionId: null
 };
 
 function ensureNPCDialogStyles() {
@@ -7096,20 +7225,23 @@ function createNPCDialogDOM() {
 }
 
 function closeNPCDialog() {
-  npcDialogOpen = false;
-  npcDialogState = {
+  window.npcDialogOpen = false;
+  window.npcDialogState = {
     npc: null,
     mode: "default",
     lines: [],
-    lineIndex: 0
+    lineIndex: 0,
+    missionId: null
   };
 
-  if (npcDialogEl && npcDialogEl.parentNode) {
-    npcDialogEl.parentNode.removeChild(npcDialogEl);
+  if (window.npcDialogEl && window.npcDialogEl.parentNode) {
+    window.npcDialogEl.parentNode.removeChild(window.npcDialogEl);
   }
 
-  npcDialogEl = null;
+  window.npcDialogEl = null;
 }
+
+window.closeNPCDialog = closeNPCDialog;
 
 function missionStepRecolectadoOK(missionId) {
   const mission = getMissionById(missionId);
@@ -7387,17 +7519,17 @@ for (const missionLoop of window.missionsData.missions) {
 }
 
 function buildNPCDialogButtons() {
-  const actionsEl = npcDialogEl.querySelector("#npc-dialog-actions");
+  const actionsEl = window.npcDialogEl?.querySelector("#npc-dialog-actions");
   if (!actionsEl) return;
 
-  const total = npcDialogState.lines.length;
-  const idx = npcDialogState.lineIndex;
+  const total = window.npcDialogState.lines.length;
+  const idx = window.npcDialogState.lineIndex;
   const atFirst = idx <= 0;
   const atLast = idx >= total - 1;
 
   let buttonsHTML = "";
 
-  if (npcDialogState.mode === "default") {
+  if (window.npcDialogState.mode === "default") {
     buttonsHTML = `
       <button class="npc-dialog-btn" type="button" data-npc-action="close">Cerrar</button>
     `;
@@ -7420,7 +7552,7 @@ function buildNPCDialogButtons() {
     return;
   }
 
-  if (npcDialogState.mode === "mission_locked_progress") {
+  if (window.npcDialogState.mode === "mission_locked_progress") {
     buttonsHTML = `
       <button class="npc-dialog-btn" type="button" data-npc-action="close">Cerrar</button>
     `;
@@ -7428,7 +7560,7 @@ function buildNPCDialogButtons() {
     return;
   }
 
-  if (npcDialogState.mode === "mission_start") {
+  if (window.npcDialogState.mode === "mission_start") {
     if (!atFirst) {
       buttonsHTML += `
         <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
@@ -7444,7 +7576,7 @@ function buildNPCDialogButtons() {
     return;
   }
 
-  if (npcDialogState.mode === "mission_progress") {
+  if (window.npcDialogState.mode === "mission_progress") {
     if (!atFirst) {
       buttonsHTML += `
         <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
@@ -7459,7 +7591,7 @@ function buildNPCDialogButtons() {
     return;
   }
 
-  if (npcDialogState.mode === "mission_finish") {
+  if (window.npcDialogState.mode === "mission_finish") {
     if (!atFirst) {
       buttonsHTML += `
         <button class="npc-dialog-btn" type="button" data-npc-action="prev">Anterior</button>
@@ -7478,43 +7610,45 @@ function buildNPCDialogButtons() {
 }
 
 function renderNPCDialog() {
-  if (!npcDialogEl || !npcDialogState.npc) return;
+  if (!window.npcDialogEl || !window.npcDialogState.npc) return;
 
-  const titleEl = npcDialogEl.querySelector("#npc-dialog-title");
-  const portraitEl = npcDialogEl.querySelector("#npc-dialog-portrait");
-  const lineEl = npcDialogEl.querySelector("#npc-dialog-line");
+  const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
+  const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
+  const lineEl = window.npcDialogEl.querySelector("#npc-dialog-line");
 
-  titleEl.textContent = npcDialogState.npc.nombre || "NPC";
-  const npcImg = npcDialogState.npc?.img;
+  titleEl.textContent = window.npcDialogState.npc.nombre || "NPC";
+  const npcImg = window.npcDialogState.npc?.img;
 
-if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
-  const frameW = 64;
-  const frameH = 64;
+  if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
+    const frameW = 64;
+    const frameH = 64;
 
-  const tempCanvas = document.createElement("canvas");
-  tempCanvas.width = 96;
-  tempCanvas.height = 120;
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = 96;
+    tempCanvas.height = 120;
 
-  const tctx = tempCanvas.getContext("2d");
-  tctx.imageSmoothingEnabled = false;
+    const tctx = tempCanvas.getContext("2d");
+    tctx.imageSmoothingEnabled = false;
 
-  tctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-  tctx.drawImage(
-    npcImg,
-    0, 0, frameW, frameH,
-    0, 0, 96, 96
-  );
+    tctx.drawImage(
+      npcImg,
+      0, 0, frameW, frameH,
+      0, 0, 96, 96
+    );
 
-  portraitEl.src = tempCanvas.toDataURL("image/png");
-} else {
-  portraitEl.src = npcDialogState.npc.imageSrc || "";
-}
+    portraitEl.src = tempCanvas.toDataURL("image/png");
+  } else {
+    portraitEl.src = window.npcDialogState.npc.imageSrc || "";
+  }
 
-  lineEl.textContent = npcDialogState.lines[npcDialogState.lineIndex] || "...";
+  lineEl.textContent = window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
 
   buildNPCDialogButtons();
 }
+
+window.renderNPCDialog = renderNPCDialog;
 
 function openNPCDialog(npc) {
   if (!npc) return;
@@ -7526,7 +7660,7 @@ function openNPCDialog(npc) {
 
   const context = getMissionContextForNPC(npc.id);
 
-  npcDialogState = {
+  window.npcDialogState = {
     npc,
     mode: context.type,
     lines: Array.isArray(context.lines) && context.lines.length ? context.lines : ["..."],
@@ -7534,8 +7668,8 @@ function openNPCDialog(npc) {
     missionId: context.missionId || null
   };
 
-  npcDialogEl = createNPCDialogDOM();
-  npcDialogOpen = true;
+  window.npcDialogEl = createNPCDialogDOM();
+  window.npcDialogOpen = true;
   renderNPCDialog();
 }
 
