@@ -4014,7 +4014,8 @@ function continuarTrasGameOver() {
   const ASSETS = {
     map: globalMap, //mapa
     hero: null, //Personaje
-    shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
+    //shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
+    shadow: "./assets/spriteAmbiente/sombra.png",
   };
 
   // Contenedor único y estable (NO se recrea)
@@ -6835,6 +6836,13 @@ function drawNPCsAmbiente(ctx) {
       const sx = (npc.frame || 0) * (npc.frameWidth || 64);
       const sy = row * (npc.frameHeight || 64);
 
+drawEntityShadow(ctx, images.shadow, npc.x, npc.y, npc.w, npc.h, {
+  scaleW: 0.72,
+  scaleH: 0.28,
+  offsetY: 0.80,
+  alpha: 0.30
+});
+
       ctx.drawImage(
         npc.img,
         sx,
@@ -6891,6 +6899,13 @@ function drawEnemigos(ctx) {
       const row = rowForFacing(enemy.facing || "down");
       const sx = (enemy.frame || 0) * (enemy.frameWidth || 64);
       const sy = row * (enemy.frameHeight || 64);
+
+drawEntityShadow(ctx, images.shadow, enemy.x, enemy.y, enemy.w, enemy.h, {
+  scaleW: enemy.tipo === "jefe" ? 0.88 : 0.74,
+  scaleH: enemy.tipo === "jefe" ? 0.34 : 0.30,
+  offsetY: 0.82,
+  alpha: enemy.tipo === "jefe" ? 0.38 : 0.32
+});
 
       ctx.drawImage(
         enemy.img,
@@ -10968,9 +10983,16 @@ function drawItems(ctx) {
       item.img.naturalWidth > 0 &&
       item.img.naturalHeight > 0;
 
-    if (imgOk) {
-      ctx.drawImage(item.img, item.x, item.y, item.size, item.size);
-    } else {
+if (imgOk) {
+  drawEntityShadow(ctx, images.shadow, item.x, item.y, item.size, item.size, {
+    scaleW: 0.56,
+    scaleH: 0.18,
+    offsetY: 0.88,
+    alpha: 0.22
+  });
+
+  ctx.drawImage(item.img, item.x, item.y, item.size, item.size);
+} else {
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
       ctx.strokeRect(item.x, item.y, item.size, item.size);
@@ -11748,18 +11770,22 @@ function drawAntorchaSuelo(ctx, obj) {
   const baseX = obj.x + obj.w / 2;
   const baseY = obj.y + obj.h;
 
+  drawEntityShadow(ctx, images.shadow, obj.x, obj.y, obj.w, obj.h, {
+    scaleW: 0.58,
+    scaleH: 0.18,
+    offsetY: 0.92,
+    alpha: 0.22
+  });
+
   ctx.save();
   ctx.translate(baseX, baseY);
 
-  // palo
   ctx.fillStyle = "#7b3f00";
   ctx.fillRect(-2, -26, 4, 24);
 
-  // soporte
   ctx.fillStyle = "#4b2a12";
   ctx.fillRect(-6, -3, 12, 3);
 
-  // brillo base
   ctx.beginPath();
   ctx.fillStyle = "rgba(255,180,60,0.28)";
   ctx.shadowColor = "#ffb347";
@@ -11767,7 +11793,6 @@ function drawAntorchaSuelo(ctx, obj) {
   ctx.arc(0, -26, 10, 0, Math.PI * 2);
   ctx.fill();
 
-  // fuego exterior
   ctx.fillStyle = "#ff7a00";
   ctx.beginPath();
   ctx.moveTo(0, -48 - Math.sin(t) * 1.5);
@@ -11775,7 +11800,6 @@ function drawAntorchaSuelo(ctx, obj) {
   ctx.quadraticCurveTo(-10, -34, 0, -48 - Math.sin(t) * 1.5);
   ctx.fill();
 
-  // fuego medio
   ctx.fillStyle = "#ffd400";
   ctx.beginPath();
   ctx.moveTo(0, -42 - Math.sin(t * 1.4) * 1.2);
@@ -11783,7 +11807,6 @@ function drawAntorchaSuelo(ctx, obj) {
   ctx.quadraticCurveTo(-7, -31, 0, -42 - Math.sin(t * 1.4) * 1.2);
   ctx.fill();
 
-  // núcleo
   ctx.fillStyle = "#fff7b0";
   ctx.beginPath();
   ctx.moveTo(0, -35 - Math.sin(t * 1.8));
@@ -12193,73 +12216,82 @@ function limpiarCacheAudioAmbiente() {
 }
 
 function drawBaseObjetoAmbiente(ctx, obj) {
+  if (!obj) return;
+
+  drawEntityShadow(ctx, images.shadow, obj.x, obj.y, obj.w, obj.h, {
+    scaleW: 0.78,
+    scaleH: 0.24,
+    offsetY: 0.88,
+    alpha: 0.24
+  });
+
   if (obj.color) {
     ctx.fillStyle = obj.color;
     ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
   }
 
-if (obj.imagen) {
-  const img = getImagenAmbienteCache(obj.imagen);
+  if (obj.imagen) {
+    const img = getImagenAmbienteCache(obj.imagen);
 
-  if (img && img.complete && img.naturalWidth > 0) {
-    ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
-  }
-}
-
-if (obj.sprites_1x10) {
-  const img = getImagenAmbienteCache(obj.sprites_1x10);
-
-  if (img && img.complete && img.naturalWidth > 0) {
-    const FRAME_W = 120;
-    const FRAME_H = 120;
-    const TOTAL_FRAMES = 10;
-
-    obj.frameTimer += 16;
-
-    const speed = Number(obj.velocidad_movimiento) || 1;
-
-    if (obj.frameTimer >= (obj.frameDuration / speed)) {
-      obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
-      obj.frameTimer = 0;
-    }
-
-    const sx = obj.frameActual * FRAME_W;
-
-    ctx.drawImage(
-      img,
-      sx, 0, FRAME_W, FRAME_H,
-      obj.x, obj.y, obj.w, obj.h
-    );
-  }
-}
-
-if (obj.sonido_ambiente) {
-  const dx = (player.x + 32) - (obj.x + obj.w / 2);
-  const dy = (player.y + 32) - (obj.y + obj.h / 2);
-  const dist = Math.hypot(dx, dy);
-
-  const audio = getAudioAmbienteCache(obj.sonido_ambiente);
-
-  if (audio) {
-    if (dist < 500) {
-      audio.volume = Math.max(0, 1 - (dist / 500));
-
-      if (!obj.audioPlaying) {
-        audio.play().catch(() => {});
-        obj.audioPlaying = true;
-      }
-
-      marcarUsoAudioAmbiente(obj.sonido_ambiente, true);
-    } else {
-      if (obj.audioPlaying) {
-        audio.pause();
-        obj.audioPlaying = false;
-      }
-
-      marcarUsoAudioAmbiente(obj.sonido_ambiente, false);
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
     }
   }
-}
+
+  if (obj.sprites_1x10) {
+    const img = getImagenAmbienteCache(obj.sprites_1x10);
+
+    if (img && img.complete && img.naturalWidth > 0) {
+      const FRAME_W = 120;
+      const FRAME_H = 120;
+      const TOTAL_FRAMES = 10;
+
+      obj.frameTimer += 16;
+
+      const speed = Number(obj.velocidad_movimiento) || 1;
+
+      if (obj.frameTimer >= (obj.frameDuration / speed)) {
+        obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
+        obj.frameTimer = 0;
+      }
+
+      const sx = obj.frameActual * FRAME_W;
+
+      ctx.drawImage(
+        img,
+        sx, 0, FRAME_W, FRAME_H,
+        obj.x, obj.y, obj.w, obj.h
+      );
+    }
+  }
+
+  if (obj.sonido_ambiente) {
+    const dx = (player.x + 32) - (obj.x + obj.w / 2);
+    const dy = (player.y + 32) - (obj.y + obj.h / 2);
+    const dist = Math.hypot(dx, dy);
+
+    const audio = getAudioAmbienteCache(obj.sonido_ambiente);
+
+    if (audio) {
+      if (dist < 500) {
+        audio.volume = Math.max(0, 1 - (dist / 500));
+
+        if (!obj.audioPlaying) {
+          audio.play().catch(() => {});
+          obj.audioPlaying = true;
+        }
+
+        marcarUsoAudioAmbiente(obj.sonido_ambiente, true);
+      } else {
+        if (obj.audioPlaying) {
+          audio.pause();
+          obj.audioPlaying = false;
+        }
+
+        marcarUsoAudioAmbiente(obj.sonido_ambiente, false);
+      }
+    }
+  }
 }
 
 function drawAmbienteCapa(ctx, capa) {
@@ -13299,8 +13331,51 @@ window._enyMoveEntityWithCollision = moverEntidadConColision;
 // =======================================================================================
 // Lógica ambiente.jsons (fin)
 // =======================================================================================
+function drawEntityShadow(ctx, shadowImg, x, y, w, h, opts = {}) {
+  // DEBUG: si no hay imagen, dibuja sombra fake
+  if (!shadowImg || !shadowImg.complete) {
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(
+      x + w / 2,
+      y + h * 0.9,
+      w * 0.35,
+      h * 0.15,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
+
+  const scaleW = opts.scaleW ?? 0.72;
+  const scaleH = opts.scaleH ?? 0.30;
+  const offsetY = opts.offsetY ?? 0.70;
+  const alpha = opts.alpha ?? 0.34;
+
+  const shadowW = Math.max(18, w * scaleW);
+  const shadowH = Math.max(10, h * scaleH);
+
+  const shadowX = x + (w - shadowW) / 2;
+  const shadowY = y + (h * offsetY) - (shadowH / 2);
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(shadowImg, shadowX, shadowY, shadowW, shadowH);
+  ctx.restore();
+}
+
 function drawJugadorCompleto(ctx, images, heroDrawX, heroDrawY, sx, sy) {
-  ctx.drawImage(images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H);
+  drawEntityShadow(ctx, images.shadow, heroDrawX, heroDrawY, HERO_DRAW_W, HERO_DRAW_H, {
+  scaleW: 0.72,
+  scaleH: 0.30,
+  offsetY: 0.78,
+  alpha: 0.34
+});
 
   ctx.save();
   ctx.fillStyle = "transparent";

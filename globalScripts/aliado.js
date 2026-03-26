@@ -552,41 +552,70 @@ if (distEnemy <= realAttackRange) {
   animar(state, dt, moving || state.attackCooldown > ATTACK_COOLDOWN_MS - 120);
 }
 
-  function afterDrawWorld({ ctx }) {
-    const state = getState();
-    if (!ctx || !state || state.posX === null || state.posY === null) return;
+function afterDrawWorld({ ctx }) {
+  const state = getState();
+  if (!ctx || !state || state.posX === null || state.posY === null) return;
 
-    const drawW = 64;
-    const drawH = 64;
+  const drawW = 64;
+  const drawH = 64;
 
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-
-    if (state.ready && state.img) {
-      const sx = state.frame * FRAME_W;
-      const sy = rowForFacing(state.facing) * FRAME_H;
-
-      ctx.drawImage(
-        state.img,
-        sx, sy, FRAME_W, FRAME_H,
-        state.posX, state.posY, drawW, drawH
-      );
-    } else {
-      ctx.fillStyle = "red";
-      ctx.fillRect(state.posX, state.posY, 30, 30);
-    }
-for (const shot of state.shots) {
   ctx.save();
-  ctx.fillStyle = "#00ffcc";
-  ctx.shadowColor = "#00ffcc";
-  ctx.shadowBlur = 10;
-  ctx.beginPath();
-  ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-}
+  ctx.imageSmoothingEnabled = false;
+
+  const shadowImg = window.images?.shadow || null;
+
+  if (typeof window.drawEntityShadow === "function") {
+    window.drawEntityShadow(ctx, shadowImg, state.posX, state.posY, drawW, drawH, {
+      scaleW: 0.72,
+      scaleH: 0.30,
+      offsetY: 0.80,
+      alpha: 0.32
+    });
+  } else {
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(
+      state.posX + drawW / 2,
+      state.posY + drawH * 0.84,
+      drawW * 0.26,
+      drawH * 0.10,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
     ctx.restore();
   }
+
+  if (state.ready && state.img) {
+    const sx = state.frame * FRAME_W;
+    const sy = rowForFacing(state.facing) * FRAME_H;
+
+    ctx.drawImage(
+      state.img,
+      sx, sy, FRAME_W, FRAME_H,
+      state.posX, state.posY, drawW, drawH
+    );
+  } else {
+    ctx.fillStyle = "red";
+    ctx.fillRect(state.posX, state.posY, 30, 30);
+  }
+
+  for (const shot of state.shots) {
+    ctx.save();
+    ctx.fillStyle = "#00ffcc";
+    ctx.shadowColor = "#00ffcc";
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
 
   window.registerGlobalModule(MODULE_ID, {
     getInitialState,
