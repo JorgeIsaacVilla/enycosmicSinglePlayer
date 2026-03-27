@@ -2483,7 +2483,7 @@ function handleNPCDialogAction(btn) {
   if (!canUseNPCClick()) return; // 🔥 BLOQUEA CLICS RÁPIDOS
 
   const action = btn.dataset.npcAction;
-
+ 
   if (action === "close" || action === "reject") {
     window.closeNPCDialog();
     return;
@@ -2494,7 +2494,7 @@ function handleNPCDialogAction(btn) {
     window.renderNPCDialog();
     return;
   }
-
+ 
   if (action === "next") {
     window.npcDialogState.lineIndex++;
     window.renderNPCDialog();
