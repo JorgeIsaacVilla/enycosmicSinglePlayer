@@ -1946,6 +1946,19 @@ if (!agregado) {
   restoreElementScrollState("#tienda-items-body", scrollTienda);
 }
 
+document.addEventListener("pointerdown", (e) => {
+  const overlay = document.getElementById("tienda-items-overlay");
+  if (!overlay) return;
+
+  const clickDentroDelPanel = e.target.closest("#tienda-items-box");
+  const clickEnTriggerDeTienda = e.target.closest("[data-open-tienda], .npc-shop-trigger");
+
+  if (clickDentroDelPanel) return;
+  if (clickEnTriggerDeTienda) return;
+
+  closeTiendaDeItems();
+}, true);
+
 function abrirTiendaDeITems() {
   ensureTiendaItemsStyles();
   closeTiendaDeItems();
