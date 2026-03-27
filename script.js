@@ -4014,8 +4014,8 @@ function continuarTrasGameOver() {
   const ASSETS = {
     map: globalMap, //mapa
     hero: null, //Personaje
-    //shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
-    shadow: "./assets/spriteAmbiente/sombra.png",
+    shadow: "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png", //Sombra del personaje (para dar sensación de profundidad)
+    //shadow: "./assets/spriteAmbiente/sombra.png",
   };
 
   // Contenedor único y estable (NO se recrea)

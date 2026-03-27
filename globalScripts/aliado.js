@@ -566,10 +566,10 @@ function afterDrawWorld({ ctx }) {
 
   if (typeof window.drawEntityShadow === "function") {
     window.drawEntityShadow(ctx, shadowImg, state.posX, state.posY, drawW, drawH, {
-      scaleW: 0.72,
-      scaleH: 0.30,
-      offsetY: 0.80,
-      alpha: 0.32
+scaleW: 0.68,
+scaleH: 0.26,
+offsetY: 0.82,
+alpha: 0.30+
     });
   } else {
     ctx.save();
