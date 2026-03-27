@@ -1888,6 +1888,51 @@ function getItemsVendibles() {
   return lista.filter(item => Number(item.precio_compra || 0) > 0);
 }
 
+/*Sistemas de clics (inicio) */
+const UI_TAP_MAX_MOVE = 12;
+
+let uiTouchGate = {
+  active: false,
+  startX: 0,
+  startY: 0,
+  moved: false,
+  target: null
+};
+
+function beginUITapGate(e, targetEl) {
+  uiTouchGate.active = true;
+  uiTouchGate.startX = e.clientX;
+  uiTouchGate.startY = e.clientY;
+  uiTouchGate.moved = false;
+  uiTouchGate.target = targetEl || null;
+}
+
+function updateUITapGate(e) {
+  if (!uiTouchGate.active) return;
+
+  const dx = e.clientX - uiTouchGate.startX;
+  const dy = e.clientY - uiTouchGate.startY;
+
+  if (Math.abs(dx) > UI_TAP_MAX_MOVE || Math.abs(dy) > UI_TAP_MAX_MOVE) {
+    uiTouchGate.moved = true;
+  }
+}
+
+function endUITapGate() {
+  uiTouchGate.active = false;
+  uiTouchGate.target = null;
+}
+
+function canCommitUITap(targetEl) {
+  if (!uiTouchGate.active) return false;
+  if (uiTouchGate.moved) return false;
+  if (!targetEl) return false;
+  if (!uiTouchGate.target) return false;
+
+  return targetEl === uiTouchGate.target || uiTouchGate.target.contains(targetEl);
+}
+/*Sistemas de clics (fin) */
+
 function comprarItemDeTienda(itemId) {
   const lista = window.itemsData || [];
   const item = lista.find(i => i.id === itemId);
@@ -2289,7 +2334,64 @@ document.addEventListener(
 );
 
   // ✅ CAPTURE: funciona aunque tengas preventDefault en #wrap
-  document.addEventListener("pointerdown", handleActionEvent, true);
+ document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") {
+    handleActionEvent(e);
+    return;
+  }
+
+  const root = document.getElementById("container-interfas");
+  if (!root) return;
+
+  const el = e.target?.closest?.("[data-action]");
+  if (!el || !root.contains(el)) return;
+
+  const tag = (el.tagName || "").toLowerCase();
+
+  if (tag === "input" || tag === "select" || tag === "textarea") return;
+
+  beginUITapGate(e, el);
+}, true);
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+  updateUITapGate(e);
+}, true);
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const root = document.getElementById("container-interfas");
+  if (!root) {
+    endUITapGate();
+    return;
+  }
+
+  const el = e.target?.closest?.("[data-action]");
+  if (!el || !root.contains(el)) {
+    endUITapGate();
+    return;
+  }
+
+  const tag = (el.tagName || "").toLowerCase();
+
+  if (tag === "input" || tag === "select" || tag === "textarea") {
+    endUITapGate();
+    return;
+  }
+
+  if (!canCommitUITap(el)) {
+    endUITapGate();
+    return;
+  }
+
+  handleActionEvent(e);
+  endUITapGate();
+}, true);
+
+document.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, true);
 
   // ✅ fallback desktop
   document.addEventListener(
@@ -2361,10 +2463,24 @@ document.addEventListener("mouseout", (e) => {
 }, true);
 */
 // Funciones adicionales para escichar el mause arrba de los items (Fin)
+let npcClickCooldown = false;
+const NPC_CLICK_DELAY = 500; // 0.5 segundos
 
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+function canUseNPCClick() {
+  if (npcClickCooldown) return false;
+
+  npcClickCooldown = true;
+
+  setTimeout(() => {
+    npcClickCooldown = false;
+  }, NPC_CLICK_DELAY);
+
+  return true;
+}
+function handleNPCDialogAction(btn) {
   if (!btn) return;
+
+  if (!canUseNPCClick()) return; // 🔥 BLOQUEA CLICS RÁPIDOS
 
   const action = btn.dataset.npcAction;
 
@@ -2403,6 +2519,15 @@ document.addEventListener("click", (e) => {
   if (action === "finish-mission") {
     finalizeActiveMissionFromNPC(window.npcDialogState.npc.id);
   }
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  if (e.pointerType && e.pointerType !== "mouse") return;
+
+  handleNPCDialogAction(btn);
 }, true);
 
 document.addEventListener("pointerdown", (e) => {
@@ -2411,9 +2536,133 @@ document.addEventListener("pointerdown", (e) => {
   const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
   if (!btn) return;
 
+  beginUITapGate(e, btn);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const dialog = document.getElementById("npc-dialog-overlay");
+  if (!dialog) return;
+
+  updateUITapGate(e);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) {
+    endUITapGate();
+    return;
+  }
+
+  if (!canCommitUITap(btn)) {
+    endUITapGate();
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+  handleNPCDialogAction(btn);
+  endUITapGate();
+}, { capture: true, passive: false });
+
+document.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, { capture: true, passive: true });
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  handleNPCDialogAction(btn);
+}, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  beginUITapGate(e, btn);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = document.querySelector("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  updateUITapGate(e);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) {
+    endUITapGate();
+    return;
+  }
+
+  if (!canCommitUITap(btn)) {
+    endUITapGate();
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+  handleNPCDialogAction(btn);
+  endUITapGate();
+}, { capture: true, passive: false });
+
+document.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, { capture: true, passive: true });
+
+
+
+
+
+
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) return;
+
+  beginUITapGate(e, btn);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+  updateUITapGate(e);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
+  if (!btn) {
+    endUITapGate();
+    return;
+  }
+
+  if (!canCommitUITap(btn)) {
+    endUITapGate();
+    return;
+  }
+
   e.preventDefault();
   btn.click();
+  endUITapGate();
 }, { capture: true, passive: false });
+
+document.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, { capture: true, passive: true });
 
 document.addEventListener("click", (e) => {
   const root = document.getElementById("container-interfas");
@@ -2507,49 +2756,90 @@ document.addEventListener("pointerdown", (e) => {
   const root = document.getElementById("container-interfas");
   if (!root || root.dataset.panel !== "inventario") return;
 
-  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (slotEl) {
-    const item = getInventarioSlotItem(slotEl);
-    if (!item) return;
+  const target =
+    e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item") ||
+    e.target.closest?.(".ui-inv-popup-btn") ||
+    e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item") ||
+    e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item") ||
+    e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
 
-    e.preventDefault();
-    e.stopPropagation();
-    openInventarioPopup(slotEl, item);
+  if (!target) return;
+
+  beginUITapGate(e, target);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const root = document.getElementById("container-interfas");
+  if (!root || root.dataset.panel !== "inventario") return;
+
+  updateUITapGate(e);
+}, { capture: true, passive: true });
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const root = document.getElementById("container-interfas");
+  if (!root || root.dataset.panel !== "inventario") {
+    endUITapGate();
+    return;
+  }
+
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (slotEl && canCommitUITap(slotEl)) {
+    const item = getInventarioSlotItem(slotEl);
+    if (item) {
+      e.preventDefault();
+      e.stopPropagation();
+      openInventarioPopup(slotEl, item);
+    }
+    endUITapGate();
     return;
   }
 
   const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
-  if (actionBtn) {
+  if (actionBtn && canCommitUITap(actionBtn)) {
     e.preventDefault();
     e.stopPropagation();
     actionBtn.click();
+    endUITapGate();
     return;
   }
 
   const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
-  if (equipSlotEl) {
+  if (equipSlotEl && canCommitUITap(equipSlotEl)) {
     e.preventDefault();
     e.stopPropagation();
     equipSlotEl.click();
+    endUITapGate();
     return;
   }
 
   const combineSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item");
-  if (combineSlotEl) {
+  if (combineSlotEl && canCommitUITap(combineSlotEl)) {
     e.preventDefault();
     e.stopPropagation();
     combineSlotEl.click();
+    endUITapGate();
     return;
   }
 
   const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
-  if (resultEl) {
+  if (resultEl && canCommitUITap(resultEl)) {
     e.preventDefault();
     e.stopPropagation();
     resultEl.click();
+    endUITapGate();
     return;
   }
+
+  endUITapGate();
 }, { capture: true, passive: false });
+
+document.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, { capture: true, passive: true });
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
 initSettingsDelegation();
