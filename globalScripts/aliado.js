@@ -569,7 +569,7 @@ function afterDrawWorld({ ctx }) {
 scaleW: 0.68,
 scaleH: 0.26,
 offsetY: 0.82,
-alpha: 0.30+
+alpha: 0.30
     });
   } else {
     ctx.save();
