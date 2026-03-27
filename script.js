@@ -980,6 +980,20 @@ function closeInterfas() {
   interfasEl = null;
 }
 
+document.addEventListener("pointerdown", (e) => {
+  if (!interfaceOpen || !interfasEl) return;
+
+  const clickDentroDelPanel = e.target.closest("#container-interfas");
+  const clickEnBotonCabecera = e.target.closest(
+    "#misions, #novedades, #iq, #inventario, #setting"
+  );
+
+  if (clickDentroDelPanel) return;
+  if (clickEnBotonCabecera) return;
+
+  closeInterfas();
+}, true);
+
 // Escape para cerrar
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && interfaceOpen) closeInterfas();
@@ -2670,6 +2684,18 @@ function buildMetafonPanel() {
 
   return el;
 }
+
+document.addEventListener("pointerdown", (e) => {
+  if (!metafonOpen || !metafonEl) return;
+
+  const clickDentroDelPanel = e.target.closest("#metafon-container");
+  const clickEnBoton = e.target.closest("#metafon");
+
+  if (clickDentroDelPanel) return;
+  if (clickEnBoton) return;
+
+  closeMetafon();
+}, true);
 
 function openMetafon() {
   if (metafonOpen) return;
