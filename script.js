@@ -44,7 +44,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 300; //50 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 0; //50 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -1889,7 +1889,7 @@ function getItemsVendibles() {
 }
 
 /*Sistemas de clics (inicio) */
-const UI_TAP_MAX_MOVE = 12;
+const UI_TAP_MAX_MOVE = 18;
 
 let uiTouchGate = {
   active: false,
@@ -2076,18 +2076,61 @@ function abrirTiendaDeITems() {
     closeTiendaDeItems();
   }, { passive: false });
 
-  overlay.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tienda-item-btn");
-    if (btn) {
-      const itemId = btn.dataset.itemId;
-      comprarItemDeTienda(itemId);
-      return;
-    }
+overlay.addEventListener("click", (e) => {
+  const btn = e.target.closest(".tienda-item-btn");
+  if (btn) {
+    if (e.pointerType && e.pointerType !== "mouse") return;
 
-    if (e.target === overlay) {
-      closeTiendaDeItems();
-    }
-  });
+    const itemId = btn.dataset.itemId;
+    comprarItemDeTienda(itemId);
+    return;
+  }
+
+  if (e.target === overlay) {
+    closeTiendaDeItems();
+  }
+});
+
+overlay.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest(".tienda-item-btn");
+  if (!btn) return;
+
+  beginUITapGate(e, btn);
+}, { passive: true });
+
+overlay.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse") return;
+  updateUITapGate(e);
+}, { passive: true });
+
+overlay.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest(".tienda-item-btn");
+  if (!btn) {
+    endUITapGate();
+    return;
+  }
+
+  if (!canCommitUITap(btn)) {
+    endUITapGate();
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const itemId = btn.dataset.itemId;
+  comprarItemDeTienda(itemId);
+
+  endUITapGate();
+}, { passive: false });
+
+overlay.addEventListener("pointercancel", () => {
+  endUITapGate();
+}, { passive: true });
 }
 
 window.abrirTiendaDeITems = abrirTiendaDeITems;
@@ -3398,6 +3441,12 @@ function isUIInteractiveTarget(t) {
     "#container-interfas," +
     "#metafon-container," +
     "#npc-dialog-overlay," +
+    "#tienda-items-overlay," +
+    "#tienda-items-box," +
+    "#tienda-items-body," +
+    "#craft-info-popup-overlay," +
+    "#craft-info-popup-box," +
+    "#game-over-dom-overlay," +
     ".box-buttons-items," +
     "button, a, input, select, textarea, label," +
     "iframe," +
