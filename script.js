@@ -2942,7 +2942,7 @@ function drawLifeBar(ctx, canvas) {
   const barWidth = 18;
   const barHeight = 140;
 
-  const marginLeft = 12;
+  const marginLeft = 24;
 
   const barX = marginLeft;
   const barY = (canvas.height / 2) - (barHeight / 2);
@@ -14118,19 +14118,18 @@ drawCameraCullingDebug(ctx);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.imageSmoothingEnabled = false;
 
-      const barWidth = 18;
-      const barHeight = 140;
-      const marginLeft = 12;
+const barWidth = 18;
+const barHeight = 140;
+const marginLeft = 12;
 
-      const barX = marginLeft;
-      const barY = (canvas.height / 2) - (barHeight / 2);
+const barX = marginLeft;
+const barY = (canvas.height / 2) - (barHeight / 2);
 
-      const slotSize = 42;
-      const slotGap = 10;
+const slotSize = 42;
+const slotGap = 10;
 
-      const startX = barX;
-      const totalHudHeight = (slotSize * window.equipSlots.length) + (slotGap * (window.equipSlots.length - 1));
-      const startY = barY - totalHudHeight - 14;
+const startX = barX;
+const startY = barY + barHeight + 54;
 
       window.hudEquipHitboxes = [];
 
