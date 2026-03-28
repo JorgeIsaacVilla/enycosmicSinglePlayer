@@ -2945,7 +2945,7 @@ function drawLifeBar(ctx, canvas) {
   const marginLeft = 24;
 
   const barX = marginLeft;
-  const barY = (canvas.height / 2) - (barHeight / 2);
+  const barY = (canvas.height / 2) - (barHeight / 2) - 120; //eje y corazon y barra de vida
 
   const fillHeight = (pdv / PDV_MAX) * barHeight;
 
@@ -14123,13 +14123,14 @@ const barHeight = 140;
 const marginLeft = 12;
 
 const barX = marginLeft;
-const barY = (canvas.height / 2) - (barHeight / 2);
+const barY = (canvas.height / 2) - (barHeight / 2) + 200; //eje y sección de ataques
 
 const slotSize = 42;
 const slotGap = 10;
 
 const startX = barX;
-const startY = barY + barHeight + 54;
+const totalHudHeight = (slotSize * window.equipSlots.length) + (slotGap * (window.equipSlots.length - 1));
+const startY = barY - totalHudHeight - 14;
 
       window.hudEquipHitboxes = [];
 
