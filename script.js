@@ -987,9 +987,13 @@ document.addEventListener("pointerdown", (e) => {
   const clickEnBotonCabecera = e.target.closest(
     "#misions, #novedades, #iq, #inventario, #setting"
   );
+  const clickEnPopupCombinaciones = e.target.closest(
+    "#craft-info-popup-overlay, #craft-info-popup-box"
+  );
 
   if (clickDentroDelPanel) return;
   if (clickEnBotonCabecera) return;
+  if (clickEnPopupCombinaciones) return;
 
   closeInterfas();
 }, true);
@@ -2155,19 +2159,20 @@ function openInventarioPopup(slotEl, item) {
   const bodyEl = panel.querySelector(".ui-body");
   if (!bodyEl) return;
 
-  bodyEl.insertAdjacentHTML(
-    "beforeend",
-    `
-      <div class="ui-inv-popup">
-        <div class="ui-inv-popup-title">${item.nombre_item}</div>
-        <div class="ui-inv-popup-actions">
-          <button class="ui-inv-popup-btn" type="button" data-inv-action="destruir">Destruir</button>
-          <button class="ui-inv-popup-btn" type="button" data-inv-action="equipar">Equipar</button>
-          <button class="ui-inv-popup-btn" type="button" data-inv-action="combinar">Combinar</button>
-        </div>
+bodyEl.insertAdjacentHTML(
+  "beforeend",
+  `
+    <div class="ui-inv-popup">
+      <div class="ui-inv-popup-title">${item.nombre_item}</div>
+      <div class="ui-inv-popup-actions">
+        <button class="ui-inv-popup-btn" type="button" data-inv-action="destruir">Destruir</button>
+        <button class="ui-inv-popup-btn" type="button" data-inv-action="equipar">Equipar</button>
+        <button class="ui-inv-popup-btn" type="button" data-inv-action="combinar">Combinar</button>
+        <button class="ui-inv-popup-btn" type="button" data-inv-action="ver-combinaciones">Ver combinaciones</button>
       </div>
-    `
-  );
+    </div>
+  `
+);
 
   const popup = bodyEl.querySelector(".ui-inv-popup:last-of-type");
   if (!popup) return;
@@ -2722,39 +2727,47 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
-  if (actionBtn) {
-    const accion = actionBtn.dataset.invAction || "";
-    const activeSlotEl = document.querySelector(
-      "#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']"
-    );
-    const slotIndex = Number(activeSlotEl?.dataset.slotIndex);
+const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
+if (actionBtn) {
+  const accion = actionBtn.dataset.invAction || "";
+  const activeSlotEl = document.querySelector(
+    "#container-interfas[data-panel='inventario'] .ui-inv-slot[data-popup-open='1']"
+  );
+  const slotIndex = Number(activeSlotEl?.dataset.slotIndex);
 
-    if (!Number.isInteger(slotIndex)) {
-      closeInventarioPopup();
-      return;
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (accion === "destruir") {
-      window.destruirItemDelInventario(slotIndex);
-      return;
-    }
-
-    if (accion === "combinar") {
-      window.agregarItemACombinacionDesdeInventario(slotIndex);
-      return;
-    }
-
-    if (accion === "equipar") {
-      equiparItemDelInventario(slotIndex);
-      return;
-    }
-
+  if (!Number.isInteger(slotIndex)) {
+    closeInventarioPopup();
     return;
   }
+
+  const item = window.inventarioUser?.[slotIndex] || null;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (accion === "destruir") {
+    window.destruirItemDelInventario(slotIndex);
+    return;
+  }
+
+  if (accion === "combinar") {
+    window.agregarItemACombinacionDesdeInventario(slotIndex);
+    return;
+  }
+
+  if (accion === "equipar") {
+    equiparItemDelInventario(slotIndex);
+    return;
+  }
+
+  if (accion === "ver-combinaciones") {
+    closeInventarioPopup();
+    if (item) openCraftInfoPopup(item);
+    return;
+  }
+
+  return;
+}
 
   const equipSlotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item");
   if (equipSlotEl) {
