@@ -2210,6 +2210,202 @@ function getInventarioSlotItem(slotEl) {
   return window.inventarioUser[index] || null;
 }
 
+let inventarioDragState = {
+  active: false,
+  slotIndex: null,
+  item: null,
+  sourceEl: null,
+  ghostEl: null,
+  pointerId: null,
+  pointerType: "mouse",
+  startX: 0,
+  startY: 0,
+  dragging: false,
+  holdTimer: null,
+  holdReady: false
+};
+
+const INVENTARIO_DRAG_THRESHOLD_MOUSE = 12;
+const INVENTARIO_DRAG_THRESHOLD_TOUCH = 20;
+const INVENTARIO_DRAG_HOLD_MS = 140;
+
+function closeInventarioDragGhost() {
+  if (inventarioDragState.ghostEl && inventarioDragState.ghostEl.parentNode) {
+    inventarioDragState.ghostEl.parentNode.removeChild(inventarioDragState.ghostEl);
+  }
+  inventarioDragState.ghostEl = null;
+}
+
+function resetInventarioDragState() {
+  if (inventarioDragState.sourceEl) {
+    inventarioDragState.sourceEl.classList.remove("ui-inv-slot--dragging");
+  }
+
+  if (inventarioDragState.holdTimer) {
+    clearTimeout(inventarioDragState.holdTimer);
+  }
+
+  closeInventarioDragGhost();
+
+  inventarioDragState.active = false;
+  inventarioDragState.slotIndex = null;
+  inventarioDragState.item = null;
+  inventarioDragState.sourceEl = null;
+  inventarioDragState.pointerId = null;
+  inventarioDragState.pointerType = "mouse";
+  inventarioDragState.startX = 0;
+  inventarioDragState.startY = 0;
+  inventarioDragState.dragging = false;
+  inventarioDragState.holdTimer = null;
+  inventarioDragState.holdReady = false;
+}
+
+function createInventarioDragGhost(item, clientX, clientY) {
+  closeInventarioDragGhost();
+
+  const ghost = document.createElement("div");
+  ghost.className = "ui-inv-drag-ghost";
+
+  ghost.innerHTML = `
+    <img class="ui-inv-drag-ghost-img" src="${item.imagen || ""}" alt="${item.nombre_item || "Item"}">
+    <span class="ui-inv-drag-ghost-count">${item.cantidad || 1}</span>
+  `;
+
+  ghost.style.left = `${clientX}px`;
+  ghost.style.top = `${clientY}px`;
+
+  document.body.appendChild(ghost);
+  inventarioDragState.ghostEl = ghost;
+}
+
+function moveInventarioDragGhost(clientX, clientY) {
+  if (!inventarioDragState.ghostEl) return;
+
+  inventarioDragState.ghostEl.style.left = `${clientX}px`;
+  inventarioDragState.ghostEl.style.top = `${clientY}px`;
+}
+
+function beginInventarioDrag(slotEl, item, e) {
+  if (!slotEl || !item) return;
+
+  inventarioDragState.active = true;
+  inventarioDragState.slotIndex = Number(slotEl.dataset.slotIndex);
+  inventarioDragState.item = item;
+  inventarioDragState.sourceEl = slotEl;
+  inventarioDragState.pointerId = e.pointerId ?? null;
+  inventarioDragState.pointerType = e.pointerType || "mouse";
+  inventarioDragState.startX = e.clientX;
+  inventarioDragState.startY = e.clientY;
+  inventarioDragState.dragging = false;
+  inventarioDragState.holdReady = inventarioDragState.pointerType === "mouse";
+
+  slotEl.classList.add("ui-inv-slot--dragging");
+
+  if (inventarioDragState.holdTimer) {
+    clearTimeout(inventarioDragState.holdTimer);
+  }
+
+  if (inventarioDragState.pointerType !== "mouse") {
+    inventarioDragState.holdTimer = setTimeout(() => {
+      inventarioDragState.holdReady = true;
+    }, INVENTARIO_DRAG_HOLD_MS);
+  }
+}
+
+function updateInventarioDrag(e) {
+  if (!inventarioDragState.active) return;
+
+  if (
+    inventarioDragState.pointerId !== null &&
+    e.pointerId !== undefined &&
+    e.pointerId !== inventarioDragState.pointerId
+  ) return;
+
+  const dx = e.clientX - inventarioDragState.startX;
+  const dy = e.clientY - inventarioDragState.startY;
+  const dist = Math.hypot(dx, dy);
+
+  const threshold =
+    inventarioDragState.pointerType === "mouse"
+      ? INVENTARIO_DRAG_THRESHOLD_MOUSE
+      : INVENTARIO_DRAG_THRESHOLD_TOUCH;
+
+  if (!inventarioDragState.dragging) {
+    if (!inventarioDragState.holdReady) return;
+    if (dist < threshold) return;
+
+    inventarioDragState.dragging = true;
+    closeInventarioPopup();
+    createInventarioDragGhost(inventarioDragState.item, e.clientX, e.clientY);
+  }
+
+  moveInventarioDragGhost(e.clientX, e.clientY);
+}
+
+function getInventarioDropTarget(clientX, clientY) {
+  const ghost = inventarioDragState.ghostEl;
+  if (ghost) ghost.style.display = "none";
+
+  const el = document.elementFromPoint(clientX, clientY);
+
+  if (ghost) ghost.style.display = "";
+
+  if (!el) return null;
+
+  const equipSlot = el.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot");
+  if (equipSlot) {
+    return { type: "equip", el: equipSlot };
+  }
+
+  const combineSlot = el.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot");
+  if (combineSlot) {
+    return { type: "combine", el: combineSlot };
+  }
+
+  const invPanel = el.closest?.("#container-interfas");
+  if (!invPanel) {
+    return { type: "destroy", el: null };
+  }
+
+  return { type: "none", el: null };
+}
+
+function commitInventarioDragDrop(clientX, clientY) {
+  if (!inventarioDragState.active || !inventarioDragState.dragging) {
+    resetInventarioDragState();
+    return false;
+  }
+
+  const slotIndex = inventarioDragState.slotIndex;
+  const drop = getInventarioDropTarget(clientX, clientY);
+
+  if (!Number.isInteger(slotIndex)) {
+    resetInventarioDragState();
+    return false;
+  }
+
+  if (drop?.type === "equip") {
+    equiparItemDelInventario(slotIndex);
+    resetInventarioDragState();
+    return true;
+  }
+
+  if (drop?.type === "combine") {
+    window.agregarItemACombinacionDesdeInventario(slotIndex);
+    resetInventarioDragState();
+    return true;
+  }
+
+  if (drop?.type === "destroy") {
+    window.destruirItemDelInventario(slotIndex);
+    resetInventarioDragState();
+    return true;
+  }
+
+  resetInventarioDragState();
+  return false;
+}
+
 // Render Tutorial (mini-swiper)
 function buildTutorialHTML() {
   const total = TUTORIAL_SLIDES.length;
@@ -2807,13 +3003,20 @@ if (actionBtn) {
 }, true);
 
 document.addEventListener("pointerdown", (e) => {
-  if (e.pointerType === "mouse") return;
-
   const root = document.getElementById("container-interfas");
   if (!root || root.dataset.panel !== "inventario") return;
 
+  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
+  if (slotEl) {
+    const item = getInventarioSlotItem(slotEl);
+    if (!item) return;
+
+    beginUITapGate(e, slotEl);
+    beginInventarioDrag(slotEl, item, e);
+    return;
+  }
+
   const target =
-    e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item") ||
     e.target.closest?.(".ui-inv-popup-btn") ||
     e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot.has-item") ||
     e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot.has-item") ||
@@ -2825,19 +3028,30 @@ document.addEventListener("pointerdown", (e) => {
 }, { capture: true, passive: true });
 
 document.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "mouse") return;
-
   const root = document.getElementById("container-interfas");
   if (!root || root.dataset.panel !== "inventario") return;
 
   updateUITapGate(e);
-}, { capture: true, passive: true });
+
+  if (inventarioDragState.active && inventarioDragState.pointerType !== "mouse") {
+    e.preventDefault();
+  }
+
+  updateInventarioDrag(e);
+}, { capture: true, passive: false });
 
 document.addEventListener("pointerup", (e) => {
-  if (e.pointerType === "mouse") return;
-
   const root = document.getElementById("container-interfas");
   if (!root || root.dataset.panel !== "inventario") {
+    endUITapGate();
+    resetInventarioDragState();
+    return;
+  }
+
+  if (inventarioDragState.active && inventarioDragState.dragging) {
+    e.preventDefault();
+    e.stopPropagation();
+    commitInventarioDragDrop(e.clientX, e.clientY);
     endUITapGate();
     return;
   }
@@ -2851,6 +3065,7 @@ document.addEventListener("pointerup", (e) => {
       openInventarioPopup(slotEl, item);
     }
     endUITapGate();
+    resetInventarioDragState();
     return;
   }
 
@@ -2860,6 +3075,7 @@ document.addEventListener("pointerup", (e) => {
     e.stopPropagation();
     actionBtn.click();
     endUITapGate();
+    resetInventarioDragState();
     return;
   }
 
@@ -2869,6 +3085,7 @@ document.addEventListener("pointerup", (e) => {
     e.stopPropagation();
     equipSlotEl.click();
     endUITapGate();
+    resetInventarioDragState();
     return;
   }
 
@@ -2878,6 +3095,7 @@ document.addEventListener("pointerup", (e) => {
     e.stopPropagation();
     combineSlotEl.click();
     endUITapGate();
+    resetInventarioDragState();
     return;
   }
 
@@ -2887,14 +3105,17 @@ document.addEventListener("pointerup", (e) => {
     e.stopPropagation();
     resultEl.click();
     endUITapGate();
+    resetInventarioDragState();
     return;
   }
 
   endUITapGate();
+  resetInventarioDragState();
 }, { capture: true, passive: false });
 
 document.addEventListener("pointercancel", () => {
   endUITapGate();
+  resetInventarioDragState();
 }, { capture: true, passive: true });
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
