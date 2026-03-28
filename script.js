@@ -14,10 +14,6 @@
 
   9.	Prueba inicial sincronización con WordPress solo con mapa 1
 
-  10. Moverlos const TOP15_PLAYER a un .json global para hacer un solo documento para todos los mapas
-
-  11. mover const NOVEDADES  a un .json para hacr un solo documento blobal para todso los mapas
-
   */
 
 // =======================================================================================
@@ -44,7 +40,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 0; //50 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 300; //50 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -1937,7 +1933,23 @@ function canCommitUITap(targetEl) {
 }
 /*Sistemas de clics (fin) */
 
+let tiendaCompraLock = false;
+
+function canComprarDesdeTienda() {
+  if (tiendaCompraLock) return false;
+
+  tiendaCompraLock = true;
+
+  setTimeout(() => {
+    tiendaCompraLock = false;
+  }, 250);
+
+  return true;
+}
+
 function comprarItemDeTienda(itemId) {
+  if (!canComprarDesdeTienda()) return;
+  
   const lista = window.itemsData || [];
   const item = lista.find(i => i.id === itemId);
   if (!item) return;
@@ -2083,8 +2095,6 @@ function abrirTiendaDeITems() {
 overlay.addEventListener("click", (e) => {
   const btn = e.target.closest(".tienda-item-btn");
   if (btn) {
-    if (e.pointerType && e.pointerType !== "mouse") return;
-
     const itemId = btn.dataset.itemId;
     comprarItemDeTienda(itemId);
     return;
@@ -2096,8 +2106,6 @@ overlay.addEventListener("click", (e) => {
 });
 
 overlay.addEventListener("pointerdown", (e) => {
-  if (e.pointerType === "mouse") return;
-
   const btn = e.target.closest(".tienda-item-btn");
   if (!btn) return;
 
@@ -2105,13 +2113,10 @@ overlay.addEventListener("pointerdown", (e) => {
 }, { passive: true });
 
 overlay.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "mouse") return;
   updateUITapGate(e);
 }, { passive: true });
 
 overlay.addEventListener("pointerup", (e) => {
-  if (e.pointerType === "mouse") return;
-
   const btn = e.target.closest(".tienda-item-btn");
   if (!btn) {
     endUITapGate();
@@ -3542,7 +3547,8 @@ function wrapText(ctx, text, maxWidth) {
 const GLOBAL_SCRIPTS = [
   //"./globalScripts/linterna.js",
   "./globalScripts/aliado.js",
-  "./globalScripts/metacam.js"
+  "./globalScripts/metacam.js",
+  "./globalScripts/interruptorOscuridad.js"
 ];
 
 window.enyGlobalModules = {
