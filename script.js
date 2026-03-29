@@ -4764,15 +4764,15 @@ function updateAtaquesPicoEscabador(dtMs) {
         "#c98a3d",
         "#8b5a2b"
       );
+      
+const len = Math.hypot(d.vx, d.vy) || 1;
+const push = 32;
 
-      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
-      const push = 32;
-
-      enemy.x += (Math.cos(angulo) / len) * push;
-      enemy.y += (Math.sin(angulo) / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(
+  enemy,
+  (d.vx / len) * push,
+  (d.vy / len) * push
+);
 
       if (!ataque.yaDesgasto) {
         const itemSlot = window.equipSlots?.[ataque.slotIndex];
@@ -13578,6 +13578,24 @@ function empujarJugadorConColision(pushX, pushY) {
 
   player.x = clamp(xFinal, leftLimit, rightLimit);
   player.y = clamp(yFinal, topLimit, bottomLimit);
+}
+
+function empujarEnemigoConColision(enemy, pushX, pushY) {
+  if (!enemy) return;
+
+  const hitW = Number(enemy.w || 64);
+  const hitH = Number(enemy.h || 64);
+
+  const nextX = enemy.x + pushX;
+  const nextY = enemy.y + pushY;
+
+  moverEntidadConColision(
+    enemy,
+    clamp(nextX, 0, WORLD_W - hitW),
+    clamp(nextY, 0, WORLD_H - hitH),
+    hitW,
+    hitH
+  );
 }
 
 function moverEntidadConColision(entidad, nextX, nextY, w, h) {

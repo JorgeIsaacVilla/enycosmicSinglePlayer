@@ -1945,3 +1945,98 @@ Ya no dependes del script de cada mapa.
 Ahora tienes una base real de motor de juego.
 
 =======================================================================================
+progreso.json en la base de datos cuando ocurra cualquiera de estos eventos
+=======================================================================================
+al iniciar sesión en el juego por primera vez en esa sesión
+al crear por primera vez el perfil jugable del usuario
+al final del proceso seleccionar avatar, profesión o cualquier dato inicial permanente del jugador
+al cambiar de mapa
+al entrar a un submapa
+al salir de un submapa
+al aceptar una misión
+al avanzar a un nuevo paso de misión
+al completar una misión
+al recoger un item del mapa
+al destruir un item del inventario
+al equipar un item
+al desequipar un item
+al usar un item consumible o agotable
+al combinar items con éxito
+al fallar una combinación si eso consume materiales
+al comprar un item en tienda
+al ganar cosmonedas
+al desbloquear un aliado, compañero o habilidad permanente
+al activar o desactivar interruptores que deban mantenerse guardados
+al abrir, cerrar o desbloquear accesos permanentes del mapa
+al derrotar enemigos únicos o eventos irrepetibles
+al morir el jugador, si la muerte afecta progreso persistente
+/*al revivir o reaparecer, si cambia posición, recursos o estado*/
+/*al salir del juego de forma controlada*/
+/*al detectar cierre de página, recarga o pérdida de foco importante, como guardado de respaldo*/
+al completar un reto, puzzle o interacción única que no deba repetirse
+al modificar datos globales del perfil compartidos entre mapas
+al terminar cualquier operación crítica que no pueda arriesgar pérdida de progreso
+
+Y en el manual pondría esta regla general debajo:
+
+“progreso.json solo debe guardarse cuando ocurra un cambio real en el estado persistente del jugador, del mapa o de la progresión. No debe guardarse por tiempo, sino por evento.”
+=======================================================================================
+Elementos que debe contener el objeto progreso.json:
+=======================================================================================
+datos_base_jugador
+user_id (referencia a WordPress)
+username
+avatar  
+profesión
+fecha_creación
+última_conexión
+estado_general
+IQ_actual
+IQ_max
+cosmonedas
+nivel (si aplica en futuro)
+experiencia_acumulada (si aplica)
+estado_posición
+mapa_actual
+submapa_actual
+posición_x
+posición_y
+dirección (opcional)
+checkpoint_activo
+inventario
+lista_items (array con id, cantidad, usos_restantes, metadata)
+slots_equipados
+slots_bloqueados (si aplica)
+items_especiales (no dropeables / únicos)
+progreso_misiones
+misiones_aceptadas
+misión_activa
+pasos_activos
+pasos_completados
+misiones_completadas
+misiones_fallidas (si aplica)
+estado_mapa
+mapas_visitados
+submapas_desbloqueados
+objetos_interactivos_estado (ej: puertas, cofres, palancas)
+interruptores_estado (on/off persistente)
+eventos_únicos_completados
+enemigos_únicos_derrotados
+progreso_global
+habilidades_desbloqueadas
+aliados_desbloqueados
+mejoras_permanentes
+flags_globales (booleanos tipo: tutorial_completado, intro_vista, etc.)
+economía
+historial_transacciones (opcional, resumido)
+compras_realizadas
+recompensas_obtenidas
+configuración_jugador
+ajustes_audio
+ajustes_controles
+preferencias_UI
+idioma (si aplica)
+estado_sesión_resumido (ligero)
+última_posición_segura
+última_interacción
+timestamp_último_guardado

@@ -402,9 +402,22 @@ function updateShots(state, dt, enemiesList = []) {
         }
 
         // retroceso 32px
-        const len = Math.hypot(shot.vx, shot.vy) || 1;
-        hitEnemy.x += (shot.vx / len) * SHOT_KNOCKBACK;
-        hitEnemy.y += (shot.vy / len) * SHOT_KNOCKBACK;
+const len = Math.hypot(shot.vx, shot.vy) || 1;
+const pushX = (shot.vx / len) * SHOT_KNOCKBACK;
+const pushY = (shot.vy / len) * SHOT_KNOCKBACK;
+
+if (bridge?.moveEntityWithCollision) {
+  bridge.moveEntityWithCollision(
+    hitEnemy,
+    hitEnemy.x + pushX,
+    hitEnemy.y + pushY,
+    hitEnemy.w || 64,
+    hitEnemy.h || 64
+  );
+} else {
+  hitEnemy.x += pushX;
+  hitEnemy.y += pushY;
+}
 
         if (hitEnemy.puntos_de_vida <= 0) {
           if (bridge?.killEnemyWithEffects) {
