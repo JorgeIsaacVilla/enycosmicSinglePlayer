@@ -16,6 +16,83 @@
 
   */
 
+
+  /* 
+PENDIENTE PROTOMAPA — REORGANIZACIÓN DE CARPETAS Y RECURSOS
+
+Si script.js se mantiene en la misma ubicación, normalmente no cambia nada.
+Pero si voy a mover documentos/recursos a otra carpeta, estas rutas y variables son las que debo revisar primero:
+
+1) JSON / DATA
+- fetch("./top15players.json")
+- fetch("./novedades.json")
+- fetch("./world.JSON/ambiente.json")
+- fetch("./world.JSON/enemy.json")
+- fetch("./world.JSON/NPCambiente.json")
+- fetch("./world.JSON/missions.json")
+- fetch("./world.JSON/ilumSistemMapa.json")
+
+2) CSS
+- ensureMetaMapCSS()               -> "./styles/metaMapStyle.css"
+- ensurePopUpCSS()                 -> "./styles/popUp.css"
+- ensureStyleDOMCSS()              -> "./styles/styleDOM.css"
+
+3) HTML / IFRAME
+- const METAFON_SRC                -> "./interactions/metafon.html"
+
+4) SCRIPTS GLOBALES
+- const GLOBAL_SCRIPTS = [
+    "./globalScripts/metacam.js",
+    "./globalScripts/interruptorOscuridad.js"
+  ]
+
+5) MAPA / ASSETS PRINCIPALES
+- const globalMap                  -> "./assets/mapas/mapa1-5000x5000.svg"
+- const LOGO_SRC                   -> "./assets/src/logo.png"
+- const COSMONEDA_SRC              -> "./assets/src/cosmoneda.svg"
+- const CORAZON_SRC                -> "./assets/panelOptions/corazon.svg"
+- window.bumerangImg.src           -> "./assets/items/bumerang.svg"
+- loadImage(...) game over         -> "./assets/avatares/enemy/centinela-reptiliano-armado.png"
+
+6) AVATARES
+- const characters[].avatar        -> "./assets/avatares/men/..."
+- const characters[].avatar        -> "./assets/avatares/women/..."
+- const characters[].sprites       -> "./assets/avatares/..."
+- fallback avatar                  -> "./assets/avatares/default.png"
+- guardSrc game over               -> "./assets/avatares/enemy/centinela-reptiliano-armado.png"
+
+7) TUTORIAL
+- const TUTORIAL_SLIDES[].img      -> "./assets/tutorial/slide1.png"
+- const TUTORIAL_SLIDES[].img      -> "./assets/tutorial/slide2.png"
+- const TUTORIAL_SLIDES[].img      -> "./assets/tutorial/slide3.png"
+- const TUTORIAL_SLIDES[].img      -> "./assets/tutorial/slide4.png"
+
+8) TIENDA / NPC / AMBIENTE
+- vendedor tienda                  -> "./assets/spriteAmbiente/vendedor.png"
+
+9) RUTAS DINÁMICAS QUE VIENEN DESDE JSON O LOCALSTORAGE
+Estas también pueden romperse si los archivos cambian de carpeta:
+- obj.imagen                       // ambiente.json / ilumSistemMapa.json / otros JSON
+- enemy.imagen                     // enemy.json
+- npc.imagen                       // NPCambiente.json / missions.json
+- item.imagen                      // items / inventario / tienda
+- localStorage.getItem("avatar")   // si guarda una ruta antigua, tocaría migrarla
+
+10) RECURSO EXTERNO QUE NO DEPENDE DE TUS CARPETAS LOCALES
+- ASSETS.shadow -> "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png"
+- icon popup     -> "https://art.pixilart.com/thumb/sr5z082f4e339daws3.png"
+
+NOTA IMPORTANTE:
+Si lo que vas a mover es solo JSON, CSS, HTML o assets, lo ideal es crear constantes base como:
+- BASE_ASSETS
+- BASE_JSON
+- BASE_STYLES
+- BASE_SCRIPTS
+- BASE_INTERACTIONS
+
+Así en el futuro cambias una sola ruta y no todo script.js.
+*/
+
 // =======================================================================================
 // Variables Coordenadas de misiones 
 // =======================================================================================
@@ -243,8 +320,6 @@ const AMBIENTE_AUDIO_CACHE_TTL = 45000; // 45 segundos sin uso
 let ambienteViewX = 0;
 let ambienteViewY = 0;
 
-
-
 async function cargarAmbiente() {
   const res = await fetch("./world.JSON/ambiente.json");
   const data = await res.json();
@@ -296,7 +371,6 @@ function ensureMetaMapCSS() {
 }
 
 function openMetaMap() {
-
 
   let metaMapRafId = null;
   let metaMapNeedsRender = false;
@@ -1026,7 +1100,6 @@ bindUIOpen(settingButton, "setting");
 //-----------------------------------------------------------------------------
 //Función de interfaz de items (fin)
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 //lógica / Interfaz nivel IQ(inicio)
@@ -2680,38 +2753,6 @@ document.addEventListener("pointercancel", () => {
   );
 }
 
-// Funciones adicionales para escichar el mause arrba de los items (inicio)
-/*
-document.addEventListener("mouseover", (e) => {
-  const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (!slotEl) return;
-
-  const item = getInventarioSlotItem(slotEl);
-  if (!item) return;
-
-  openInventarioPopup(slotEl, item);
-}, true);
-
-document.addEventListener("mouseout", (e) => {
-  const fromSlot = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (!fromSlot) return;
-
-  const nextEl = e.relatedTarget;
-
-  if (
-    nextEl &&
-    (
-      nextEl.closest?.(".ui-inv-popup") ||
-      nextEl.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item")
-    )
-  ) {
-    return;
-  }
-
-  closeInventarioPopup();
-}, true);
-*/
-// Funciones adicionales para escichar el mause arrba de los items (Fin)
 let npcClickCooldown = false;
 const NPC_CLICK_DELAY = 500; // 0.5 segundos
 
@@ -3160,7 +3201,6 @@ function drawLifeBar(ctx, canvas) {
 //Puntos de vida (fin)
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 //metafon (inicio)
 //-----------------------------------------------------------------------------
@@ -3486,7 +3526,7 @@ function wrapText(ctx, text, maxWidth) {
 
 const GLOBAL_SCRIPTS = [
   //"./globalScripts/linterna.js",
-  //"./globalScripts/aliado.js",
+  "./globalScripts/aliado.js",
   "./globalScripts/metacam.js",
   "./globalScripts/interruptorOscuridad.js",
   //"./globalScripts/timerOscuridad15s.js"
@@ -5715,6 +5755,7 @@ async function preloadIlumSistemaMapa() {
   //console.log("Preload ilumSystem finalizado:", ilumSistemaMapa);
 }
 
+/*
 function getRectIlumObjeto(obj) {
   return {
     x: obj.x,
@@ -5732,6 +5773,7 @@ function getPlayerRectIlum() {
     h: PLAYER_HIT_H
   };
 }
+*/
 
 function encenderObjetoIlumMapa(obj) {
   if (!obj || obj.encendida) return;
@@ -6086,7 +6128,7 @@ window.addEventListener("keydown", (e) => {
   });
 
   // Dpad
-  let pressed = false;
+  //let pressed = false;
  
   const clearHeld = () => { held.length = 0; };
 
@@ -6584,6 +6626,7 @@ function getActiveMission() {
   return getMissionById(window.missionSystem.activeMissionId);
 }
 
+/*
 function getCurrentMissionStep() {
   const mission = getActiveMission();
   if (!mission) return null;
@@ -6614,19 +6657,6 @@ function isMissionAvailable(mission) {
 
   return true;
 }
-/*
-
-function isMissionAvailable(mission) {
-  if (!mission) return false;
-
-  if ((Number(IQuser) || 0) < (Number(mission.condiciones?.nivelIQMinimo) || 0)) {
-    return false;
-  }
-
-  const req = mission.condiciones?.misionesRequeridas || [];
-  return req.every(id => isMissionCompleted(id));
-}
-
 */
 
 function revealMissionStep(missionId, stepIndex) {
@@ -6897,9 +6927,11 @@ if (step.tipo === "hablar_npc_entrega" && Array.isArray(step.entregaItems)) {
 
 window.finalizeActiveMissionFromNPC = finalizeActiveMissionFromNPC;
 
+/*
 function getMissionStarterNPCId(mission) {
   return mission?.pasos?.[0]?.npcId || null;
 }
+*/
 
 function tieneItemsRequeridos(listaItems = []) {
   return listaItems.every(req => {
@@ -6909,6 +6941,7 @@ function tieneItemsRequeridos(listaItems = []) {
   });
 }
 
+/*
 function getCurrentNPCMissionRole(npcId) {
   const activeMission = getActiveMission();
 
@@ -6953,6 +6986,7 @@ function getCurrentNPCMissionRole(npcId) {
     mission: null
   };
 }
+  */
 //===========================================
 /*Dibujar NPC (inicio) */
 //===========================================
@@ -7000,7 +7034,6 @@ function preloadNPCsAmbiente(list) {
     }))
   );
 }
-
 
 //--NPC's Misiones
 function preloadNPCs(list) {
@@ -7150,7 +7183,6 @@ function drawBubblesNPCsAmbiente(ctx) {
     drawBubbleNPCambiente(ctx, npc);
   }
 }
-
 
 //--Enemigo
 function drawEnemigos(ctx) {
@@ -8430,6 +8462,7 @@ function getAliadoComoObjetivo() {
   return aliado;
 }
 
+/*
 function colisionaEnemigoConObjetivo(enemy, objetivo) {
   if (!enemy || !objetivo) return false;
 
@@ -8440,6 +8473,7 @@ function colisionaEnemigoConObjetivo(enemy, objetivo) {
     objetivo.y + objetivo.h > enemy.y
   );
 }
+*/
 
 function obtenerObjetivoPrincipalEnemigo(enemy) {
   const jugadorObjetivo = {
@@ -8492,6 +8526,7 @@ function obtenerObjetivoPrincipalEnemigo(enemy) {
   return candidatos[0].objetivo;
 }
 
+/*
 function aplicarDanioAObjetivoEnemigo(objetivo, danio, enemy) {
   if (!objetivo || danio <= 0) return;
 
@@ -8538,6 +8573,7 @@ function empujarObjetivoEnemigo(objetivo, enemy) {
 
   empujarJugadorConColision(pushX, pushY);
 }
+*/
 
 function activarGameOver() {
   gameOverActive = true;
@@ -9241,6 +9277,7 @@ window.ataquesEspecialesJefeActivos = [];
 window.particulasVolcanJefeActivas = [];
 window.explosionesJefeActivas = [];
 
+/*
 function inicializarEstadoAtaqueEspecialJefe(enemy) {
   if (!enemy || enemy.tipo !== "jefe") return;
 
@@ -9252,6 +9289,7 @@ function inicializarEstadoAtaqueEspecialJefe(enemy) {
   enemy.ataqueEspecialDecisionMax = 4200;
   enemy.ataqueEspecialProbabilidad = 0.38;
 }
+*/
 
 function crearParticulasVolcanJefe(atk) {
   const enemy = atk.enemyRef;
@@ -10388,7 +10426,6 @@ function updateParticulasBumerang(dtMs) {
   }
 }
 
-
 function drawParticulasBumerang(ctx) {
   for (const p of (window.particulasBumerang || [])) {
     const alpha = Math.max(0, p.life / p.maxLife);
@@ -10912,8 +10949,6 @@ async function handleCanvasClick(e) {
   }
 }
 
-
-
 /*Lógica selector de genero. mover valor para mover y visualizar el texto con el ratio del clic (Inicio) */
 const fontSiseGender = 28; //tamaño de letra selector de genero
 /*Constante posicionamiento selector genero hombre */
@@ -11324,7 +11359,8 @@ window.pruebaDeItems = pruebaDeItems;
   // ❌ EXCLUIR ITEMS NO DESEADOS
   const itemsFiltrados = itemsData.filter(item =>
     item.id !== "espada_de_hierro" &&
-    item.id !== "escudo_de_hierro"
+    item.id !== "escudo_de_hierro" &&
+    item.id !== "patines"
   );
 
   for(let i = 0; i < 10; i++){
@@ -11627,6 +11663,7 @@ function contarMaterialesEnCombinacion() {
   return conteo;
 }
 
+/*
 function mostrarPopupCreacion(mensaje) {
   const panel = document.getElementById("container-interfas");
   if (!panel) return;
@@ -11647,6 +11684,7 @@ function mostrarPopupCreacion(mensaje) {
     popup.remove();
   }, 1800);
 }
+*/
 
 function limpiarSlotsDeCombinacionUsados(resultado) {
   if (!resultado || !Array.isArray(resultado.materiales_requeridos_para_crear)) return;
@@ -12366,6 +12404,7 @@ for (const luz of lucesIlumMapa) {
 // =======================================================================================
 // Lógica ambiente.jsons (inicio)
 // =======================================================================================
+/*
 function drawAmbiente(ctx) {
   if (!ambienteObjetos || !ambienteObjetos.length) return;
 
@@ -12479,7 +12518,7 @@ function drawAmbiente(ctx) {
     }
   }
 }
-
+*/
 function objetoPuedeTaparJugador(obj) {
   if (!obj) return false;
 
@@ -14461,7 +14500,7 @@ drawCameraCullingDebug(ctx);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.imageSmoothingEnabled = false;
 
-const barWidth = 18;
+//const barWidth = 18;
 const barHeight = 140;
 const marginLeft = 12;
 
@@ -14666,7 +14705,7 @@ async function start() {
   let last = performance.now();
   const MAX_DT = 33; // evita saltos grandes de física/lógica
   const MIN_DT = 0;
-  let rafId = null;
+  //let rafId = null;
 
   function loop(now) {
     let dt = now - last;
