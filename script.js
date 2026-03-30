@@ -1605,11 +1605,8 @@ function devolverItemDesdeEquipado(slotIndex) {
   if (esAgotable && usosActuales <= 0 && desapareceAlAgotarse) {
     window.equipSlots[slotIndex] = null;
 
-    if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-      const bodyEl = interfasEl.querySelector(".ui-body");
-      if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-      restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
-    }
+    refreshInventarioUI();
+    restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
     return;
   }
 
@@ -1634,11 +1631,8 @@ function devolverItemDesdeEquipado(slotIndex) {
 
   window.equipSlots[slotIndex] = null;
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
-  }
+  refreshInventarioUI();
+  restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
 }
 
 window.devolverItemDesdeEquipado = devolverItemDesdeEquipado;
@@ -1699,11 +1693,7 @@ function equiparItemDelInventario(slotIndex) {
 
       closeInventarioPopup();
 
-      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-        const bodyEl = interfasEl.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-        restoreInventarioScrollState(scrollInventario);
-      }
+      refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
       return;
     }
   }
@@ -1763,11 +1753,7 @@ function equiparItemDelInventario(slotIndex) {
 
   closeInventarioPopup();
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    restoreInventarioScrollState(scrollInventario);
-  }
+  refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
 }
 
 function ensureCraftInfoPopupStyles() {
@@ -2007,11 +1993,8 @@ if (!agregado) {
 
   cosmonedas -= precio;
 
-  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-    const bodyEl = interfasEl.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
-    restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
-  }
+  refreshInventarioUI();
+  restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
 
   showPopupFeedback({
     title: "Compra realizada",
@@ -3928,6 +3911,19 @@ function restoreInventarioScrollState(scrollState) {
   });
 }
 
+function refreshInventarioUI({ restoreScroll = false, scrollState = null } = {}) {
+  if (!interfaceOpen || !interfasEl || interfasEl.dataset.panel !== "inventario") return;
+
+  const bodyEl = interfasEl.querySelector(".ui-body");
+  if (!bodyEl) return;
+
+  bodyEl.innerHTML = buildInventarioHTML();
+
+  if (restoreScroll && scrollState) {
+    restoreInventarioScrollState(scrollState);
+  }
+}
+
 // =============================
 // ILUM SISTEM MAPA (antorchas y chimeneas independientes)
 // =============================
@@ -3970,12 +3966,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       closeInventarioPopup();
 
-      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-        const bodyEl = interfasEl.querySelector(".ui-body");
-if (bodyEl) {
-  bodyEl.innerHTML = buildInventarioHTML();
-  restoreInventarioScrollState(scrollInventario);
-}}
+      refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
 
       break;
     }
