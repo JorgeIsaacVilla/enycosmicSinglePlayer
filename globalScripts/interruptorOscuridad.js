@@ -1,8 +1,8 @@
 registerGlobalModule("interruptor_oscuridad", {
   getInitialState() {
     return {
-      worldX: 2890,
-      worldY: 1650,
+worldX: 4120,
+worldY: 880,
       width: 30,
       height: 62,
       hitboxEl: null,

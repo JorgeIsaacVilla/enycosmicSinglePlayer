@@ -3847,7 +3847,7 @@ killEnemyWithEffects: (enemy) => {
 };
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
