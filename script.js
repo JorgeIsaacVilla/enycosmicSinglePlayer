@@ -40,7 +40,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
   let avatar     = localStorage.getItem("avatar");
   let profession = localStorage.getItem("profession");
 
-  let cosmonedas = 300; //50 Inicial el saldo se gurdará en la base de datos
+  let cosmonedas = 3000; //50 Inicial el saldo se gurdará en la base de datos
 
   // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -3847,7 +3847,7 @@ killEnemyWithEffects: (enemy) => {
 };
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -3984,6 +3984,8 @@ const ILUM_ENEMY_OFF_RADIUS = 90;
 function usarItemEquipadoDesdeHUD(slotIndex) {
   const item = window.equipSlots?.[slotIndex];
   if (!item) return;
+
+  const scrollInventario = getInventarioScrollState();
 
   switch (item.id) {
 
@@ -4765,14 +4767,11 @@ function updateAtaquesPicoEscabador(dtMs) {
         "#8b5a2b"
       );
       
-const len = Math.hypot(d.vx, d.vy) || 1;
 const push = 32;
+const pushX = Math.cos(angulo) * push;
+const pushY = Math.sin(angulo) * push;
 
-empujarEnemigoConColision(
-  enemy,
-  (d.vx / len) * push,
-  (d.vy / len) * push
-);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (!ataque.yaDesgasto) {
         const itemSlot = window.equipSlots?.[ataque.slotIndex];
