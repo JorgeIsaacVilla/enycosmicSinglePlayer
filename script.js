@@ -296,6 +296,25 @@ function ensureMetaMapCSS() {
 }
 
 function openMetaMap() {
+
+
+  let metaMapRafId = null;
+  let metaMapNeedsRender = false;
+
+  function requestMetaMapRender() {
+    if (metaMapRafId !== null) return;
+
+    metaMapRafId = requestAnimationFrame(() => {
+      metaMapRafId = null;
+
+      if (!document.getElementById("metamap-overlay")) return;
+      if (!metaMapNeedsRender) return;
+
+      metaMapNeedsRender = false;
+      render();
+    });
+  }
+
   ensureMetaMapCSS();
   console.log("Abrir MetaMap en index.html");
 
@@ -362,18 +381,6 @@ function openMetaMap() {
     playerX,
     playerY
   };
-
-  function closeMetaMap() {
-    if (metaMapRafId !== null) {
-      cancelAnimationFrame(metaMapRafId);
-      metaMapRafId = null;
-    }
-
-    window.removeEventListener("keydown", escHandler);
-    window.removeEventListener("resize", resizeHandler);
-
-    overlay.remove();
-  }
 
   function clampOffsets() {
     const scaledW = state.mapBaseW * state.zoom;
@@ -543,8 +550,8 @@ function openMetaMap() {
     state.offsetX = Math.floor((vw - state.mapBaseW) / 2);
     state.offsetY = Math.floor((vh - state.mapBaseH) / 2);
 
-    clampOffsets();
-    render();
+       clampOffsets();
+    scheduleMetaMapRender();
   }
 
   function zoomAt(nextZoom) {
@@ -562,8 +569,8 @@ function openMetaMap() {
     state.offsetX = cx - (worldX * state.zoom);
     state.offsetY = cy - (worldY * state.zoom);
 
-    clampOffsets();
-    render();
+       clampOffsets();
+    scheduleMetaMapRender();
   }
 
   function startDrag(e) {
@@ -588,8 +595,8 @@ function openMetaMap() {
     state.offsetX = state.startOffsetX + dx;
     state.offsetY = state.startOffsetY + dy;
 
-    clampOffsets();
-    render();
+       clampOffsets();
+    scheduleMetaMapRender();
     e.preventDefault();
   }
 
@@ -603,11 +610,13 @@ function openMetaMap() {
   mapEl.addEventListener("load", () => {
     fitMapToViewport();
     syncStarterMissionMarkers();
+    scheduleMetaMapRender();
   });
 
   if (mapEl.complete) {
     fitMapToViewport();
     syncStarterMissionMarkers();
+    scheduleMetaMapRender();
   }
 
   closeBtn.addEventListener("click", closeMetaMap);
@@ -647,7 +656,24 @@ function openMetaMap() {
     }
   }, { passive: false });
 
-  let metaMapRafId = null;
+  function scheduleMetaMapRender() {
+    metaMapNeedsRender = true;
+    requestMetaMapRender();
+  }
+
+  function closeMetaMap() {
+    if (metaMapRafId !== null) {
+      cancelAnimationFrame(metaMapRafId);
+      metaMapRafId = null;
+    }
+
+    metaMapNeedsRender = false;
+
+    window.removeEventListener("keydown", escHandler);
+    window.removeEventListener("resize", resizeHandler);
+
+    overlay.remove();
+  }
 
   function escHandler(e) {
     if (e.key === "Escape") {
@@ -658,22 +684,13 @@ function openMetaMap() {
   function resizeHandler() {
     if (!document.getElementById("metamap-overlay")) return;
     fitMapToViewport();
-  }
-
-  function metaMapLoop() {
-    if (!document.getElementById("metamap-overlay")) {
-      metaMapRafId = null;
-      return;
-    }
-
-    render();
-    metaMapRafId = requestAnimationFrame(metaMapLoop);
+    scheduleMetaMapRender();
   }
 
   window.addEventListener("keydown", escHandler);
   window.addEventListener("resize", resizeHandler);
 
-  metaMapRafId = requestAnimationFrame(metaMapLoop);
+  scheduleMetaMapRender();
 }
 // ===============================
 //-----MetaMap (fin)
