@@ -6941,52 +6941,6 @@ function tieneItemsRequeridos(listaItems = []) {
   });
 }
 
-/*
-function getCurrentNPCMissionRole(npcId) {
-  const activeMission = getActiveMission();
-
-  // Si el NPC pertenece al paso actual de la misión seleccionada
-  if (activeMission) {
-    const currentStepIndex = window.missionSystem.activeStepIndexByMission[activeMission.id];
-    const currentStep = activeMission.pasos?.[currentStepIndex];
-
-    if (
-      currentStep &&
-      (currentStep.tipo === "hablar_npc" || currentStep.tipo === "hablar_npc_entrega") &&
-      currentStep.npcId === npcId
-    ) {
-      const isLast = currentStepIndex === activeMission.pasos.length - 1;
-
-      return {
-        type: isLast ? "mission_finish" : "mission_progress",
-        mission: activeMission
-      };
-    }
-  }
-
-  // Si el NPC inicia una misión que todavía NO ha sido aceptada
-  const starterMission = window.missionsData?.missions?.find((mission) => {
-    if (!mission) return false;
-    if (!isMissionAvailable(mission)) return false;
-    if (isMissionAccepted(mission.id)) return false;
-
-    const starterId = mission.pasos?.[0]?.npcId;
-    return starterId === npcId;
-  });
-
-  if (starterMission) {
-    return {
-      type: "mission_start",
-      mission: starterMission
-    };
-  }
-
-  return {
-    type: "default",
-    mission: null
-  };
-}
-  */
 //===========================================
 /*Dibujar NPC (inicio) */
 //===========================================
@@ -9277,20 +9231,6 @@ window.ataquesEspecialesJefeActivos = [];
 window.particulasVolcanJefeActivas = [];
 window.explosionesJefeActivas = [];
 
-/*
-function inicializarEstadoAtaqueEspecialJefe(enemy) {
-  if (!enemy || enemy.tipo !== "jefe") return;
-
-  enemy.cooldownAtaqueEspecial = 2200 + Math.random() * 2400;
-  enemy.ataqueEspecialPreparando = false;
-  enemy.ataqueEspecialActivo = false;
-  enemy.ataqueEspecialHitAplicado = false;
-  enemy.ataqueEspecialDecisionMin = 1800;
-  enemy.ataqueEspecialDecisionMax = 4200;
-  enemy.ataqueEspecialProbabilidad = 0.38;
-}
-*/
-
 function crearParticulasVolcanJefe(atk) {
   const enemy = atk.enemyRef;
   if (!enemy) return;
@@ -10969,8 +10909,6 @@ const formHeightSelectorFemale = fontSiseGender * 1.2; // altura aproximada del 
 
 /*Lógica selector de genero. mover valor para mover y visualizar el texto con el ratio del clic (fin) */
 
-
-
 /*Lógica boton volver en selector de avatar para mover el boton y su ratio de click (inicio) */
 // ===== UI: Botón Volver (global) =====
 /* ===== BOTÓN VOLVER CONFIG ===== */
@@ -11305,40 +11243,6 @@ async function cargarItemsJSON(){
  cargarItemsEnMapa();
 }
 
-/* para cargar todos los items hasta que se acaben. hay que descomentar el pruebaDeItems() para que funcione de manera automatica
-
-function pruebaDeItems(){
-
-  if(items.length > 0 || itemsData.length === 0) return;
-
-  const radius = 300;
-
-  for(let i=0;i<10;i++){
-
-    const randomItem = itemsData[Math.floor(Math.random()*itemsData.length)];
-
-const img = new Image();
-img.onload = () => {};
-img.onerror = () => {
-  console.warn("No cargó la imagen del item:", randomItem.imagen);
-};
-img.src = randomItem.imagen;
-
-    const offsetX = (Math.random() - 0.5) * radius;
-    const offsetY = (Math.random() - 0.5) * radius;
-
-    items.push({
-      ...randomItem,
-      x: player.x + offsetX,
-      y: player.y + offsetY,
-      img: img,
-      size: 32
-    });
-
-  }
-
-}*/
-
 //AL MATAR JEFES SE LLAMA LA FUNCIÓN NUEVA DE pruebaDeItems() PARA DESPLEGAR ITEMS MENOS ESPADA, Y ESCUDO DE HIERRO.
 
 function dropItemsJefe(enemy){
@@ -11662,29 +11566,6 @@ function contarMaterialesEnCombinacion() {
 
   return conteo;
 }
-
-/*
-function mostrarPopupCreacion(mensaje) {
-  const panel = document.getElementById("container-interfas");
-  if (!panel) return;
-
-  const bodyEl = panel.querySelector(".ui-body");
-  if (!bodyEl) return;
-
-  const oldMsg = bodyEl.querySelector(".ui-inv-craft-popup");
-  if (oldMsg) oldMsg.remove();
-
-  const popup = document.createElement("div");
-  popup.className = "ui-inv-craft-popup";
-  popup.textContent = mensaje;
-
-  bodyEl.appendChild(popup);
-
-  setTimeout(() => {
-    popup.remove();
-  }, 1800);
-}
-*/
 
 function limpiarSlotsDeCombinacionUsados(resultado) {
   if (!resultado || !Array.isArray(resultado.materiales_requeridos_para_crear)) return;
@@ -12404,121 +12285,7 @@ for (const luz of lucesIlumMapa) {
 // =======================================================================================
 // Lógica ambiente.jsons (inicio)
 // =======================================================================================
-/*
-function drawAmbiente(ctx) {
-  if (!ambienteObjetos || !ambienteObjetos.length) return;
 
-  function drawBaseObjeto(obj) {
-    if (obj.color) {
-      ctx.fillStyle = obj.color;
-      ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
-    }
-
-    if (obj.imagen) {
-      if (!ambienteImagenesCache[obj.imagen]) {
-        const img = new Image();
-        img.onload = () => console.log("Imagen ambiente cargada:", obj.imagen);
-        img.onerror = () => console.warn("No cargó imagen ambiente:", obj.imagen);
-        img.src = obj.imagen;
-        ambienteImagenesCache[obj.imagen] = img;
-      }
-
-      const img = ambienteImagenesCache[obj.imagen];
-
-      if (img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, obj.x, obj.y, obj.w, obj.h);
-      }
-    }
-
-    if (obj.sprites_1x10) {
-      if (!ambienteImagenesCache[obj.sprites_1x10]) {
-        const img = new Image();
-        img.onload = () => console.log("Sprite ambiente cargado:", obj.sprites_1x10);
-        img.onerror = () => console.warn("No cargó sprite ambiente:", obj.sprites_1x10);
-        img.src = obj.sprites_1x10;
-        ambienteImagenesCache[obj.sprites_1x10] = img;
-      }
-
-      const img = ambienteImagenesCache[obj.sprites_1x10];
-
-      if (img.complete && img.naturalWidth > 0) {
-        const FRAME_W = 120;
-        const FRAME_H = 120;
-        const TOTAL_FRAMES = 10;
-
-        obj.frameTimer += 16;
-
-        const speed = Number(obj.velocidad_movimiento) || 1;
-
-        if (obj.frameTimer >= (obj.frameDuration / speed)) {
-          obj.frameActual = (obj.frameActual + 1) % TOTAL_FRAMES;
-          obj.frameTimer = 0;
-        }
-
-        const sx = obj.frameActual * FRAME_W;
-
-        ctx.drawImage(
-          img,
-          sx, 0, FRAME_W, FRAME_H,
-          obj.x, obj.y, obj.w, obj.h
-        );
-      }
-    }
-
-    if (obj.sonido_ambiente) {
-      const dx = (player.x + 32) - (obj.x + obj.w / 2);
-      const dy = (player.y + 32) - (obj.y + obj.h / 2);
-      const dist = Math.hypot(dx, dy);
-
-      if (!ambienteAudioCache[obj.sonido_ambiente]) {
-        const audio = new Audio(obj.sonido_ambiente);
-        audio.loop = true;
-        ambienteAudioCache[obj.sonido_ambiente] = audio;
-      }
-
-      const audio = ambienteAudioCache[obj.sonido_ambiente];
-
-      if (dist < 500) {
-        audio.volume = Math.max(0, 1 - (dist / 500));
-
-        if (!obj.audioPlaying) {
-          audio.play().catch(() => {});
-          obj.audioPlaying = true;
-        }
-      } else {
-        if (obj.audioPlaying) {
-          audio.pause();
-          obj.audioPlaying = false;
-        }
-      }
-    }
-  }
-
-    const listaOrdenada = [...ambienteObjetos].sort((a, b) => {
-      const za = (a.y + a.h);
-      const zb = (b.y + b.h);
-      if (za !== zb) return za - zb;
-
-      const aEsAntorcha = a.subtipo === "antorcha_suelo";
-      const bEsAntorcha = b.subtipo === "antorcha_suelo";
-
-      if (aEsAntorcha && !bEsAntorcha) return -1;
-      if (!aEsAntorcha && bEsAntorcha) return 1;
-
-      return 0;
-    });
-
-  for (const obj of listaOrdenada) {
-    if (!obj) continue;
-
-    if (obj.subtipo === "antorcha_suelo") {
-      drawAntorchaSuelo(ctx, obj);
-    } else {
-      drawBaseObjeto(obj);
-    }
-  }
-}
-*/
 function objetoPuedeTaparJugador(obj) {
   if (!obj) return false;
 
