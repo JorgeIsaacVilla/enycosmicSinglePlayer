@@ -14664,10 +14664,19 @@ async function start() {
   });
 
   let last = performance.now();
+  const MAX_DT = 33; // evita saltos grandes de física/lógica
+  const MIN_DT = 0;
+  let rafId = null;
 
   function loop(now) {
-    const dt = now - last;
+    let dt = now - last;
     last = now;
+
+    if (!Number.isFinite(dt)) dt = 16.67;
+    if (dt < MIN_DT) dt = MIN_DT;
+    if (dt > MAX_DT) dt = MAX_DT;
+
+    const enemigosActivos = window.enemigos || [];
 
     runGlobalHook("beforeUpdate", {
       dt,
@@ -14677,7 +14686,7 @@ async function start() {
       images,
       npcs,
       npcsAmbiente,
-      enemigos: window.enemigos || [],
+      enemigos: enemigosActivos,
       ambienteObjetos
     });
 
@@ -14691,16 +14700,16 @@ async function start() {
       images,
       npcs,
       npcsAmbiente,
-      enemigos: window.enemigos || [],
+      enemigos: enemigosActivos,
       ambienteObjetos
     });
 
     draw(images);
 
-    requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
   }
 
-  requestAnimationFrame(loop);
+  rafId = requestAnimationFrame(loop);
 }
 
 // solo precarga miniaturas (para selección)
