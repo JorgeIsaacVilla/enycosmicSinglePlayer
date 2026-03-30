@@ -2726,13 +2726,13 @@ function canUseNPCClick() {
 
   return true;
 }
+
 function handleNPCDialogAction(btn) {
   if (!btn) return;
-
-  if (!canUseNPCClick()) return; // 🔥 BLOQUEA CLICS RÁPIDOS
+  if (!canUseNPCClick()) return;
 
   const action = btn.dataset.npcAction;
- 
+
   if (action === "close" || action === "reject") {
     window.closeNPCDialog();
     return;
@@ -2743,7 +2743,7 @@ function handleNPCDialogAction(btn) {
     window.renderNPCDialog();
     return;
   }
- 
+
   if (action === "next") {
     window.npcDialogState.lineIndex++;
     window.renderNPCDialog();
@@ -2767,6 +2767,7 @@ function handleNPCDialogAction(btn) {
 
   if (action === "finish-mission") {
     finalizeActiveMissionFromNPC(window.npcDialogState.npc.id);
+    return;
   }
 }
 
@@ -2774,8 +2775,6 @@ document.addEventListener("click", (e) => {
   const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
   if (!btn) return;
 
-  if (e.pointerType && e.pointerType !== "mouse") return;
-
   handleNPCDialogAction(btn);
 }, true);
 
@@ -2790,10 +2789,6 @@ document.addEventListener("pointerdown", (e) => {
 
 document.addEventListener("pointermove", (e) => {
   if (e.pointerType === "mouse") return;
-
-  const dialog = document.getElementById("npc-dialog-overlay");
-  if (!dialog) return;
-
   updateUITapGate(e);
 }, { capture: true, passive: true });
 
@@ -2820,61 +2815,6 @@ document.addEventListener("pointerup", (e) => {
 document.addEventListener("pointercancel", () => {
   endUITapGate();
 }, { capture: true, passive: true });
-
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
-  if (!btn) return;
-
-  handleNPCDialogAction(btn);
-}, true);
-
-document.addEventListener("pointerdown", (e) => {
-  if (e.pointerType === "mouse") return;
-
-  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
-  if (!btn) return;
-
-  beginUITapGate(e, btn);
-}, { capture: true, passive: true });
-
-document.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "mouse") return;
-
-  const btn = document.querySelector("#npc-dialog-actions [data-npc-action]");
-  if (!btn) return;
-
-  updateUITapGate(e);
-}, { capture: true, passive: true });
-
-document.addEventListener("pointerup", (e) => {
-  if (e.pointerType === "mouse") return;
-
-  const btn = e.target.closest?.("#npc-dialog-actions [data-npc-action]");
-  if (!btn) {
-    endUITapGate();
-    return;
-  }
-
-  if (!canCommitUITap(btn)) {
-    endUITapGate();
-    return;
-  }
-
-  e.preventDefault();
-  e.stopPropagation();
-  handleNPCDialogAction(btn);
-  endUITapGate();
-}, { capture: true, passive: false });
-
-document.addEventListener("pointercancel", () => {
-  endUITapGate();
-}, { capture: true, passive: true });
-
-
-
-
-
-
 
 document.addEventListener("pointerdown", (e) => {
   if (e.pointerType === "mouse") return;
