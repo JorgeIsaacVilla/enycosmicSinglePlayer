@@ -3546,7 +3546,7 @@ function wrapText(ctx, text, maxWidth) {
 
 const GLOBAL_SCRIPTS = [
   //"./globalScripts/linterna.js",
-  "./globalScripts/aliado.js",
+  //"./globalScripts/aliado.js",
   "./globalScripts/metacam.js",
   "./globalScripts/interruptorOscuridad.js",
   //"./globalScripts/timerOscuridad15s.js"
@@ -8469,6 +8469,128 @@ function colisionaEnemigoConJugador(enemy) {
   );
 }
 
+function getAliadoComoObjetivo() {
+  if (typeof window.enyGetAliadoTarget !== "function") return null;
+
+  const aliado = window.enyGetAliadoTarget();
+  if (!aliado) return null;
+
+  if (typeof window.enyIsAliadoAlive === "function" && !window.enyIsAliadoAlive()) {
+    return null;
+  }
+
+  return aliado;
+}
+
+function colisionaEnemigoConObjetivo(enemy, objetivo) {
+  if (!enemy || !objetivo) return false;
+
+  return (
+    objetivo.x < enemy.x + enemy.w &&
+    objetivo.x + objetivo.w > enemy.x &&
+    objetivo.y < enemy.y + enemy.h &&
+    objetivo.y + objetivo.h > enemy.y
+  );
+}
+
+function obtenerObjetivoPrincipalEnemigo(enemy) {
+  const jugadorObjetivo = {
+    x: player.x,
+    y: player.y,
+    w: HERO_DRAW_W,
+    h: HERO_DRAW_H,
+    tipo: "jugador"
+  };
+
+  const aliadoObjetivo = getAliadoComoObjetivo();
+
+  const candidatos = [];
+
+  const puedeVerJugador = enemigoTieneLineaDeVision(enemy, jugadorObjetivo);
+  const distanciaJugador = distanciaEntreEntidades(enemy, jugadorObjetivo);
+
+  const jugadorDetectado =
+    enemy.tipo === "jefe"
+      ? (distanciaJugador <= enemy.radioVision)
+      : (distanciaJugador <= enemy.radioVision && puedeVerJugador);
+
+  if (jugadorDetectado) {
+    candidatos.push({
+      objetivo: jugadorObjetivo,
+      dist: distanciaJugador
+    });
+  }
+
+  if (aliadoObjetivo) {
+    const puedeVerAliado = enemigoTieneLineaDeVision(enemy, aliadoObjetivo);
+    const distanciaAliado = distanciaEntreEntidades(enemy, aliadoObjetivo);
+
+    const aliadoDetectado =
+      enemy.tipo === "jefe"
+        ? (distanciaAliado <= enemy.radioVision)
+        : (distanciaAliado <= enemy.radioVision && puedeVerAliado);
+
+    if (aliadoDetectado) {
+      candidatos.push({
+        objetivo: aliadoObjetivo,
+        dist: distanciaAliado
+      });
+    }
+  }
+
+  if (!candidatos.length) return null;
+
+  candidatos.sort((a, b) => a.dist - b.dist);
+  return candidatos[0].objetivo;
+}
+
+function aplicarDanioAObjetivoEnemigo(objetivo, danio, enemy) {
+  if (!objetivo || danio <= 0) return;
+
+  if (objetivo.tipo === "aliado") {
+    if (typeof window.enyDamageAliado === "function") {
+      window.enyDamageAliado(danio, enemy);
+    }
+    return;
+  }
+
+  pdv -= danio;
+  if (pdv < 0) pdv = 0;
+
+  crearTextoDanio(
+    player.x + 32,
+    player.y - 10,
+    "-" + danio
+  );
+
+  player.blinkTimer = 300;
+
+  if (pdv <= 0 && !gameOverActive) {
+    activarGameOver();
+  }
+}
+
+function empujarObjetivoEnemigo(objetivo, enemy) {
+  if (!objetivo || !enemy) return;
+
+  const dx = objetivo.x - enemy.x;
+  const dy = objetivo.y - enemy.y;
+  const dist = Math.hypot(dx, dy) || 1;
+
+  const push = 32;
+  const pushX = (dx / dist) * push;
+  const pushY = (dy / dist) * push;
+
+  if (objetivo.tipo === "aliado") {
+    if (typeof window.enyDamageAliado === "function") {
+      // el aliado ya recibe empuje dentro de su propia función de daño
+    }
+    return;
+  }
+
+  empujarJugadorConColision(pushX, pushY);
+}
+
 function activarGameOver() {
   gameOverActive = true;
   updateGameplayUIVisibility();
@@ -8746,7 +8868,8 @@ const jugadorComoObjetivo = {
   x: player.x,
   y: player.y,
   w: HERO_DRAW_W,
-  h: HERO_DRAW_H
+  h: HERO_DRAW_H,
+  tipo: "jugador"
 };
 
 const fuegoObjetivo = buscarFuenteDeFuegoCercana(enemy, 320);
@@ -8759,8 +8882,15 @@ if (fuegoObjetivo) {
 }
 
 const puedeVerJugador = enemigoTieneLineaDeVision(enemy, jugadorComoObjetivo);
-
 const antorchaObjetivo = buscarAntorchaSueloCercana(enemy, enemy.radioVision + 250);
+const objetivoPrincipal = !antorchaObjetivo ? obtenerObjetivoPrincipalEnemigo(enemy) : null;
+const usuarioDentroVision = !antorchaObjetivo && !!objetivoPrincipal;
+
+if (!antorchaObjetivo) {
+  enemy.persiguiendo = !!objetivoPrincipal;
+}
+
+
 
 const jugadorDetectado =
   enemy.tipo === "jefe"
@@ -8771,7 +8901,6 @@ if (!antorchaObjetivo) {
   enemy.persiguiendo = jugadorDetectado;
 }
 
-const usuarioDentroVision = !antorchaObjetivo && jugadorDetectado;
 
     if (enemy.tipo === "jefe") {
   if (enemy.cooldownAtaqueEspecial > 0) {
@@ -9706,14 +9835,17 @@ window.disparosEnemigosArmadosActivos = [];
 function lanzarDisparoEnemigoArmado(enemy) {
   if (!enemy) return;
 
+  const objetivo = obtenerObjetivoPrincipalEnemigo(enemy);
+  if (!objetivo) return;
+
   const enemyCenterX = enemy.x + enemy.w / 2;
   const enemyCenterY = enemy.y + enemy.h / 2;
 
-  const playerCenterX = player.x + HERO_DRAW_W / 2;
-  const playerCenterY = player.y + HERO_DRAW_H / 2;
+  const objetivoCenterX = objetivo.x + objetivo.w / 2;
+  const objetivoCenterY = objetivo.y + objetivo.h / 2;
 
-  const dx = playerCenterX - enemyCenterX;
-  const dy = playerCenterY - enemyCenterY;
+  const dx = objetivoCenterX - enemyCenterX;
+  const dy = objetivoCenterY - enemyCenterY;
   const len = Math.hypot(dx, dy) || 1;
 
   const vx = (dx / len) * (enemy.velocidadDisparo || 8.5);
@@ -9726,7 +9858,8 @@ function lanzarDisparoEnemigoArmado(enemy) {
     vy,
     largo: enemy.largoDisparo || 28,
     vida: 700,
-    danio: Number(enemy.puntos_de_ataque ?? 0) || 0
+    danio: Number(enemy.puntos_de_ataque ?? 0) || 0,
+    objetivoTipo: objetivo.tipo || "jugador"
   });
 }
 
@@ -9785,35 +9918,52 @@ if (proyectilColisionaAmbiente(d.x - 5, d.y - 5, 10, 10)) {
     const hitX = d.x - hitboxW / 2;
     const hitY = d.y - hitboxH / 2;
 
-    const colisionaJugador =
-      hitX < player.x + HERO_DRAW_W &&
-      hitX + hitboxW > player.x &&
-      hitY < player.y + HERO_DRAW_H &&
-      hitY + hitboxH > player.y;
+    const aliadoObjetivo = getAliadoComoObjetivo();
 
-    if (colisionaJugador) {
-      const danio = Number(d.danio ?? 0) || 0;
+const colisionaJugador =
+  hitX < player.x + HERO_DRAW_W &&
+  hitX + hitboxW > player.x &&
+  hitY < player.y + HERO_DRAW_H &&
+  hitY + hitboxH > player.y;
 
-      pdv -= danio;
-      if (pdv < 0) pdv = 0;
+const colisionaAliado = aliadoObjetivo
+  ? (
+      hitX < aliadoObjetivo.x + aliadoObjetivo.w &&
+      hitX + hitboxW > aliadoObjetivo.x &&
+      hitY < aliadoObjetivo.y + aliadoObjetivo.h &&
+      hitY + hitboxH > aliadoObjetivo.y
+    )
+  : false;
 
-      crearTextoDanio(
-        player.x + 32,
-        player.y - 10,
-        "-" + danio,
-        "#ff3b3b",
-        "#ff0000"
-      );
+if (colisionaJugador || colisionaAliado) {
+  const danio = Number(d.danio ?? 0) || 0;
 
-      player.blinkTimer = 300;
-
-      if (pdv <= 0 && !gameOverActive) {
-        activarGameOver();
-      }
-
-      window.disparosEnemigosArmadosActivos.splice(i, 1);
-      continue;
+  if (colisionaAliado && !colisionaJugador) {
+    if (typeof window.enyDamageAliado === "function") {
+      window.enyDamageAliado(danio);
     }
+  } else {
+    pdv -= danio;
+    if (pdv < 0) pdv = 0;
+
+    crearTextoDanio(
+      player.x + 32,
+      player.y - 10,
+      "-" + danio,
+      "#ff3b3b",
+      "#ff0000"
+    );
+
+    player.blinkTimer = 300;
+
+    if (pdv <= 0 && !gameOverActive) {
+      activarGameOver();
+    }
+  }
+
+  window.disparosEnemigosArmadosActivos.splice(i, 1);
+  continue;
+}
 
     if (
       d.vida <= 0 ||
