@@ -14680,7 +14680,7 @@ if (gameMode === "playing") {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (FIN) */
 
 //--------------------------------------------------------------
-/*--------Resetear datios de juego para pruebas (Inicio)
+/*--------Resetear datios de juego para pruebas (Inicio)*/
 //--------------------------------------------------------------
 function resetPlayerProfile() {
  localStorage.removeItem("avatar");
@@ -14703,4 +14703,4 @@ function resetPlayerProfile() {
   gameMode = "checking";
 }
 
-resetPlayerProfile() */
+//resetPlayerProfile() 
