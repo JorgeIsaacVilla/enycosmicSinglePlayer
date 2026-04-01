@@ -6,7 +6,7 @@
 
 (function () {
   const MODULE_ID = "aliado_reptiliano_test";
-  const SPRITE_SRC = "./assets/avatares/armaduras/armadura1.svg";
+  const SPRITE_SRC = "../assets/avatares/armaduras/armadura1.svg";
 
   const FRAME_W = 64;
   const FRAME_H = 64;

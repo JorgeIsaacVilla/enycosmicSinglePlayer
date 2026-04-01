@@ -1,47 +1,322 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Enycosmic Game Play</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Enycosmic - Inicio</title>
+
+  <style>
+    @font-face {
+      font-family: "arcade";
+      src: url("./assets/font/RetroGaming.ttf") format("truetype");
+    }
+
+    :root{
+      --dom-bg: #000000;
+      --dom-text: #00ffcc;
+      --dom-border: #00ffcc;
+      --dom-shadow-1: #0b3d35;
+      --dom-shadow-2: rgba(0,0,0,.45);
+      --dom-radius-soft: 16px;
+      --page-gap: 16px;
+    }
+
+    *{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body{
+      width: 100%;
+      height: 100%;
+    }
+
+    body{
+      font-family: "arcade", monospace;
+      overflow: hidden;
+      background-image: url("./assets/backgrounds/backgroundWrap.svg");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--page-gap);
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .intro-shell{
+      width: min(100%, 980px);
+      height: min(100%, 780px);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+.intro-panel{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--dom-radius-soft);
+  background-color: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 0 0 2px rgba(0,255,204,0.9),
+    0 0 12px rgba(0,255,204,0.9),
+    0 0 28px rgba(0,255,204,0.6),
+    0 0 48px rgba(0,255,204,0.4),
+    0 18px 42px var(--dom-shadow-2);
+
+      background-image: url("./assets/backgrounds/domo.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  isolation: isolate;
+}
+    
+
+    .intro-overlay{
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,.18) 0%,
+          rgba(0,0,0,.34) 38%,
+          rgba(0,0,0,.55) 100%
+        );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+.intro-content{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.pixel-start-btn{
+  appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "arcade", monospace;
+  font-size: clamp(12px, 1.4vw, 16px);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #000000;
+  background: #18f5e1;
+  padding: 0 32px;
+  min-width: 220px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+  box-shadow:
+    0 0 0 2px rgba(24,245,225,0.95),
+    0 0 12px rgba(24,245,225,0.85),
+    0 0 24px rgba(24,245,225,0.45);
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+
+.pixel-start-btn:hover{
+  background: #ffffff;
+   color: #8a2be2; /* morado Enycosmic */
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,1),
+    0 0 12px rgba(255,255,255,1),
+    0 0 28px rgba(255,255,255,0.95),
+    0 0 52px rgba(255,255,255,0.85),
+    0 0 86px rgba(255,255,255,0.65);
+  transform: scale(1.03);
+}
+
+.pixel-start-btn:active{
+  transform: scale(0.98);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,1),
+    0 0 10px rgba(255,255,255,0.95),
+    0 0 20px rgba(255,255,255,0.7);
+}
+
+    @media (max-width: 1024px){
+      body{
+        padding: 16px;
+      }
+
+      .intro-shell{
+        width: 100%;
+        height: min(100%, 780px);
+      }
+    }
+
+@media (max-width: 768px){
+  .intro-content{
+    padding: 24px;
+  }
+
+  .pixel-start-btn{
+    min-width: 210px;
+    height: 42px;
+    padding: 0 24px;
+  }
+}
+
+    @media (max-width: 520px){
+      body{
+        padding: 16px;
+      }
+
+      .intro-shell{
+        width: 100%;
+        height: 100%;
+      }
+
+      .intro-panel{
+        width: 100%;
+        height: 100%;
+      }
+  .intro-content{
+    padding: 20px;
+  }
+
+  .pixel-start-btn{
+    width: 100%;
+    min-width: 100%;
+    max-width: 260px;
+    font-size: 12px;
+  }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap" id="wrap">
-    <!-- sincronizar con base de datos
-      *Nombre de avatar: de wordpress a gamePlay
-      *IQ: de gamePlay a wordpress / wordpress a gamePlay
-      *Sprites: de gamePlay a wordpress / wordpress a gamePlay
-      *profesión: de gamePlay a wordpress
-      *cosmonedas: de gamePlay a wordpress / wordpress a gamePlay
-      *Vida del personaje: de gamePlay a wordpress / wordpress a gamePlay
-    -->
-   <!---->
-    <div class="box-buttons-items" style="display: none;">
-      <button id="misions"></button>
-      <button id="novedades"></button><!--Noticias de actualizaciones, insentivar a compartir, donaciones y compras-->
-      <button id="iq"></button>   <!--Acá se vera tu nivel IQ actual, y se verá el nivel IQ de otros usuarios ACTIVOS en una lista-->
-      <button id="inventario"></button>   <!--Máximo 3x3 / y distintos trajes que se adquiere en el juego-->
-      <button id="setting"></button>   <!--Volumen, terminos y condiciones, reglas de privacidad, Donaciones, soporte,  cambiar musica ambiente, devolver a estado de fabrica(Esto se guardará en localStorage), pantalla completa, tutorial del juego-->
 
-    </div>
+  <main class="intro-shell">
+    <section class="intro-panel" id="view-intro-cover">
+      <div class="intro-overlay"></div>
 
-    <button id="metafon" style="display: none;"></button>   <!--Calculadora, camara de realidad ahumentada(Camara), juego de la culebrita(Sneak Game), meta-chat, BIN, cuaderno recordatorio, metamap-->
+      <div class="intro-content">
+        <button class="pixel-start-btn" id="btn-jugar">Jugar</button>
+      </div>
+    </section>
+  </main>
 
-    <canvas id="game"></canvas>
+<script>
+const btnJugar = document.getElementById("btn-jugar");
+const panel = document.getElementById("view-intro-cover");
 
-     <!--
-    <button onclick="pruebaDeItems()">Generar Items</button>
-    <button onclick="reto_codificacion_01()">Reto 01</button>
-    -->
+const clickSound = new Audio("./assets/song/efect/click.mp3");
+clickSound.volume = 0.05;
+
+function playClickSound() {
+  clickSound.currentTime = 0;
+  clickSound.play().catch(()=>{});
+}
+
+btnJugar.addEventListener("click", () => {
+playClickSound();
+  panel.innerHTML = `
+    <div style="position:relative; width:100%; height:100%;">
       
-    <div class="joystick" style="display: none;" id="joy" aria-label="Palanca táctil">
-      <div class="joy-base"></div>
-      <div class="joy-stick" id="joyStick"></div>
-    </div>
-  </div>
+      <video id="intro-video" autoplay playsinline style="
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        border-radius:16px;
+      ">
+        <source src="./assets/backgrounds/introduction.mp4" type="video/mp4">
+      </video>
 
-<script src="./script.js"></script>
+      <button id="btn-skip" class="pixel-start-btn" style="
+        position:absolute;
+        top:20px;
+        right:20px;
+        display:none;
+        min-width:180px;
+        height:38px;
+        font-size:12px;
+      ">
+        Omitir
+      </button>
+
+    </div>
+  `;
+
+  const video = document.getElementById("intro-video");
+  const btnSkip = document.getElementById("btn-skip");
+
+  // Intentar reproducir con sonido
+  video.muted = false;
+  video.volume = 0.7; // volumen del video (0.0 a 1.0)
+  const playPromise = video.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      video.muted = true;
+      video.play();
+    });
+  }
+
+  // Mostrar botón de omitir después de 5 segundos
+  setTimeout(() => {
+    btnSkip.style.display = "inline-flex";
+  }, 5000);
+
+  // Función para ir a pantalla final
+  function mostrarInicio() {
+    panel.innerHTML = `
+      <div style="
+        width:100%;
+        height:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      ">
+        <button id="btn-start-game" class="pixel-start-btn">
+          Iniciar juego
+        </button>
+      </div>
+    `;
+
+    const btnStart = document.getElementById("btn-start-game");
+
+btnStart.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  playClickSound();
+
+  btnStart.disabled = true;
+  btnStart.style.pointerEvents = "none";
+
+  setTimeout(() => {
+    window.location.href = "./protomapa/index.html";
+  }, 1000);
+});
+  }
+
+  // Si termina el video
+  video.addEventListener("ended", mostrarInicio);
+
+  // Si el usuario omite
+  btnSkip.addEventListener("click", () => {
+  playClickSound();
+  mostrarInicio();
+});
+
+});
+</script>
 </body>
 </html>
