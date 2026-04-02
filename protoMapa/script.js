@@ -92,6 +92,67 @@ Si lo que vas a mover es solo JSON, CSS, HTML o assets, lo ideal es crear consta
 
 Así en el futuro cambias una sola ruta y no todo script.js.
 */
+/*Global Songs and efects (inicio) */
+let efectVolumen = 0.8;
+
+const swordSound = new Audio("../assets/song/efect/espada.mp3");
+
+function playSwordSound() {
+  const s = swordSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const pushBlockSound = new Audio("../assets/song/efect/pushBlockArcilla.mp3");
+
+function playPushBlockSound() {
+  const s = pushBlockSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const bumerangSound = new Audio("../assets/song/efect/bumerang.mp3");
+
+function playbumerangSound() {
+  const s = bumerangSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const LazerSound = new Audio("../assets/song/efect/lazer.mp3");
+
+function playLazerSound() {
+  const s = LazerSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const corazonSound = new Audio("../assets/song/efect/corazon.mp3");
+
+function playcorazonSound() {
+  const s = corazonSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const uiSound = new Audio("../assets/song/efect/button.mp3");
+uiSound.volume = 0.5;
+
+function playUISound() {
+  const s = uiSound.cloneNode(); // evita cortes si haces clicks rápidos
+  s.volume = 0.5;
+  s.play().catch(()=>{});
+}
+
+const gameOverSound = new Audio("../assets/song/melodys/gameOver.mp3");
+gameOverSound.volume = 0.7;
+
+function playGameOverSound() {
+  const s = gameOverSound.cloneNode();
+  s.volume = getSettingVolume ? getSettingVolume() : 0.7;
+  s.play().catch(()=>{});
+}
+/*Global Songs and efects (fin) */
 
 // =======================================================================================
 // Variables Coordenadas de misiones 
@@ -919,22 +980,27 @@ function buildInterfas(type) {
 
   switch (type) {
     case "novedades":
+      playUISound();
       bodyHTML = buildNovedadesHTML(NOVEDADES);
       break;
 
     case "setting":
+      playUISound();
       bodyHTML = buildSettingHTML();
       break;
 
     case "inventario":
+      playUISound();
       bodyHTML = buildInventarioHTML();
       break;
 
     case "iq":
+      playUISound();
       bodyHTML = buildIQPanelHTML();
       break;
 
     case "misions":
+      playUISound();
       bodyHTML = window.buildMissionsHTML();
       break;
 
@@ -1418,20 +1484,63 @@ const LS_SETTINGS = {
   ambientIndex: "eny_settings_ambient_index",
 };
 
-// URLs externas (se abren nueva pestaña)
-const SETTING_LINKS = {
-  terms: "https://example.com/terminos",
-  privacy: "https://example.com/privacidad",
-  donations: "https://example.com/donaciones",
-  support: "https://example.com/soporte",
+const AMBIENT_TRACK = {
+  name: "Ambiente mapa 1",
+  src: "../assets/song/melodys/ambienteMapa1.wav"
 };
 
-// Música ambiente (por ahora YouTube; luego reemplazas por rutas locales)
-const AMBIENT_TRACKS = [
-  { name: "Ambiente 01", url: "https://www.youtube.com/watch?v=5qap5aO4i9A" },
-  { name: "Ambiente 02", url: "https://www.youtube.com/watch?v=DWcJFNfaw9c" },
-  { name: "Ambiente 03", url: "https://www.youtube.com/watch?v=hHW1oY26kxQ" },
-];
+let ambientAudio = null;
+
+function ensureAmbientAudio() {
+  if (ambientAudio) return ambientAudio;
+
+  ambientAudio = new Audio(AMBIENT_TRACK.src);
+  ambientAudio.loop = true;
+  ambientAudio.preload = "auto";
+  //ambientAudio.volume = getSettingVolume();
+  ambientAudio.volume = 0.5;
+
+  return ambientAudio;
+}
+
+function applyAmbientVolume() {
+  const audio = ensureAmbientAudio();
+  audio.volume = getSettingVolume();
+}
+
+document.addEventListener("click", unlockAudioAndPlay);
+document.addEventListener("touchstart", unlockAudioAndPlay);
+document.addEventListener("keydown", unlockAudioAndPlay);
+
+let audioUnlocked = false;
+
+function unlockAudioAndPlay() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  if (getAmbientEnabled()) {
+    const audio = ensureAmbientAudio();
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  }
+
+  // eliminar listeners después del primer uso
+  document.removeEventListener("click", unlockAudioAndPlay);
+  document.removeEventListener("touchstart", unlockAudioAndPlay);
+  document.removeEventListener("keydown", unlockAudioAndPlay);
+}
+
+function playAmbientMusic() {
+  const audio = ensureAmbientAudio();
+  applyAmbientVolume();
+
+  audio.play().catch(() => {});
+}
+
+function pauseAmbientMusic() {
+  if (!ambientAudio) return;
+  ambientAudio.pause();
+}
 
 // Tutorial (slides mock; tú luego cambias imágenes reales)
 const TUTORIAL_SLIDES = [
@@ -1455,15 +1564,14 @@ function setSettingVolume(v) {
   return n;
 }
 
-function getAmbientIndex() {
-  const i = Number(localStorage.getItem(LS_SETTINGS.ambientIndex));
-  const safe = Number.isFinite(i) ? i : 0;
-  return Math.max(0, Math.min(AMBIENT_TRACKS.length - 1, safe));
+function getAmbientEnabled() {
+  const v = localStorage.getItem(LS_SETTINGS.ambientIndex);
+  return v !== "0";
 }
-function setAmbientIndex(i) {
-  const idx = Math.max(0, Math.min(AMBIENT_TRACKS.length - 1, Number(i) || 0));
-  localStorage.setItem(LS_SETTINGS.ambientIndex, String(idx));
-  return idx;
+function setAmbientEnabled(value) {
+  const enabled = value ? "1" : "0";
+  localStorage.setItem(LS_SETTINGS.ambientIndex, enabled);
+  return enabled === "1";
 }
 
 function factoryResetSettings() {
@@ -1525,18 +1633,13 @@ async function toggleFullscreen() {
 // Render Setting raíz
 function buildSettingHTML() {
   const vol = getSettingVolume();
-  const ambientIdx = getAmbientIndex();
-  const ambient = AMBIENT_TRACKS[ambientIdx];
-
-  const ambientOptions = AMBIENT_TRACKS.map((t, i) =>
-    `<option value="${i}" ${i === ambientIdx ? "selected" : ""}>${t.name}</option>`
-  ).join("");
+  const ambientEnabled = getAmbientEnabled();
 
   return `
     <div class="ui-settings-root">
 
       <div class="ui-settings-section">
-        <p class="ui-settings-title">Volumen</p>
+        <p class="ui-settings-title">Volumen música ambiente</p>
         <input class="ui-slider" type="range" min="0" max="1" step="0.01"
           value="${vol}"
           data-action="set-volume">
@@ -1546,12 +1649,11 @@ function buildSettingHTML() {
       <div class="ui-settings-section">
         <p class="ui-settings-title">Música ambiente</p>
         <div class="ui-settings-row">
-          <select class="ui-select" data-action="set-ambient">
-            ${ambientOptions}
-          </select>
-          <button class="ui-btn" data-action="open-ambient">Abrir pista</button>
+          <button class="ui-btn" data-action="toggle-ambient">
+            ${ambientEnabled ? "Apagar música" : "Encender música"}
+          </button>
         </div>
-        <p class="ui-small">Seleccionada: ${ambient.name}</p>
+        <p class="ui-small">Pista: ${AMBIENT_TRACK.name}</p>
       </div>
 
       <div class="ui-settings-section">
@@ -2552,14 +2654,6 @@ function handleActionEvent(e) {
   e.preventDefault();
   e.stopPropagation();
 
-  if (action === "open-link") {
-    const key = el.dataset.link;
-    const url = SETTING_LINKS[key];
-    //console.log("Abrir link:", key, url);
-    if (url) window.open(url, "_blank", "noopener,noreferrer");
-    return;
-  }
-
   if (action === "fullscreen") {
     //console.log("Activar pantalla completa");
     toggleFullscreen();
@@ -2596,13 +2690,20 @@ function handleActionEvent(e) {
     return;
   }
 
-  if (action === "open-ambient") {
-    const idx = getAmbientIndex();
-    const url = AMBIENT_TRACKS[idx]?.url;
-    //console.log("Abrir música ambiente:", idx, url);
-    if (url) window.open(url, "_blank", "noopener,noreferrer");
-    return;
+if (action === "toggle-ambient") {
+  const enabled = !getAmbientEnabled();
+  setAmbientEnabled(enabled);
+
+  if (enabled) {
+    playAmbientMusic();
+  } else {
+    pauseAmbientMusic();
   }
+
+  const bodyEl = root.querySelector(".ui-body");
+  if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
+  return;
+}
 
   if (action === "factory-reset") {
     //console.log("Restablecer estado de fábrica");
@@ -2643,15 +2744,14 @@ document.addEventListener(
 
     const el = e.target;
     if (!el || !root.contains(el)) return;
+if (el.matches('[data-action="set-volume"]')) {
+  setSettingVolume(el.value);
+  applyAmbientVolume();
 
-    if (el.matches('[data-action="set-volume"]')) {
-      //console.log("Volumen cambiado:", el.value);
-      setSettingVolume(el.value);
-
-      const info = root.querySelector(".ui-small");
-      if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
-      return;
-    }
+  const info = root.querySelector(".ui-small");
+  if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
+  return;
+}
 
     if (el.matches('[data-action="set-ambient"]')) {
       //console.log("Música ambiente seleccionada:", el.value);
@@ -2745,19 +2845,14 @@ document.addEventListener("pointercancel", () => {
       const el = e.target;
       if (!el || !root.contains(el)) return;
 
-      if (el.matches('[data-action="set-volume"]')) {
-        setSettingVolume(el.value);
-        const info = root.querySelector(".ui-small");
-        if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
-        return;
-      }
+if (el.matches('[data-action="set-volume"]')) {
+  setSettingVolume(el.value);
+  applyAmbientVolume();
 
-      if (el.matches('[data-action="set-ambient"]')) {
-        setAmbientIndex(el.value);
-        const bodyEl = root.querySelector(".ui-body");
-        if (bodyEl) bodyEl.innerHTML = buildSettingHTML();
-        return;
-      }
+  const info = root.querySelector(".ui-small");
+  if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
+  return;
+}
     },
     true
   );
@@ -3116,6 +3211,10 @@ document.addEventListener("pointercancel", () => {
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
 initSettingsDelegation();
+if (getAmbientEnabled()) {
+  ensureAmbientAudio();
+  applyAmbientVolume();
+}
 //-----------------------------------------------------------------------------
 //lógica Visual de Setting (fin)
 //-----------------------------------------------------------------------------
@@ -4006,12 +4105,14 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
 
       if (item.agotable === true) {
         item.usos = Math.max(0, (item.usos ?? 1) - 1);
+        playcorazonSound() 
       }
 
       //console.log("El usuario usará este item: corazon");
       break;
 
     case "bloque_de_arcilla": {
+      playPushBlockSound()
       window.colocarBloqueArcillaDesdeHUD(slotIndex);
 
       closeInventarioPopup();
@@ -4030,6 +4131,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
         }
       } else {
         window.activarAntorcha(slotIndex);
+        playPushBlockSound()
       }
 
       closeInventarioPopup();
@@ -4045,6 +4147,7 @@ if (bodyEl) {
     }
 
     case "pistola_lazer": {
+      playLazerSound()
       const item = window.equipSlots?.[slotIndex];
       if (!item) return;
 
@@ -4077,6 +4180,8 @@ if (bodyEl) {
     }
 
     case "espada_de_madera": {
+      playSwordSound();
+
       const item = window.equipSlots?.[slotIndex];
       if (!item) return;
 
@@ -4100,6 +4205,7 @@ if (bodyEl) {
     }
 
     case "bumerang": {
+      playbumerangSound()
       const item = window.equipSlots?.[slotIndex];
       if (!item) return;
 
@@ -4155,6 +4261,9 @@ if (bodyEl) {
     }
 
     case "espada_de_hierro": {
+
+      playSwordSound();
+
       const item = window.equipSlots?.[slotIndex];
       if (!item) return;
 
@@ -4283,6 +4392,7 @@ overlay.innerHTML = `
   const btn = overlay.querySelector("#game-over-dom-continue");
 
   btn.addEventListener("click", (e) => {
+    playUISound();
     e.preventDefault();
     e.stopPropagation();
     continuarTrasGameOver();
@@ -4345,6 +4455,10 @@ for (const enemy of (window.enemigos || [])) {
 
   hoveredItem = null;
   hoveredCanvasInteractive = null;
+
+  if (getAmbientEnabled()) {
+  playAmbientMusic();
+}
 
   if (joy) joy.style.display = "block";
   if (boxButtonsITems) boxButtonsITems.style.display = "flex";
@@ -8570,6 +8684,14 @@ function activarGameOver() {
     resetJoy();
   }
 
+  pauseAmbientMusic();
+
+  if (ambientAudio) {
+    ambientAudio.currentTime = 0;
+  }
+
+  playGameOverSound();
+
   openGameOverDOMOverlay();
 }
 
@@ -10771,12 +10893,14 @@ async function handleCanvasClick(e) {
       mouseY >= selectorFemaleY - 20 && mouseY <= selectorFemaleY + formHeightSelectorFemale;
 
     if (maleHit) {
+      playUISound();
       selectedGender = "male";
       checkingStep = "avatar";
       return;
     }
 
     if (femaleHit) {
+      playUISound();
       selectedGender = "female";
       checkingStep = "avatar";
       return;
@@ -10805,6 +10929,7 @@ async function handleCanvasClick(e) {
         mouseY >= y && mouseY <= y + cell;
 
       if (hit) {
+        playUISound();
         hoveredAvatarIndex = i;
         selectedAvatar = filtered[i];
         return;
@@ -10825,6 +10950,7 @@ async function handleCanvasClick(e) {
       mouseY >= ratioY && mouseY <= ratioY + ratioH;
 
     if (clickedBack) {
+      playUISound();
       checkingStep = "gender";
       selectedGender = null;
       selectedAvatar = null;
@@ -10842,6 +10968,7 @@ async function handleCanvasClick(e) {
         mouseY >= btnY && mouseY <= btnY + continueBtnH;
 
       if (clickedContinue) {
+        playUISound();
         localStorage.setItem("avatar", selectedAvatar.sprites);
         localStorage.setItem("avatarId", selectedAvatar.id);
         localStorage.setItem("gender", selectedAvatar.gender);
@@ -10871,12 +10998,14 @@ async function handleCanvasClick(e) {
       mouseY >= rightY && mouseY <= rightY + btnSize;
 
     if (clickedLeft) {
+      playUISound();
       professionIndex = (professionIndex - 1 + professions.length) % professions.length;
       professionScroll = 0;
       return;
     }
 
     if (clickedRight) {
+      playUISound();
       professionIndex = (professionIndex + 1) % professions.length;
       professionScroll = 0;
       return;
@@ -10901,6 +11030,7 @@ async function handleCanvasClick(e) {
       mouseY >= backHitY && mouseY <= backHitY + backHitH;
 
     if (clickedBack) {
+      playUISound();
       checkingStep = "avatar";
       professionScroll = 0;
       return;
@@ -10925,6 +11055,7 @@ async function handleCanvasClick(e) {
       mouseY >= hit.y && mouseY <= hit.y + hit.h;
 
     if (clickedContinue) {
+      playUISound();
       const current = professions[professionIndex];
       localStorage.setItem("profession", current.id);
 
@@ -14066,9 +14197,6 @@ function draw(images) {
       );
 
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      if (gameOverActive) {
-        drawGameOverScreen();
-      }
       return;
     }
 
@@ -14416,102 +14544,6 @@ const startY = barY - totalHudHeight - 14;
 // =======================================================================================
 // Lógica de pintura en canvas (fin)
 // =======================================================================================
-function drawGameOverScreen() {
-  ctx.save();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  ctx.fillStyle = "rgba(0,0,0,0.96)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-
-  const playerDrawW = 96;
-  const playerDrawH = 96;
-
-  const guardW = 96;
-  const guardH = 96;
-  const separation = 120;
-
-  const playerRow = rowForFacing("down");
-  const playerSx = 0;
-  const playerSy = playerRow * HERO_H;
-
-  const guardRow = rowForFacing("down");
-  const guardSx = 0;
-  const guardSy = guardRow * 64;
-
-  const playerX = centerX - (playerDrawW / 2);
-  const playerY = centerY - 90;
-
-  const guardLeftX = centerX - separation - (guardW / 2);
-  const guardRightX = centerX + separation - (guardW / 2);
-  const guardY = centerY - 90;
-
-  if (gameOverState.centinelaIzqImg) {
-    ctx.drawImage(
-      gameOverState.centinelaIzqImg,
-      guardSx, guardSy, 64, 64,
-      guardLeftX, guardY, guardW, guardH
-    );
-  }
-
-  if (images.hero) {
-    ctx.drawImage(
-      images.hero,
-      playerSx, playerSy, HERO_W, HERO_H,
-      playerX, playerY, playerDrawW, playerDrawH
-    );
-  }
-
-  if (gameOverState.centinelaDerImg) {
-    ctx.drawImage(
-      gameOverState.centinelaDerImg,
-      guardSx, guardSy, 64, 64,
-      guardRightX, guardY, guardW, guardH
-    );
-  }
-
-  ctx.textAlign = "center";
-
-  ctx.fillStyle = "#ff2b2b";
-  ctx.shadowColor = "#ff0000";
-  ctx.shadowBlur = 16;
-  ctx.font = "30px arcade";
-  ctx.fillText("GAME OVER", centerX, centerY + 40);
-
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "14px arcade";
-  ctx.fillText("Te atraparon los reptilianos", centerX, centerY + 80);
-  ctx.fillText("Para continuar", centerX, centerY + 110);
-  ctx.fillText("tendras que pagar 3 cosmonedas", centerX, centerY + 130);
-
-  const btnW = 190;
-  const btnH = 42;
-  const btnX = centerX - (btnW / 2);
-  const btnY = centerY + 145;
-
-  gameOverState.continueBtn = {
-    x: btnX,
-    y: btnY,
-    w: btnW,
-    h: btnH
-  };
-
-  ctx.fillStyle = "#00ffcc";
-  ctx.fillRect(btnX, btnY, btnW, btnH);
-
-  ctx.strokeStyle = "#ffffff";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(btnX, btnY, btnW, btnH);
-
-  ctx.fillStyle = "#000000";
-  ctx.font = "16px arcade";
-  ctx.fillText("CONTINUAR", centerX, btnY + 27);
-
-  ctx.restore();
-}
 
 async function start() {
   await loadGlobalScripts();

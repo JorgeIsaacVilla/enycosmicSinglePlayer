@@ -143,7 +143,7 @@ function ensureAliadoPopUpCSS() {
   const link = document.createElement("link");
   link.id = "popup-feedback-css-link";
   link.rel = "stylesheet";
-  link.href = "./styles/popUp.css";
+  link.href = "../styles/popUp.css";
   document.head.appendChild(link);
 }
 
