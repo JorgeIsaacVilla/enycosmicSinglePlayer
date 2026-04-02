@@ -95,6 +95,15 @@ Así en el futuro cambias una sola ruta y no todo script.js.
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
+const errorSound = new Audio("../assets/song/efect/error.mp3");
+
+function playerrorSound() {
+  const s = errorSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+
 const swordSound = new Audio("../assets/song/efect/espada.mp3");
 
 function playSwordSound() {
