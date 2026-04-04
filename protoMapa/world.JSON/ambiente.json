@@ -57,7 +57,7 @@
     "zIndexBase": 3300,
     "sprites_1x10": "../assets/spriteAmbiente/sprites ambiente.png",
     "velocidad_movimiento": 1.1,
-    "sonido_ambiente": null
+    "sonido_ambiente": "../assets/song/ambiente/fuente.mp3"
   },
     {
     "zona_id": "portal_dimensional_01",
