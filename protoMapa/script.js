@@ -1551,13 +1551,49 @@ function pauseAmbientMusic() {
   ambientAudio.pause();
 }
 
-// Tutorial (slides mock; tú luego cambias imágenes reales)
-const TUTORIAL_SLIDES = [
-  { img: "../assets/tutorial/slide1.png", text: "Bienvenido a Enycosmic. Usa el joystick para moverte." },
-  { img: "../assets/tutorial/slide2.png", text: "Explora el mapa. Encuentra secretos y rutas ocultas." },
-  { img: "../assets/tutorial/slide3.png", text: "Completa misiones para ganar cosmonedas e IQ." },
-  { img: "../assets/tutorial/slide4.png", text: "Abre paneles: IQ, inventario, novedades y settings." },
-];
+let TUTORIAL_SLIDES = [];
+
+async function cargarTutorialDesdeJSON() {
+  try {
+    const res = await fetch("../tutorial.json", { cache: "no-store" });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    let slides = [];
+
+    if (Array.isArray(data)) {
+      slides = data;
+    } else if (Array.isArray(data.slides)) {
+      slides = data.slides;
+    }
+
+    TUTORIAL_SLIDES = slides
+      .map(slide => ({
+        img: slide.img || slide.image || null,
+        video: slide.video || null,
+        text: slide.text || slide.descripcion || ""
+      }))
+      .filter(slide => slide.img || slide.video);
+
+    console.log("Tutorial cargado:", TUTORIAL_SLIDES);
+
+    if (!TUTORIAL_SLIDES.length) {
+      TUTORIAL_SLIDES = [
+        { img: "../assets/tutorial/slide1.png", text: "Tutorial no disponible." }
+      ];
+    }
+
+  } catch (error) {
+    console.error("Error cargando tutorial.json:", error);
+
+    TUTORIAL_SLIDES = [
+      { img: "../assets/tutorial/slide1.png", text: "Tutorial no disponible." }
+    ];
+  }
+}
 
 // Estado UI tutorial (solo memoria)
 let tutorialIndex = 0;
@@ -2607,10 +2643,59 @@ function commitInventarioDragDrop(clientX, clientY) {
 
 // Render Tutorial (mini-swiper)
 function buildTutorialHTML() {
-  const total = TUTORIAL_SLIDES.length;
+  const total = Array.isArray(TUTORIAL_SLIDES) ? TUTORIAL_SLIDES.length : 0;
+
+  if (!total) {
+    return `
+      <div class="ui-tutorial">
+        <div class="ui-settings-section">
+          <p class="ui-settings-title">Tutorial del juego</p>
+          <p class="ui-small">0/0</p>
+        </div>
+
+        <div class="ui-tutorial-frame">
+          <div class="ui-tutorial-caption">No hay tutorial disponible todavía.</div>
+        </div>
+
+        <div class="ui-tutorial-controls">
+          <button class="ui-btn" data-action="back-to-settings">Volver</button>
+        </div>
+      </div>
+    `;
+  }
+
   tutorialIndex = Math.max(0, Math.min(total - 1, tutorialIndex));
 
   const slide = TUTORIAL_SLIDES[tutorialIndex];
+
+  if (!slide) {
+    return `
+      <div class="ui-tutorial">
+        <div class="ui-settings-section">
+          <p class="ui-settings-title">Tutorial del juego</p>
+          <p class="ui-small">Error de carga</p>
+        </div>
+
+        <div class="ui-tutorial-frame">
+          <div class="ui-tutorial-caption">No se pudo leer el slide actual.</div>
+        </div>
+
+        <div class="ui-tutorial-controls">
+          <button class="ui-btn" data-action="back-to-settings">Volver</button>
+        </div>
+      </div>
+    `;
+  }
+
+  const mediaHTML = slide.video
+    ? `
+      <video class="ui-tutorial-img" controls playsinline preload="metadata">
+        <source src="${slide.video}" type="video/mp4">
+      </video>
+    `
+    : `
+      <img class="ui-tutorial-img" src="${slide.img || ""}" alt="Tutorial ${tutorialIndex + 1}">
+    `;
 
   return `
     <div class="ui-tutorial">
@@ -2621,13 +2706,13 @@ function buildTutorialHTML() {
       </div>
 
       <div class="ui-tutorial-frame">
-        <img class="ui-tutorial-img" src="${slide.img}" alt="Tutorial ${tutorialIndex + 1}">
-        <p class="ui-tutorial-caption">${slide.text}</p>
+        ${mediaHTML}
+        <p class="ui-tutorial-caption">${slide.text || ""}</p>
       </div>
 
       <div class="ui-tutorial-controls">
-        <button class="ui-btn" data-action="tutorial-prev">Anterior</button>
-        <button class="ui-btn" data-action="tutorial-next">Siguiente</button>
+        <button class="ui-btn" data-action="tutorial-prev" ${tutorialIndex <= 0 ? "disabled" : ""}>Anterior</button>
+        <button class="ui-btn" data-action="tutorial-next" ${tutorialIndex >= total - 1 ? "disabled" : ""}>Siguiente</button>
         <button class="ui-btn" data-action="back-to-settings">Volver</button>
       </div>
 
@@ -2669,12 +2754,33 @@ function handleActionEvent(e) {
     return;
   }
 
-  if (action === "open-tutorial") {
-    //console.log("Abrir tutorial");
-    const bodyEl = root.querySelector(".ui-body");
-    if (bodyEl) bodyEl.innerHTML = buildTutorialHTML();
-    return;
-  }
+if (action === "open-tutorial") {
+  const bodyEl = root.querySelector(".ui-body");
+  if (!bodyEl) return;
+
+  bodyEl.innerHTML = `<div class="ui-small">Cargando tutorial...</div>`;
+
+  cargarTutorialDesdeJSON().then(() => {
+    tutorialIndex = 0;
+    bodyEl.innerHTML = buildTutorialHTML();
+  }).catch(() => {
+    bodyEl.innerHTML = `
+      <div class="ui-tutorial">
+        <div class="ui-settings-section">
+          <p class="ui-settings-title">Tutorial del juego</p>
+        </div>
+        <div class="ui-tutorial-frame">
+          <div class="ui-tutorial-caption">No se pudo cargar el tutorial.</div>
+        </div>
+        <div class="ui-tutorial-controls">
+          <button class="ui-btn" data-action="back-to-settings">Volver</button>
+        </div>
+      </div>
+    `;
+  });
+
+  return;
+}
 
   if (action === "back-to-settings") {
     //console.log("Volver a settings");

@@ -212,22 +212,519 @@
   </main>
 
 <script>
+const LS_BIENVENIDA = "eny_bienvenida_vista";
+
+function marcarBienvenidaVista() {
+  localStorage.setItem(LS_BIENVENIDA, "1");
+}
+
 const btnJugar = document.getElementById("btn-jugar");
 const panel = document.getElementById("view-intro-cover");
 
 const clickSound = new Audio("./assets/song/efect/click.mp3");
 clickSound.volume = 0.05;
 
+const TUTORIAL_JSON_URL = "./tutorial.json";
+const LS_TUTORIAL_SEEN = "eny_tutorial_seen_v1";
+
+let tutorialSlides = [];
+let tutorialIndex = 0;
+
 function playClickSound() {
   clickSound.currentTime = 0;
   clickSound.play().catch(()=>{});
 }
 
+function irAlJuego() {
+  window.location.href = "./protoMapa/index.html";
+}
+
+function marcarTutorialComoVisto() {
+  localStorage.setItem(LS_TUTORIAL_SEEN, "1");
+}
+
+function usuarioYaVioTutorial() {
+  return localStorage.getItem(LS_TUTORIAL_SEEN) === "1";
+}
+
+async function cargarTutorialJSON() {
+  try {
+    const res = await fetch(TUTORIAL_JSON_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("No se pudo cargar tutorial.json");
+
+    const data = await res.json();
+
+    if (Array.isArray(data)) {
+      tutorialSlides = data;
+      return;
+    }
+
+    if (Array.isArray(data.slides)) {
+      tutorialSlides = data.slides;
+      return;
+    }
+
+    tutorialSlides = [];
+  } catch (error) {
+    console.error("Error cargando tutorial.json:", error);
+    tutorialSlides = [];
+  }
+}
+
+function usuarioYaVioBienvenida() {
+  return localStorage.getItem(LS_BIENVENIDA) === "1";
+}
+
+function mostrarBienvenidaEnycosmic(callback) {
+  const old = document.getElementById("eny-bienvenida-overlay");
+  if (old) old.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "eny-bienvenida-overlay";
+
+  overlay.innerHTML = `
+    <div style="
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.82);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+      padding:20px;
+    ">
+      <div style="
+        width:min(92%,560px);
+        background:rgba(0,0,0,0.78);
+        border:2px solid #18f5e1;
+        box-shadow:
+          0 0 12px rgba(24,245,225,0.9),
+          0 0 28px rgba(24,245,225,0.45);
+        border-radius:16px;
+        padding:24px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:16px;
+        text-align:center;
+      ">
+        <img
+          src="./assets/images/bin.png"
+          alt="Bienvenida Enycosmic"
+          style="
+            width:160px;
+            max-width:70%;
+            image-rendering:pixelated;
+            display:block;
+          "
+        >
+
+        <div style="
+          color:#18f5e1;
+          font-family:arcade, monospace;
+          font-size:12px;
+          line-height:1.8;
+        ">
+          Bienvenido a Enycosmic 🚀<br><br>
+          Antes de comenzar tu aventura,<br>
+          recuerda que aquí aprender también te hace más fuerte.<br><br>
+          Prepárate para explorar, pensar y evolucionar.
+        </div>
+
+        <button
+          id="btn-continuar-bienvenida"
+          class="pixel-start-btn"
+          style="min-width:180px;"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("btn-continuar-bienvenida").addEventListener("click", (e) => {
+    e.preventDefault();
+    playClickSound();
+    overlay.remove();
+    if (typeof callback === "function") callback();
+  });
+}
+
+function renderPantallaInicialFinal() {
+  panel.innerHTML = `
+    <div style="
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    ">
+      <div style="
+        display:flex;
+        gap:14px;
+        flex-wrap:wrap;
+        justify-content:center;
+        align-items:center;
+      ">
+        <button id="btn-start-game" class="pixel-start-btn">
+          Iniciar juego
+        </button>
+
+        <button id="btn-open-tutorial" class="pixel-start-btn" style="
+          min-width:180px;
+        ">
+          Tutorial
+        </button>
+      </div>
+    </div>
+  `;
+
+  const btnStart = document.getElementById("btn-start-game");
+  const btnTutorial = document.getElementById("btn-open-tutorial");
+
+  btnStart.addEventListener("click", async (e) => {
+    e.preventDefault();
+    playClickSound();
+
+    if (!usuarioYaVioTutorial()) {
+      await abrirTutorial({ forced: true });
+      return;
+    }
+
+    btnStart.disabled = true;
+    btnStart.style.pointerEvents = "none";
+
+    const entrarAlJuego = () => {
+      setTimeout(() => {
+        irAlJuego();
+      }, 500);
+    };
+
+    if (!usuarioYaVioBienvenida()) {
+      mostrarBienvenidaEnycosmic(() => {
+        marcarBienvenidaVista();
+        entrarAlJuego();
+      });
+      return;
+    }
+
+    entrarAlJuego();
+  });
+
+  btnTutorial.addEventListener("click", async (e) => {
+    e.preventDefault();
+    playClickSound();
+    await abrirTutorial({ forced: false });
+  });
+}
+
+function renderTutorialSlide() {
+  const total = tutorialSlides.length;
+
+  if (!total) {
+    panel.innerHTML = `
+      <div style="
+        width:100%;
+        height:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:24px;
+      ">
+        <div style="
+          width:min(100%,780px);
+          background:rgba(0,0,0,.58);
+          border:2px solid #18f5e1;
+          box-shadow:0 0 18px rgba(24,245,225,.45);
+          border-radius:16px;
+          padding:24px;
+          text-align:center;
+          display:flex;
+          flex-direction:column;
+          gap:18px;
+          color:#18f5e1;
+        ">
+          <p style="font-size:12px; line-height:1.8;">
+            No se encontraron mini videos en tutorial.json
+          </p>
+
+          <div style="
+            display:flex;
+            justify-content:center;
+            gap:12px;
+            flex-wrap:wrap;
+          ">
+            <button id="btn-back-from-empty-tutorial" class="pixel-start-btn" style="min-width:180px;">
+              Volver
+            </button>
+
+            <button id="btn-start-from-empty-tutorial" class="pixel-start-btn" style="min-width:220px;">
+              Iniciar juego
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("btn-back-from-empty-tutorial")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      playClickSound();
+      renderPantallaInicialFinal();
+    });
+
+document.getElementById("btn-start-from-empty-tutorial")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  playClickSound();
+  marcarTutorialComoVisto();
+
+  const entrarAlJuego = () => {
+    setTimeout(() => {
+      irAlJuego();
+    }, 500);
+  };
+
+  if (!usuarioYaVioBienvenida()) {
+    mostrarBienvenidaEnycosmic(() => {
+      marcarBienvenidaVista();
+      entrarAlJuego();
+    });
+    return;
+  }
+
+  entrarAlJuego();
+});
+
+    return;
+  }
+
+  tutorialIndex = Math.max(0, Math.min(tutorialIndex, total - 1));
+
+  const slide = tutorialSlides[tutorialIndex];
+  const titulo = slide.titulo || `Tutorial ${tutorialIndex + 1}`;
+  const descripcion = slide.descripcion || "";
+  const video = slide.video || slide.src || "";
+  const isLast = tutorialIndex === total - 1;
+
+  const dotsHTML = tutorialSlides.map((_, i) => {
+    return `
+      <span style="
+        width:12px;
+        height:12px;
+        border-radius:50%;
+        display:inline-block;
+        background:${i === tutorialIndex ? "#18f5e1" : "rgba(255,255,255,.28)"};
+        box-shadow:${i === tutorialIndex ? "0 0 10px rgba(24,245,225,.9)" : "none"};
+      "></span>
+    `;
+  }).join("");
+
+  panel.innerHTML = `
+    <div style="
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    ">
+      <div style="
+        width:min(100%,860px);
+        height:min(100%,700px);
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        background:rgba(0,0,0,.54);
+        border:2px solid rgba(24,245,225,.95);
+        box-shadow:
+          0 0 12px rgba(24,245,225,.8),
+          0 0 28px rgba(24,245,225,.35);
+        border-radius:16px;
+        padding:18px;
+      ">
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:12px;
+          flex-wrap:wrap;
+          color:#18f5e1;
+        ">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:14px;">${titulo}</div>
+            <div style="font-size:10px; opacity:.9;">Paso ${tutorialIndex + 1} de ${total}</div>
+          </div>
+
+          <button id="btn-close-tutorial" class="pixel-start-btn" style="
+            min-width:140px;
+            height:36px;
+            font-size:18px;
+            padding:0 18px;
+          ">
+            Cerrar
+          </button>
+        </div>
+
+        <div style="
+          flex:1;
+          min-height:0;
+          display:flex;
+          flex-direction:column;
+          gap:14px;
+          justify-content:center;
+        ">
+          <div style="
+            width:100%;
+            flex:1;
+            min-height:280px;
+            background:#000;
+            border-radius:14px;
+            overflow:hidden;
+            box-shadow:0 0 18px rgba(0,0,0,.45);
+          ">
+            <video id="tutorial-video" controls playsinline style="
+              width:100%;
+              height:100%;
+              object-fit:cover;
+              display:block;
+              background:#000;
+            ">
+              <source src="${video}" type="video/mp4">
+            </video>
+          </div>
+
+          <div style="
+            min-height:46px;
+            color:#ffffff;
+            font-size:18px;
+            line-height:1.8;
+            text-align:center;
+            padding:0 6px;
+          ">
+            ${descripcion}
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:8px;
+            flex-wrap:wrap;
+          ">
+            ${dotsHTML}
+          </div>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          gap:12px;
+          flex-wrap:wrap;
+        ">
+          <button id="btn-tutorial-prev" class="pixel-start-btn" style="
+            min-width:150px;
+            height:38px;
+            font-size:18px;
+            ${tutorialIndex === 0 ? "opacity:.45; pointer-events:none;" : ""}
+          ">
+            Anterior
+          </button>
+
+          ${
+            !isLast
+              ? `
+                <button id="btn-tutorial-next" class="pixel-start-btn" style="
+                  min-width:150px;
+                  height:38px;
+                  font-size:18px;
+                ">
+                  Siguiente
+                </button>
+              `
+              : `
+                <button id="btn-start-after-tutorial" class="pixel-start-btn" style="
+                  min-width:220px;
+                  height:38px;
+                  font-size:18px;
+                ">
+                  Iniciar juego
+                </button>
+              `
+          }
+        </div>
+      </div>
+    </div>
+  `;
+
+  const btnClose = document.getElementById("btn-close-tutorial");
+  const btnPrev = document.getElementById("btn-tutorial-prev");
+  const btnNext = document.getElementById("btn-tutorial-next");
+  const btnStartAfterTutorial = document.getElementById("btn-start-after-tutorial");
+
+  btnClose?.addEventListener("click", (e) => {
+    e.preventDefault();
+    playClickSound();
+    renderPantallaInicialFinal();
+  });
+
+  btnPrev?.addEventListener("click", (e) => {
+    e.preventDefault();
+    playClickSound();
+    tutorialIndex--;
+    renderTutorialSlide();
+  });
+
+  btnNext?.addEventListener("click", (e) => {
+    e.preventDefault();
+    playClickSound();
+    tutorialIndex++;
+    renderTutorialSlide();
+  });
+
+btnStartAfterTutorial?.addEventListener("click", (e) => {
+  e.preventDefault();
+  playClickSound();
+  marcarTutorialComoVisto();
+
+  const entrarAlJuego = () => {
+    setTimeout(() => {
+      irAlJuego();
+    }, 500);
+  };
+
+  if (!usuarioYaVioBienvenida()) {
+    mostrarBienvenidaEnycosmic(() => {
+      marcarBienvenidaVista();
+      entrarAlJuego();
+    });
+    return;
+  }
+
+  entrarAlJuego();
+});
+}
+
+async function abrirTutorial({ forced = false } = {}) {
+  await cargarTutorialJSON();
+  tutorialIndex = 0;
+  renderTutorialSlide();
+
+  if (forced) {
+    const btnClose = document.getElementById("btn-close-tutorial");
+    if (btnClose) {
+      btnClose.style.display = "none";
+    }
+  }
+}
+
 btnJugar.addEventListener("click", () => {
-playClickSound();
+  playClickSound();
+
   panel.innerHTML = `
     <div style="position:relative; width:100%; height:100%;">
-      
       <video id="intro-video" autoplay playsinline style="
         width:100%;
         height:100%;
@@ -248,16 +745,15 @@ playClickSound();
       ">
         Omitir
       </button>
-
     </div>
   `;
 
   const video = document.getElementById("intro-video");
   const btnSkip = document.getElementById("btn-skip");
 
-  // Intentar reproducir con sonido
   video.muted = false;
-  video.volume = 0.7; // volumen del video (0.0 a 1.0)
+  video.volume = 0.7;
+
   const playPromise = video.play();
 
   if (playPromise !== undefined) {
@@ -267,52 +763,21 @@ playClickSound();
     });
   }
 
-  // Mostrar botón de omitir después de 5 segundos
   setTimeout(() => {
     btnSkip.style.display = "inline-flex";
   }, 5000);
 
-  // Función para ir a pantalla final
+  
   function mostrarInicio() {
-    panel.innerHTML = `
-      <div style="
-        width:100%;
-        height:100%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      ">
-        <button id="btn-start-game" class="pixel-start-btn">
-          Iniciar juego
-        </button>
-      </div>
-    `;
-
-    const btnStart = document.getElementById("btn-start-game");
-
-btnStart.addEventListener("click", (e) => {
-  e.preventDefault();
-
-  playClickSound();
-
-  btnStart.disabled = true;
-  btnStart.style.pointerEvents = "none";
-
-  setTimeout(() => {
-    window.location.href = "./protoMapa/index.html";
-  }, 1000);
-});
+    renderPantallaInicialFinal();
   }
 
-  // Si termina el video
   video.addEventListener("ended", mostrarInicio);
 
-  // Si el usuario omite
   btnSkip.addEventListener("click", () => {
-  playClickSound();
-  mostrarInicio();
-});
-
+    playClickSound();
+    mostrarInicio();
+  });
 });
 </script>
 </body>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarjeta MATLOG</title>
+  <style>
+    @font-face {
+  font-family: "RetroGaming";
+  src: url("./RetroGaming.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+    :root{
+      --card-w: 380px;
+      --card-h: 620px;  
+      --glow-a: #7df9ff;
+      --glow-b: #8a5cff;
+      --glow-c: #d5f6ff;
+      --bg-1: #04030a;
+      --bg-2: #08071a;
+      --bg-3: #0b1231;
+    }
+
+    *{
+      box-sizing: border-box;
+    }
+
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(93,54,255,.15), transparent 25%),
+        radial-gradient(circle at 20% 20%, rgba(0,255,255,.08), transparent 18%),
+        radial-gradient(circle at 80% 70%, rgba(121,0,255,.08), transparent 22%),
+        linear-gradient(180deg, #000 0%, #04040d 35%, #000 100%);
+        font-family: "RetroGaming", sans-serif;
+
+    }
+
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      perspective: 1600px;
+    }
+
+    .scene{
+      position:relative;
+      width: var(--card-w);
+      height: var(--card-h);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      filter: drop-shadow(0 20px 50px rgba(0,0,0,.65));
+    }
+
+    .aurora{
+      position:absolute;
+      inset:-80px;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(0,255,255,.18), transparent 20%),
+        radial-gradient(circle at 70% 30%, rgba(140,0,255,.18), transparent 24%),
+        radial-gradient(circle at 50% 70%, rgba(120,220,255,.10), transparent 26%);
+      filter: blur(35px);
+      animation: auroraFloat 9s ease-in-out infinite alternate;
+      pointer-events:none;
+    }
+
+    .card{
+      position:relative;
+      width:100%;
+      height:100%;
+      border-radius:32px;
+      overflow:hidden;
+      transform-style:preserve-3d;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)),
+        radial-gradient(circle at 50% 25%, rgba(138,92,255,.12), transparent 25%),
+        linear-gradient(180deg, var(--bg-3) 0%, var(--bg-2) 50%, var(--bg-1) 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(180,220,255,.12),
+        inset 0 0 60px rgba(110,72,255,.12),
+        0 0 60px rgba(69,43,255,.18);
+      isolation:isolate;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(125deg, transparent 0 42%, rgba(255,255,255,.14) 49%, transparent 56%),
+        linear-gradient(transparent, transparent);
+      mix-blend-mode:screen;
+      opacity:.4;
+      transform:translateX(-130%);
+      animation: sheen 7s linear infinite;
+      pointer-events:none;
+      z-index:30;
+    }
+
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 56%, rgba(0,0,0,.35) 100%);
+      pointer-events:none;
+      z-index:28;
+    }
+
+    .noise{
+      position:absolute;
+      inset:0;
+      background-image:
+        radial-gradient(rgba(255,255,255,.08) 0.7px, transparent 0.7px);
+      background-size: 7px 7px;
+      mix-blend-mode: soft-light;
+      opacity:.06;
+      z-index:26;
+      pointer-events:none;
+    }
+
+    .stars,
+    .glyphs,
+    .ring,
+    .core-wrap,
+    .energy-beam,
+    .lightning,
+    .frame-layer,
+    .ui-layer,
+    .particles{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      transform-style:preserve-3d;
+       z-index: 1;
+    }
+
+    .stars{
+      z-index:1;
+      overflow:hidden;
+    }
+
+    .star{
+      position:absolute;
+      width:2px;
+      height:2px;
+      border-radius:50%;
+      background:#dffcff;
+      box-shadow: 0 0 10px rgba(120,240,255,.9);
+      opacity:.75;
+      animation: twinkle var(--dur) ease-in-out infinite;
+    }
+
+    .glyphs{
+      z-index:6;
+      mix-blend-mode:screen;
+      opacity:.75;
+      
+    }
+
+    .glyph{
+      position:absolute;
+      color:#8feaff;
+      text-shadow:
+        0 0 8px rgba(125,249,255,.9),
+        0 0 18px rgba(138,92,255,.7);
+      font-size: 12px;
+      letter-spacing: 1px;
+      animation: glyphFloat var(--dur) ease-in-out infinite;
+      opacity:.7;
+    }
+
+    .energy-beam{
+      z-index:9;
+      display:flex;
+      justify-content:center;
+      align-items:flex-end;
+    }
+
+    .beam{
+      position:absolute;
+      bottom:112px;
+      width:28px;
+      height:280px;
+      border-radius:999px;
+      background:
+        linear-gradient(180deg,
+          rgba(255,255,255,0),
+          rgba(120,240,255,.35) 18%,
+          rgba(145,110,255,.5) 58%,
+          rgba(125,249,255,.85) 100%);
+      filter: blur(6px);
+      transform: translateZ(50px);
+      animation: beamPulse 3.2s ease-in-out infinite;
+    }
+
+    .beam::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,.85) 100%);
+      transform: scaleX(.26);
+      filter: blur(2px);
+    }
+
+    .ring{
+      z-index:12;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .ring span{
+      position:absolute;
+      border-radius:50%;
+      border:2px solid rgba(125,249,255,.78);
+      box-shadow:
+        0 0 15px rgba(125,249,255,.55),
+        inset 0 0 15px rgba(138,92,255,.35);
+      mix-blend-mode:screen;
+    }
+
+    .ring .r1{
+      width:230px;
+      height:72px;
+      top:242px;
+      transform: rotate(-6deg) rotateX(73deg) translateZ(30px);
+      animation: spinA 8s linear infinite;
+    }
+
+    .ring .r2{
+      width:245px;
+      height:86px;
+      top:218px;
+      border-color: rgba(146,110,255,.78);
+      box-shadow:
+        0 0 18px rgba(146,110,255,.5),
+        inset 0 0 16px rgba(125,249,255,.28);
+      transform: rotate(14deg) rotateX(74deg) translateZ(12px);
+      animation: spinB 10s linear infinite reverse;
+    }
+
+    .ring .r3{
+      width:250px;
+      height:250px;
+      top:130px;
+      border-width:1px;
+      border-color: rgba(125,249,255,.35);
+      filter: blur(.3px);
+      transform: scaleY(.22);
+      animation: pulseRing 4s ease-in-out infinite;
+    }
+
+    .ring-text{
+      position:absolute;
+      width:250px;
+      height:250px;
+      top:128px;
+      left:50%;
+      margin-left:-125px;
+      border-radius:50%;
+      color:#aaf5ff;
+      
+      font-size:11px;
+      text-shadow:
+        0 0 10px rgba(125,249,255,.85),
+        0 0 18px rgba(138,92,255,.6);
+      animation: spinText 14s linear infinite;
+      transform: scaleY(.24);
+      opacity:.8;
+    }
+
+    .ring-text span{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform-origin:0 0;
+      white-space:pre;
+    }
+
+    .core-wrap{
+      z-index:16;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .core{
+      position:absolute;
+      top:188px;
+      width:162px;
+      height:162px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(218,246,255,1) 7%, rgba(176,140,255,.95) 18%, rgba(101,72,255,.72) 38%, rgba(57,37,119,.85) 60%, rgba(14,9,38,.92) 78%, rgba(0,0,0,.2) 100%);
+      box-shadow:
+        0 0 28px rgba(125,249,255,.9),
+        0 0 60px rgba(138,92,255,.8),
+        inset 0 0 22px rgba(255,255,255,.5);
+      animation: corePulse 3.4s ease-in-out infinite;
+      transform: translateZ(70px);
+      overflow:hidden;
+    }
+
+    .core::before,
+    .core::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:50%;
+      background:
+        conic-gradient(from 0deg, rgba(125,249,255,.05), rgba(125,249,255,.55), rgba(146,110,255,.15), rgba(255,255,255,.35), rgba(125,249,255,.05));
+      filter: blur(1px);
+      animation: coreSpin 5.5s linear infinite;
+      mix-blend-mode:screen;
+    }
+
+    .core::after{
+      inset:30px;
+      animation-direction:reverse;
+      animation-duration: 3.8s;
+      opacity:.9;
+    }
+
+    .core-grid{
+      position:absolute;
+      inset:12px;
+      border-radius:50%;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0 2px, transparent 2px 8px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 2px, transparent 2px 9px);
+      opacity:.22;
+      mix-blend-mode:screen;
+      animation: coreDrift 7s linear infinite;
+    }
+
+    .halo{
+      position:absolute;
+      top:152px;
+      width:230px;
+      height:230px;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(154,120,255,.32), rgba(125,249,255,.14), transparent 68%);
+      filter: blur(16px);
+      animation: haloPulse 3.4s ease-in-out infinite;
+    }
+
+    .cubes{
+      position:absolute;
+      inset:0;
+      z-index:17;
+    }
+
+    .cube{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border:1px solid rgba(192,238,255,.8);
+      background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(125,249,255,.05));
+      box-shadow:
+        0 0 10px rgba(125,249,255,.5),
+        inset 0 0 8px rgba(146,110,255,.3);
+      transform: rotate(45deg);
+      animation: cubeFloat var(--dur) ease-in-out infinite;
+      opacity:.85;
+    }
+
+    .cube::before{
+      content:"";
+      position:absolute;
+      inset:3px;
+      border:1px solid rgba(125,249,255,.35);
+    }
+
+    .lightning{
+      z-index:13;
+      opacity:.9;
+      mix-blend-mode:screen;
+    }
+
+    .arc{
+      position:absolute;
+      width:3px;
+      height:88px;
+      background: linear-gradient(180deg, transparent, rgba(146,110,255,.95), transparent);
+      filter: blur(1.6px);
+      transform-origin: top center;
+      animation: arcZap var(--dur) linear infinite;
+    }
+
+    .particles{
+      z-index:18;
+      overflow:hidden;
+    }
+
+    .particle{
+      position:absolute;
+      width:3px;
+      height:14px;
+      border-radius:999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(125,249,255,.5), transparent);
+      box-shadow: 0 0 8px rgba(125,249,255,.8);
+      animation: rainDown var(--dur) linear infinite;
+      opacity:.82;
+    }
+
+    .bottom-glow{
+      position:absolute;
+      left:50%;
+      bottom:116px;
+      width:150px;
+      height:42px;
+      transform: translateX(-50%);
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(125,249,255,.4), rgba(138,92,255,.18), transparent 70%);
+      filter: blur(10px);
+      z-index:11;
+      animation: platformGlow 2.8s ease-in-out infinite;
+    }
+
+    .ui-layer{
+      z-index:27;
+    }
+
+    .title{
+      position:absolute;
+      top:120px;
+      left:50%;
+      transform:translateX(-50%) translateZ(70px);
+      
+      font-size:28px;
+      font-weight:900;
+      letter-spacing:6px;
+      color:#cfffff;
+      text-shadow:
+        0 0 10px rgba(125,249,255,.9),
+        0 0 20px rgba(138,92,255,.75),
+        0 0 34px rgba(125,249,255,.45);
+      animation: titleFlicker 4s ease-in-out infinite;
+      user-select:none;
+    }
+
+    .subtitle{
+      position:absolute;
+      top:350px;
+      left:50%;
+      transform:translateX(-50%) translateZ(55px);
+      
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:4px;
+      color:rgba(220,246,255,.78);
+      text-shadow: 0 0 12px rgba(125,249,255,.35);
+      text-transform:uppercase;
+      user-select:none;
+    }
+
+    .scanline{
+      position:absolute;
+      inset:0;
+      z-index:29;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.03) 0px,
+          rgba(255,255,255,.03) 1px,
+          transparent 2px,
+          transparent 4px
+        );
+      mix-blend-mode:soft-light;
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    .hint{
+      position:absolute;
+      bottom:28px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:40;
+      color:rgba(210,240,255,.78);
+      font-size:13px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      text-shadow:0 0 12px rgba(125,249,255,.2);
+      pointer-events:none;
+      
+      user-select:none;
+    }
+    .frame-layer {
+  inset: 0;
+  z-index: 999; /* 🔥 clave */
+  pointer-events: none;
+}
+
+    .frame-layer img{
+      width:100%;
+      height:100%;
+      display:block;
+      /*object-fit:contain;*/
+      transform: translateZ(120px);
+      filter: drop-shadow(0 0 10px rgba(120,240,255,.08));
+      user-select:none;
+      -webkit-user-drag:none;
+      transform: translateZ(200px); /* opcional para reforzar */
+    }
+
+    @keyframes auroraFloat{
+      0%{ transform: translate3d(-10px,-8px,0) scale(1); opacity:.8; }
+      100%{ transform: translate3d(10px,12px,0) scale(1.08); opacity:1; }
+    }
+    @keyframes sheen{
+      0%{ transform: translateX(-130%) skewX(-18deg); }
+      100%{ transform: translateX(180%) skewX(-18deg); }
+    }
+    @keyframes twinkle{
+      0%,100%{ opacity:.2; transform: scale(.7); }
+      50%{ opacity:1; transform: scale(1.35); }
+    }
+    @keyframes glyphFloat{
+      0%,100%{ transform: translateY(0) rotate(0deg); opacity:.3; }
+      50%{ transform: translateY(-10px) rotate(4deg); opacity:.9; }
+    }
+    @keyframes beamPulse{
+      0%,100%{ opacity:.5; transform: translateZ(50px) scaleY(.92); }
+      50%{ opacity:1; transform: translateZ(50px) scaleY(1.08); }
+    }
+    @keyframes spinA{
+      from{ transform: rotate(-6deg) rotateX(73deg) rotateZ(0deg); }
+      to{ transform: rotate(-6deg) rotateX(73deg) rotateZ(360deg); }
+    }
+    @keyframes spinB{
+      from{ transform: rotate(14deg) rotateX(74deg) rotateZ(0deg); }
+      to{ transform: rotate(14deg) rotateX(74deg) rotateZ(360deg); }
+    }
+    @keyframes pulseRing{
+      0%,100%{ opacity:.22; transform: scaleY(.22) scale(1); }
+      50%{ opacity:.48; transform: scaleY(.22) scale(1.06); }
+    }
+    @keyframes spinText{
+      from{ transform: scaleY(.24) rotate(0deg); }
+      to{ transform: scaleY(.24) rotate(360deg); }
+    }
+    @keyframes corePulse{
+      0%,100%{ transform: translateZ(70px) scale(.96); filter: brightness(.95) saturate(1); }
+      50%{ transform: translateZ(70px) scale(1.04); filter: brightness(1.2) saturate(1.18); }
+    }
+    @keyframes coreSpin{
+      from{ transform: rotate(0deg); }
+      to{ transform: rotate(360deg); }
+    }
+    @keyframes coreDrift{
+      from{ transform: rotate(0deg) scale(1); }
+      to{ transform: rotate(360deg) scale(1.02); }
+    }
+    @keyframes haloPulse{
+      0%,100%{ transform: scale(.9); opacity:.5; }
+      50%{ transform: scale(1.08); opacity:1; }
+    }
+    @keyframes cubeFloat{
+      0%,100%{ transform: translateY(0px) rotate(45deg) scale(.9); opacity:.35; }
+      50%{ transform: translateY(-10px) rotate(135deg) scale(1.15); opacity:1; }
+    }
+    @keyframes arcZap{
+      0%{ opacity:0; transform: rotate(var(--rot)) scaleY(.2); }
+      10%{ opacity:1; }
+      50%{ opacity:.9; transform: rotate(var(--rot)) scaleY(1); }
+      100%{ opacity:0; transform: rotate(var(--rot)) scaleY(.1); }
+    }
+    @keyframes rainDown{
+      0%{ transform: translateY(-30px) scaleY(.7); opacity:0; }
+      10%{ opacity:1; }
+      100%{ transform: translateY(240px) scaleY(1.25); opacity:0; }
+    }
+    @keyframes platformGlow{
+      0%,100%{ opacity:.45; transform: translateX(-50%) scale(1); }
+      50%{ opacity:.95; transform: translateX(-50%) scale(1.12); }
+    }
+    @keyframes titleFlicker{
+      0%,100%{ opacity:1; }
+      7%{ opacity:.78; }
+      8%{ opacity:1; }
+      45%{ opacity:.95; }
+      46%{ opacity:.7; }
+      48%{ opacity:1; }
+    }
+
+    @media (max-width: 480px){
+      :root{
+        --card-w: 330px;
+        --card-h: 538px;
+      }
+      .title{
+        font-size:40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="aurora"></div>
+
+    <div class="card" id="card">
+      <div class="stars" id="stars"></div>
+      <div class="glyphs" id="glyphs"></div>
+      <div class="energy-beam">
+        <div class="beam"></div>
+      </div>
+
+      <div class="bottom-glow"></div>
+
+      <div class="ring">
+        <span class="r1"></span>
+        <span class="r2"></span>
+        <span class="r3"></span>
+      </div>
+
+      <div class="ring-text" id="ringText"></div>
+
+      <div class="core-wrap">
+        <div class="halo"></div>
+        <div class="core">
+          <div class="core-grid"></div>
+        </div>
+      </div>
+
+      <div class="cubes" id="cubes"></div>
+      <div class="lightning" id="lightning"></div>
+      <div class="particles" id="particles"></div>
+
+      <div class="ui-layer">
+        <div class="title">MATLOG</div>
+        <div class="subtitle">algoritmo de conocimiento alienígena</div>
+      </div>
+
+      <div class="frame-layer">
+        <img src="./marco.png" alt="marco MATLOG">
+      </div>
+
+      <div class="noise"></div>
+      <div class="scanline"></div>
+    </div>
+  </div>
+
+  <script>
+    const card = document.getElementById("card");
+    const stars = document.getElementById("stars");
+    const glyphs = document.getElementById("glyphs");
+    const cubes = document.getElementById("cubes");
+    const lightning = document.getElementById("lightning");
+    const particles = document.getElementById("particles");
+    const ringText = document.getElementById("ringText");
+
+    const alienString = " MATLOG ∑ ⟡ ⌬ ⟢ ⟠ Ψ Δ Ω 7E 0F λ π ⟐ ⟣ ∴ ";
+
+    function createStars(total = 80) {
+      for (let i = 0; i < total; i++) {
+        const s = document.createElement("span");
+        s.className = "star";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.top = Math.random() * 100 + "%";
+        s.style.setProperty("--dur", (2 + Math.random() * 4) + "s");
+        s.style.animationDelay = (-Math.random() * 6) + "s";
+        s.style.opacity = 0.25 + Math.random() * 0.75;
+        const size = 1 + Math.random() * 2.2;
+        s.style.width = size + "px";
+        s.style.height = size + "px";
+        stars.appendChild(s);
+      }
+    }
+
+    function createGlyphs(total = 24) {
+      const chars = ["∑","⌬","⟢","⟡","Ψ","Δ","π","λ","∞","⊕","⟠","⌁","¤","7E","0F"];
+      for (let i = 0; i < total; i++) {
+        const g = document.createElement("span");
+        g.className = "glyph";
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = 12 + Math.random() * 76 + "%";
+        g.style.top = 18 + Math.random() * 56 + "%";
+        g.style.setProperty("--dur", (3 + Math.random() * 6) + "s");
+        g.style.animationDelay = (-Math.random() * 5) + "s";
+        g.style.fontSize = (10 + Math.random() * 8) + "px";
+        glyphs.appendChild(g);
+      }
+    }
+
+    function createCubes(total = 13) {
+      const positions = [
+        [18, 28],[30, 18],[50, 14],[72, 20],[82, 30],
+        [16, 56],[26, 70],[48, 76],[70, 70],[82, 62],
+        [24, 84],[52, 82],[76, 82]
+      ];
+      for (let i = 0; i < total; i++) {
+        const c = document.createElement("span");
+        c.className = "cube";
+        c.style.left = positions[i][0] + "%";
+        c.style.top = positions[i][1] + "%";
+        c.style.setProperty("--dur", (2.8 + Math.random() * 3.4) + "s");
+        c.style.animationDelay = (-Math.random() * 5) + "s";
+        cubes.appendChild(c);
+      }
+    }
+
+    function createLightning(total = 9) {
+      const config = [
+        [39, 58, -28],[44, 61, -12],[50, 63, 0],[56, 61, 12],[61, 58, 28],
+        [37, 55, -40],[63, 55, 40],[47, 67, -8],[53, 67, 8]
+      ];
+      for (let i = 0; i < total; i++) {
+        const a = document.createElement("span");
+        a.className = "arc";
+        a.style.left = config[i][0] + "%";
+        a.style.top = config[i][1] + "%";
+        a.style.setProperty("--rot", config[i][2] + "deg");
+        a.style.setProperty("--dur", (1.2 + Math.random() * 1.6) + "s");
+        a.style.animationDelay = (-Math.random() * 3) + "s";
+        lightning.appendChild(a);
+      }
+    }
+
+    function createParticles(total = 70) {
+      for (let i = 0; i < total; i++) {
+        const p = document.createElement("span");
+        p.className = "particle";
+        p.style.left = 24 + Math.random() * 52 + "%";
+        p.style.top = 16 + Math.random() * 12 + "%";
+        p.style.setProperty("--dur", (1.8 + Math.random() * 3.5) + "s");
+        p.style.animationDelay = (-Math.random() * 4) + "s";
+        p.style.opacity = 0.3 + Math.random() * 0.7;
+        particles.appendChild(p);
+      }
+    }
+
+    function createRingText(text) {
+      const chars = text.split("");
+      const radius = 112;
+      chars.forEach((char, i) => {
+        const span = document.createElement("span");
+        const angle = (360 / chars.length) * i;
+        span.textContent = char;
+        span.style.transform = `rotate(${angle}deg) translate(${radius}px) rotate(90deg)`;
+        ringText.appendChild(span);
+      });
+    }
+
+    createStars();
+    createGlyphs();
+    createCubes();
+    createLightning();
+    createParticles();
+    createRingText(alienString.repeat(2));
+
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let idleT = 0;
+
+    function animateCard() {
+      idleT += 0.012;
+
+      currentX += (targetX - currentX) * 0.075;
+      currentY += (targetY - currentY) * 0.075;
+
+      const idleX = Math.sin(idleT) * 6;
+      const idleY = Math.cos(idleT * 1.35) * 4;
+
+      const rotY = currentX * 10 + idleX;
+      const rotX = -currentY * 10 + idleY;
+
+      card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0px)`;
+
+      requestAnimationFrame(animateCard);
+    }
+
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+
+      targetX = (px - 0.5) * 2;
+      targetY = (py - 0.5) * 2;
+    });
+
+    card.addEventListener("mouseleave", () => {
+      targetX = 0;
+      targetY = 0;
+    });
+
+    animateCard();
+  </script>
+</body>
+</html>

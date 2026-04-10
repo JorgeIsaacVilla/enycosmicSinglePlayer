@@ -1,0 +1,19 @@
+{
+  "slides": [
+    {
+      "titulo": "Movimiento básico",
+      "descripcion": "Aprende a moverte por el mapa y controlar tu personaje.",
+      "video": "./assets/tutorial/video1.mp4"
+    },
+    {
+      "titulo": "Inventario",
+      "descripcion": "Descubre cómo abrir el inventario, combinar items y equiparlos.",
+      "video": "./assets/tutorial/video2.mp4"
+    },
+    {
+      "titulo": "Misiones",
+      "descripcion": "Interactúa con NPCs y completa objetivos para avanzar.",
+      "video": "./assets/tutorial/video3.mp4"
+    }
+  ]
+}
