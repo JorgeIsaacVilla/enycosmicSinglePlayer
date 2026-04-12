@@ -95,6 +95,25 @@ Así en el futuro cambias una sola ruta y no todo script.js.
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
+function getSettingSfxVolume() {
+  const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
+  return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.8;
+}
+
+function setSettingSfxVolume(v) {
+  const value = Math.max(0, Math.min(1, Number(v) || 0));
+  localStorage.setItem(LS_SETTINGS.sfxVolume, String(value));
+  efectVolumen = value;
+}
+
+const jefederrotaSound = new Audio("../assets/song/efect/jefederrota.mp3");
+
+function playjefederrotaSound() {
+  const s = jefederrotaSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
 const errorSound = new Audio("../assets/song/efect/error.mp3");
 
 function playerrorSound() {
@@ -103,6 +122,45 @@ function playerrorSound() {
   s.play().catch(()=>{});
 }
 
+const enemyderrotaSound = new Audio("../assets/song/efect/enemyderrota.mp3");
+
+function playenemyderrotaSound() {
+  const s = enemyderrotaSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const goodSound = new Audio("../assets/song/efect/good.mp3");
+
+function playgoodSound() {
+  const s = goodSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const tockSound = new Audio("../assets/song/efect/tock.mp3");
+
+function playtockSound() {
+  const s = tockSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const fuegoSound = new Audio("../assets/song/efect/fuego.mp3");
+
+function playFuegoSound() {
+  const s = fuegoSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
+const comodoAttackSound = new Audio("../assets/song/efect/comodoAtack.mp3");
+
+function playComodoAttackSound() {
+  const s = comodoAttackSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
 
 const swordSound = new Audio("../assets/song/efect/espada.mp3");
 
@@ -126,6 +184,7 @@ function playbumerangSound() {
   const s = bumerangSound.cloneNode();
   s.volume = efectVolumen;
   s.play().catch(()=>{});
+   return s;
 }
 
 const LazerSound = new Audio("../assets/song/efect/lazer.mp3");
@@ -145,11 +204,11 @@ function playcorazonSound() {
 }
 
 const uiSound = new Audio("../assets/song/efect/button.mp3");
-uiSound.volume = 0.5;
+uiSound.volume = efectVolumen;
 
 function playUISound() {
   const s = uiSound.cloneNode(); // evita cortes si haces clicks rápidos
-  s.volume = 0.5;
+  s.volume = efectVolumen;
   s.play().catch(()=>{});
 }
 
@@ -159,6 +218,14 @@ gameOverSound.volume = 0.7;
 function playGameOverSound() {
   const s = gameOverSound.cloneNode();
   s.volume = getSettingVolume ? getSettingVolume() : 0.7;
+  s.play().catch(()=>{});
+}
+
+const arcillaBreakSound = new Audio("../assets/song/efect/desmorone.mp3");
+
+function playArcillaBreakSound() {
+  const s = arcillaBreakSound.cloneNode();
+  s.volume = efectVolumen;
   s.play().catch(()=>{});
 }
 /*Global Songs and efects (fin) */
@@ -1490,6 +1557,7 @@ function setNovedadesCount(count, { animate = false } = {}) {
 // Keys localStorage (solo settings)
 const LS_SETTINGS = {
   volume: "eny_settings_volume",
+  sfxVolume: "eny_settings_sfx_volume",
   ambientIndex: "eny_settings_ambient_index",
 };
 
@@ -1506,7 +1574,7 @@ function ensureAmbientAudio() {
   ambientAudio = new Audio(AMBIENT_TRACK.src);
   ambientAudio.loop = true;
   ambientAudio.preload = "auto";
-  //ambientAudio.volume = getSettingVolume();
+  ambientAudio.volume = getSettingVolume();
   ambientAudio.volume = 0.5;
 
   return ambientAudio;
@@ -1678,6 +1746,7 @@ async function toggleFullscreen() {
 // Render Setting raíz
 function buildSettingHTML() {
   const vol = getSettingVolume();
+  const sfxVol = getSettingSfxVolume();
   const ambientEnabled = getAmbientEnabled();
 
   return `
@@ -1688,7 +1757,15 @@ function buildSettingHTML() {
         <input class="ui-slider" type="range" min="0" max="1" step="0.01"
           value="${vol}"
           data-action="set-volume">
-        <p class="ui-small">Volumen actual: ${Math.round(vol * 100)}%</p>
+        <p class="ui-small ui-setting-music-value">Volumen actual: ${Math.round(vol * 100)}%</p>
+      </div>
+
+      <div class="ui-settings-section">
+        <p class="ui-settings-title">Volumen efectos de sonido</p>
+        <input class="ui-slider" type="range" min="0" max="1" step="0.01"
+          value="${sfxVol}"
+          data-action="set-sfx-volume">
+        <p class="ui-small ui-setting-sfx-value">Efectos actuales: ${Math.round(sfxVol * 100)}%</p>
       </div>
 
       <div class="ui-settings-section">
@@ -1855,8 +1932,8 @@ function devolverItemDesdeEquipado(slotIndex) {
   });
 
   if (!agregado) {
-    //console.log("Inventario lleno, no se puede devolver el item equipado");
     return;
+    
   }
 
   window.equipSlots[slotIndex] = null;
@@ -1870,6 +1947,8 @@ window.devolverItemDesdeEquipado = devolverItemDesdeEquipado;
 function equiparItemDelInventario(slotIndex) {
   const item = window.inventarioUser?.[slotIndex];
   if (!item) return;
+
+ playtockSound();
 
   const scrollInventario = getInventarioScrollState();
 
@@ -2171,6 +2250,7 @@ let tiendaCompraLock = false;
 function canComprarDesdeTienda() {
   if (tiendaCompraLock) return false;
 
+  playtockSound()
   tiendaCompraLock = true;
 
   setTimeout(() => {
@@ -2191,11 +2271,12 @@ function comprarItemDeTienda(itemId) {
   if (precio <= 0) return;
 
 if ((Number(cosmonedas) || 0) < precio) {
+  playerrorSound()
   showPopupFeedback({
     title: "Compra fallida",
     message: "No tienes suficientes cosmonedas.",
     type: "warning",
-    duration: 10000
+    duration: 5000
   });
   return;
 }
@@ -2212,11 +2293,12 @@ if ((Number(cosmonedas) || 0) < precio) {
   });
 
 if (!agregado) {
+  playerrorSound()
   showPopupFeedback({
     title: "Inventario lleno",
     message: "No puedes agregar más items.",
     type: "warning",
-    duration: 10000
+    duration: 5000
   });
   return;
 }
@@ -2230,7 +2312,7 @@ if (!agregado) {
     title: "Compra realizada",
     message: `Haz comprado ${item.nombre_item || item.nombre || "este item"}.`,
     type: "success",
-    duration: 10000
+    duration: 5000
   });
 
   abrirTiendaDeITems();
@@ -2251,6 +2333,7 @@ document.addEventListener("pointerdown", (e) => {
 }, true);
 
 function abrirTiendaDeITems() {
+  playtockSound()
   ensureTiendaItemsStyles();
   closeTiendaDeItems();
 
@@ -2579,25 +2662,35 @@ function updateInventarioDrag(e) {
 
 function getInventarioDropTarget(clientX, clientY) {
   const ghost = inventarioDragState.ghostEl;
+
   if (ghost) ghost.style.display = "none";
 
-  const el = document.elementFromPoint(clientX, clientY);
+  let el = null;
+
+  try {
+    el = document.elementFromPoint(clientX, clientY);
+  } catch (_) {
+    if (ghost) ghost.style.display = "";
+    return null;
+  }
 
   if (ghost) ghost.style.display = "";
 
-  if (!el) return null;
+  if (!(el instanceof Element)) {
+    return null;
+  }
 
-  const equipSlot = el.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot");
+  const equipSlot = el.closest("#container-interfas[data-panel='inventario'] .ui-inv-equip-slot");
   if (equipSlot) {
     return { type: "equip", el: equipSlot };
   }
 
-  const combineSlot = el.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot");
+  const combineSlot = el.closest("#container-interfas[data-panel='inventario'] .ui-inv-combine-slot");
   if (combineSlot) {
     return { type: "combine", el: combineSlot };
   }
 
-  const invPanel = el.closest?.("#container-interfas");
+  const invPanel = el.closest("#container-interfas");
   if (!invPanel) {
     return { type: "destroy", el: null };
   }
@@ -2612,9 +2705,17 @@ function commitInventarioDragDrop(clientX, clientY) {
   }
 
   const slotIndex = inventarioDragState.slotIndex;
-  const drop = getInventarioDropTarget(clientX, clientY);
 
   if (!Number.isInteger(slotIndex)) {
+    resetInventarioDragState();
+    return false;
+  }
+
+  let drop = null;
+
+  try {
+    drop = getInventarioDropTarget(clientX, clientY);
+  } catch (_) {
     resetInventarioDragState();
     return false;
   }
@@ -2626,13 +2727,17 @@ function commitInventarioDragDrop(clientX, clientY) {
   }
 
   if (drop?.type === "combine") {
-    window.agregarItemACombinacionDesdeInventario(slotIndex);
+    if (typeof window.agregarItemACombinacionDesdeInventario === "function") {
+      window.agregarItemACombinacionDesdeInventario(slotIndex);
+    }
     resetInventarioDragState();
     return true;
   }
 
   if (drop?.type === "destroy") {
-    window.destruirItemDelInventario(slotIndex);
+    if (typeof window.destruirItemDelInventario === "function") {
+      window.destruirItemDelInventario(slotIndex);
+    }
     resetInventarioDragState();
     return true;
   }
@@ -2859,17 +2964,25 @@ document.addEventListener(
 
     const el = e.target;
     if (!el || !root.contains(el)) return;
-if (el.matches('[data-action="set-volume"]')) {
-  setSettingVolume(el.value);
-  applyAmbientVolume();
 
-  const info = root.querySelector(".ui-small");
-  if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
-  return;
-}
+    if (el.matches('[data-action="set-volume"]')) {
+      setSettingVolume(el.value);
+      applyAmbientVolume();
+
+      const info = root.querySelector(".ui-setting-music-value");
+      if (info) info.textContent = `Volumen actual: ${Math.round(getSettingVolume() * 100)}%`;
+      return;
+    }
+
+    if (el.matches('[data-action="set-sfx-volume"]')) {
+      setSettingSfxVolume(el.value);
+
+      const info = root.querySelector(".ui-setting-sfx-value");
+      if (info) info.textContent = `Efectos actuales: ${Math.round(getSettingSfxVolume() * 100)}%`;
+      return;
+    }
 
     if (el.matches('[data-action="set-ambient"]')) {
-      //console.log("Música ambiente seleccionada:", el.value);
       setAmbientIndex(el.value);
 
       const bodyEl = root.querySelector(".ui-body");
@@ -2995,28 +3108,33 @@ function handleNPCDialogAction(btn) {
   const action = btn.dataset.npcAction;
 
   if (action === "close" || action === "reject") {
+    playtockSound()
     window.closeNPCDialog();
     return;
   }
 
   if (action === "prev") {
+    playtockSound()
     window.npcDialogState.lineIndex--;
     window.renderNPCDialog();
     return;
   }
 
   if (action === "next") {
+    playtockSound()
     window.npcDialogState.lineIndex++;
     window.renderNPCDialog();
     return;
   }
 
   if (action === "accept-mission") {
+    playtockSound()
     acceptMission(window.npcDialogState.missionId);
     return;
   }
 
   if (action === "continue-mission") {
+    playtockSound()
     const ok = continueActiveMissionFromNPC(window.npcDialogState.npc.id);
 
     if (!ok) {
@@ -3027,6 +3145,7 @@ function handleNPCDialogAction(btn) {
   }
 
   if (action === "finish-mission") {
+    playtockSound()
     finalizeActiveMissionFromNPC(window.npcDialogState.npc.id);
     return;
   }
@@ -3119,15 +3238,17 @@ document.addEventListener("click", (e) => {
   if (!root || root.dataset.panel !== "inventario") return;
 
   const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (slotEl) {
-    const item = getInventarioSlotItem(slotEl);
-    if (!item) return;
+if (slotEl) {
+  const item = getInventarioSlotItem(slotEl);
+  if (!item) return;
 
-    e.preventDefault();
-    e.stopPropagation();
-    openInventarioPopup(slotEl, item);
-    return;
-  }
+  playUISound();
+
+  e.preventDefault();
+  e.stopPropagation();
+  openInventarioPopup(slotEl, item);
+  return;
+}
 
 const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
 if (actionBtn) {
@@ -3196,12 +3317,13 @@ if (actionBtn) {
   }
 
   const resultEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-combine-result.has-item");
-  if (resultEl) {
-    e.preventDefault();
-    e.stopPropagation();
-    window.intentarCrearItemFinal();
-    return;
-  }
+if (resultEl) {
+  playUISound();
+  e.preventDefault();
+  e.stopPropagation();
+  window.intentarCrearItemFinal();
+  return;
+}
 
   if (!e.target.closest?.(".ui-inv-popup")) {
     closeInventarioPopup();
@@ -3263,17 +3385,19 @@ document.addEventListener("pointerup", (e) => {
   }
 
   const slotEl = e.target.closest?.("#container-interfas[data-panel='inventario'] .ui-inv-slot.has-item");
-  if (slotEl && canCommitUITap(slotEl)) {
-    const item = getInventarioSlotItem(slotEl);
-    if (item) {
-      e.preventDefault();
-      e.stopPropagation();
-      openInventarioPopup(slotEl, item);
-    }
-    endUITapGate();
-    resetInventarioDragState();
-    return;
+if (slotEl && canCommitUITap(slotEl)) {
+  const item = getInventarioSlotItem(slotEl);
+  if (item) {
+    playUISound();
+
+    e.preventDefault();
+    e.stopPropagation();
+    openInventarioPopup(slotEl, item);
   }
+  endUITapGate();
+  resetInventarioDragState();
+  return;
+}
 
   const actionBtn = e.target.closest?.(".ui-inv-popup-btn");
   if (actionBtn && canCommitUITap(actionBtn)) {
@@ -3326,6 +3450,8 @@ document.addEventListener("pointercancel", () => {
 
 // ✅ deja SOLO 1 llamada a esto (una sola vez en todo el archivo)
 initSettingsDelegation();
+efectVolumen = getSettingSfxVolume();
+
 if (getAmbientEnabled()) {
   ensureAmbientAudio();
   applyAmbientVolume();
@@ -3974,7 +4100,13 @@ function showCombinacionEstadoModal(tipo) {
   const mensaje =
     tipo === "ok"
       ? "Combinación exitosa"
-      : "Combinación de ITEMS fallido";
+      : "Combinación de ITEMS fallido" ;
+
+if (tipo !== "ok") {
+    playerrorSound(); // 👈 AQUÍ
+  } else {
+    playgoodSound();
+  }
 
   document.body.insertAdjacentHTML(
     "beforeend",
@@ -4052,7 +4184,7 @@ killEnemyWithEffects: (enemy) => {
 };
 
 //--Lógica de antorchas e iluminación de mapas oscuros (inicio)
-let mapaOscuro = true; //--Define si el mapa es oscuro o no true/false
+let mapaOscuro = false; //--Define si el mapa es oscuro o no true/false
 
 const TORCH_DURATION_MS = 30000;
 const TORCH_LIGHT_RADIUS = 200;
@@ -4245,6 +4377,7 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
           window.apagarAntorcha(false);
         }
       } else {
+        playFuegoSound();
         window.activarAntorcha(slotIndex);
       }
 
@@ -4319,7 +4452,6 @@ if (bodyEl) {
     }
 
     case "bumerang": {
-      playbumerangSound()
       const item = window.equipSlots?.[slotIndex];
       if (!item) return;
 
@@ -4351,28 +4483,30 @@ if (bodyEl) {
       break;
     }
 
-    case "pico_escabador": {
-      const item = window.equipSlots?.[slotIndex];
-      if (!item) return;
+case "pico_escabador": {
+  playSwordSound();
 
-      if ((item.usos ?? 0) <= 0) {
-        //console.log("El pico escabador está agotado");
-        return;
-      }
+  const item = window.equipSlots?.[slotIndex];
+  if (!item) return;
 
-      window.lanzarAtaquePicoEscabador(slotIndex);
+  if ((item.usos ?? 0) <= 0) {
+    //console.log("El pico escabador está agotado");
+    return;
+  }
 
-      closeInventarioPopup();
+  window.lanzarAtaquePicoEscabador(slotIndex);
 
-      if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
-        const bodyEl = interfasEl.querySelector(".ui-body");
+  closeInventarioPopup();
+
+  if (interfaceOpen && interfasEl && interfasEl.dataset.panel === "inventario") {
+    const bodyEl = interfasEl.querySelector(".ui-body");
 if (bodyEl) {
   bodyEl.innerHTML = buildInventarioHTML();
   restoreInventarioScrollState(scrollInventario);
 }}
 
-      break;
-    }
+  break;
+}
 
     case "espada_de_hierro": {
 
@@ -4406,7 +4540,7 @@ if (bodyEl) {
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
         type: "warning",
-        duration: 10000
+        duration: 5000
       });
       break;
     case "rueda":
@@ -4414,7 +4548,7 @@ if (bodyEl) {
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
         type: "warning",
-        duration: 10000
+        duration: 5000
       });
       break;
     case "cable":
@@ -4422,7 +4556,7 @@ if (bodyEl) {
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
         type: "warning",
-        duration: 10000
+        duration: 5000
       });
       break;
     case "cuero":
@@ -4430,7 +4564,7 @@ if (bodyEl) {
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
         type: "warning",
-        duration: 10000
+        duration: 5000
       });
       break;
 
@@ -4439,7 +4573,7 @@ if (bodyEl) {
         title: "Item no utilizable",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
         type: "warning",
-        duration: 10000
+        duration: 5000
       });
       break;
   }
@@ -4532,7 +4666,7 @@ function continuarTrasGameOver() {
       title: "Sin cosmonedas",
       message: "Necesitas 3 cosmonedas para continuar.",
       type: "warning",
-      duration: 10000
+      duration: 5000
     });
     return;
   }
@@ -5848,6 +5982,7 @@ function tomarItemSeleccionado(itemTomado) {
 
   if (!agregado) {
     //console.log("Inventario lleno");
+    playerrorSound()
     return;
   }
 
@@ -6033,6 +6168,8 @@ function getPlayerRectIlum() {
 
 function encenderObjetoIlumMapa(obj) {
   if (!obj || obj.encendida) return;
+
+  playFuegoSound();
 
   obj.encendida = true;
   obj.pdr_fuego = ILUM_FUEGO_PDR_MAX;
@@ -9773,6 +9910,7 @@ function lanzarAtaqueEspecialJefe(enemy) {
   }
 
   window.ataquesEspecialesJefeActivos.push(ataque);
+  playComodoAttackSound();
 }
 
 function updateAtaquesEspecialesJefe(dtMs) {
@@ -10053,6 +10191,8 @@ function lanzarDisparoEnemigoArmado(enemy) {
 
   const objetivo = obtenerObjetivoPrincipalEnemigo(enemy);
   if (!objetivo) return;
+
+  playLazerSound();
 
   const enemyCenterX = enemy.x + enemy.w / 2;
   const enemyCenterY = enemy.y + enemy.h / 2;
@@ -10420,7 +10560,8 @@ function lanzarBumerang(itemData) {
     angulo: 0,
     size,
     vida: 1200,
-    danio: Number(itemData?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0
+    danio: Number(itemData?.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
+    audio: playbumerangSound()
   };
 
   window.bumerangsActivos.push(nuevoBumerang);
@@ -10504,12 +10645,25 @@ if (danarBloqueArcillaEnRect(
   b.x,
   b.y
 )) {
+  if (b.audio) {
+    b.audio.pause();
+    b.audio.currentTime = 0;
+    b.audio = null;
+  }
+
   window.bumerangsActivos.splice(i, 1);
   continue;
 }
 
 if (proyectilColisionaAmbiente(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2)) {
   crearChispasImpactoBloque(b.x, b.y, "#ffb347");
+
+  if (b.audio) {
+    b.audio.pause();
+    b.audio.currentTime = 0;
+    b.audio = null;
+  }
+
   window.bumerangsActivos.splice(i, 1);
   continue;
 }
@@ -10563,16 +10717,22 @@ if (enemy.puntos_de_vida <= 0) {
       break;
     }
 
-    if (
-      impacto ||
-      b.x < -100 ||
-      b.y < -100 ||
-      b.x > WORLD_W + 100 ||
-      b.y > WORLD_H + 100 ||
-      b.vida <= 0
-    ) {
-      window.bumerangsActivos.splice(i, 1);
-    }
+if (
+  impacto ||
+  b.x < -100 ||
+  b.y < -100 ||
+  b.x > WORLD_W + 100 ||
+  b.y > WORLD_H + 100 ||
+  b.vida <= 0
+) {
+  if (b.audio) {
+    b.audio.pause();
+    b.audio.currentTime = 0;
+    b.audio = null;
+  }
+
+  window.bumerangsActivos.splice(i, 1);
+}
   }
 }
 
@@ -11546,6 +11706,7 @@ async function cargarItemsJSON(){
 
 function dropItemsJefe(enemy){
   //console.log("💀 Jefe derrotado → generando items");
+  playjefederrotaSound()
   pruebaDeItems();
 }
 
@@ -11595,6 +11756,7 @@ window.pruebaDeItems = pruebaDeItems;
 }
 
 function soltarItemPorMuerte(enemy) {
+  playenemyderrotaSound();
   if (!itemsData || itemsData.length === 0) return;
 
   const random = Math.random();
@@ -11765,6 +11927,8 @@ function destruirItemDelInventario(slotIndex) {
   const item = window.inventarioUser[slotIndex];
   if (!item) return;
 
+  playUISound();
+
   window.inventarioUser.splice(slotIndex, 1);
   normalizarInventario();
   closeInventarioPopup();
@@ -11779,6 +11943,8 @@ function destruirItemDelInventario(slotIndex) {
 function agregarItemACombinacionDesdeInventario(slotIndex) {
   const item = window.inventarioUser[slotIndex];
   if (!item) return;
+
+  playtockSound();
 
   const scrollInventario = getInventarioScrollState();
 
@@ -11796,7 +11962,6 @@ function agregarItemACombinacionDesdeInventario(slotIndex) {
   } else {
     const slotLibre = combinacionSlots.findIndex(s => s === null);
     if (slotLibre === -1) {
-      //console.log("No hay espacio en la zona de combinación");
       return;
     }
 
@@ -11827,6 +11992,8 @@ function devolverItemDesdeCombinacion(slotIndex) {
   const item = combinacionSlots[slotIndex];
   if (!item) return;
 
+  playtockSound();
+
   const itemADevolver = {
     ...item
   };
@@ -11836,7 +12003,6 @@ function devolverItemDesdeCombinacion(slotIndex) {
   const agregado = agregarItemAlInventario(itemADevolver);
 
   if (!agregado) {
-    //console.log("Inventario lleno, no se puede devolver el item");
     return;
   }
 
@@ -12359,6 +12525,7 @@ function existeAntorchaSobreBloque(bloque) {
 }
 
 window.colocarAntorchaSobreBloqueArcilla = function(slotIndex) {
+  playtockSound()
   const item = window.equipSlots?.[slotIndex];
   if (!item) return false;
   if (item.id !== "antorcha_de_fuego") return false;
@@ -13083,6 +13250,7 @@ function aplicarDanioABloqueArcilla(obj, danio, impactoX, impactoY) {
   crearParticulasArcilla(impactoX, impactoY);
 
   if (obj.pdr <= 0) {
+    playArcillaBreakSound();
     crearParticulasArcilla(obj.x + obj.w / 2, obj.y + obj.h / 2);
 
     ambienteObjetos = ambienteObjetos.filter(el =>

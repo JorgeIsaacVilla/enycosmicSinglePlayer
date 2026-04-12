@@ -38,6 +38,14 @@
   const ALLY_BAR_W = 42;
   const ALLY_BAR_H = 6;
 
+const LazerSound = new Audio("../assets/song/efect/lazer.mp3");
+
+function playLazerSound() {
+  const s = LazerSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
 function getInitialState() {
   return {
     img: null,
@@ -474,6 +482,7 @@ showAliadoPopupFeedback({
     });
 
     state.attackCooldown = ATTACK_COOLDOWN_MS;
+    playLazerSound()
     return true;
   }
 
