@@ -114,6 +114,14 @@ function playjefederrotaSound() {
   s.play().catch(()=>{});
 }
 
+const endSound = new Audio("../assets/song/efect/end.mp3");
+
+function playendSound() {
+  const s = endSound.cloneNode();
+  s.volume = efectVolumen;
+  s.play().catch(()=>{});
+}
+
 const errorSound = new Audio("../assets/song/efect/error.mp3");
 
 function playerrorSound() {
@@ -1563,7 +1571,7 @@ const LS_SETTINGS = {
 
 const AMBIENT_TRACK = {
   name: "Ambiente mapa 1",
-  src: "../assets/song/melodys/ambienteMapa1.wav"
+  src: "../assets/song/melodys/ambienteMapa1.mp3"
 };
 
 let ambientAudio = null;
@@ -4536,6 +4544,7 @@ if (bodyEl) {
     case "escudo_de_hierro":
       break;
     case "bateria":
+      playerrorSound()
             showPopupFeedback({
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
@@ -4544,6 +4553,7 @@ if (bodyEl) {
       });
       break;
     case "rueda":
+      playerrorSound()
             showPopupFeedback({
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
@@ -4552,6 +4562,7 @@ if (bodyEl) {
       });
       break;
     case "cable":
+      playerrorSound()
             showPopupFeedback({
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
@@ -4560,6 +4571,7 @@ if (bodyEl) {
       });
       break;
     case "cuero":
+      playerrorSound()
       showPopupFeedback({
         title: item.nombre_item || "Item",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
@@ -4569,6 +4581,7 @@ if (bodyEl) {
       break;
 
     default:
+      playerrorSound()
       showPopupFeedback({
         title: "Item no utilizable",
         message: "Este item no se puede usar en el campo. Consulta sus posibles combinaciones.",
@@ -6938,6 +6951,8 @@ function openRetoPopup(retoId, onComplete) {
   }, { passive: false });
 }
 
+
+/*Espacio para llamar funciones al compeltar retos (inicio) */
 function completarRetoMission(retoId) {
   const mission = getActiveMission();
   if (!mission) return false;
@@ -6984,6 +6999,9 @@ function completarRetoMission(retoId) {
 window.reto_codificacion_01 = function () {
   openRetoPopup("reto_codificacion_01", completarRetoMission);
 };
+
+/*Espacio para llamar funciones al compeltar retos (fin) */
+
 //------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
 
 function setActiveMission(missionId) {
@@ -8049,6 +8067,7 @@ function showMissionRewardPopup(mission) {
 
   btn.addEventListener("click", closeRewardPopup);
   btn.addEventListener("pointerdown", (e) => {
+    playendSound()
     if (e.pointerType === "mouse") return;
     e.preventDefault();
     closeRewardPopup();
@@ -11835,6 +11854,7 @@ if (imgOk) {
 }
 
 function agregarItemAlInventario(nuevoItem) {
+  playtockSound();
   const MAX_SLOTS = 16;
   const MAX_STACK = 25;
 
@@ -12837,6 +12857,7 @@ function getAudioAmbienteCache(src) {
     const audio = new Audio(src);
     audio.loop = true;
     audio.preload = "auto";
+    audio.volume = efectVolumen;
 
     entry = {
       audio,
@@ -12847,6 +12868,7 @@ function getAudioAmbienteCache(src) {
     ambienteAudioCache[src] = entry;
   } else {
     entry.lastUsed = performance.now();
+    entry.audio.volume = efectVolumen;
   }
 
   return entry.audio;
@@ -12965,25 +12987,26 @@ function drawBaseObjetoAmbiente(ctx, obj) {
 
     const audio = getAudioAmbienteCache(obj.sonido_ambiente);
 
-    if (audio) {
-      if (dist < 500) {
-        audio.volume = Math.max(0, 1 - (dist / 500));
+if (audio) {
+  if (dist < 500) {
+    const volumenDistancia = Math.max(0, 1 - (dist / 500));
+    audio.volume = volumenDistancia * efectVolumen;
 
-        if (!obj.audioPlaying) {
-          audio.play().catch(() => {});
-          obj.audioPlaying = true;
-        }
-
-        marcarUsoAudioAmbiente(obj.sonido_ambiente, true);
-      } else {
-        if (obj.audioPlaying) {
-          audio.pause();
-          obj.audioPlaying = false;
-        }
-
-        marcarUsoAudioAmbiente(obj.sonido_ambiente, false);
-      }
+    if (!obj.audioPlaying) {
+      audio.play().catch(() => {});
+      obj.audioPlaying = true;
     }
+
+    marcarUsoAudioAmbiente(obj.sonido_ambiente, true);
+  } else {
+    if (obj.audioPlaying) {
+      audio.pause();
+      obj.audioPlaying = false;
+    }
+
+    marcarUsoAudioAmbiente(obj.sonido_ambiente, false);
+  }
+}
   }
 }
 
@@ -13337,7 +13360,7 @@ function buscarFuenteDeFuegoCercana(enemy, radioBusqueda = 320) {
 
   return mejor;
 }
-
+/*
 function procesarImpactoEnemigoContraBloque(enemy, nextX, nextY) {
   const obj = colisionAmbiente(nextX, nextY, enemy.w, enemy.h);
   if (!obj || !esBloqueArcilla(obj)) return false;
@@ -13359,7 +13382,7 @@ function procesarImpactoEnemigoContraBloque(enemy, nextX, nextY) {
 }
 //-- lógica arcilla (fin)
 
-/*
+
 function colisionAmbiente(x, y, w, h) {
 
   for (const obj of ambienteObjetos) {
