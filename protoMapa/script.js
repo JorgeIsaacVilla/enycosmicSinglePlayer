@@ -14789,6 +14789,19 @@ const startY = barY - totalHudHeight - 14;
         ctx.lineWidth = 2;
         ctx.strokeRect(x, y, slotSize, slotSize);
 
+        const hudKeyLabel = i === 0 ? "Q" : (i === 1 ? "E" : "");
+
+if (hudKeyLabel) {
+  ctx.fillStyle = "black";
+  ctx.fillRect(x + 2, y + 2, 14, 12);
+
+  ctx.fillStyle = "#00ffcc";
+  ctx.font = "18px arcade";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(hudKeyLabel, x + 19, y + 20);
+}
+
         if (!item) return;
 
         if (!item._hudImg) {
