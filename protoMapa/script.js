@@ -1583,7 +1583,6 @@ function ensureAmbientAudio() {
   ambientAudio.loop = true;
   ambientAudio.preload = "auto";
   ambientAudio.volume = getSettingVolume();
-  ambientAudio.volume = 0.5;
 
   return ambientAudio;
 }
@@ -1591,6 +1590,23 @@ function ensureAmbientAudio() {
 function applyAmbientVolume() {
   const audio = ensureAmbientAudio();
   audio.volume = getSettingVolume();
+}
+
+function syncAmbientMusicState({ restart = false } = {}) {
+  const audio = ensureAmbientAudio();
+  applyAmbientVolume();
+
+  if (!getAmbientEnabled()) {
+    audio.pause();
+    audio.currentTime = 0;
+    return;
+  }
+
+  if (restart) {
+    audio.currentTime = 0;
+  }
+
+  audio.play().catch(() => {});
 }
 
 document.addEventListener("click", unlockAudioAndPlay);
@@ -1603,23 +1619,15 @@ function unlockAudioAndPlay() {
   if (audioUnlocked) return;
   audioUnlocked = true;
 
-  if (getAmbientEnabled()) {
-    const audio = ensureAmbientAudio();
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
-  }
+  syncAmbientMusicState();
 
-  // eliminar listeners después del primer uso
   document.removeEventListener("click", unlockAudioAndPlay);
   document.removeEventListener("touchstart", unlockAudioAndPlay);
   document.removeEventListener("keydown", unlockAudioAndPlay);
 }
 
 function playAmbientMusic() {
-  const audio = ensureAmbientAudio();
-  applyAmbientVolume();
-
-  audio.play().catch(() => {});
+  syncAmbientMusicState();
 }
 
 function pauseAmbientMusic() {
@@ -3884,7 +3892,7 @@ function wrapText(ctx, text, maxWidth) {
 
 const GLOBAL_SCRIPTS = [
   //"../globalScripts/linterna.js",
-  "../globalScripts/aliado.js",
+  //"../globalScripts/aliado.js",
   "../globalScripts/metacam.js",
   "../globalScripts/interruptorOscuridad.js",
   //"../globalScripts/timerOscuridad15s.js"
@@ -4717,9 +4725,7 @@ for (const enemy of (window.enemigos || [])) {
   hoveredItem = null;
   hoveredCanvasInteractive = null;
 
-  if (getAmbientEnabled()) {
-  playAmbientMusic();
-}
+syncAmbientMusicState({ restart: true });
 
   if (joy) joy.style.display = "block";
   if (boxButtonsITems) boxButtonsITems.style.display = "flex";
@@ -5440,14 +5446,11 @@ function updateAtaquesEspadaHierro(dtMs) {
         "#d8ff7a"
       );
 
-      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
-      const push = 32;
+const push = 32;
+const pushX = Math.cos(angulo) * push;
+const pushY = Math.sin(angulo) * push;
 
-      enemy.x += (Math.cos(angulo) / len) * push;
-      enemy.y += (Math.sin(angulo) / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (enemy.puntos_de_vida <= 0) {
         eliminarEnemigoPorDerrota(enemy);
@@ -5746,14 +5749,11 @@ if (espadaMaderaLunge.time <= 0) {
         "#ff7b00"
       );
 
-      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
       const push = 32;
+      const pushX = Math.cos(angulo) * push;
+      const pushY = Math.sin(angulo) * push;
 
-      enemy.x += (Math.cos(angulo) / len) * push;
-      enemy.y += (Math.sin(angulo) / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+      empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (!ataque.yaDesgasto) {
         consumirUsoEspadaMadera(ataque.slotIndex);
@@ -6009,11 +6009,12 @@ function tomarItemSeleccionado(itemTomado) {
     hoveredItem = null;
   }
 
+ /*
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
   }
-
+*/
   if (items.length === 0) {
     cargarItemsEnMapa({
       excluirInstanciaId: ultimaInstanciaRecogida,
@@ -8631,11 +8632,12 @@ window.renderNPCDialog = renderNPCDialog;
 function openNPCDialog(npc) {
   if (!npc) return;
 
+ /*
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
   }
-
+*/
   const context = getMissionContextForNPC(npc.id);
 
   window.npcDialogState = {
@@ -9143,6 +9145,16 @@ function intentarApagarFuenteDeFuego(enemy, obj) {
   return false;
 }
 
+function mirarEnemigoHaciaObjetivo(enemy, dx, dy) {
+  if (!enemy) return;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    enemy.facing = dx > 0 ? "right" : "left";
+  } else {
+    enemy.facing = dy > 0 ? "down" : "up";
+  }
+}
+
 function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
   if (!enemy || !obj) return false;
   if (!obj.encendida) return false;
@@ -9166,6 +9178,8 @@ function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
   dx /= dist;
   dy /= dist;
 
+  mirarEnemigoHaciaObjetivo(enemy, dx, dy);
+
   enemy.dirX = dx;
   enemy.dirY = dy;
   enemy.isMoving = true;
@@ -9179,6 +9193,11 @@ function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
       enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
     }
   } else {
+    resetRodeoEnemigo(enemy);
+    enemy.isMoving = false;
+    enemy.dirX = 0;
+    enemy.dirY = 0;
+    mirarEnemigoHaciaObjetivo(enemy, dx, dy);
     enemy.frame = 0;
     enemy.frameTimer = 0;
   }
@@ -9499,11 +9518,7 @@ if (
     }
   }
 
-  if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
-    enemy.facing = enemy.dirX > 0 ? "right" : "left";
-  } else {
-    enemy.facing = enemy.dirY > 0 ? "down" : "up";
-  }
+mirarEnemigoHaciaObjetivo(enemy, enemy.dirX, enemy.dirY);
 
 if (enemy.tipo === "armado") {
   enemy.tiempoCambioDecision -= dtMs;
@@ -9528,12 +9543,20 @@ if (enemy.tipo === "armado") {
         enemy.frameTimer -= enemy.frameDurationMs;
         enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
       }
-    } else {
-      enemy.frame = 0;
-      enemy.frameTimer = 0;
-    }
+} else {
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+}
   } else {
-    resetRodeoEnemigo(enemy);
+    //resetRodeoEnemigo(enemy);
     enemy.isMoving = false;
     enemy.frame = 0;
     enemy.frameTimer = 0;
@@ -9550,9 +9573,17 @@ if (enemy.tipo === "armado") {
       enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
     }
   } else {
-    enemy.frame = 0;
-    enemy.frameTimer = 0;
-  }
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+}
 
   if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
     hacerHablarEnemigo(enemy, "ataque");
@@ -9583,7 +9614,14 @@ if (enemy.isMoving && enemy.pasosRestantes > 0) {
     enemy.frameTimer = 0;
   }
 } else {
-  resetRodeoEnemigo(enemy);
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
   enemy.frame = 0;
   enemy.frameTimer = 0;
 }
@@ -10475,14 +10513,12 @@ if (proyectilColisionaAmbiente(d.x - lazerHitW / 2, d.y - lazerHitH / 2, lazerHi
         "#eaff00"
       );
 
-      const len = Math.hypot(d.vx, d.vy) || 1;
-      const push = 32;
+const len = Math.hypot(d.vx, d.vy) || 1;
+const push = 32;
+const pushX = (d.vx / len) * push;
+const pushY = (d.vy / len) * push;
 
-      enemy.x += (d.vx / len) * push;
-      enemy.y += (d.vy / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (enemy.puntos_de_vida <= 0) {
         eliminarEnemigoPorDerrota(enemy);
@@ -10721,14 +10757,12 @@ if (enemy.puntos_de_vida <= 0) {
   break;
 }
 
-      const len = Math.hypot(b.vx, b.vy) || 1;
-      const push = 32;
+const len = Math.hypot(b.vx, b.vy) || 1;
+const push = 32;
+const pushX = (b.vx / len) * push;
+const pushY = (b.vy / len) * push;
 
-      enemy.x += (b.vx / len) * push;
-      enemy.y += (b.vy / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       enemy.cooldownDano = 250;
 
@@ -11933,6 +11967,11 @@ function agregarItemAlInventario(nuevoItem) {
     usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos,
     cuanto_quita_de_vida_al_enemigo: Number(nuevoItem.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
   });
+
+const activeMissionId = window.missionSystem?.activeMissionId;
+if (activeMissionId) {
+  validarPasoRecolectarItems(activeMissionId);
+}
 
   return true;
 }

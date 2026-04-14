@@ -1,102 +1,7 @@
-  /*
-  Slogan: El nivel te lo quedas tu.
-  
-  -> Corrección de los local Storage para sincronización de base de datos a wordpress
-  -> Creación de estados de mapa y sincronización con base de datos de wordpress. para que el usuario al salir del juego, y vuelva a entrar, aparesca en el mismo sitio en el que quedó
-  -> Creación de estados de misiones y de items de mapa, y sincronización a bases de datos. todos los items se renuevan cada 24 horas, y las misiones cada 3 día
-  
-  //-------------------Fases de desarrollo Etapa 5.-----------
-  6.	Estados de mapa 
-
-  7.	desarrollo de nuevo índex. para empezar el juego 
-
-  8.	reorganización de carpetas y recursos 
-
-  9.	Prueba inicial sincronización con WordPress solo con mapa 1
-
-  */
-
-
-  /* 
-PENDIENTE PROTOMAPA — REORGANIZACIÓN DE CARPETAS Y RECURSOS
-
-Si script.js se mantiene en la misma ubicación, normalmente no cambia nada.
-Pero si voy a mover documentos/recursos a otra carpeta, estas rutas y variables son las que debo revisar primero:
-
-1) JSON / DATA
-- fetch("../top15players.json")
-- fetch("../novedades.json")
-- fetch("../world.JSON/ambiente.json")
-- fetch("../world.JSON/enemy.json")
-- fetch("../world.JSON/NPCambiente.json")
-- fetch("../world.JSON/missions.json")
-- fetch("../world.JSON/ilumSistemMapa.json")
-
-2) CSS
-- ensureMetaMapCSS()               -> "../styles/metaMapStyle.css"
-- ensurePopUpCSS()                 -> "../styles/popUp.css"
-- ensureStyleDOMCSS()              -> "../styles/styleDOM.css"
-
-3) HTML / IFRAME
-- const METAFON_SRC                -> "../interactions/metafon.html"
-
-4) SCRIPTS GLOBALES
-- const GLOBAL_SCRIPTS = [
-    "../globalScripts/metacam.js",
-    "../globalScripts/interruptorOscuridad.js"
-  ]
-
-5) MAPA / ASSETS PRINCIPALES
-- const globalMap                  -> "../assets/mapas/mapa1-5000x5000.svg"
-- const LOGO_SRC                   -> "../assets/src/logo.png"
-- const COSMONEDA_SRC              -> "../assets/src/cosmoneda.svg"
-- const CORAZON_SRC                -> "../assets/panelOptions/corazon.svg"
-- window.bumerangImg.src           -> "../assets/items/bumerang.svg"
-- loadImage(...) game over         -> "../assets/avatares/enemy/centinela-reptiliano-armado.png"
-
-6) AVATARES
-- const characters[].avatar        -> "../assets/avatares/men/..."
-- const characters[].avatar        -> "../assets/avatares/women/..."
-- const characters[].sprites       -> "../assets/avatares/..."
-- fallback avatar                  -> "../assets/avatares/default.png"
-- guardSrc game over               -> "../assets/avatares/enemy/centinela-reptiliano-armado.png"
-
-7) TUTORIAL
-- const TUTORIAL_SLIDES[].img      -> "../assets/tutorial/slide1.png"
-- const TUTORIAL_SLIDES[].img      -> "../assets/tutorial/slide2.png"
-- const TUTORIAL_SLIDES[].img      -> "../assets/tutorial/slide3.png"
-- const TUTORIAL_SLIDES[].img      -> "../assets/tutorial/slide4.png"
-
-8) TIENDA / NPC / AMBIENTE
-- vendedor tienda                  -> "../assets/spriteAmbiente/vendedor.png"
-
-9) RUTAS DINÁMICAS QUE VIENEN DESDE JSON O LOCALSTORAGE
-Estas también pueden romperse si los archivos cambian de carpeta:
-- obj.imagen                       // ambiente.json / ilumSistemMapa.json / otros JSON
-- enemy.imagen                     // enemy.json
-- npc.imagen                       // NPCambiente.json / missions.json
-- item.imagen                      // items / inventario / tienda
-- localStorage.getItem("avatar")   // si guarda una ruta antigua, tocaría migrarla
-
-10) RECURSO EXTERNO QUE NO DEPENDE DE TUS CARPETAS LOCALES
-- ASSETS.shadow -> "https://assets.codepen.io/21542/DemoRpgCharacterShadow.png"
-- icon popup     -> "https://art.pixilart.com/thumb/sr5z082f4e339daws3.png"
-
-NOTA IMPORTANTE:
-Si lo que vas a mover es solo JSON, CSS, HTML o assets, lo ideal es crear constantes base como:
-- BASE_ASSETS
-- BASE_JSON
-- BASE_STYLES
-- BASE_SCRIPTS
-- BASE_INTERACTIONS
-
-Así en el futuro cambias una sola ruta y no todo script.js.
-*/
-/*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-let userPostX = 4710;
-let userPostY = 4789;
+let userPostX = 2500;
+let userPostY = 4300;
 
 function getSettingSfxVolume() {
   const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
@@ -1586,7 +1491,6 @@ function ensureAmbientAudio() {
   ambientAudio.loop = true;
   ambientAudio.preload = "auto";
   ambientAudio.volume = getSettingVolume();
-  ambientAudio.volume = 0.5;
 
   return ambientAudio;
 }
@@ -1594,6 +1498,23 @@ function ensureAmbientAudio() {
 function applyAmbientVolume() {
   const audio = ensureAmbientAudio();
   audio.volume = getSettingVolume();
+}
+
+function syncAmbientMusicState({ restart = false } = {}) {
+  const audio = ensureAmbientAudio();
+  applyAmbientVolume();
+
+  if (!getAmbientEnabled()) {
+    audio.pause();
+    audio.currentTime = 0;
+    return;
+  }
+
+  if (restart) {
+    audio.currentTime = 0;
+  }
+
+  audio.play().catch(() => {});
 }
 
 document.addEventListener("click", unlockAudioAndPlay);
@@ -1606,23 +1527,15 @@ function unlockAudioAndPlay() {
   if (audioUnlocked) return;
   audioUnlocked = true;
 
-  if (getAmbientEnabled()) {
-    const audio = ensureAmbientAudio();
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
-  }
+  syncAmbientMusicState();
 
-  // eliminar listeners después del primer uso
   document.removeEventListener("click", unlockAudioAndPlay);
   document.removeEventListener("touchstart", unlockAudioAndPlay);
   document.removeEventListener("keydown", unlockAudioAndPlay);
 }
 
 function playAmbientMusic() {
-  const audio = ensureAmbientAudio();
-  applyAmbientVolume();
-
-  audio.play().catch(() => {});
+  syncAmbientMusicState();
 }
 
 function pauseAmbientMusic() {
@@ -4720,9 +4633,7 @@ for (const enemy of (window.enemigos || [])) {
   hoveredItem = null;
   hoveredCanvasInteractive = null;
 
-  if (getAmbientEnabled()) {
-  playAmbientMusic();
-}
+syncAmbientMusicState({ restart: true });
 
   if (joy) joy.style.display = "block";
   if (boxButtonsITems) boxButtonsITems.style.display = "flex";
@@ -5443,14 +5354,11 @@ function updateAtaquesEspadaHierro(dtMs) {
         "#d8ff7a"
       );
 
-      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
-      const push = 32;
+const push = 32;
+const pushX = Math.cos(angulo) * push;
+const pushY = Math.sin(angulo) * push;
 
-      enemy.x += (Math.cos(angulo) / len) * push;
-      enemy.y += (Math.sin(angulo) / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (enemy.puntos_de_vida <= 0) {
         eliminarEnemigoPorDerrota(enemy);
@@ -5749,14 +5657,11 @@ if (espadaMaderaLunge.time <= 0) {
         "#ff7b00"
       );
 
-      const len = Math.hypot(Math.cos(angulo), Math.sin(angulo)) || 1;
       const push = 32;
+      const pushX = Math.cos(angulo) * push;
+      const pushY = Math.sin(angulo) * push;
 
-      enemy.x += (Math.cos(angulo) / len) * push;
-      enemy.y += (Math.sin(angulo) / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+      empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (!ataque.yaDesgasto) {
         consumirUsoEspadaMadera(ataque.slotIndex);
@@ -6012,11 +5917,12 @@ function tomarItemSeleccionado(itemTomado) {
     hoveredItem = null;
   }
 
+ /*
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
   }
-
+*/
   if (items.length === 0) {
     cargarItemsEnMapa({
       excluirInstanciaId: ultimaInstanciaRecogida,
@@ -8634,11 +8540,12 @@ window.renderNPCDialog = renderNPCDialog;
 function openNPCDialog(npc) {
   if (!npc) return;
 
+ /*
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
   }
-
+*/
   const context = getMissionContextForNPC(npc.id);
 
   window.npcDialogState = {
@@ -9146,6 +9053,16 @@ function intentarApagarFuenteDeFuego(enemy, obj) {
   return false;
 }
 
+function mirarEnemigoHaciaObjetivo(enemy, dx, dy) {
+  if (!enemy) return;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    enemy.facing = dx > 0 ? "right" : "left";
+  } else {
+    enemy.facing = dy > 0 ? "down" : "up";
+  }
+}
+
 function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
   if (!enemy || !obj) return false;
   if (!obj.encendida) return false;
@@ -9169,6 +9086,8 @@ function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
   dx /= dist;
   dy /= dist;
 
+  mirarEnemigoHaciaObjetivo(enemy, dx, dy);
+
   enemy.dirX = dx;
   enemy.dirY = dy;
   enemy.isMoving = true;
@@ -9182,6 +9101,11 @@ function moverEnemigoHaciaFuego(enemy, obj, dtMs) {
       enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
     }
   } else {
+    resetRodeoEnemigo(enemy);
+    enemy.isMoving = false;
+    enemy.dirX = 0;
+    enemy.dirY = 0;
+    mirarEnemigoHaciaObjetivo(enemy, dx, dy);
     enemy.frame = 0;
     enemy.frameTimer = 0;
   }
@@ -9502,11 +9426,7 @@ if (
     }
   }
 
-  if (Math.abs(enemy.dirX) > Math.abs(enemy.dirY)) {
-    enemy.facing = enemy.dirX > 0 ? "right" : "left";
-  } else {
-    enemy.facing = enemy.dirY > 0 ? "down" : "up";
-  }
+mirarEnemigoHaciaObjetivo(enemy, enemy.dirX, enemy.dirY);
 
 if (enemy.tipo === "armado") {
   enemy.tiempoCambioDecision -= dtMs;
@@ -9531,12 +9451,20 @@ if (enemy.tipo === "armado") {
         enemy.frameTimer -= enemy.frameDurationMs;
         enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
       }
-    } else {
-      enemy.frame = 0;
-      enemy.frameTimer = 0;
-    }
+} else {
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+}
   } else {
-    resetRodeoEnemigo(enemy);
+    //resetRodeoEnemigo(enemy);
     enemy.isMoving = false;
     enemy.frame = 0;
     enemy.frameTimer = 0;
@@ -9553,9 +9481,17 @@ if (enemy.tipo === "armado") {
       enemy.frame = (enemy.frame + 1) % enemy.totalFrames;
     }
   } else {
-    enemy.frame = 0;
-    enemy.frameTimer = 0;
-  }
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
+  enemy.frame = 0;
+  enemy.frameTimer = 0;
+}
 
   if (enemy.tiempoHablaCooldown <= 0 && Math.random() < 0.12) {
     hacerHablarEnemigo(enemy, "ataque");
@@ -9586,7 +9522,14 @@ if (enemy.isMoving && enemy.pasosRestantes > 0) {
     enemy.frameTimer = 0;
   }
 } else {
-  resetRodeoEnemigo(enemy);
+  const lookX = enemy.dirX;
+  const lookY = enemy.dirY;
+
+  //resetRodeoEnemigo(enemy);
+  enemy.isMoving = false;
+  enemy.dirX = 0;
+  enemy.dirY = 0;
+  mirarEnemigoHaciaObjetivo(enemy, lookX, lookY);
   enemy.frame = 0;
   enemy.frameTimer = 0;
 }
@@ -10478,14 +10421,12 @@ if (proyectilColisionaAmbiente(d.x - lazerHitW / 2, d.y - lazerHitH / 2, lazerHi
         "#eaff00"
       );
 
-      const len = Math.hypot(d.vx, d.vy) || 1;
-      const push = 32;
+const len = Math.hypot(d.vx, d.vy) || 1;
+const push = 32;
+const pushX = (d.vx / len) * push;
+const pushY = (d.vy / len) * push;
 
-      enemy.x += (d.vx / len) * push;
-      enemy.y += (d.vy / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       if (enemy.puntos_de_vida <= 0) {
         eliminarEnemigoPorDerrota(enemy);
@@ -10724,14 +10665,12 @@ if (enemy.puntos_de_vida <= 0) {
   break;
 }
 
-      const len = Math.hypot(b.vx, b.vy) || 1;
-      const push = 32;
+const len = Math.hypot(b.vx, b.vy) || 1;
+const push = 32;
+const pushX = (b.vx / len) * push;
+const pushY = (b.vy / len) * push;
 
-      enemy.x += (b.vx / len) * push;
-      enemy.y += (b.vy / len) * push;
-
-      enemy.x = clamp(enemy.x, 0, WORLD_W - enemy.w);
-      enemy.y = clamp(enemy.y, 0, WORLD_H - enemy.h);
+empujarEnemigoConColision(enemy, pushX, pushY);
 
       enemy.cooldownDano = 250;
 
@@ -11532,8 +11471,9 @@ let items = [];// Prueba de items
 
 //Items escondidos en mapa
 let itemsEnMapaConfig = [
+  { instancia_id: "itm_mapa_01", item_id: "cuero", x: 1800, y: 950 },
   { instancia_id: "itm_mapa_02", item_id: "diodo_lazer", x: 2000, y: 1100 },
-  { instancia_id: "itm_mapa_03", item_id: "pistola_lazer", x: 4652, y: 4035 }
+  { instancia_id: "itm_mapa_03", item_id: "pistola_lazer", x: 2200, y: 1000 }
 ];
 
 function cargarItemsEnMapa(opciones = {}) {
@@ -11935,6 +11875,11 @@ function agregarItemAlInventario(nuevoItem) {
     usos_maximos: esBloqueArcilla ? null : nuevoUsosMaximos,
     cuanto_quita_de_vida_al_enemigo: Number(nuevoItem.cuanto_quita_de_vida_al_enemigo ?? 0) || 0,
   });
+
+const activeMissionId = window.missionSystem?.activeMissionId;
+if (activeMissionId) {
+  validarPasoRecolectarItems(activeMissionId);
+}
 
   return true;
 }
