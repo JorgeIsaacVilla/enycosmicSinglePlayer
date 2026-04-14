@@ -1,0 +1,1851 @@
+{
+  "missions": [
+    {
+      "id": "m1",
+      "nombre": "Rondas de calibración",
+      "tipo": "diaria",
+      "clasificacion": "inicio",
+      "descripcion": "Habla con tres especialistas para validar los sistemas básicos del sector.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 0,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc001",
+          "nombre": "Aelys",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+          "posicion": {
+            "x": 320,
+            "y": 3740
+          },
+          "conversation_default": "Estoy revisando la red de observación.",
+          "dialogos": {
+            "inicio": [
+              "Bienvenido al módulo de calibración.",
+              "Necesito que confirmes el estado de otros dos puntos del sector."
+            ],
+            "en_progreso": [
+              "Aún no has verificado todos los nodos."
+            ],
+            "completado": [
+              "Excelente. El sector ya quedó calibrado."
+            ]
+          }
+        },
+        {
+          "id": "npc002",
+          "nombre": "Jack",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Jack.png",
+          "posicion": {
+            "x": 640,
+            "y": 3460
+          },
+          "conversation_default": "Todavía estoy ajustando las lecturas ópticas.",
+          "dialogos": {
+            "inicio": [
+              "Las lecturas del telescopio ya son estables.",
+              "Te falta confirmar el último punto."
+            ],
+            "en_progreso": [
+              "Sigue con la ronda de verificación."
+            ],
+            "completado": [
+              "Mi informe ya fue registrado."
+            ]
+          }
+        },
+        {
+          "id": "npc003",
+          "nombre": "Kaia",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Kaia.png",
+          "posicion": {
+            "x": 980,
+            "y": 3870
+          },
+          "conversation_default": "Este panel no debe quedar fuera de sincronía.",
+          "dialogos": {
+            "inicio": [
+              "Todo está listo en el nodo sur.",
+              "Con esto puedes cerrar la ronda."
+            ],
+            "en_progreso": [
+              "Finaliza la verificación del sector."
+            ],
+            "completado": [
+              "La ronda de calibración fue completada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m1s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc001",
+          "titulo": "Habla con Aelys",
+          "descripcion": "Recibe la ruta de verificación inicial.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc001",
+            "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+            "posicion": {
+              "x": 320,
+              "y": 3740
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m1s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc002",
+          "titulo": "Habla con Jack",
+          "descripcion": "Confirma el segundo punto de observación.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc002",
+            "imagen": "../assets/avatares/npc/mapa1/Jack.png",
+            "posicion": {
+              "x": 640,
+              "y": 3460
+            }
+          },
+          "otorgaItems": [
+            {
+              "id": "cable",
+              "cantidad": 1
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "id": "m1s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc003",
+          "titulo": "Habla con Kaia",
+          "descripcion": "Cierra la ronda de calibración.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc003",
+            "imagen": "../assets/avatares/npc/mapa1/Kaia.png",
+            "posicion": {
+              "x": 980,
+              "y": 3870
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 5,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m2",
+      "nombre": "Eco de navegación",
+      "tipo": "diaria",
+      "clasificacion": "inicio",
+      "descripcion": "Consulta a tres navegantes para reunir las pautas de tránsito interno del mapa.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 1,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc004",
+          "nombre": "Manuel",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+          "posicion": {
+            "x": 1320,
+            "y": 3580
+          },
+          "conversation_default": "Estoy cartografiando nuevas rutas.",
+          "dialogos": {
+            "inicio": [
+              "Necesitamos revalidar las rutas internas.",
+              "Habla con dos operadores más y trae su reporte."
+            ],
+            "en_progreso": [
+              "La cartografía aún no está completa."
+            ],
+            "completado": [
+              "Muy bien. Las rutas quedaron actualizadas."
+            ]
+          }
+        },
+        {
+          "id": "npc005",
+          "nombre": "Myra",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Myra.png",
+          "posicion": {
+            "x": 1660,
+            "y": 3320
+          },
+          "conversation_default": "Las rutas cambian según la actividad orbital.",
+          "dialogos": {
+            "inicio": [
+              "Ya confirmé el corredor este.",
+              "Aún debes visitar el último punto."
+            ],
+            "en_progreso": [
+              "Te falta consolidar el reporte."
+            ],
+            "completado": [
+              "Mi parte de la cartografía ya fue aprobada."
+            ]
+          }
+        },
+        {
+          "id": "npc006",
+          "nombre": "Nyra",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Nyra.png",
+          "posicion": {
+            "x": 1980,
+            "y": 3780
+          },
+          "conversation_default": "No puedo liberar el tránsito sin autorización.",
+          "dialogos": {
+            "inicio": [
+              "Este sector quedó libre de interferencias.",
+              "Con esto puedes cerrar la inspección."
+            ],
+            "en_progreso": [
+              "Termina de registrar las rutas."
+            ],
+            "completado": [
+              "La navegación local quedó certificada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m2s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc004",
+          "titulo": "Habla con Manuel",
+          "descripcion": "Recibe la solicitud de cartografía.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc004",
+            "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+            "posicion": {
+              "x": 1320,
+              "y": 3580
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m2s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc005",
+          "titulo": "Habla con Myra",
+          "descripcion": "Recoge el segundo informe de tránsito.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc005",
+            "imagen": "../assets/avatares/npc/mapa1/Myra.png",
+            "posicion": {
+              "x": 1660,
+              "y": 3320
+            }
+          },
+          "otorgaItems": [
+            {
+              "id": "agua",
+              "cantidad": 1
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "id": "m2s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc006",
+          "titulo": "Habla con Nyra",
+          "descripcion": "Completa la inspección de navegación.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc006",
+            "imagen": "../assets/avatares/npc/mapa1/Nyra.png",
+            "posicion": {
+              "x": 1980,
+              "y": 3780
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 5,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m3",
+      "nombre": "Bitácora de resonancia",
+      "tipo": "diaria",
+      "clasificacion": "inicio",
+      "descripcion": "Activa una cadena de diálogo con tres operadores para registrar una resonancia detectada en el mapa.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 2,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc007",
+          "nombre": "Astra",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Astra.png",
+          "posicion": {
+            "x": 420,
+            "y": 3120
+          },
+          "conversation_default": "Todavía no cierro el registro de resonancia.",
+          "dialogos": {
+            "inicio": [
+              "Una señal extraña cruzó el observatorio.",
+              "Habla con Cyra y Elara para cerrar el registro."
+            ],
+            "en_progreso": [
+              "Aún faltan dos firmas por validar."
+            ],
+            "completado": [
+              "La resonancia quedó archivada."
+            ]
+          }
+        },
+        {
+          "id": "npc008",
+          "nombre": "Cyra",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Cyra.png",
+          "posicion": {
+            "x": 820,
+            "y": 2940
+          },
+          "conversation_default": "Esa frecuencia no parece natural.",
+          "dialogos": {
+            "inicio": [
+              "La señal tuvo una variación breve.",
+              "Elara debe confirmar el último patrón."
+            ],
+            "en_progreso": [
+              "Falta la última validación del registro."
+            ],
+            "completado": [
+              "Mi lectura ya fue incorporada."
+            ]
+          }
+        },
+        {
+          "id": "npc009",
+          "nombre": "Elara",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Elara.png",
+          "posicion": {
+            "x": 1180,
+            "y": 3260
+          },
+          "conversation_default": "No he liberado todavía el archivo central.",
+          "dialogos": {
+            "inicio": [
+              "La secuencia quedó confirmada.",
+              "Ya puedes finalizar el registro."
+            ],
+            "en_progreso": [
+              "Completa la cadena de resonancia."
+            ],
+            "completado": [
+              "El archivo de resonancia quedó sellado."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m3s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc007",
+          "titulo": "Habla con Astra",
+          "descripcion": "Recibe el reporte inicial de resonancia.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc007",
+            "imagen": "../assets/avatares/npc/mapa1/Astra.png",
+            "posicion": {
+              "x": 420,
+              "y": 3120
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m3s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc008",
+          "titulo": "Habla con Cyra",
+          "descripcion": "Registra la variación de la señal.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc008",
+            "imagen": "../assets/avatares/npc/mapa1/Cyra.png",
+            "posicion": {
+              "x": 820,
+              "y": 2940
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m3s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc009",
+          "titulo": "Habla con Elara",
+          "descripcion": "Cierra la bitácora de resonancia.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc009",
+            "imagen": "../assets/avatares/npc/mapa1/Elara.png",
+            "posicion": {
+              "x": 1180,
+              "y": 3260
+            }
+          },
+          "otorgaItems": [
+            {
+              "id": "corazon",
+              "cantidad": 1
+            }
+          ]
+        }
+      ],
+      "recompensas": {
+        "iq": 6,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m4",
+      "nombre": "Circuito de observación",
+      "tipo": "diaria",
+      "clasificacion": "inicio",
+      "descripcion": "Consulta a tres técnicos y completa una cadena de observación básica del mapa.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 3,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc010",
+          "nombre": "Eira",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+          "posicion": {
+            "x": 1480,
+            "y": 3010
+          },
+          "conversation_default": "Todavía estoy revisando el circuito óptico.",
+          "dialogos": {
+            "inicio": [
+              "Una línea de observación quedó incompleta.",
+              "Consulta con Lyra y Vanya para finalizarla."
+            ],
+            "en_progreso": [
+              "Aún no has completado el circuito."
+            ],
+            "completado": [
+              "El circuito de observación quedó activo."
+            ]
+          }
+        },
+        {
+          "id": "npc011",
+          "nombre": "Lyra",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+          "posicion": {
+            "x": 1820,
+            "y": 2860
+          },
+          "conversation_default": "Estoy afinando la lente secundaria.",
+          "dialogos": {
+            "inicio": [
+              "Mi lente ya fue alineada.",
+              "Solo falta confirmar el enlace con Vanya."
+            ],
+            "en_progreso": [
+              "Sigue con la inspección."
+            ],
+            "completado": [
+              "La alineación quedó aprobada."
+            ]
+          }
+        },
+        {
+          "id": "npc012",
+          "nombre": "Vanya",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Vanya.png",
+          "posicion": {
+            "x": 2220,
+            "y": 3180
+          },
+          "conversation_default": "No liberaré el circuito sin confirmación completa.",
+          "dialogos": {
+            "inicio": [
+              "La última lectura coincide con el patrón esperado.",
+              "Ya puedes completar el circuito."
+            ],
+            "en_progreso": [
+              "Asegura todas las lecturas antes de cerrar."
+            ],
+            "completado": [
+              "El circuito quedó funcionando sin fallos."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m4s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc010",
+          "titulo": "Habla con Eira",
+          "descripcion": "Recibe la orden de observación.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc010",
+            "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+            "posicion": {
+              "x": 1480,
+              "y": 3010
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m4s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc011",
+          "titulo": "Habla con Lyra",
+          "descripcion": "Recoge el segundo ajuste del circuito.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc011",
+            "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+            "posicion": {
+              "x": 1820,
+              "y": 2860
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m4s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc012",
+          "titulo": "Habla con Vanya",
+          "descripcion": "Finaliza el circuito de observación.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc012",
+            "imagen": "../assets/avatares/npc/mapa1/Vanya.png",
+            "posicion": {
+              "x": 2220,
+              "y": 3180
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 6,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m5",
+      "nombre": "Mensajes del corredor norte",
+      "tipo": "secundaria",
+      "clasificacion": "inicio",
+      "descripcion": "Encadena tres conversaciones para registrar avisos del corredor norte del mapa.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 4,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc013",
+          "nombre": "Vexa",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+          "posicion": {
+            "x": 2480,
+            "y": 3680
+          },
+          "conversation_default": "Todavía no he terminado de distribuir los avisos.",
+          "dialogos": {
+            "inicio": [
+              "Los reportes del corredor norte llegaron incompletos.",
+              "Consulta con Zevran y Ziria para cerrar la cadena."
+            ],
+            "en_progreso": [
+              "Aún faltan avisos por registrar."
+            ],
+            "completado": [
+              "Todos los avisos fueron archivados."
+            ]
+          }
+        },
+        {
+          "id": "npc014",
+          "nombre": "Zevran",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Zevran.png",
+          "posicion": {
+            "x": 2780,
+            "y": 3420
+          },
+          "conversation_default": "El corredor sigue bajo monitoreo.",
+          "dialogos": {
+            "inicio": [
+              "Mi aviso ya está listo.",
+              "Debes llevar el reporte final con Ziria."
+            ],
+            "en_progreso": [
+              "Todavía no termina la distribución."
+            ],
+            "completado": [
+              "Mi aviso ya quedó entregado."
+            ]
+          }
+        },
+        {
+          "id": "npc015",
+          "nombre": "Ziria",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Ziria.png",
+          "posicion": {
+            "x": 3140,
+            "y": 3890
+          },
+          "conversation_default": "No puedo cerrar el registro hasta recibir todos los datos.",
+          "dialogos": {
+            "inicio": [
+              "El informe final coincide con las lecturas del corredor.",
+              "Puedes dar por finalizada la cadena."
+            ],
+            "en_progreso": [
+              "Asegura todos los avisos antes del cierre."
+            ],
+            "completado": [
+              "La cadena de avisos quedó consolidada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m5s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc013",
+          "titulo": "Habla con Vexa",
+          "descripcion": "Recibe la ruta de mensajes del corredor norte.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc013",
+            "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+            "posicion": {
+              "x": 2480,
+              "y": 3680
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m5s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc014",
+          "titulo": "Habla con Zevran",
+          "descripcion": "Recoge el segundo aviso del corredor.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc014",
+            "imagen": "../assets/avatares/npc/mapa1/Zevran.png",
+            "posicion": {
+              "x": 2780,
+              "y": 3420
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m5s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc015",
+          "titulo": "Habla con Ziria",
+          "descripcion": "Cierra el registro del corredor norte.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc015",
+            "imagen": "../assets/avatares/npc/mapa1/Ziria.png",
+            "posicion": {
+              "x": 3140,
+              "y": 3890
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 7,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m6",
+      "nombre": "Anillo de confirmación",
+      "tipo": "secundaria",
+      "clasificacion": "inicio",
+      "descripcion": "Valida una secuencia de contactos para confirmar el anillo externo del observatorio.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 5,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc016",
+          "nombre": "Alira",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+          "posicion": {
+            "x": 760,
+            "y": 3640
+          },
+          "conversation_default": "Aún no cierro el anillo de confirmación.",
+          "dialogos": {
+            "inicio": [
+              "El anillo externo necesita tres firmas.",
+              "Habla con Selka y Syra para completarlas."
+            ],
+            "en_progreso": [
+              "Todavía faltan firmas de validación."
+            ],
+            "completado": [
+              "El anillo externo ya fue confirmado."
+            ]
+          }
+        },
+        {
+          "id": "npc017",
+          "nombre": "Selka",
+          "rol": "informante",
+          "imagen": "../assets/avatares/npc/mapa1/Selka.png",
+          "posicion": {
+            "x": 1120,
+            "y": 3380
+          },
+          "conversation_default": "Mi firma no será válida sin el sello final.",
+          "dialogos": {
+            "inicio": [
+              "Mi firma ya está lista.",
+              "Syra debe registrar el cierre del anillo."
+            ],
+            "en_progreso": [
+              "Aún no completas la validación."
+            ],
+            "completado": [
+              "Mi firma quedó asentada."
+            ]
+          }
+        },
+        {
+          "id": "npc018",
+          "nombre": "Syra",
+          "rol": "cierre_informativo",
+          "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+          "posicion": {
+            "x": 1460,
+            "y": 3710
+          },
+          "conversation_default": "No puedo sellar el anillo sin la secuencia completa.",
+          "dialogos": {
+            "inicio": [
+              "La secuencia ya coincide con los registros.",
+              "Puedes cerrar el anillo externo."
+            ],
+            "en_progreso": [
+              "Completa primero la cadena de confirmación."
+            ],
+            "completado": [
+              "El sello del anillo fue aplicado."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m6s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc016",
+          "titulo": "Habla con Alira",
+          "descripcion": "Recibe la solicitud de firmas del anillo.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc016",
+            "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+            "posicion": {
+              "x": 760,
+              "y": 3640
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m6s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc017",
+          "titulo": "Habla con Selka",
+          "descripcion": "Recoge la segunda firma del anillo.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc017",
+            "imagen": "../assets/avatares/npc/mapa1/Selka.png",
+            "posicion": {
+              "x": 1120,
+              "y": 3380
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m6s3",
+          "tipo": "hablar_npc",
+          "npcId": "npc018",
+          "titulo": "Habla con Syra",
+          "descripcion": "Sella la validación final del anillo.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc018",
+            "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+            "posicion": {
+              "x": 1460,
+              "y": 3710
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 7,
+        "cosmonedas": 0,
+        "items": [],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m7",
+      "nombre": "Reinicio de bobina",
+      "tipo": "secundaria",
+      "clasificacion": "diaria",
+      "descripcion": "Reúne materiales para reiniciar una bobina auxiliar y repórtalo al técnico principal.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 5,
+        "misionesRequeridas": [
+          "m1"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc019",
+          "nombre": "Arkon",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+          "posicion": {
+            "x": 2260,
+            "y": 2980
+          },
+          "conversation_default": "La bobina sigue descargada.",
+          "dialogos": {
+            "inicio": [
+              "La bobina auxiliar quedó sin energía.",
+              "Consigue materiales y entrégalos para reiniciar el sistema."
+            ],
+            "en_progreso": [
+              "Todavía no tienes los componentes de la bobina."
+            ],
+            "completado": [
+              "Buen trabajo. La bobina volvió a funcionar."
+            ]
+          }
+        },
+        {
+          "id": "npc020",
+          "nombre": "Valen",
+          "rol": "intercambio",
+          "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+          "posicion": {
+            "x": 2439,
+            "y": 4800
+          },
+          "conversation_default": "Sin materiales no podré reparar nada.",
+          "dialogos": {
+            "inicio": [
+              "Necesito los componentes exactos para reiniciar la bobina."
+            ],
+            "en_progreso": [
+              "Aún faltan materiales para completar el reinicio."
+            ],
+            "completado": [
+              "La bobina ya quedó reensamblada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m7s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc019",
+          "titulo": "Habla con Arkon",
+          "descripcion": "Recibe la solicitud de reinicio de bobina.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc019",
+            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "posicion": {
+              "x": 2260,
+              "y": 2980
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m7s2",
+          "tipo": "recolectar_items",
+          "titulo": "Recolecta los materiales",
+          "descripcion": "Reúne 2 cables y 1 cobre para el reinicio.",
+          "objetivosItems": [
+            {
+              "id": "cable",
+              "cantidad": 2
+            },
+            {
+              "id": "cobre",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "bobina_materiales_01",
+            "imagen": "../assets/items/cable.svg",
+            "posicion": {
+              "x": 1850,
+              "y": 2380
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m7s3",
+          "tipo": "hablar_npc_entrega",
+          "npcId": "npc020",
+          "titulo": "Entrega los materiales a Valen",
+          "descripcion": "Valen reiniciará la bobina auxiliar.",
+          "entregaItems": [
+            {
+              "id": "cable",
+              "cantidad": 2
+            },
+            {
+              "id": "cobre",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc020",
+            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+            "posicion": {
+              "x": 2620,
+              "y": 2800
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m7s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc019",
+          "titulo": "Regresa con Arkon",
+          "descripcion": "Confirma que la bobina fue reiniciada.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc019",
+            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "posicion": {
+              "x": 2260,
+              "y": 2980
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 10,
+        "cosmonedas": 8,
+        "items": [
+          {
+            "id": "cable",
+            "cantidad": 1
+          },
+          {
+            "id": "bateria",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m8",
+      "nombre": "Pulso del corredor violeta",
+      "tipo": "secundaria",
+      "clasificacion": "diaria",
+      "descripcion": "Recoge insumos para estabilizar el corredor violeta y entrégalos a la especialista designada.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 6,
+        "misionesRequeridas": [
+          "m2"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc021",
+          "nombre": "Orion",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+          "posicion": {
+            "x": 3000,
+            "y": 3120
+          },
+          "conversation_default": "El pulso del corredor aún es inestable.",
+          "dialogos": {
+            "inicio": [
+              "El corredor violeta está perdiendo estabilidad.",
+              "Consigue los insumos y entrégalos para reactivar su pulso."
+            ],
+            "en_progreso": [
+              "Todavía faltan componentes para estabilizar el corredor."
+            ],
+            "completado": [
+              "El corredor violeta volvió a sincronizarse."
+            ]
+          }
+        },
+        {
+          "id": "npc022",
+          "nombre": "Kael",
+          "rol": "intercambio",
+          "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+          "posicion": {
+            "x": 3380,
+            "y": 2880
+          },
+          "conversation_default": "No puedo reconstruir el pulso sin insumos.",
+          "dialogos": {
+            "inicio": [
+              "Trae los materiales correctos y estabilizaré el corredor."
+            ],
+            "en_progreso": [
+              "Aún no están todos los materiales necesarios."
+            ],
+            "completado": [
+              "El pulso quedó restablecido."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m8s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc021",
+          "titulo": "Habla con Orion",
+          "descripcion": "Recibe la solicitud de estabilización del corredor violeta.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc021",
+            "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+            "posicion": {
+              "x": 3000,
+              "y": 3120
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m8s2",
+          "tipo": "recolectar_items",
+          "titulo": "Recolecta los insumos",
+          "descripcion": "Reúne 2 hierro y 1 bateria para reactivar el corredor.",
+          "objetivosItems": [
+            {
+              "id": "hierro",
+              "cantidad": 2
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "corredor_violeta_01",
+            "imagen": "../assets/items/hierro.svg",
+            "posicion": {
+              "x": 2360,
+              "y": 2180
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m8s3",
+          "tipo": "hablar_npc_entrega",
+          "npcId": "npc022",
+          "titulo": "Entrega los insumos a Kael",
+          "descripcion": "Kael estabilizará el corredor violeta.",
+          "entregaItems": [
+            {
+              "id": "hierro",
+              "cantidad": 2
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc022",
+            "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+            "posicion": {
+              "x": 3380,
+              "y": 2880
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m8s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc021",
+          "titulo": "Regresa con Orion",
+          "descripcion": "Confirma que el corredor volvió a estabilizarse.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc021",
+            "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+            "posicion": {
+              "x": 3000,
+              "y": 3120
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 10,
+        "cosmonedas": 8,
+        "items": [
+          {
+            "id": "corazon",
+            "cantidad": 1
+          },
+          {
+            "id": "hierro",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m9",
+      "nombre": "Reparación de consola fría",
+      "tipo": "secundaria",
+      "clasificacion": "diaria",
+      "descripcion": "Recoge materiales para reparar una consola congelada del laboratorio exterior.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 7,
+        "misionesRequeridas": [
+          "m3"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc023",
+          "nombre": "Samnder",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+          "posicion": {
+            "x": 3600,
+            "y": 3520
+          },
+          "conversation_default": "La consola fría sigue fuera de línea.",
+          "dialogos": {
+            "inicio": [
+              "La consola del laboratorio quedó congelada.",
+              "Reúne las piezas necesarias y entrégalas para reiniciar el panel."
+            ],
+            "en_progreso": [
+              "Aún no tengo todas las piezas necesarias."
+            ],
+            "completado": [
+              "La consola fría volvió a responder."
+            ]
+          }
+        },
+        {
+          "id": "npc024",
+          "nombre": "Sena",
+          "rol": "intercambio",
+          "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+          "posicion": {
+            "x": 3940,
+            "y": 3240
+          },
+          "conversation_default": "Sin recursos no podré reactivar la consola.",
+          "dialogos": {
+            "inicio": [
+              "Trae los materiales y me encargaré del reinicio."
+            ],
+            "en_progreso": [
+              "Todavía no reuniste lo necesario."
+            ],
+            "completado": [
+              "La consola ya fue reactivada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m9s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc023",
+          "titulo": "Habla con Samnder",
+          "descripcion": "Recibe la orden de reparación de la consola fría.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc023",
+            "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+            "posicion": {
+              "x": 3600,
+              "y": 3520
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m9s2",
+          "tipo": "recolectar_items",
+          "titulo": "Recolecta los materiales",
+          "descripcion": "Reúne 2 plastico y 1 cable para la reparación.",
+          "objetivosItems": [
+            {
+              "id": "plastico",
+              "cantidad": 2
+            },
+            {
+              "id": "cable",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "consola_fria_01",
+            "imagen": "../assets/items/plastico.svg",
+            "posicion": {
+              "x": 2790,
+              "y": 1920
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m9s3",
+          "tipo": "hablar_npc_entrega",
+          "npcId": "npc024",
+          "titulo": "Entrega los materiales a Sena",
+          "descripcion": "Sena reconstruirá el panel congelado.",
+          "entregaItems": [
+            {
+              "id": "plastico",
+              "cantidad": 2
+            },
+            {
+              "id": "cable",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc024",
+            "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+            "posicion": {
+              "x": 3940,
+              "y": 3240
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m9s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc023",
+          "titulo": "Regresa con Samnder",
+          "descripcion": "Confirma que la consola quedó operativa.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc023",
+            "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+            "posicion": {
+              "x": 3600,
+              "y": 3520
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 11,
+        "cosmonedas": 10,
+        "items": [
+          {
+            "id": "plastico",
+            "cantidad": 1
+          },
+          {
+            "id": "bateria",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m10",
+      "nombre": "Estación de mezcla orbital",
+      "tipo": "secundaria",
+      "clasificacion": "diaria",
+      "descripcion": "Reúne componentes líquidos y entrégalos para activar una estación de mezcla orbital.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 8,
+        "misionesRequeridas": [
+          "m4"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc025",
+          "nombre": "Cyron",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+          "posicion": {
+            "x": 4160,
+            "y": 2920
+          },
+          "conversation_default": "La estación orbital no puede mezclar sin reactivos.",
+          "dialogos": {
+            "inicio": [
+              "La estación de mezcla se quedó sin insumos base.",
+              "Reúne los materiales y entrégalos para volver a activarla."
+            ],
+            "en_progreso": [
+              "Aún no tienes todos los reactivos necesarios."
+            ],
+            "completado": [
+              "La estación orbital volvió a funcionar."
+            ]
+          }
+        },
+        {
+          "id": "npc026",
+          "nombre": "Darek",
+          "rol": "intercambio",
+          "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+          "posicion": {
+            "x": 4520,
+            "y": 3180
+          },
+          "conversation_default": "No puedo preparar la mezcla sin los ingredientes exactos.",
+          "dialogos": {
+            "inicio": [
+              "Trae el baso de agua y la sal. Con eso activaré la estación."
+            ],
+            "en_progreso": [
+              "Todavía faltan reactivos para la mezcla."
+            ],
+            "completado": [
+              "La mezcla ya fue procesada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m10s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc025",
+          "titulo": "Habla con Cyron",
+          "descripcion": "Recibe la solicitud para activar la estación de mezcla orbital.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc025",
+            "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+            "posicion": {
+              "x": 4160,
+              "y": 2920
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m10s2",
+          "tipo": "recolectar_items",
+          "titulo": "Recolecta los reactivos",
+          "descripcion": "Reúne 1 baso_de_agua y 1 sal para la estación orbital.",
+          "objetivosItems": [
+            {
+              "id": "baso_de_agua",
+              "cantidad": 1
+            },
+            {
+              "id": "sal",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "mezcla_orbital_01",
+            "imagen": "../assets/items/basoAgua.svg",
+            "posicion": {
+              "x": 3120,
+              "y": 1610
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m10s3",
+          "tipo": "hablar_npc_entrega",
+          "npcId": "npc026",
+          "titulo": "Entrega los reactivos a Darek",
+          "descripcion": "Darek reactivará la estación orbital.",
+          "entregaItems": [
+            {
+              "id": "baso_de_agua",
+              "cantidad": 1
+            },
+            {
+              "id": "sal",
+              "cantidad": 1
+            }
+          ],
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc026",
+            "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+            "posicion": {
+              "x": 4520,
+              "y": 3180
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m10s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc025",
+          "titulo": "Regresa con Cyron",
+          "descripcion": "Confirma que la estación quedó reactivada.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc025",
+            "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+            "posicion": {
+              "x": 4160,
+              "y": 2920
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 11,
+        "cosmonedas": 10,
+        "items": [
+          {
+            "id": "corazon",
+            "cantidad": 1
+          },
+          {
+            "id": "agua",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    },
+    {
+      "id": "m11",
+      "nombre": "Secuencia del algoritmo velado",
+      "tipo": "principal",
+      "clasificacion": "diaria",
+      "descripcion": "Recorre una cadena corta de contactos, activa un reto de codificación y vuelve con el iniciador para desbloquear un algoritmo del mapa.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 10,
+        "misionesRequeridas": [
+          "m7",
+          "m8"
+        ],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc027",
+          "nombre": "Maese_Ion",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
+          "posicion": {
+            "x": 3500,
+            "y": 3820
+          },
+          "conversation_default": "El algoritmo aún no ha sido revelado.",
+          "dialogos": {
+            "inicio": [
+              "Ha llegado el momento de descifrar la secuencia velada.",
+              "Busca a Aelys y activa el núcleo lógico del sector."
+            ],
+            "en_progreso": [
+              "La secuencia aún no ha sido completada."
+            ],
+            "completado": [
+              "Has desbloqueado el algoritmo del mapa."
+            ]
+          }
+        },
+        {
+          "id": "npc028",
+          "nombre": "Aelys",
+          "rol": "contacto",
+          "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+          "posicion": {
+            "x": 3880,
+            "y": 3620
+          },
+          "conversation_default": "La secuencia no será entregada fuera de protocolo.",
+          "dialogos": {
+            "inicio": [
+              "Aquí está la pista inicial del patrón lógico.",
+              "Dirígete al núcleo y completa la secuencia."
+            ],
+            "en_progreso": [
+              "Todavía debes cerrar la secuencia del núcleo."
+            ],
+            "completado": [
+              "Mi parte del patrón ya fue entregada."
+            ]
+          }
+        },
+        {
+          "id": "npc029",
+          "nombre": "Orbek",
+          "rol": "cierre",
+          "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+          "posicion": {
+            "x": 4340,
+            "y": 3900
+          },
+          "conversation_default": "El núcleo no responde si la secuencia sigue abierta.",
+          "dialogos": {
+            "inicio": [
+              "La secuencia ya fue recibida.",
+              "Regresa con Maese Ion para cerrar el algoritmo."
+            ],
+            "en_progreso": [
+              "Primero debes resolver el núcleo lógico."
+            ],
+            "completado": [
+              "La secuencia ha quedado confirmada."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m11s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc027",
+          "titulo": "Habla con Maese Ion",
+          "descripcion": "Recibe la misión principal del algoritmo velado.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc027",
+            "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
+            "posicion": {
+              "x": 3500,
+              "y": 3820
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m11s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc028",
+          "titulo": "Habla con Aelys",
+          "descripcion": "Obtén la pista inicial del patrón lógico.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc028",
+            "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+            "posicion": {
+              "x": 3880,
+              "y": 3620
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 3,
+          "id": "m11s3",
+          "tipo": "completar_reto",
+          "titulo": "Completa el reto del núcleo lógico",
+          "descripcion": "Resuelve la secuencia codificada del núcleo central.",
+          "retoId": "reto_codificacion_01",
+          "llamar_funcion_reto": "reto_codificacion_01()",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "objeto",
+            "objetivoId": "reto_codificacion_01",
+            "imagen": "../assets/items/diodoLazer.svg",
+            "posicion": {
+              "x": 3810,
+              "y": 1540
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m11s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc029",
+          "titulo": "Habla con Orbek",
+          "descripcion": "Entrega la secuencia decodificada y desbloquea el cierre.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc029",
+            "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+            "posicion": {
+              "x": 4340,
+              "y": 3900
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 5,
+          "id": "m11s5",
+          "tipo": "hablar_npc",
+          "npcId": "npc027",
+          "titulo": "Regresa con Maese Ion",
+          "descripcion": "Cierra el algoritmo velado y finaliza la misión principal.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc027",
+            "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
+            "posicion": {
+              "x": 3500,
+              "y": 3820
+            }
+          },
+          "otorgaItems": []
+        }
+      ],
+      "recompensas": {
+        "iq": 20,
+        "cosmonedas": 20,
+        "items": [
+          {
+            "id": "bateria",
+            "cantidad": 1
+          }
+        ],
+        "codigoSecreto": null
+      }
+    }
+  ]
+}
+
+

@@ -1,0 +1,1908 @@
+{
+  "enemigos": [
+    {
+      "id": "enemy_m2_entrada_basico_01",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 43,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1920,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_02",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2050,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_armado_03",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2180,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_04",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2310,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_05",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 43,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2440,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_armado_06",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2570,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_07",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 49,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2700,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_08",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2830,
+        "y": 2380
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_armado_09",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1985,
+        "y": 2510
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_10",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2115,
+        "y": 2510
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_basico_11",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 49,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9,
+      "radioVision": 400,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2505,
+        "y": 2510
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_entrada_armado_12",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2635,
+        "y": 2510
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_01",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 8,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.3000000000000003,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 60,
+        "y": 60
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_02",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 9,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.4000000000000004,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1110,
+        "y": 60
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_03",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 60,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.5,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2130,
+        "y": 60
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_04",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 54,
+      "puntos_de_ataque": 8,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.2,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2860,
+        "y": 60
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_05",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 9,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.3000000000000003,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3840,
+        "y": 60
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_06",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 58,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.4000000000000004,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1655,
+        "y": 130
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_07",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 60,
+      "puntos_de_ataque": 8,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.5,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 600,
+        "y": 300
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_08",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 54,
+      "puntos_de_ataque": 9,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.2,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3210,
+        "y": 300
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_volador_09",
+      "nombre": "Reptiliano Volador",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/reptiliano-volador.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoVolador",
+      "Speed_enemy": 2.3000000000000003,
+      "radioVision": 430,
+      "dialogos": [
+        "Skrree...!!",
+        "Dominaremos los cielos",
+        "La especie superior vencerá",
+        "Nadie escapará desde el aire"
+      ],
+      "dialogos_Atack": [
+        "¡Desde el cielo!",
+        "¡Cazar objetivo!",
+        "¡Picado mortal!",
+        "¡Atrápenlo!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3400,
+        "y": 300
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemIntermedio"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_10",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.1,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1390,
+        "y": 550
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_11",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 59,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.2,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1950,
+        "y": 550
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_12",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 62,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 1.9,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4890,
+        "y": 630
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_13",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 65,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 200,
+        "y": 620
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_14",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 68,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.1,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 970,
+        "y": 620
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_15",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.2,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3318,
+        "y": 620
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_16",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 59,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 1.9,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3490,
+        "y": 620
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_17",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 62,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4260,
+        "y": 620
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_18",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 65,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.1,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 690,
+        "y": 1045
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_19",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 68,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.2,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2860,
+        "y": 970
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_20",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 56,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 1.9,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3560,
+        "y": 970
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_armado_21",
+      "nombre": "Comandante reptiliano",
+      "tipo": "armado",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+      "puntos_de_vida": 59,
+      "puntos_de_ataque": 7,
+      "atackAnimation": "ataqueEnemigoArmado",
+      "Speed_enemy": 2.0,
+      "radioVision": 420,
+      "dialogos": [
+        "grr...!!",
+        "Zona restringida",
+        "La base será defendida",
+        "Nadie entrará vivo"
+      ],
+      "dialogos_Atack": [
+        "¡Fuego!",
+        "¡Eliminar al intruso!",
+        "¡Te destruiré!",
+        "¡Defiendan la base!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1530,
+        "y": 1040
+      },
+      "ejecucion_script": {
+        "al_morir": "dropConsumibleBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_22",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 44,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2090,
+        "y": 1040
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_23",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9000000000000001,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4450,
+        "y": 1040
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_24",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 48,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3150,
+        "y": 1090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_25",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7000000000000002,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 60,
+        "y": 1180
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_26",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 42,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4010,
+        "y": 1147
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_27",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 44,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4680,
+        "y": 1320
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_28",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1180,
+        "y": 1460
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_29",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 48,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7000000000000002,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2080,
+        "y": 1460
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_30",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3750,
+        "y": 1460
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_31",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 42,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9000000000000001,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1740,
+        "y": 1530
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_32",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 44,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2860,
+        "y": 1530
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_33",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7000000000000002,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4495,
+        "y": 1570
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_34",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 48,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 410,
+        "y": 1600
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_35",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9000000000000001,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3210,
+        "y": 1600
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_36",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 42,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4680,
+        "y": 1810
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_37",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 44,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7000000000000002,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 60,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_38",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 780,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_39",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 48,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9000000000000001,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1460,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_40",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 40,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.6,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2160,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_41",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 42,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.7000000000000002,
+      "radioVision": 430,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 2790,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_42",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 44,
+      "puntos_de_ataque": 5,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 390,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 3840,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_m2_laberinto_basico_43",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 46,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.9000000000000001,
+      "radioVision": 410,
+      "dialogos": [
+        "grr...!!",
+        "Gr...!!",
+        "La dominación del mundo",
+        "La supervivencia de nuestra especie"
+      ],
+      "dialogos_Atack": [
+        "¡Intruso detectado!",
+        "¡No escaparás!",
+        "¡Atacar!",
+        "¡El mundo será nuestro!"
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 4890,
+        "y": 2090
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_dragon_de_comodo_01",
+      "nombre": "VELKARION, COLMILLO DE TITANIO",
+      "tipo": "jefe",
+      "imagen": "../assets/avatares/enemy/dragon-de-comodo.png",
+      "puntos_de_vida": 500,
+      "puntos_de_ataque": 18,
+      "atackAnimation": "ataqueEnemigoJefeComodo",
+      "Speed_enemy": 1.2,
+      "radioVision": 600,
+      "dialogos": [
+        "GRAAAARRR...!!",
+        "El portal será abierto",
+        "La dominación del mundo ha comenzado",
+        "Tu especie caerá"
+      ],
+      "dialogos_Atack": [
+        "¡Te aplastaré!",
+        "¡Nadie sobrevive al dragón!",
+        "¡Ríndete ahora!",
+        "¡La tierra me pertenece!"
+      ],
+      "tamano": {
+        "w": 320,
+        "h": 320
+      },
+      "posicion": {
+        "x": 4817,
+        "y": 100
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemsJefe"
+      }
+    }
+  ]
+}
