@@ -13726,6 +13726,7 @@ function resetEscapeArcillaEnemigo(enemy) {
   enemy.modoEscape = "normal";
   enemy.arcillaObjetivoId = null;
   enemy.cooldownGolpeEscape = 0;
+  enemy.tiempoEscapeArcilla = 0;
 }
 
 function enemigoEstaCercaDeBloqueArcilla(enemy, bloque, margen = 18) {
@@ -13798,6 +13799,7 @@ if (!enemy.rodeando) return false;
   if (!bloque) return false;
 
   enemy.modoEscape = "buscar_arcilla";
+  enemy.tiempoEscapeArcilla = 0;
   enemy.arcillaObjetivoId = bloque.zona_id;
   enemy.cooldownGolpeEscape = 0;
   enemy.tiempoEncerrado = 0;
@@ -13808,6 +13810,18 @@ if (!enemy.rodeando) return false;
 }
 
 function procesarEscapeArcillaEnemigo(enemy, dtMs) {
+  // ⏱️ Contador de tiempo en modo escape
+enemy.tiempoEscapeArcilla = (enemy.tiempoEscapeArcilla || 0) + dtMs;
+
+// ⛔ Si pasan 0.5 segundos, salir del modo escape
+if (enemy.tiempoEscapeArcilla >= 300) {
+  enemy.modoEscape = "normal";
+  enemy.arcillaObjetivoId = null;
+  enemy.cooldownGolpeEscape = 0;
+  enemy.tiempoEscapeArcilla = 0;
+  return false;
+}
+
   if (!enemy) return false;
 
   const activo = intentarActivarEscapeArcillaEnemigo(enemy);

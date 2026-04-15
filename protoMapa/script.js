@@ -95,6 +95,9 @@ Así en el futuro cambias una sola ruta y no todo script.js.
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
+let userPostX = 2500;
+let userPostY = 4300;
+
 function getSettingSfxVolume() {
   const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
   return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.8;
@@ -352,8 +355,8 @@ function activarEfectoEscudo(tipo, orientacion = "down") {
 
 //--Variables al momento de morir (inicio)
 let gameOverActive = false;
-const PLAYER_SPAWN_X = 3200;
-const PLAYER_SPAWN_Y = 1024;
+const PLAYER_SPAWN_X = userPostX;
+const PLAYER_SPAWN_Y = userPostY;
 
 const gameOverState = {
   centinelaIzqImg: null,
@@ -378,7 +381,7 @@ const FRASES_VALIENTES = [
 ];
 
 //Mapa del juego
-const globalMap = "../assets/mapas/mapa1-5000x5000.svg"
+const globalMap = "../assets/mapas/mapa4-5000x5000.svg"
 const WORLD_W_GLOBAL = 5000
 const WORLD_H_GLOBAL = 5000
 
@@ -543,8 +546,8 @@ function openMetaMap() {
   const WORLD_W = WORLD_W_GLOBAL;
   const WORLD_H = WORLD_H_GLOBAL;
 
-  const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : 3200;
-  const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : 1024;
+  const playerX = (window.player && typeof window.player.x === "number") ? window.player.x : userPostX;
+  const playerY = (window.player && typeof window.player.y === "number") ? window.player.y : userPostY;
 
   wrapEl.insertAdjacentHTML(
     "beforeend",
@@ -6543,7 +6546,7 @@ window.addEventListener("keydown", (e) => {
 
   // Estado
   const player = {
-    x: 3200, y: 1024, speed: 3, //datos Avatar: Coordenadas - Velocidad
+    x: userPostX, y: userPostY, speed: 3, //datos Avatar: Coordenadas - Velocidad
     facing: "down", walking: false,
     frame: 0, frameTimer: 0, frameDurationMs: 150, blinkTimer: 0,
   };
@@ -13818,6 +13821,7 @@ function resetEscapeArcillaEnemigo(enemy) {
   enemy.modoEscape = "normal";
   enemy.arcillaObjetivoId = null;
   enemy.cooldownGolpeEscape = 0;
+  enemy.tiempoEscapeArcilla = 0;
 }
 
 function enemigoEstaCercaDeBloqueArcilla(enemy, bloque, margen = 18) {
@@ -13890,6 +13894,7 @@ if (!enemy.rodeando) return false;
   if (!bloque) return false;
 
   enemy.modoEscape = "buscar_arcilla";
+  enemy.tiempoEscapeArcilla = 0;
   enemy.arcillaObjetivoId = bloque.zona_id;
   enemy.cooldownGolpeEscape = 0;
   enemy.tiempoEncerrado = 0;
@@ -13900,6 +13905,18 @@ if (!enemy.rodeando) return false;
 }
 
 function procesarEscapeArcillaEnemigo(enemy, dtMs) {
+  // ⏱️ Contador de tiempo en modo escape
+enemy.tiempoEscapeArcilla = (enemy.tiempoEscapeArcilla || 0) + dtMs;
+
+// ⛔ Si pasan 0.5 segundos, salir del modo escape
+if (enemy.tiempoEscapeArcilla >= 300) {
+  enemy.modoEscape = "normal";
+  enemy.arcillaObjetivoId = null;
+  enemy.cooldownGolpeEscape = 0;
+  enemy.tiempoEscapeArcilla = 0;
+  return false;
+}
+
   if (!enemy) return false;
 
   const activo = intentarActivarEscapeArcillaEnemigo(enemy);

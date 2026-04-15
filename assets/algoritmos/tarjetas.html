@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prueba de tarjetas Enycosmic</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg-1: #090909;
+      --bg-2: #141414;
+      --line: rgba(255,255,255,.08);
+      --text: #f3e7c7;
+      --shadow: 0 20px 40px rgba(0,0,0,.45);
+      --radius: 22px;
+      --card-w: 240px;
+      --card-h: 420px;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(255,180,60,.08), transparent 30%),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      width: min(1400px, 100%);
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: clamp(1.6rem, 2vw, 2.2rem);
+      letter-spacing: .05em;
+      margin: 0 0 8px;
+    }
+
+    .sub {
+      text-align: center;
+      opacity: .8;
+      margin: 0 0 28px;
+      font-size: .95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 26px;
+      justify-items: center;
+    }
+
+    .card-slot {
+      perspective: 1400px;
+      width: var(--card-w);
+      user-select: none;
+    }
+
+    .card {
+      position: relative;
+      width: var(--card-w);
+      height: var(--card-h);
+      transform-style: preserve-3d;
+      cursor: grab;
+      transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      touch-action: none;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card.dragging {
+      transition: none;
+      box-shadow: 0 30px 60px rgba(0,0,0,.6);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      backface-visibility: hidden;
+      border: 1px solid var(--line);
+      background: #0f0f0f;
+    }
+
+    .face img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .back {
+      transform: rotateY(180deg);
+    }
+
+    .label {
+      text-align: center;
+      margin-top: 10px;
+      font-size: .95rem;
+      opacity: .9;
+      letter-spacing: .04em;
+    }
+
+    .hint {
+      margin-top: 26px;
+      text-align: center;
+      opacity: .72;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 560px) {
+      :root {
+        --card-w: 180px;
+        --card-h: 315px;
+      }
+      .grid {
+        gap: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="title">Prueba de tarjetas Enycosmic</h1>
+    <p class="sub">Arrastra cada tarjeta horizontalmente para voltearla.</p>
+
+    <div class="grid" id="grid"></div>
+
+    <p class="hint">Puedes reemplazar las rutas de las imágenes en el arreglo cards dentro del script.</p>
+  </div>
+
+  <script>
+    const backImage = "./reverso.png";
+
+    const cards = [
+      {
+        name: "Matlog",
+        front: "./matlog/tarjet.png"
+      },
+      {
+        name: "Tesla",
+        front: "./tesla/tarjet.png"
+      },
+      {
+        name: "Hacker",
+        front: "./hacker/tarjet.png"
+      },
+      {
+        name: "Voynich",
+        front: "./sonido/tarjet.png"
+      },
+      {
+        name: "Lógico",
+        front: "./logico/tarjet.png"
+      },
+      {
+        name: "Mecánica",
+        front: "./mecanica/tarjet.png"
+      }
+    ];
+
+    const grid = document.getElementById('grid');
+
+    cards.forEach((item, index) => {
+      const slot = document.createElement('div');
+      slot.className = 'card-slot';
+      slot.innerHTML = `
+        <div class="card" data-index="${index}" data-side="front" style="transform: rotateY(0deg)">
+          <div class="face front">
+            <img src="${item.front}" alt="Tarjeta ${item.name} frente" draggable="false">
+          </div>
+          <div class="face back">
+            <img src="${backImage}" alt="Tarjeta ${item.name} reverso" draggable="false">
+          </div>
+        </div>
+        <div class="label">${item.name}</div>
+      `;
+      grid.appendChild(slot);
+    });
+
+    document.querySelectorAll('.card').forEach(setupCardDrag);
+
+    function setupCardDrag(card) {
+      let dragging = false;
+      let startX = 0;
+      let currentRotation = card.dataset.side === 'back' ? 180 : 0;
+      let liveRotation = currentRotation;
+
+      card.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        startX = e.clientX;
+        liveRotation = currentRotation;
+        card.classList.add('dragging');
+        card.setPointerCapture(e.pointerId);
+      });
+
+      card.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        liveRotation = currentRotation + dx * 0.9;
+        card.style.transform = `rotateY(${liveRotation}deg)`;
+      });
+
+      function finishDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        card.classList.remove('dragging');
+
+        const normalized = normalizeDeg(liveRotation);
+        const toBack = normalized > 90 && normalized < 270;
+        currentRotation = toBack ? 180 : 0;
+        card.dataset.side = toBack ? 'back' : 'front';
+        card.style.transform = `rotateY(${currentRotation}deg)`;
+
+        try {
+          card.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+      }
+
+      card.addEventListener('pointerup', finishDrag);
+      card.addEventListener('pointercancel', finishDrag);
+      card.addEventListener('pointerleave', (e) => {
+        if (dragging && e.buttons === 0) finishDrag(e);
+      });
+
+      card.addEventListener('dblclick', () => {
+        currentRotation = currentRotation === 0 ? 180 : 0;
+        liveRotation = currentRotation;
+        card.dataset.side = currentRotation === 180 ? 'back' : 'front';
+        card.style.transform = `rotateY(${currentRotation}deg)`;
+      });
+    }
+
+    function normalizeDeg(deg) {
+      return ((deg % 360) + 360) % 360;
+    }
+  </script>
+</body>
+</html>
