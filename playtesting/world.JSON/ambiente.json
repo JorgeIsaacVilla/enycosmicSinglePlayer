@@ -6692,7 +6692,7 @@
   },
   {
     "zona_id": "coli__03_laboratiorio_01_oficina_01",
-    "color": "red",
+    "color": null,
     "tipo": "colisionables",
     "funcion": null,
     "x": 4376,
@@ -7585,13 +7585,25 @@
     "funcion": "tomarAguaDeFuente",
     "x": 2032,
     "y": 3099,
-    "w": 140,
-    "h": 140,
+    "w": 220,
+    "h": 220,
     "imagen": null,
     "zIndexBase": 3300,
     "sprites_1x10": "../assets/spriteAmbiente/spritesAmbiente.png",
-    "velocidad_movimiento": 1.1,
+    "velocidad_movimiento": 2.8,
     "sonido_ambiente": "../assets/song/ambiente/fuente.mp3"
+  },
+  {
+    "zona_id": "coli_fuente_laberinto",
+    "color": null,
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 2032,
+    "y": 3200,
+    "w": 220,
+    "h": 100,
+    "imagen": null,
+    "zIndexBase": 3300
   },
   {
     "zona_id": "basura_01",
@@ -7917,7 +7929,7 @@
   {
     "zona_id": "pc_Alien_01",
     "tipo": "visual cliqueable",
-    "funcion": "criptogramaAlienigena",
+    "funcion": "resolverCriptogramaDeMatlog",
     "x": 4741,
     "y": 80,
     "w": 220,

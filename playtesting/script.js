@@ -6912,9 +6912,285 @@ function continuarTrasGameOver() {
     return false;
   }
 
-  window.reto_codificacion_01 = function () {
-    openRetoPopup("reto_codificacion_01", completarRetoMission);
+  window.resolverCriptogramaDeMatlog = function () {
+    const overlayExistente = document.getElementById("matlog-criptograma-overlay");
+    if (overlayExistente) return;
+
+    const wrap = document.getElementById("wrap") || document.body;
+
+    wrap.insertAdjacentHTML("beforeend", `
+    <div id="matlog-criptograma-overlay" style="
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.78);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    ">
+      <div id="matlog-criptograma-box" style="
+        width: 100%;
+        max-width: 520px;
+        background-image: url('../assets/backgrounds/texturaAlien.png');
+        background-size: 100% 100%;
+        border: 3px solid #6ef7ff;
+        box-shadow: 0 0 25px rgba(110,247,255,.35);
+        padding: 18px;
+        color: #fff;
+      ">
+        <div style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 14px;
+        ">
+          <div style="
+            font-size: 22px;
+            font-weight: bold;
+            color: #6ef7ff;
+            text-align: left;
+            font-family:'arcade','monospace';
+          ">
+            ⟟⏃⌇⌿⏁⍜⌖⋔ ⌇⋏⏁ ⍀⏃⋔⏃ ⋔⏃⏁⌰⍜☌
+          </div>
+
+          <button id="cerrar-criptograma-matlog" type="button" style="
+            width: 36px;
+            height: 36px;
+            border: 2px solid #6ef7ff;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+          ">X</button>
+        </div>
+
+        <div style="
+          margin-bottom: 14px;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #d9faff;
+          text-align: left;
+          font-family:'arcade','monospace';
+        ">
+         ⧗ ⍜⍀⎅⟒⋏⏃ ⌰⏃⌇ ⌿⟟⟒⋉⏃⌇ ⎅⟒⌰ ☊⍜⎅⟒⌖ ⏃⌰⟟⟒⋏Í☌⟒⋏⏃ ⧗ </br>
+⌇ ⍀⟒☊⍜⋏⌇⏁⍀⎍⊬⟒ ⟒⌰ ☊⍀⟟⌿⏁⍜☌⍀⏃⋔⏃ ⎅⟒ ⋔⏃⏁⌰⍜☌ ⌇
+        </div>
+
+        <div id="matlog-puzzle-box" style="
+          position: relative;
+          margin: 0 auto 18px auto;
+          width: 302px;
+          height: 302px;
+          background: #000;
+          border: 1px solid #6ef7ff;
+          overflow: hidden;
+        ">
+          <div data-piece="0" style="position:absolute;top:0;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="1" style="position:absolute;top:0;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="2" style="position:absolute;top:0;left:200px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="3" style="position:absolute;top:100px;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="4" style="position:absolute;top:100px;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="5" style="position:absolute;top:100px;left:200px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="6" style="position:absolute;top:200px;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="7" style="position:absolute;top:200px;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="8" style="position:absolute;top:200px;left:200px;width:100px;height:100px;border:1px solid #000;background:none;background-color:#000;z-index:0;"></div>
+        </div>
+
+        <div style="
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          flex-wrap: wrap;
+        ">
+          <button id="mezclar-criptograma-matlog" type="button" style="
+            padding: 10px 16px;
+            border: 2px solid #6ef7ff;
+            background: #0f1d22;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            font-family:'arcade','monospace';
+          ">Mezclar</button>
+
+          <button id="confirmar-criptograma-matlog" type="button" style="
+            padding: 10px 16px;
+            border: 2px solid #00ff88;
+            background: #11261a;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            font-family:'arcade','monospace';
+          ">Ya tengo el criptograma</button>
+        </div>
+      </div>
+    </div>
+  `);
+
+    const overlay = document.getElementById("matlog-criptograma-overlay");
+    const box = document.getElementById("matlog-puzzle-box");
+    const btnCerrar = document.getElementById("cerrar-criptograma-matlog");
+    const btnMezclar = document.getElementById("mezclar-criptograma-matlog");
+    const btnConfirmar = document.getElementById("confirmar-criptograma-matlog");
+
+    const coords = [
+      [0, 0],
+      [0, 100],
+      [0, 200],
+      [100, 0],
+      [100, 100],
+      [100, 200],
+      [200, 0],
+      [200, 100],
+      [200, 200]
+    ];
+
+    const coordsMap = {
+      "0 0": 0,
+      "0 100": 1,
+      "0 200": 2,
+      "100 0": 3,
+      "100 100": 4,
+      "100 200": 5,
+      "200 0": 6,
+      "200 100": 7,
+      "200 200": 8
+    };
+
+    const neighborhood = {
+      0: [1, 3],
+      1: [0, 2, 4],
+      2: [1, 5],
+      3: [0, 4, 6],
+      4: [1, 3, 5, 7],
+      5: [2, 4, 8],
+      6: [3, 7],
+      7: [6, 4, 8],
+      8: [5, 7]
+    };
+
+    let hole = null;
+
+    function cerrarPuzzle() {
+      const el = document.getElementById("matlog-criptograma-overlay");
+      if (el) el.remove();
+    }
+
+    function assignState() {
+      const piezas = box.querySelectorAll("div");
+
+      piezas.forEach((pieza, i) => {
+        const top = parseInt(pieza.style.top, 10);
+        const left = parseInt(pieza.style.left, 10);
+
+        pieza.index = i;
+        pieza.coord = coordsMap[`${top} ${left}`];
+
+        if (pieza.dataset.piece === "8") {
+          hole = pieza;
+        }
+      });
+    }
+
+    function randomizeBoard() {
+      const piezas = Array.from(box.querySelectorAll("div"));
+      const disponibles = coords.slice();
+
+      piezas.forEach((pieza) => {
+        const idx = Math.floor(Math.random() * disponibles.length);
+        const [top, left] = disponibles.splice(idx, 1)[0];
+        pieza.style.top = `${top}px`;
+        pieza.style.left = `${left}px`;
+      });
+
+      assignState();
+    }
+
+    function moverPieza(ev) {
+      const target = ev.target;
+      if (!target || target === hole) return;
+
+      assignState();
+
+      if (!neighborhood[hole.coord]?.includes(target.coord)) return;
+
+      const savedTop = target.style.top;
+      const savedLeft = target.style.left;
+
+      target.style.top = hole.style.top;
+      target.style.left = hole.style.left;
+
+      hole.style.top = savedTop;
+      hole.style.left = savedLeft;
+
+      assignState();
+    }
+
+    function puzzleResuelto() {
+      const piezas = Array.from(box.querySelectorAll("div"));
+
+      return piezas.every((pieza, i) => pieza.coord === i);
+    }
+
+    btnCerrar.addEventListener("click", cerrarPuzzle);
+
+    overlay.addEventListener("pointerdown", (e) => {
+      if (e.target === overlay) cerrarPuzzle();
+    });
+
+    btnMezclar.addEventListener("click", () => {
+      randomizeBoard();
+    });
+
+    box.addEventListener("mousedown", moverPieza);
+    box.addEventListener("touchstart", moverPieza, { passive: true });
+
+    /*btnConfirmar.addEventListener("click", () => {
+      const resuelto = puzzleResuelto();
+
+      if (resuelto) {
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Codex Resuelto",
+            message: "Has descifrado el criptograma de Matlog.",
+            type: "success",
+            duration: 4000
+          });
+        }
+
+        cerrarPuzzle();
+
+        if (typeof completarRetoMission === "function") {
+          completarRetoMission("resolverCriptogramaDeMatlog");
+        }
+
+        return;
+      }
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Criptograma incompleto",
+          message: "Aún no has ordenado correctamente el Codex.",
+          type: "warning",
+          duration: 3500
+        });
+      }
+    });*/
+
+    btnConfirmar.addEventListener("click", () => {
+      cerrarPuzzle();
+
+      if (typeof completarRetoMission === "function") {
+        completarRetoMission("resolverCriptogramaDeMatlog");
+      }
+    });
+
+    randomizeBoard();
   };
+
   window.reptilianoApagaLuz = function () {
     const missionId = "m4";
     const mission = getMissionById(missionId);
@@ -7091,6 +7367,9 @@ function continuarTrasGameOver() {
   }
 
   /*
+      // IMPORTANTE:
+    // Ya NO bloqueamos por misiones requeridas
+    // para permitir aceptar todas las misiones.
   function getCurrentMissionStep() {
     const mission = getActiveMission();
     if (!mission) return null;
@@ -7115,9 +7394,7 @@ function continuarTrasGameOver() {
       }
     }
   
-    // IMPORTANTE:
-    // Ya NO bloqueamos por misiones requeridas
-    // para permitir aceptar todas las misiones.
+
   
     return true;
   }
@@ -15403,124 +15680,604 @@ function tomarItemDeArcilla() {
   }
 }
 
-function insertarCodexEnPedestal() {
-
+window.insertarCodexEnPedestal = function () {
   const existente = document.getElementById("codex-pedestal-overlay");
   if (existente) existente.remove();
 
   const overlay = document.createElement("div");
   overlay.id = "codex-pedestal-overlay";
-
-  overlay.innerHTML = `
-    <div id="codex-overlay-bg" style="
-      position:absolute;
-      left:0;
-      top:0;
-      width:100%;
-      height:100%;
-      background:rgba(0,0,0,0.75);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:99999;
-    ">
-      <div id="codex-box" style="
-        position:absolute;
-        left:50%;
-        top:50%;
-        transform:translate(-50%,-50%);
-        width:320px;
-        height:320px;
-        background-image:url('https://i.pinimg.com/originals/16/02/b2/1602b26c05ee78120695d592a68b8912.gif');
-        background-size:cover;
-        background-position:center;
-        background-repeat:no-repeat;
-        border-radius:0;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        padding:20px;
-        box-sizing:border-box;
-      ">
-        <div style="
-          color:#fff;
-          font-size:18px;
-          margin-bottom:18px;
-          text-align:center;
-          text-shadow:2px 2px 0 #000;
-        ">
-          Ingresa la contraseña
-        </div>
-
-        <input id="codex-input" type="password" maxlength="4" placeholder="****" style="
-          width:180px;
-          height:40px;
-          border:2px solid #fff;
-          background:rgba(0,0,0,0.65);
-          color:#fff;
-          text-align:center;
-          font-size:20px;
-          outline:none;
-          margin-bottom:14px;
-          box-sizing:border-box;
-        "/>
-
-        <div style="display:flex; gap:10px;">
-          <button id="codex-ok" style="
-            width:110px;
-            height:40px;
-            border:2px solid #fff;
-            background:rgba(0,0,0,0.7);
-            color:#fff;
-            font-family:arcade;
-          ">Aceptar</button>
-
-          <button id="codex-close" style="
-            width:110px;
-            height:40px;
-            border:2px solid #fff;
-            background:rgba(0,0,0,0.7);
-            color:#fff;
-            font-family:arcade;
-          ">Cerrar</button>
-        </div>
-      </div>
-    </div>
-  `;
-
   document.body.appendChild(overlay);
 
-  const input = document.getElementById("codex-input");
-  const btnOk = document.getElementById("codex-ok");
-  const btnClose = document.getElementById("codex-close");
+  const CLAVE_CORRECTA = "pvr2-6";
 
-  function validarClave() {
-    const clave = (input.value || "").trim();
-
-    if (clave === "7399") {
-      console.log("Contraseña correcta");
-      overlay.remove();
-      return;
-    }
-
-    if (typeof playerrorSound === "function") {
-      playerrorSound();
-    }
+  function cerrarOverlay() {
+    const el = document.getElementById("codex-pedestal-overlay");
+    if (el) el.remove();
   }
 
-  btnOk.onclick = validarClave;
-  btnClose.onclick = () => overlay.remove();
+  function normalizarClave(valor) {
+    return String(valor || "").trim().toLowerCase();
+  }
 
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      validarClave();
+  function crearPreguntaLogaritmo() {
+    // 🔢 cantidad de dígitos aleatoria (2 a 6)
+    const digitos = Math.floor(Math.random() * 5) + 2; // 2–6
+
+    let numero = "";
+
+    for (let i = 0; i < digitos; i++) {
+      if (i === 0) {
+        // primer dígito no puede ser 0
+        numero += Math.floor(Math.random() * 9) + 1;
+      } else {
+        numero += Math.floor(Math.random() * 10);
+      }
     }
-  });
 
-  input.focus();
-}
+    numero = Number(numero);
+
+    const respuesta = String(Math.floor(Math.log10(numero)));
+
+    return { numero, respuesta };
+  }
+
+  function crearPreguntas(cantidad = 5) {
+    return Array.from({ length: cantidad }, () => crearPreguntaLogaritmo());
+  }
+
+  function renderPantallaClave() {
+    overlay.innerHTML = `
+      <div id="codex-overlay-bg" style="
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.75);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:99999;
+      ">
+        <div id="codex-box" style="
+          position:relative;
+          width:320px;
+          height:320px;
+          background-image:url('https://i.pinimg.com/originals/16/02/b2/1602b26c05ee78120695d592a68b8912.gif');
+          background-size:cover;
+          background-position:center;
+          background-repeat:no-repeat;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          padding:20px;
+          box-sizing:border-box;
+        ">
+          <div style="
+            color:#fff;
+            font-size:18px;
+            margin-bottom:18px;
+            text-align:center;
+            text-shadow:2px 2px 0 #000;
+          ">
+            Ingresa el codex
+          </div>
+
+          <input id="codex-input" type="password" maxlength="12" placeholder="****" style="
+            width:180px;
+            height:40px;
+            border:2px solid #fff;
+            background:rgba(0,0,0,0.65);
+            color:#fff;
+            text-align:center;
+            font-size:20px;
+            outline:none;
+            margin-bottom:14px;
+            box-sizing:border-box;
+          "/>
+
+          <div style="display:flex; gap:10px;">
+            <button id="codex-ok" style="
+              width:110px;
+              height:40px;
+              border:2px solid #fff;
+              background:rgba(0,0,0,0.7);
+              color:#fff;
+              font-family:arcade;
+              cursor:pointer;
+            ">Aceptar</button>
+
+            <button id="codex-close" style="
+              width:110px;
+              height:40px;
+              border:2px solid #fff;
+              background:rgba(0,0,0,0.7);
+              color:#fff;
+              font-family:arcade;
+              cursor:pointer;
+            ">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const input = document.getElementById("codex-input");
+    const btnOk = document.getElementById("codex-ok");
+    const btnClose = document.getElementById("codex-close");
+
+    function validarClave() {
+      const clave = normalizarClave(input.value);
+
+      if (clave === CLAVE_CORRECTA) {
+        renderPantallaAlgoritmo();
+        return;
+      }
+
+      if (typeof playerrorSound === "function") playerrorSound();
+
+      input.value = "";
+      input.focus();
+    }
+
+    btnOk.onclick = validarClave;
+    btnClose.onclick = cerrarOverlay;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        validarClave();
+      }
+    });
+
+    input.focus();
+  }
+
+  function renderPantallaAlgoritmo() {
+    overlay.innerHTML = `
+      <div style="
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.82);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:99999;
+      ">
+        <div style="
+          width:320px;
+          height:550px;
+          background:#060b12;
+          border:2px solid #6ef7ff;
+          padding:10px;
+          box-sizing:border-box;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+        ">
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            color:#fff;
+            font-size:16px;
+          ">
+            <span>Codex desbloqueado</span>
+            <button id="codex-close-2" style="
+              width:34px;
+              height:34px;
+              border:2px solid #fff;
+              background:#111;
+              color:#fff;
+              cursor:pointer;
+            ">X</button>
+          </div>
+
+          <iframe
+            src="../assets/algoritmos/matlog/matlog.html"
+            style="
+              width:100%;
+              height:390px;
+              border:2px solid #6ef7ff;
+              background:#000;
+            "
+          ></iframe>
+
+          <button id="explorar-algoritmo-matlog" style="
+            width:100%;
+            height:44px;
+            border:2px solid #00ffb3;
+            background:#10221d;
+            color:#fff;
+            cursor:pointer;
+            font-family:arcade;
+          ">Explorar Algoritmo de Matlog</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("codex-close-2").onclick = cerrarOverlay;
+    document.getElementById("explorar-algoritmo-matlog").onclick = renderPantallaVideo;
+  }
+
+  function renderPantallaVideo() {
+    overlay.innerHTML = `
+      <div style="
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.82);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:99999;
+      ">
+        <div style="
+          width:320px;
+          height:500px;
+          background:#060b12;
+          border:2px solid #6ef7ff;
+          padding:10px;
+          box-sizing:border-box;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+        ">
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            color:#fff;
+            font-size:16px;
+          ">
+            <span>Algoritmo de Matlog</span>
+            <button id="codex-close-3" style="
+              width:34px;
+              height:34px;
+              border:2px solid #fff;
+              background:#111;
+              color:#fff;
+              cursor:pointer;
+            ">X</button>
+          </div>
+
+          <video controls autoplay style="
+            width:100%;
+            height:390px;
+            object-fit:cover;
+            border:2px solid #6ef7ff;
+            background:#000;
+          ">
+            <source src="../assets/video/matlog.mp4" type="video/mp4">
+          </video>
+
+          <button id="abrir-prueba-matlog" style="
+            width:100%;
+            height:44px;
+            border:2px solid #ffd54a;
+            background:#2a2010;
+            color:#fff;
+            cursor:pointer;
+            font-family:arcade;
+          ">Prueba de conocimiento Algorítmico</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("codex-close-3").onclick = cerrarOverlay;
+    document.getElementById("abrir-prueba-matlog").onclick = renderPantallaPrueba;
+  }
+
+  function renderPantallaPrueba() {
+    const preguntas = crearPreguntas(5);
+    let indiceActual = 0;
+    let correctas = 0;
+    let respondidas = 0;
+
+    function renderPregunta() {
+      const pregunta = preguntas[indiceActual];
+      const restantes = 5 - respondidas;
+      const minNecesarias = Math.max(0, 4 - correctas);
+
+      overlay.innerHTML = `
+        <div style="
+          position:fixed;
+          left:0;
+          top:0;
+          width:100%;
+          height:100%;
+          background:rgba(0,0,0,0.85);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          z-index:99999;
+        ">
+          <div style="
+            width:320px;
+            height:500px;
+            background:#0b0f18;
+            border:2px solid #6ef7ff;
+            padding:12px;
+            box-sizing:border-box;
+            color:#fff;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+          ">
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              font-size:15px;
+            ">
+              <span>Prueba de conocimiento</span>
+              <button id="codex-close-4" style="
+                width:34px;
+                height:34px;
+                border:2px solid #fff;
+                background:#111;
+                color:#fff;
+                cursor:pointer;
+              ">X</button>
+            </div>
+
+            <div style="
+              font-size:12px;
+              line-height:1.4;
+              color:#cfefff;
+            ">
+              Responde solo el número entero antes del punto.
+              <br>
+              Ejemplo: log(8546) = 3
+            </div>
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              font-size:12px;
+              color:#ffe082;
+            ">
+              <span>Pregunta ${indiceActual + 1} de 5</span>
+              <span>Aciertos: ${correctas}/5</span>
+            </div>
+
+            <div style="
+              flex:1;
+              display:flex;
+              flex-direction:column;
+              align-items:center;
+              justify-content:center;
+              gap:18px;
+              border:1px solid #355a66;
+              background:#101926;
+              padding:12px;
+            ">
+              <div style="
+                font-size:28px;
+                color:#fff;
+                text-align:center;
+              ">
+                log(${pregunta.numero})
+              </div>
+
+              <input
+                id="matlog-respuesta-unica"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                style="
+                  width:140px;
+                  height:42px;
+                  border:2px solid #6ef7ff;
+                  background:#000;
+                  color:#fff;
+                  text-align:center;
+                  font-size:22px;
+                  box-sizing:border-box;
+                "
+              />
+
+              <div id="matlog-feedback" style="
+                min-height:40px;
+                font-size:13px;
+                text-align:center;
+                color:#cfefff;
+                line-height:1.35;
+              "></div>
+            </div>
+
+            <button id="validar-prueba-matlog" style="
+              width:100%;
+              height:42px;
+              border:2px solid #00ff88;
+              background:#11261a;
+              color:#fff;
+              cursor:pointer;
+              font-family:arcade;
+            ">Validar respuesta</button>
+
+            <div style="
+              font-size:11px;
+              text-align:center;
+              color:#9ad7ff;
+            ">
+              Necesitas acertar al menos 4 de 5 preguntas para pasar.
+              <br>
+              Te faltan ${minNecesarias} aciertos en ${restantes} intento(s).
+            </div>
+          </div>
+        </div>
+      `;
+
+      const input = document.getElementById("matlog-respuesta-unica");
+      const btnValidar = document.getElementById("validar-prueba-matlog");
+      const feedback = document.getElementById("matlog-feedback");
+      const btnCerrar = document.getElementById("codex-close-4");
+
+      btnCerrar.onclick = cerrarOverlay;
+
+      function avanzar() {
+        setTimeout(() => {
+          indiceActual += 1;
+
+          if (indiceActual >= preguntas.length) {
+            finalizarPrueba();
+            return;
+          }
+
+          renderPregunta();
+        }, 900);
+      }
+
+      function validarRespuesta() {
+        const valor = String(input.value || "").trim();
+        const correcta = pregunta.respuesta;
+
+        if (valor === "") {
+          if (typeof playerrorSound === "function") playerrorSound();
+          feedback.textContent = "Ingresa una respuesta.";
+          feedback.style.color = "#ff8a80";
+          input.focus();
+          return;
+        }
+
+        respondidas += 1;
+
+        if (valor === correcta) {
+          correctas += 1;
+          feedback.textContent = `Correcto. log(${pregunta.numero}) = ${correcta}`;
+          feedback.style.color = "#7CFFB2";
+          if (typeof playgoodSound === "function") playgoodSound();
+        } else {
+          feedback.textContent = `Incorrecto. La respuesta correcta era ${correcta}.`;
+          feedback.style.color = "#ff8a80";
+          if (typeof playerrorSound === "function") playerrorSound();
+        }
+
+        btnValidar.disabled = true;
+        input.disabled = true;
+
+        avanzar();
+      }
+
+      btnValidar.onclick = validarRespuesta;
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          validarRespuesta();
+        }
+      });
+
+      input.focus();
+    }
+
+    function finalizarPrueba() {
+      const aprobado = correctas >= 4;
+
+      overlay.innerHTML = `
+        <div style="
+          position:fixed;
+          left:0;
+          top:0;
+          width:100%;
+          height:100%;
+          background:rgba(0,0,0,0.85);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          z-index:99999;
+        ">
+          <div style="
+            width:320px;
+            min-height:320px;
+            background:#0b0f18;
+            border:2px solid ${aprobado ? "#00ff88" : "#ff6b6b"};
+            padding:18px;
+            box-sizing:border-box;
+            color:#fff;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:14px;
+            text-align:center;
+          ">
+            <div style="
+              font-size:22px;
+              color:${aprobado ? "#7CFFB2" : "#ff8a80"};
+            ">
+              ${aprobado ? "Prueba superada" : "Prueba no superada"}
+            </div>
+
+            <div style="
+              font-size:16px;
+              line-height:1.5;
+              color:#d8f3ff;
+            ">
+              Respuestas correctas: ${correctas} de 5
+            </div>
+
+            <div style="
+              font-size:13px;
+              line-height:1.5;
+              color:#cfefff;
+            ">
+              ${aprobado
+          ? "Has demostrado comprender el algoritmo de Matlog."
+          : "Necesitas acertar al menos 4 de 5 preguntas para avanzar."}
+            </div>
+
+            <button id="matlog-final-btn" style="
+              width:100%;
+              height:42px;
+              border:2px solid #fff;
+              background:#111;
+              color:#fff;
+              cursor:pointer;
+              font-family:arcade;
+            ">
+              ${aprobado ? "Continuar" : "Intentar de nuevo"}
+            </button>
+          </div>
+        </div>
+      `;
+
+      const btnFinal = document.getElementById("matlog-final-btn");
+
+      btnFinal.onclick = function () {
+        if (aprobado) {
+          if (typeof showPopupFeedback === "function") {
+            showPopupFeedback({
+              title: "Prueba superada",
+              message: "Has dominado el algoritmo de Matlog.",
+              type: "success",
+              duration: 4000
+            });
+          }
+
+          cerrarOverlay();
+
+          if (typeof completarRetoMission === "function") {
+            completarRetoMission("insertarCodexEnPedestal");
+          }
+          return;
+        }
+
+        renderPantallaPrueba();
+      };
+    }
+
+    renderPregunta();
+  }
+
+  renderPantallaClave();
+};
 
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (FIN) */
 
