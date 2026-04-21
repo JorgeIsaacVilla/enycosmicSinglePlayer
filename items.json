@@ -1,37 +1,43 @@
 {
   "items": [
     {
-  "id": "arcilla",
-  "nombre_item": "Arcilla",
-  "tipo_item": "consumible",
-  "imagen": "../assets/items/arcilla.svg",
-  "agotable": false,
-  "cantidad_de_usos": null,
-  "cuanto_quita_de_vida_al_enemigo": 0,
-  "desaparece_al_agotarse": false,
-  "creable": false,
-  "materiales_requeridos_para_crear": [],
-  "combinable": true,
-  "precio_compra": 3
-},
-{
-  "id": "bloque_de_arcilla",
-  "nombre_item": "Bloque de arcilla",
-  "tipo_item": "consumible",
-  "imagen": "../assets/items/bloqueArcilla.svg",
-  "sonido_efecto": "../assets/song/efect/pushBlockArcilla.mp3",
-  "agotable": true,
-  "cantidad_de_usos": 1,
-  "cuanto_quita_de_vida_al_enemigo": 0,
-  "desaparece_al_agotarse": true,
-  "creable": true,
-  "materiales_requeridos_para_crear": [
-    { "item_id": "baso_de_agua", "cantidad": 1 },
-    { "item_id": "arcilla", "cantidad": 5 }
-  ],
-  "combinable": false,
-  "precio_compra": 5
-},
+      "id": "arcilla",
+      "nombre_item": "Arcilla",
+      "tipo_item": "consumible",
+      "imagen": "../assets/items/arcilla.svg",
+      "agotable": false,
+      "cantidad_de_usos": null,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": false,
+      "creable": false,
+      "materiales_requeridos_para_crear": [],
+      "combinable": true,
+      "precio_compra": 3
+    },
+    {
+      "id": "bloque_de_arcilla",
+      "nombre_item": "Bloque de arcilla",
+      "tipo_item": "consumible",
+      "imagen": "../assets/items/bloqueArcilla.svg",
+      "sonido_efecto": "../assets/song/efect/pushBlockArcilla.mp3",
+      "agotable": true,
+      "cantidad_de_usos": 1,
+      "cuanto_quita_de_vida_al_enemigo": 0,
+      "desaparece_al_agotarse": true,
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        {
+          "item_id": "baso_de_agua",
+          "cantidad": 1
+        },
+        {
+          "item_id": "arcilla",
+          "cantidad": 5
+        }
+      ],
+      "combinable": false,
+      "precio_compra": 5
+    },
     {
       "id": "corazon",
       "nombre_item": "Corazon",
@@ -44,9 +50,18 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "limon", "cantidad": 1 },
-        { "item_id": "sal", "cantidad": 1 },
-        { "item_id": "baso_de_agua", "cantidad": 1 }
+        {
+          "item_id": "limon",
+          "cantidad": 1
+        },
+        {
+          "item_id": "sal",
+          "cantidad": 1
+        },
+        {
+          "item_id": "baso_de_agua",
+          "cantidad": 1
+        }
       ],
       "combinable": false,
       "precio_compra": 12
@@ -62,9 +77,18 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "bateria", "cantidad": 1 },
-        { "item_id": "palo_de_madera", "cantidad": 1 },
-        { "item_id": "cable", "cantidad": 2 }
+        {
+          "item_id": "bateria",
+          "cantidad": 1
+        },
+        {
+          "item_id": "palo_de_madera",
+          "cantidad": 1
+        },
+        {
+          "item_id": "cable",
+          "cantidad": 2
+        }
       ],
       "combinable": false,
       "precio_compra": 3
@@ -81,9 +105,18 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "diodo_lazer", "cantidad": 1 },
-        { "item_id": "bateria", "cantidad": 1 },
-        { "item_id": "cable", "cantidad": 2 }
+        {
+          "item_id": "diodo_lazer",
+          "cantidad": 1
+        },
+        {
+          "item_id": "bateria",
+          "cantidad": 1
+        },
+        {
+          "item_id": "cable",
+          "cantidad": 2
+        }
       ],
       "combinable": false,
       "precio_compra": 80
@@ -100,7 +133,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "madera", "cantidad": 3 }
+        {
+          "item_id": "madera",
+          "cantidad": 3
+        }
       ],
       "combinable": false,
       "precio_compra": 12
@@ -116,7 +152,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "madera", "cantidad": 5 }
+        {
+          "item_id": "madera",
+          "cantidad": 5
+        }
       ],
       "combinable": false,
       "precio_compra": 18
@@ -133,7 +172,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "madera", "cantidad": 2 }
+        {
+          "item_id": "madera",
+          "cantidad": 2
+        }
       ],
       "combinable": false,
       "precio_compra": 8
@@ -149,8 +191,14 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "madera", "cantidad": 1 },
-        { "item_id": "hierro", "cantidad": 2 }
+        {
+          "item_id": "madera",
+          "cantidad": 1
+        },
+        {
+          "item_id": "hierro",
+          "cantidad": 2
+        }
       ],
       "combinable": false,
       "precio_compra": 3
@@ -166,10 +214,22 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "balinera", "cantidad": 2 },
-        { "item_id": "cuero", "cantidad": 2 },
-        { "item_id": "rueda", "cantidad": 2 },
-        { "item_id": "madera", "cantidad": 2 }
+        {
+          "item_id": "balinera",
+          "cantidad": 2
+        },
+        {
+          "item_id": "cuero",
+          "cantidad": 2
+        },
+        {
+          "item_id": "rueda",
+          "cantidad": 2
+        },
+        {
+          "item_id": "madera",
+          "cantidad": 2
+        }
       ],
       "combinable": false,
       "precio_compra": 600
@@ -186,7 +246,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "hierro", "cantidad": 180 }
+        {
+          "item_id": "hierro",
+          "cantidad": 180
+        }
       ],
       "combinable": false,
       "precio_compra": 700
@@ -202,7 +265,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "hierro", "cantidad": 200 }
+        {
+          "item_id": "hierro",
+          "cantidad": 200
+        }
       ],
       "combinable": false,
       "precio_compra": 800
@@ -218,8 +284,14 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "baso", "cantidad": 1 },
-        { "item_id": "agua", "cantidad": 1 }
+        {
+          "item_id": "baso",
+          "cantidad": 1
+        },
+        {
+          "item_id": "agua",
+          "cantidad": 1
+        }
       ],
       "combinable": true,
       "precio_compra": 5
@@ -235,9 +307,18 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "limon", "cantidad": 1 },
-        { "item_id": "hierro", "cantidad": 1 },
-        { "item_id": "cobre", "cantidad": 1 }
+        {
+          "item_id": "limon",
+          "cantidad": 1
+        },
+        {
+          "item_id": "hierro",
+          "cantidad": 1
+        },
+        {
+          "item_id": "cobre",
+          "cantidad": 1
+        }
       ],
       "combinable": true,
       "precio_compra": 10
@@ -253,7 +334,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "plastico", "cantidad": 3 }
+        {
+          "item_id": "plastico",
+          "cantidad": 3
+        }
       ],
       "combinable": true,
       "precio_compra": 60
@@ -269,7 +353,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "cobre", "cantidad": 3 }
+        {
+          "item_id": "cobre",
+          "cantidad": 3
+        }
       ],
       "combinable": true,
       "precio_compra": 5
@@ -325,8 +412,17 @@
       "cantidad_de_usos": null,
       "cuanto_quita_de_vida_al_enemigo": 0,
       "desaparece_al_agotarse": true,
-      "creable": false,
-      "materiales_requeridos_para_crear": [],
+      "creable": true,
+      "materiales_requeridos_para_crear": [
+        {
+          "item_id": "baso_de_agua",
+          "cantidad": 1
+        },
+        {
+          "item_id": "antorcha_de_fuego",
+          "cantidad": 3
+        }
+      ],
       "combinable": true,
       "precio_compra": 1
     },
@@ -341,7 +437,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "plastico", "cantidad": 1 }
+        {
+          "item_id": "plastico",
+          "cantidad": 1
+        }
       ],
       "combinable": true,
       "precio_compra": 2
@@ -371,7 +470,10 @@
       "desaparece_al_agotarse": true,
       "creable": true,
       "materiales_requeridos_para_crear": [
-        { "item_id": "madera", "cantidad": 1 }
+        {
+          "item_id": "madera",
+          "cantidad": 1
+        }
       ],
       "combinable": true,
       "precio_compra": 1

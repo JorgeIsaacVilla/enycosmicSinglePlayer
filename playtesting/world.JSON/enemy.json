@@ -435,7 +435,7 @@
         "h": 64
       },
       "posicion": {
-        "x": 60,
+        "x": 600,
         "y": 60
       },
       "ejecucion_script": {
@@ -1897,7 +1897,7 @@
         "h": 320
       },
       "posicion": {
-        "x": 4817,
+        "x": 4394,
         "y": 100
       },
       "ejecucion_script": {

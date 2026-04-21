@@ -22,7 +22,10 @@
           "nombre": "Aelys",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
-          "posicion": { "x": 420, "y": 560 },
+          "posicion": {
+            "x": 420,
+            "y": 560
+          },
           "conversation_default": "Estoy revisando la red de observación.",
           "dialogos": {
             "inicio": [
@@ -42,7 +45,10 @@
           "nombre": "Jack",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Jack.png",
-          "posicion": { "x": 760, "y": 780 },
+          "posicion": {
+            "x": 760,
+            "y": 780
+          },
           "conversation_default": "Todavía estoy ajustando las lecturas ópticas.",
           "dialogos": {
             "inicio": [
@@ -62,7 +68,10 @@
           "nombre": "Kaia",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Kaia.png",
-          "posicion": { "x": 1120, "y": 940 },
+          "posicion": {
+            "x": 1120,
+            "y": 940
+          },
           "conversation_default": "Este panel no debe quedar fuera de sincronía.",
           "dialogos": {
             "inicio": [
@@ -91,7 +100,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc001",
             "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
-            "posicion": { "x": 420, "y": 560 }
+            "posicion": {
+              "x": 420,
+              "y": 560
+            }
           },
           "otorgaItems": []
         },
@@ -107,7 +119,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc002",
             "imagen": "../assets/avatares/npc/mapa1/Jack.png",
-            "posicion": { "x": 760, "y": 780 }
+            "posicion": {
+              "x": 760,
+              "y": 780
+            }
           },
           "otorgaItems": [
             {
@@ -128,7 +143,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc003",
             "imagen": "../assets/avatares/npc/mapa1/Kaia.png",
-            "posicion": { "x": 1120, "y": 940 }
+            "posicion": {
+              "x": 1120,
+              "y": 940
+            }
           },
           "otorgaItems": []
         }
@@ -162,7 +180,10 @@
           "nombre": "Manuel",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
-          "posicion": { "x": 1350, "y": 620 },
+          "posicion": {
+            "x": 1350,
+            "y": 620
+          },
           "conversation_default": "Estoy cartografiando nuevas rutas.",
           "dialogos": {
             "inicio": [
@@ -182,7 +203,10 @@
           "nombre": "Myra",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Myra.png",
-          "posicion": { "x": 1580, "y": 890 },
+          "posicion": {
+            "x": 1580,
+            "y": 890
+          },
           "conversation_default": "Las rutas cambian según la actividad orbital.",
           "dialogos": {
             "inicio": [
@@ -202,7 +226,10 @@
           "nombre": "Nyra",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Nyra.png",
-          "posicion": { "x": 1810, "y": 1110 },
+          "posicion": {
+            "x": 1810,
+            "y": 1110
+          },
           "conversation_default": "No puedo liberar el tránsito sin autorización.",
           "dialogos": {
             "inicio": [
@@ -231,7 +258,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc004",
             "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
-            "posicion": { "x": 1350, "y": 620 }
+            "posicion": {
+              "x": 1350,
+              "y": 620
+            }
           },
           "otorgaItems": []
         },
@@ -247,7 +277,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc005",
             "imagen": "../assets/avatares/npc/mapa1/Myra.png",
-            "posicion": { "x": 1580, "y": 890 }
+            "posicion": {
+              "x": 1580,
+              "y": 890
+            }
           },
           "otorgaItems": [
             {
@@ -268,7 +301,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc006",
             "imagen": "../assets/avatares/npc/mapa1/Nyra.png",
-            "posicion": { "x": 1810, "y": 1110 }
+            "posicion": {
+              "x": 1810,
+              "y": 1110
+            }
           },
           "otorgaItems": []
         }
@@ -302,7 +338,10 @@
           "nombre": "Astra",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Astra.png",
-          "posicion": { "x": 520, "y": 1320 },
+          "posicion": {
+            "x": 520,
+            "y": 1320
+          },
           "conversation_default": "Todavía no cierro el registro de resonancia.",
           "dialogos": {
             "inicio": [
@@ -322,7 +361,10 @@
           "nombre": "Cyra",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Cyra.png",
-          "posicion": { "x": 860, "y": 1460 },
+          "posicion": {
+            "x": 860,
+            "y": 1460
+          },
           "conversation_default": "Esa frecuencia no parece natural.",
           "dialogos": {
             "inicio": [
@@ -342,7 +384,10 @@
           "nombre": "Elara",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Elara.png",
-          "posicion": { "x": 1210, "y": 1590 },
+          "posicion": {
+            "x": 1210,
+            "y": 1590
+          },
           "conversation_default": "No he liberado todavía el archivo central.",
           "dialogos": {
             "inicio": [
@@ -371,7 +416,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc007",
             "imagen": "../assets/avatares/npc/mapa1/Astra.png",
-            "posicion": { "x": 520, "y": 1320 }
+            "posicion": {
+              "x": 520,
+              "y": 1320
+            }
           },
           "otorgaItems": []
         },
@@ -387,7 +435,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc008",
             "imagen": "../assets/avatares/npc/mapa1/Cyra.png",
-            "posicion": { "x": 860, "y": 1460 }
+            "posicion": {
+              "x": 860,
+              "y": 1460
+            }
           },
           "otorgaItems": []
         },
@@ -403,7 +454,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc009",
             "imagen": "../assets/avatares/npc/mapa1/Elara.png",
-            "posicion": { "x": 1210, "y": 1590 }
+            "posicion": {
+              "x": 1210,
+              "y": 1590
+            }
           },
           "otorgaItems": [
             {
@@ -442,7 +496,10 @@
           "nombre": "Eira",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Eira.png",
-          "posicion": { "x": 1490, "y": 1520 },
+          "posicion": {
+            "x": 1490,
+            "y": 1520
+          },
           "conversation_default": "Todavía estoy revisando el circuito óptico.",
           "dialogos": {
             "inicio": [
@@ -462,7 +519,10 @@
           "nombre": "Lyra",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
-          "posicion": { "x": 1740, "y": 1670 },
+          "posicion": {
+            "x": 1740,
+            "y": 1670
+          },
           "conversation_default": "Estoy afinando la lente secundaria.",
           "dialogos": {
             "inicio": [
@@ -482,7 +542,10 @@
           "nombre": "Vanya",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Vanya.png",
-          "posicion": { "x": 2010, "y": 1810 },
+          "posicion": {
+            "x": 2010,
+            "y": 1810
+          },
           "conversation_default": "No liberaré el circuito sin confirmación completa.",
           "dialogos": {
             "inicio": [
@@ -511,7 +574,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc010",
             "imagen": "../assets/avatares/npc/mapa1/Eira.png",
-            "posicion": { "x": 1490, "y": 1520 }
+            "posicion": {
+              "x": 1490,
+              "y": 1520
+            }
           },
           "otorgaItems": []
         },
@@ -527,7 +593,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc011",
             "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
-            "posicion": { "x": 1740, "y": 1670 }
+            "posicion": {
+              "x": 1740,
+              "y": 1670
+            }
           },
           "otorgaItems": []
         },
@@ -543,7 +612,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc012",
             "imagen": "../assets/avatares/npc/mapa1/Vanya.png",
-            "posicion": { "x": 2010, "y": 1810 }
+            "posicion": {
+              "x": 2010,
+              "y": 1810
+            }
           },
           "otorgaItems": []
         }
@@ -577,7 +649,10 @@
           "nombre": "Vexa",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
-          "posicion": { "x": 2140, "y": 920 },
+          "posicion": {
+            "x": 2140,
+            "y": 920
+          },
           "conversation_default": "Todavía no he terminado de distribuir los avisos.",
           "dialogos": {
             "inicio": [
@@ -597,7 +672,10 @@
           "nombre": "Zevran",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Zevran.png",
-          "posicion": { "x": 2360, "y": 1080 },
+          "posicion": {
+            "x": 2360,
+            "y": 1080
+          },
           "conversation_default": "El corredor sigue bajo monitoreo.",
           "dialogos": {
             "inicio": [
@@ -617,7 +695,10 @@
           "nombre": "Ziria",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Ziria.png",
-          "posicion": { "x": 2590, "y": 1230 },
+          "posicion": {
+            "x": 2590,
+            "y": 1230
+          },
           "conversation_default": "No puedo cerrar el registro hasta recibir todos los datos.",
           "dialogos": {
             "inicio": [
@@ -646,7 +727,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc013",
             "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
-            "posicion": { "x": 2140, "y": 920 }
+            "posicion": {
+              "x": 2140,
+              "y": 920
+            }
           },
           "otorgaItems": []
         },
@@ -662,7 +746,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc014",
             "imagen": "../assets/avatares/npc/mapa1/Zevran.png",
-            "posicion": { "x": 2360, "y": 1080 }
+            "posicion": {
+              "x": 2360,
+              "y": 1080
+            }
           },
           "otorgaItems": []
         },
@@ -678,7 +765,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc015",
             "imagen": "../assets/avatares/npc/mapa1/Ziria.png",
-            "posicion": { "x": 2590, "y": 1230 }
+            "posicion": {
+              "x": 2590,
+              "y": 1230
+            }
           },
           "otorgaItems": []
         }
@@ -712,7 +802,10 @@
           "nombre": "Alira",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Alira.png",
-          "posicion": { "x": 720, "y": 1940 },
+          "posicion": {
+            "x": 720,
+            "y": 1940
+          },
           "conversation_default": "Aún no cierro el anillo de confirmación.",
           "dialogos": {
             "inicio": [
@@ -732,7 +825,10 @@
           "nombre": "Selka",
           "rol": "informante",
           "imagen": "../assets/avatares/npc/mapa1/Selka.png",
-          "posicion": { "x": 1030, "y": 2060 },
+          "posicion": {
+            "x": 1030,
+            "y": 2060
+          },
           "conversation_default": "Mi firma no será válida sin el sello final.",
           "dialogos": {
             "inicio": [
@@ -752,7 +848,10 @@
           "nombre": "Syra",
           "rol": "cierre_informativo",
           "imagen": "../assets/avatares/npc/mapa1/Syra.png",
-          "posicion": { "x": 1340, "y": 2180 },
+          "posicion": {
+            "x": 1340,
+            "y": 2180
+          },
           "conversation_default": "No puedo sellar el anillo sin la secuencia completa.",
           "dialogos": {
             "inicio": [
@@ -781,7 +880,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc016",
             "imagen": "../assets/avatares/npc/mapa1/Alira.png",
-            "posicion": { "x": 720, "y": 1940 }
+            "posicion": {
+              "x": 720,
+              "y": 1940
+            }
           },
           "otorgaItems": []
         },
@@ -797,7 +899,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc017",
             "imagen": "../assets/avatares/npc/mapa1/Selka.png",
-            "posicion": { "x": 1030, "y": 2060 }
+            "posicion": {
+              "x": 1030,
+              "y": 2060
+            }
           },
           "otorgaItems": []
         },
@@ -813,7 +918,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc018",
             "imagen": "../assets/avatares/npc/mapa1/Syra.png",
-            "posicion": { "x": 1340, "y": 2180 }
+            "posicion": {
+              "x": 1340,
+              "y": 2180
+            }
           },
           "otorgaItems": []
         }
@@ -838,7 +946,9 @@
       },
       "condiciones": {
         "nivelIQMinimo": 5,
-        "misionesRequeridas": ["m1"],
+        "misionesRequeridas": [
+          "m1"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -847,7 +957,10 @@
           "nombre": "Arkon",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
-          "posicion": { "x": 1660, "y": 2320 },
+          "posicion": {
+            "x": 1660,
+            "y": 2320
+          },
           "conversation_default": "La bobina sigue descargada.",
           "dialogos": {
             "inicio": [
@@ -867,7 +980,10 @@
           "nombre": "Valen",
           "rol": "intercambio",
           "imagen": "../assets/avatares/npc/mapa1/Valen.png",
-          "posicion": { "x": 1940, "y": 2460 },
+          "posicion": {
+            "x": 1940,
+            "y": 2460
+          },
           "conversation_default": "Sin materiales no podré reparar nada.",
           "dialogos": {
             "inicio": [
@@ -895,7 +1011,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc019",
             "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
-            "posicion": { "x": 1660, "y": 2320 }
+            "posicion": {
+              "x": 1660,
+              "y": 2320
+            }
           },
           "otorgaItems": []
         },
@@ -906,15 +1025,24 @@
           "titulo": "Recolecta los materiales",
           "descripcion": "Reúne 2 cables y 1 cobre para el reinicio.",
           "objetivosItems": [
-            { "id": "cable", "cantidad": 2 },
-            { "id": "cobre", "cantidad": 1 }
+            {
+              "id": "cable",
+              "cantidad": 2
+            },
+            {
+              "id": "cobre",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "bobina_materiales_01",
             "imagen": "../assets/items/cable.svg",
-            "posicion": { "x": 1850, "y": 2380 }
+            "posicion": {
+              "x": 1850,
+              "y": 2380
+            }
           },
           "otorgaItems": []
         },
@@ -926,15 +1054,24 @@
           "titulo": "Entrega los materiales a Valen",
           "descripcion": "Valen reiniciará la bobina auxiliar.",
           "entregaItems": [
-            { "id": "cable", "cantidad": 2 },
-            { "id": "cobre", "cantidad": 1 }
+            {
+              "id": "cable",
+              "cantidad": 2
+            },
+            {
+              "id": "cobre",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc020",
             "imagen": "../assets/avatares/npc/mapa1/Valen.png",
-            "posicion": { "x": 1940, "y": 2460 }
+            "posicion": {
+              "x": 1940,
+              "y": 2460
+            }
           },
           "otorgaItems": []
         },
@@ -950,7 +1087,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc019",
             "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
-            "posicion": { "x": 1660, "y": 2320 }
+            "posicion": {
+              "x": 1660,
+              "y": 2320
+            }
           },
           "otorgaItems": []
         }
@@ -984,7 +1124,9 @@
       },
       "condiciones": {
         "nivelIQMinimo": 6,
-        "misionesRequeridas": ["m2"],
+        "misionesRequeridas": [
+          "m2"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -993,7 +1135,10 @@
           "nombre": "Orion",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Orion.png",
-          "posicion": { "x": 2240, "y": 2080 },
+          "posicion": {
+            "x": 2240,
+            "y": 2080
+          },
           "conversation_default": "El pulso del corredor aún es inestable.",
           "dialogos": {
             "inicio": [
@@ -1013,7 +1158,10 @@
           "nombre": "Kael",
           "rol": "intercambio",
           "imagen": "../assets/avatares/npc/mapa1/Kael.png",
-          "posicion": { "x": 2480, "y": 2250 },
+          "posicion": {
+            "x": 2480,
+            "y": 2250
+          },
           "conversation_default": "No puedo reconstruir el pulso sin insumos.",
           "dialogos": {
             "inicio": [
@@ -1041,7 +1189,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc021",
             "imagen": "../assets/avatares/npc/mapa1/Orion.png",
-            "posicion": { "x": 2240, "y": 2080 }
+            "posicion": {
+              "x": 2240,
+              "y": 2080
+            }
           },
           "otorgaItems": []
         },
@@ -1052,15 +1203,24 @@
           "titulo": "Recolecta los insumos",
           "descripcion": "Reúne 2 hierro y 1 bateria para reactivar el corredor.",
           "objetivosItems": [
-            { "id": "hierro", "cantidad": 2 },
-            { "id": "bateria", "cantidad": 1 }
+            {
+              "id": "hierro",
+              "cantidad": 2
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "corredor_violeta_01",
             "imagen": "../assets/items/hierro.svg",
-            "posicion": { "x": 2360, "y": 2180 }
+            "posicion": {
+              "x": 2360,
+              "y": 2180
+            }
           },
           "otorgaItems": []
         },
@@ -1072,15 +1232,24 @@
           "titulo": "Entrega los insumos a Kael",
           "descripcion": "Kael estabilizará el corredor violeta.",
           "entregaItems": [
-            { "id": "hierro", "cantidad": 2 },
-            { "id": "bateria", "cantidad": 1 }
+            {
+              "id": "hierro",
+              "cantidad": 2
+            },
+            {
+              "id": "bateria",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc022",
             "imagen": "../assets/avatares/npc/mapa1/Kael.png",
-            "posicion": { "x": 2480, "y": 2250 }
+            "posicion": {
+              "x": 2480,
+              "y": 2250
+            }
           },
           "otorgaItems": []
         },
@@ -1096,7 +1265,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc021",
             "imagen": "../assets/avatares/npc/mapa1/Orion.png",
-            "posicion": { "x": 2240, "y": 2080 }
+            "posicion": {
+              "x": 2240,
+              "y": 2080
+            }
           },
           "otorgaItems": []
         }
@@ -1130,7 +1302,9 @@
       },
       "condiciones": {
         "nivelIQMinimo": 7,
-        "misionesRequeridas": ["m3"],
+        "misionesRequeridas": [
+          "m3"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -1139,7 +1313,10 @@
           "nombre": "Samnder",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
-          "posicion": { "x": 2680, "y": 1820 },
+          "posicion": {
+            "x": 2680,
+            "y": 1820
+          },
           "conversation_default": "La consola fría sigue fuera de línea.",
           "dialogos": {
             "inicio": [
@@ -1159,7 +1336,10 @@
           "nombre": "Sena",
           "rol": "intercambio",
           "imagen": "../assets/avatares/npc/mapa1/Sena.png",
-          "posicion": { "x": 2870, "y": 2010 },
+          "posicion": {
+            "x": 2870,
+            "y": 2010
+          },
           "conversation_default": "Sin recursos no podré reactivar la consola.",
           "dialogos": {
             "inicio": [
@@ -1187,7 +1367,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
             "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
-            "posicion": { "x": 2680, "y": 1820 }
+            "posicion": {
+              "x": 2680,
+              "y": 1820
+            }
           },
           "otorgaItems": []
         },
@@ -1198,15 +1381,24 @@
           "titulo": "Recolecta los materiales",
           "descripcion": "Reúne 2 plastico y 1 cable para la reparación.",
           "objetivosItems": [
-            { "id": "plastico", "cantidad": 2 },
-            { "id": "cable", "cantidad": 1 }
+            {
+              "id": "plastico",
+              "cantidad": 2
+            },
+            {
+              "id": "cable",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "consola_fria_01",
             "imagen": "../assets/items/plastico.svg",
-            "posicion": { "x": 2790, "y": 1920 }
+            "posicion": {
+              "x": 2790,
+              "y": 1920
+            }
           },
           "otorgaItems": []
         },
@@ -1218,15 +1410,24 @@
           "titulo": "Entrega los materiales a Sena",
           "descripcion": "Sena reconstruirá el panel congelado.",
           "entregaItems": [
-            { "id": "plastico", "cantidad": 2 },
-            { "id": "cable", "cantidad": 1 }
+            {
+              "id": "plastico",
+              "cantidad": 2
+            },
+            {
+              "id": "cable",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc024",
             "imagen": "../assets/avatares/npc/mapa1/Sena.png",
-            "posicion": { "x": 2870, "y": 2010 }
+            "posicion": {
+              "x": 2870,
+              "y": 2010
+            }
           },
           "otorgaItems": []
         },
@@ -1242,7 +1443,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
             "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
-            "posicion": { "x": 2680, "y": 1820 }
+            "posicion": {
+              "x": 2680,
+              "y": 1820
+            }
           },
           "otorgaItems": []
         }
@@ -1276,7 +1480,9 @@
       },
       "condiciones": {
         "nivelIQMinimo": 8,
-        "misionesRequeridas": ["m4"],
+        "misionesRequeridas": [
+          "m4"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -1285,7 +1491,10 @@
           "nombre": "Cyron",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
-          "posicion": { "x": 3010, "y": 1520 },
+          "posicion": {
+            "x": 3010,
+            "y": 1520
+          },
           "conversation_default": "La estación orbital no puede mezclar sin reactivos.",
           "dialogos": {
             "inicio": [
@@ -1305,7 +1514,10 @@
           "nombre": "Darek",
           "rol": "intercambio",
           "imagen": "../assets/avatares/npc/mapa1/Darek.png",
-          "posicion": { "x": 3230, "y": 1690 },
+          "posicion": {
+            "x": 3230,
+            "y": 1690
+          },
           "conversation_default": "No puedo preparar la mezcla sin los ingredientes exactos.",
           "dialogos": {
             "inicio": [
@@ -1333,7 +1545,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc025",
             "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
-            "posicion": { "x": 3010, "y": 1520 }
+            "posicion": {
+              "x": 3010,
+              "y": 1520
+            }
           },
           "otorgaItems": []
         },
@@ -1344,15 +1559,24 @@
           "titulo": "Recolecta los reactivos",
           "descripcion": "Reúne 1 baso_de_agua y 1 sal para la estación orbital.",
           "objetivosItems": [
-            { "id": "baso_de_agua", "cantidad": 1 },
-            { "id": "sal", "cantidad": 1 }
+            {
+              "id": "baso_de_agua",
+              "cantidad": 1
+            },
+            {
+              "id": "sal",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "mezcla_orbital_01",
             "imagen": "../assets/items/basoAgua.svg",
-            "posicion": { "x": 3120, "y": 1610 }
+            "posicion": {
+              "x": 3120,
+              "y": 1610
+            }
           },
           "otorgaItems": []
         },
@@ -1364,15 +1588,24 @@
           "titulo": "Entrega los reactivos a Darek",
           "descripcion": "Darek reactivará la estación orbital.",
           "entregaItems": [
-            { "id": "baso_de_agua", "cantidad": 1 },
-            { "id": "sal", "cantidad": 1 }
+            {
+              "id": "baso_de_agua",
+              "cantidad": 1
+            },
+            {
+              "id": "sal",
+              "cantidad": 1
+            }
           ],
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc026",
             "imagen": "../assets/avatares/npc/mapa1/Darek.png",
-            "posicion": { "x": 3230, "y": 1690 }
+            "posicion": {
+              "x": 3230,
+              "y": 1690
+            }
           },
           "otorgaItems": []
         },
@@ -1388,7 +1621,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc025",
             "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
-            "posicion": { "x": 3010, "y": 1520 }
+            "posicion": {
+              "x": 3010,
+              "y": 1520
+            }
           },
           "otorgaItems": []
         }
@@ -1422,7 +1658,10 @@
       },
       "condiciones": {
         "nivelIQMinimo": 10,
-        "misionesRequeridas": ["m7", "m8"],
+        "misionesRequeridas": [
+          "m7",
+          "m8"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -1431,7 +1670,10 @@
           "nombre": "Maese_Ion",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
-          "posicion": { "x": 3480, "y": 1280 },
+          "posicion": {
+            "x": 3480,
+            "y": 1280
+          },
           "conversation_default": "El algoritmo aún no ha sido revelado.",
           "dialogos": {
             "inicio": [
@@ -1451,7 +1693,10 @@
           "nombre": "Aelys",
           "rol": "contacto",
           "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
-          "posicion": { "x": 3690, "y": 1460 },
+          "posicion": {
+            "x": 3690,
+            "y": 1460
+          },
           "conversation_default": "La secuencia no será entregada fuera de protocolo.",
           "dialogos": {
             "inicio": [
@@ -1471,7 +1716,10 @@
           "nombre": "Orbek",
           "rol": "cierre",
           "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
-          "posicion": { "x": 3920, "y": 1620 },
+          "posicion": {
+            "x": 3920,
+            "y": 1620
+          },
           "conversation_default": "El núcleo no responde si la secuencia sigue abierta.",
           "dialogos": {
             "inicio": [
@@ -1500,7 +1748,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc027",
             "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
-            "posicion": { "x": 3480, "y": 1280 }
+            "posicion": {
+              "x": 3480,
+              "y": 1280
+            }
           },
           "otorgaItems": []
         },
@@ -1516,7 +1767,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc028",
             "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
-            "posicion": { "x": 3690, "y": 1460 }
+            "posicion": {
+              "x": 3690,
+              "y": 1460
+            }
           },
           "otorgaItems": []
         },
@@ -1533,7 +1787,10 @@
             "tipoObjetivo": "objeto",
             "objetivoId": "reto_codificacion_01",
             "imagen": "../assets/items/diodoLazer.svg",
-            "posicion": { "x": 3810, "y": 1540 }
+            "posicion": {
+              "x": 3810,
+              "y": 1540
+            }
           },
           "otorgaItems": []
         },
@@ -1549,7 +1806,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc029",
             "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
-            "posicion": { "x": 3920, "y": 1620 }
+            "posicion": {
+              "x": 3920,
+              "y": 1620
+            }
           },
           "otorgaItems": []
         },
@@ -1565,7 +1825,10 @@
             "tipoObjetivo": "npc",
             "objetivoId": "npc027",
             "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
-            "posicion": { "x": 3480, "y": 1280 }
+            "posicion": {
+              "x": 3480,
+              "y": 1280
+            }
           },
           "otorgaItems": []
         }
@@ -1584,8 +1847,3 @@
     }
   ]
 }
-
-
-
-
-
