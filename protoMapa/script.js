@@ -6045,14 +6045,14 @@ function continuarTrasGameOver() {
     hoveredItem = getItemAtCanvasPosition(e.clientX, e.clientY);
     hoveredCanvasInteractive = getHoveredCanvasInteractive(e.clientX, e.clientY);
 
-    canvas.style.cursor = hoveredCanvasInteractive ? "pointer" : "default";
+    canvas.style.cursor = 'url("../assets/cursor.png") 0 0, auto';
   });
 
   // Salir del canvas limpia hover
   canvas.addEventListener("mouseleave", () => {
     hoveredItem = null;
     hoveredCanvasInteractive = null;
-    canvas.style.cursor = "default";
+    canvas.style.cursor = 'url("../assets/cursor.png") 0 0, auto';
   });
 
   // Click mouse desktop
@@ -8960,7 +8960,7 @@ function continuarTrasGameOver() {
     player.walking = false;
     hoveredItem = null;
     hoveredCanvasInteractive = null;
-    canvas.style.cursor = "default";
+    canvas.style.cursor = 'url("../assets/src/puntero.svg") 0 0, auto';
 
     if (typeof resetJoy === "function") {
       resetJoy();
@@ -13499,7 +13499,6 @@ function continuarTrasGameOver() {
         border:2px solid #00ffcc;
         font-family:'arcade','monospace';
         font-size:10px;
-        cursor:pointer;
         text-transform:uppercase;
       ">Cerrar</button>
     </div>

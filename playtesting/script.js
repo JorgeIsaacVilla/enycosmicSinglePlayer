@@ -5950,14 +5950,14 @@ function continuarTrasGameOver() {
     hoveredItem = getItemAtCanvasPosition(e.clientX, e.clientY);
     hoveredCanvasInteractive = getHoveredCanvasInteractive(e.clientX, e.clientY);
 
-    canvas.style.cursor = hoveredCanvasInteractive ? "pointer" : "default";
+    canvas.style.cursor = 'url("../assets/src/puntero.svg") 0 0, auto';
   });
 
   // Salir del canvas limpia hover
   canvas.addEventListener("mouseleave", () => {
     hoveredItem = null;
     hoveredCanvasInteractive = null;
-    canvas.style.cursor = "default";
+    canvas.style.cursor = 'url("../assets/src/puntero.svg") 0 0, auto';
   });
 
   // Click mouse desktop
@@ -6869,7 +6869,7 @@ function continuarTrasGameOver() {
 
 
   /*Espacio para llamar funciones al compeltar retos (inicio) */
-  function completarRetoMission(retoId) {
+  window.completarRetoMission = function (retoId) {
     const mission = getActiveMission();
     if (!mission) return false;
 
@@ -6989,14 +6989,14 @@ function continuarTrasGameOver() {
           border: 1px solid #6ef7ff;
           overflow: hidden;
         ">
-          <div data-piece="0" style="position:absolute;top:0;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="1" style="position:absolute;top:0;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="2" style="position:absolute;top:0;left:200px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="3" style="position:absolute;top:100px;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="4" style="position:absolute;top:100px;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="5" style="position:absolute;top:100px;left:200px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="6" style="position:absolute;top:200px;left:0;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 100%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="7" style="position:absolute;top:200px;left:100px;width:100px;height:100px;border:1px solid #000;cursor:pointer;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="0" style="position:absolute;top:0;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="1" style="position:absolute;top:0;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="2" style="position:absolute;top:0;left:200px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="3" style="position:absolute;top:100px;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="4" style="position:absolute;top:100px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="5" style="position:absolute;top:100px;left:200px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="6" style="position:absolute;top:200px;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="7" style="position:absolute;top:200px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 100%;transition:top .25s linear,left .25s linear;"></div>
           <div data-piece="8" style="position:absolute;top:200px;left:200px;width:100px;height:100px;border:1px solid #000;background:none;background-color:#000;z-index:0;"></div>
         </div>
 
@@ -7393,9 +7393,7 @@ function continuarTrasGameOver() {
         }
       }
     }
-  
 
-  
     return true;
   }
   */
@@ -9279,7 +9277,7 @@ function continuarTrasGameOver() {
     player.walking = false;
     hoveredItem = null;
     hoveredCanvasInteractive = null;
-    canvas.style.cursor = "default";
+    canvas.style.cursor = 'url("../assets/src/puntero.svg") 0 0, auto';
 
     if (typeof resetJoy === "function") {
       resetJoy();
@@ -13901,7 +13899,7 @@ function continuarTrasGameOver() {
         border:2px solid #00ffcc;
         font-family:'arcade','monospace';
         font-size:10px;
-        cursor:pointer;
+        
         text-transform:uppercase;
       ">Cerrar</button>
     </div>
@@ -15785,7 +15783,7 @@ window.insertarCodexEnPedestal = function () {
               background:rgba(0,0,0,0.7);
               color:#fff;
               font-family:arcade;
-              cursor:pointer;
+              
             ">Aceptar</button>
 
             <button id="codex-close" style="
@@ -15795,7 +15793,7 @@ window.insertarCodexEnPedestal = function () {
               background:rgba(0,0,0,0.7);
               color:#fff;
               font-family:arcade;
-              cursor:pointer;
+              
             ">Cerrar</button>
           </div>
         </div>
@@ -15872,7 +15870,7 @@ window.insertarCodexEnPedestal = function () {
               border:2px solid #fff;
               background:#111;
               color:#fff;
-              cursor:pointer;
+              
             ">X</button>
           </div>
 
@@ -15892,7 +15890,7 @@ window.insertarCodexEnPedestal = function () {
             border:2px solid #00ffb3;
             background:#10221d;
             color:#fff;
-            cursor:pointer;
+            
             font-family:arcade;
           ">Explorar Algoritmo de Matlog</button>
         </div>
@@ -15905,72 +15903,97 @@ window.insertarCodexEnPedestal = function () {
 
   function renderPantallaVideo() {
     overlay.innerHTML = `
+    <div style="
+      position:fixed;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.82);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+    ">
       <div style="
-        position:fixed;
-        left:0;
-        top:0;
-        width:100%;
-        height:100%;
-        background:rgba(0,0,0,0.82);
+        width:320px;
+        height:500px;
+        background:#060b12;
+        border:2px solid #6ef7ff;
+        padding:10px;
+        box-sizing:border-box;
         display:flex;
-        align-items:center;
-        justify-content:center;
-        z-index:99999;
+        flex-direction:column;
+        gap:10px;
       ">
         <div style="
-          width:320px;
-          height:500px;
-          background:#060b12;
-          border:2px solid #6ef7ff;
-          padding:10px;
-          box-sizing:border-box;
           display:flex;
-          flex-direction:column;
-          gap:10px;
+          justify-content:space-between;
+          align-items:center;
+          color:#fff;
+          font-size:16px;
         ">
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+          <span>Algoritmo de Matlog</span>
+          <button id="codex-close-3" style="
+            width:34px;
+            height:34px;
+            border:2px solid #fff;
+            background:#111;
             color:#fff;
-            font-size:16px;
-          ">
-            <span>Algoritmo de Matlog</span>
-            <button id="codex-close-3" style="
-              width:34px;
-              height:34px;
-              border:2px solid #fff;
-              background:#111;
-              color:#fff;
-              cursor:pointer;
-            ">X</button>
-          </div>
-
-          <video controls autoplay style="
-            width:100%;
-            height:390px;
-            object-fit:cover;
-            border:2px solid #6ef7ff;
-            background:#000;
-          ">
-            <source src="../assets/video/matlog.mp4" type="video/mp4">
-          </video>
-
-          <button id="abrir-prueba-matlog" style="
-            width:100%;
-            height:44px;
-            border:2px solid #ffd54a;
-            background:#2a2010;
-            color:#fff;
-            cursor:pointer;
-            font-family:arcade;
-          ">Prueba de conocimiento Algorítmico</button>
+            
+          ">X</button>
         </div>
-      </div>
-    `;
 
-    document.getElementById("codex-close-3").onclick = cerrarOverlay;
-    document.getElementById("abrir-prueba-matlog").onclick = renderPantallaPrueba;
+        <video id="video-matlog" controls autoplay style="
+          width:100%;
+          height:390px;
+          object-fit:cover;
+          border:2px solid #6ef7ff;
+          background:#000;
+        ">
+          <source src="../assets/video/matlog.mp4" type="video/mp4">
+        </video>
+
+        <button id="abrir-prueba-matlog" style="
+          width:100%;
+          height:44px;
+          border:2px solid #ffd54a;
+          background:#2a2010;
+          color:#fff;
+          
+          font-family:arcade;
+        ">Prueba de conocimiento Algorítmico</button>
+      </div>
+    </div>
+  `;
+
+    const video = document.getElementById("video-matlog");
+
+    // Pausar música ambiente al abrir el video
+    if (typeof pauseAmbientMusic === "function") {
+      pauseAmbientMusic();
+    }
+
+    // Asegurar reproducción del video
+    if (video) {
+      video.play().catch(() => { });
+    }
+
+    document.getElementById("codex-close-3").onclick = () => {
+      // Reestablecer música si cierran esta pantalla
+      if (typeof playAmbientMusic === "function") {
+        playAmbientMusic();
+      }
+      cerrarOverlay();
+    };
+
+    document.getElementById("abrir-prueba-matlog").onclick = () => {
+      // Reestablecer música al iniciar la prueba
+      if (typeof playAmbientMusic === "function") {
+        playAmbientMusic();
+      }
+      renderPantallaPrueba();
+    };
   }
 
   function renderPantallaPrueba() {
@@ -16022,7 +16045,7 @@ window.insertarCodexEnPedestal = function () {
                 border:2px solid #fff;
                 background:#111;
                 color:#fff;
-                cursor:pointer;
+                
               ">X</button>
             </div>
 
@@ -16097,7 +16120,7 @@ window.insertarCodexEnPedestal = function () {
               border:2px solid #00ff88;
               background:#11261a;
               color:#fff;
-              cursor:pointer;
+              
               font-family:arcade;
             ">Validar respuesta</button>
 
@@ -16239,7 +16262,7 @@ window.insertarCodexEnPedestal = function () {
               border:2px solid #fff;
               background:#111;
               color:#fff;
-              cursor:pointer;
+              
               font-family:arcade;
             ">
               ${aprobado ? "Continuar" : "Intentar de nuevo"}
@@ -16251,25 +16274,25 @@ window.insertarCodexEnPedestal = function () {
       const btnFinal = document.getElementById("matlog-final-btn");
 
       btnFinal.onclick = function () {
-        if (aprobado) {
-          if (typeof showPopupFeedback === "function") {
-            showPopupFeedback({
-              title: "Prueba superada",
-              message: "Has dominado el algoritmo de Matlog.",
-              type: "success",
-              duration: 4000
-            });
-          }
-
-          cerrarOverlay();
-
-          if (typeof completarRetoMission === "function") {
-            completarRetoMission("insertarCodexEnPedestal");
-          }
+        if (!aprobado) {
+          renderPantallaPrueba();
           return;
         }
 
-        renderPantallaPrueba();
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Prueba superada",
+            message: "Has dominado el algoritmo de Matlog.",
+            type: "success",
+            duration: 4000
+          });
+        }
+
+        if (typeof window.completarRetoMission === "function") {
+          window.completarRetoMission("insertarCodexEnPedestal");
+        }
+
+        cerrarOverlay();
       };
     }
 
@@ -16279,6 +16302,394 @@ window.insertarCodexEnPedestal = function () {
   renderPantallaClave();
 };
 
+window.DesencriptarCentral = function () {
+  const existente = document.getElementById("desencriptar-central-overlay");
+  if (existente) existente.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "desencriptar-central-overlay";
+  document.body.appendChild(overlay);
+
+  let preguntas = [];
+  let indiceActual = 0;
+  let tiempoRestante = 5;
+  let timerId = null;
+  let bloqueado = false;
+
+  function cerrarOverlay() {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+    const el = document.getElementById("desencriptar-central-overlay");
+    if (el) el.remove();
+  }
+
+  function crearPreguntaLogaritmo() {
+    const digitos = Math.floor(Math.random() * 5) + 2; // 2 a 6
+    let numero = "";
+
+    for (let i = 0; i < digitos; i++) {
+      if (i === 0) {
+        numero += Math.floor(Math.random() * 9) + 1;
+      } else {
+        numero += Math.floor(Math.random() * 10);
+      }
+    }
+
+    numero = Number(numero);
+    const respuesta = String(Math.floor(Math.log10(numero)));
+
+    return { numero, respuesta };
+  }
+
+  function crearPreguntas(cantidad = 8) {
+    return Array.from({ length: cantidad }, () => crearPreguntaLogaritmo());
+  }
+
+  function reiniciarReto(mensaje) {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    if (typeof playerrorSound === "function") {
+      playerrorSound();
+    }
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Fallo en la desencriptación",
+        message: mensaje || "La secuencia se reinició.",
+        type: "warning",
+        duration: 3000
+      });
+    }
+
+    preguntas = crearPreguntas(8);
+    indiceActual = 0;
+    tiempoRestante = 5;
+    bloqueado = false;
+
+    renderPregunta();
+  }
+
+  function renderPregunta() {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    const pregunta = preguntas[indiceActual];
+    tiempoRestante = 5;
+    bloqueado = false;
+
+    overlay.innerHTML = `
+      <div style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.86);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px;
+        z-index:999999;
+        box-sizing:border-box;
+      ">
+        <div style="
+          width:min(92vw, 360px);
+          min-height:520px;
+          background:#081019;
+          border:2px solid #6ef7ff;
+          box-shadow:0 0 18px rgba(110,247,255,.28);
+          padding:12px;
+          box-sizing:border-box;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+          color:#fff;
+          font-family:arcade, monospace;
+        ">
+          <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+          ">
+            <div style="
+              font-size:14px;
+              color:#6ef7ff;
+              line-height:1.4;
+            ">
+              ⎅⟒⌇⟒⋏☊⍀⟟⌿⏁⏃⍀ ☊⟒⋏⏁⍀⏃⌰
+            </div>
+
+            <button id="cerrar-desencriptacion-central" type="button" style="
+              width:38px;
+              height:38px;
+              border:2px solid #fff;
+              background:#111;
+              color:#fff;
+              font-family:arcade, monospace;
+              cursor:pointer;
+              flex:0 0 auto;
+            ">X</button>
+          </div>
+
+          <div style="
+            font-size:11px;
+            line-height:1.5;
+            color:#cfefff;
+            text-align:center;
+            min-height:48px;
+          ">
+            ⍀⟒⌇⍜⌰⎐⟒ ⌰⍜☌⏃⍀⟟⏁⋔⍜⌇ ⟒⋏ ⌇⟒☊⎍⟒⋏☊⟟⏃.<br>
+            ⌇⟟ ⎎⏃⌰⌰⏃⌇ ⍜ ⌇⟒ ⏃☌⍜⏁⏃ ⟒⌰ ⏁⟟⟒⋔⌿⍜, ⏁⍜⎅⍜ ⎐⎍⟒⌰⎐⟒ ⏃ ⟟⋏⟟☊⟟⏃⍀.
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:11px;
+            color:#ffe082;
+            gap:8px;
+          ">
+            <span>⍀⟒⏁⍜ ${indiceActual + 1} / 8</span>
+            <span id="contador-desencriptacion" style="color:#ff8a80;">⏁⟟⟒⋔⌿⍜: ${tiempoRestante}</span>
+          </div>
+
+          <div style="
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:18px;
+            border:1px solid #355a66;
+            background:#101926;
+            padding:12px;
+            box-sizing:border-box;
+          ">
+            <div style="
+              font-size:30px;
+              color:#fff;
+              text-align:center;
+              line-height:1.2;
+              word-break:break-word;
+            ">
+              log(${pregunta.numero})
+            </div>
+
+            <input
+              id="respuesta-desencriptacion-central"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              style="
+                width:150px;
+                height:48px;
+                border:2px solid #6ef7ff;
+                background:#000;
+                color:#fff;
+                text-align:center;
+                font-size:24px;
+                box-sizing:border-box;
+                font-family:arcade, monospace;
+              "
+            />
+
+            <div id="feedback-desencriptacion-central" style="
+              min-height:38px;
+              text-align:center;
+              font-size:11px;
+              color:#cfefff;
+              line-height:1.45;
+            "></div>
+          </div>
+
+          <button id="validar-desencriptacion-central" type="button" style="
+            width:100%;
+            height:44px;
+            border:2px solid #00ff88;
+            background:#11261a;
+            color:#fff;
+            font-family:arcade, monospace;
+            cursor:pointer;
+          ">VALIDAR</button>
+        </div>
+      </div>
+    `;
+
+    const btnCerrar = document.getElementById("cerrar-desencriptacion-central");
+    const btnValidar = document.getElementById("validar-desencriptacion-central");
+    const input = document.getElementById("respuesta-desencriptacion-central");
+    const feedback = document.getElementById("feedback-desencriptacion-central");
+    const contador = document.getElementById("contador-desencriptacion");
+
+    btnCerrar.onclick = cerrarOverlay;
+
+    function pasarSiguientePregunta() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+
+      indiceActual += 1;
+
+      if (indiceActual >= preguntas.length) {
+        finalizarReto();
+        return;
+      }
+
+      renderPregunta();
+    }
+
+    function validarRespuesta() {
+      if (bloqueado) return;
+
+      const valor = String(input.value || "").trim();
+      const correcta = pregunta.respuesta;
+
+      if (valor === "") {
+        if (typeof playerrorSound === "function") {
+          playerrorSound();
+        }
+        feedback.textContent = "⟟⋏☌⍀⟒⌇⏃ ⎍⋏⏃ ⍀⟒⌇⌿⎍⟒⌇⏁⏃.";
+        feedback.style.color = "#ff8a80";
+        input.focus();
+        return;
+      }
+
+      if (valor !== correcta) {
+        reiniciarReto("Fallaste en la secuencia. Debes comenzar de nuevo.");
+        return;
+      }
+
+      bloqueado = true;
+
+      if (typeof playgoodSound === "function") {
+        playgoodSound();
+      }
+
+      feedback.textContent = `☊⍜⍀⍀⟒☊⏁⍜ · log(${pregunta.numero}) = ${correcta}`;
+      feedback.style.color = "#7CFFB2";
+      btnValidar.disabled = true;
+      input.disabled = true;
+
+      setTimeout(() => {
+        pasarSiguientePregunta();
+      }, 650);
+    }
+
+    btnValidar.onclick = validarRespuesta;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        validarRespuesta();
+      }
+    });
+
+    input.focus();
+
+    timerId = setInterval(() => {
+      tiempoRestante -= 1;
+      contador.textContent = `⏁⟟⟒⋔⌿⍜: ${tiempoRestante}`;
+
+      if (tiempoRestante <= 2) {
+        contador.style.color = "#ff5252";
+      }
+
+      if (tiempoRestante <= 0) {
+        clearInterval(timerId);
+        timerId = null;
+        reiniciarReto("Se agotó el tiempo. La desencriptación se reinició.");
+      }
+    }, 1000);
+  }
+
+  function finalizarReto() {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    overlay.innerHTML = `
+      <div style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.86);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px;
+        z-index:999999;
+        box-sizing:border-box;
+      ">
+        <div style="
+          width:min(92vw, 360px);
+          min-height:280px;
+          background:#081019;
+          border:2px solid #00ff88;
+          box-shadow:0 0 18px rgba(0,255,136,.22);
+          padding:18px;
+          box-sizing:border-box;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          gap:14px;
+          color:#fff;
+          text-align:center;
+          font-family:arcade, monospace;
+        ">
+          <div style="font-size:18px; color:#7CFFB2;">
+            Software de la central de generación
+          </div>
+
+          <div style="
+            font-size:12px;
+            line-height:1.6;
+            color:#d8f3ff;
+          ">
+            Sistema energético y de datos liberado. Protocolos reiniciados.
+          </div>
+
+          <button id="continuar-desencriptacion-central" type="button" style="
+            width:100%;
+            height:44px;
+            border:2px solid #fff;
+            background:#111;
+            color:#fff;
+            font-family:arcade, monospace;
+            cursor:pointer;
+          ">CONTINUAR</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("continuar-desencriptacion-central").onclick = function () {
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Desencriptación completada",
+          message: "Has roto la encriptación central.",
+          type: "success",
+          duration: 4000
+        });
+      }
+
+      if (typeof window.completarRetoMission === "function") {
+        window.completarRetoMission("DesencriptarCentral");
+      }
+
+      cerrarOverlay();
+    };
+  }
+
+  preguntas = crearPreguntas(8);
+  renderPregunta();
+};
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (FIN) */
 
 //--------------------------------------------------------------

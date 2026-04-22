@@ -33,6 +33,12 @@
   --dom-font-lg: 14px;
   --dom-line: 1.35;
 }
+body{
+  cursor: url("../assets/src/puntero.svg") 0 0, auto;
+}
+canvas{
+  cursor: url("../assets/src/puntero.svg") 0 0, auto;
+}
 
 /* =========================
    BASE MODAL / PANEL SYSTEM
@@ -143,7 +149,6 @@
   border:2px solid var(--dom-border);
   font-family:var(--dom-font);
   font-size:var(--dom-font-lg);
-  cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -201,7 +206,6 @@
   border:2px solid var(--dom-border);
   font-family:var(--dom-font);
   font-size:var(--dom-font-xs);
-  cursor:pointer;
   text-transform:uppercase;
   box-sizing:border-box;
 }
@@ -313,7 +317,6 @@
   padding:10px;
   display:grid;
   gap:8px;
-  cursor:pointer;
   box-sizing:border-box;
 }
 
@@ -828,7 +831,6 @@
   color: #000000;
   font-family: arcade, monospace;
   font-size: 16px;
-  cursor: pointer;
   box-sizing: border-box;
   margin-top: 16px;
 }

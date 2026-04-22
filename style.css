@@ -37,14 +37,19 @@ body{
   place-items:center;
   overflow:hidden;
   touch-action:none;
-
+cursor: url("./assets/src/puntero.svg") 0 0, auto;
   margin: 0;
   height: 100%;
   background-image: url('./assets/backgrounds/backgroundWrap.svg');
   background-position: center;
   background-size: cover;
 }
-
+canvas{
+  cursor: url("./assets/src/puntero.svg") 0 0, auto;
+}
+button{
+  cursor: url("./assets/src/puntero.svg") 0 0, auto;
+}
 /* Contenedor responsivo */
 .wrap{
   width:min(96vw, 980px);
@@ -208,7 +213,6 @@ body{
   display:grid;
   place-items:center;
   font-size:20px;
-  cursor:pointer;
   touch-action:none;
 }
 
@@ -405,7 +409,6 @@ body{
   background:black;
   color:#00ffcc;
   border:3px solid #00ffcc;
-  cursor:pointer;
   font-weight:bold;
 }
 
@@ -708,7 +711,6 @@ body{
   font-family:"arcade","monospace";
   font-size:12px;
   padding:8px 10px;
-  cursor:pointer;
   text-transform:uppercase;
 }
 
@@ -996,7 +998,6 @@ body{
   font-family:"arcade","monospace";
   font-size:10px;
   padding:6px 4px;
-  cursor:pointer;
   text-transform:uppercase;
 }
 
@@ -1031,7 +1032,6 @@ body{
 }
 
 .ui-inv-combine-result.has-item{
-  cursor:pointer;
 }
 
 .ui-inv-craft-popup{
@@ -1106,7 +1106,6 @@ body{
   color:#00ffcc;
   font-family:"arcade","monospace";
   font-size:12px;
-  cursor:pointer;
   touch-action:manipulation;
 }
 

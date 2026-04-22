@@ -1094,8 +1094,8 @@
       "id": "m5",
       "nombre": "El algoritmo de Matlog",
       "tipo": "principal",
-      "clasificacion": "diaria",
-      "descripcion": "Desifra el criptograma, para tener acceso al algoritmo de Matlog y adquirir todo su conocimiento.",
+      "clasificacion": "historia",
+      "descripcion": "Descifra el criptograma para tener acceso al algoritmo de Matlog y adquirir todo su conocimiento.",
       "estadoFinalizacion": {
         "tipo": "automatica",
         "condicion": "todos_los_pasos",
@@ -1114,17 +1114,17 @@
       "npcs": [
         {
           "id": "npc11",
-          "nombre": "Capitan Valen",
+          "nombre": "Capitán Valen",
           "rol": "inicio",
           "imagen": "../assets/avatares/npc/mapa1/Valen.png",
           "posicion": {
             "x": 1889,
             "y": 4718
           },
-          "conversation_default": "Qué secretos tendrá este algoritmo de conocimiento?",
+          "conversation_default": "¿Qué secretos tendrá este algoritmo de conocimiento?",
           "dialogos": {
             "inicio": [
-              "Hola camarada.",
+              "Hola, camarada.",
               "Si has llegado hasta aquí, es porque has sido esforzado y valiente.",
               "No se me ocurre otra persona a quien delegar esta difícil tarea.",
               "Más que tú, mi mejor cosmonauta.",
@@ -1134,9 +1134,9 @@
               "Pero confío en tu ingenio para descifrarlo y salvarnos de este mal.",
               "Uno de nuestros centinelas se infiltró en la base alienígena y halló el Codex.",
               "Pero antes de perder la señal con él,",
-              "dijo que el Codex fue corrompido de extremo a extremo.",
-              "Y que está siendo custodiado por el más poderoso reptiliano.",
-              "En el ala superior derecha del laberinto.",
+              "dijo que el Codex fue corrompido de extremo a extremo,",
+              "y que está siendo custodiado por el más poderoso reptiliano,",
+              "en el ala superior derecha del laberinto.",
               "Ve y resuelve el criptograma.",
               "Salva a la humanidad con el poder del algoritmo.",
               "¡Por favor!"
@@ -1161,21 +1161,22 @@
             "x": 2256,
             "y": 4232
           },
-          "conversation_default": "Es muy complejo. Nadie ha podido desfrar el algoritmo de Matlog.",
+          "conversation_default": "Es muy complejo. Nadie ha podido descifrar el algoritmo de Matlog.",
           "dialogos": {
             "inicio": [
-              "Hasta ahora nadie ha podido desifrar el algoritmo de matlog,",
-              "Y ahora será imposible ya que los reptilianos lo incriptaron en forma de codex."
+              "Hasta ahora nadie ha podido descifrar el algoritmo de Matlog,",
+              "y ahora será aún más difícil, ya que los reptilianos lo encriptaron en forma de Codex."
             ],
             "en_progreso": [
-              "El algoritmo de matlog es el codex principal con el que funciona la tecnologia reptiliana.",
-              "Crees que funcione para desbloquear la subestación de generación electrica?",
-              "El doctor Axiom tiene la teoria que su bloqueo funciona con los principios de matlog!"
+              "El algoritmo de Matlog es el Codex con el que funciona la tecnología reptiliana.",
+              "¿Crees que funcione para desbloquear la subestación de generación eléctrica?",
+              "El doctor Axiom tiene una teoria.",
+              "El cree que El codigo de bloqueo funciona con los principios de Matlog."
             ],
             "completado": [
               "Espero que puedas compartir con el mundo ese conocimiento",
-              "Y que lo uses para lo bueno.",
-              "Ahora estas por encima en el conocimiento."
+              "y que lo uses para el bien.",
+              "Ahora estás por encima en el conocimiento."
             ]
           }
         },
@@ -1188,25 +1189,25 @@
             "x": 2189,
             "y": 4320
           },
-          "conversation_default": "Es buena practica apuntar las cosas. Lo puedes hacer en el metafon.",
+          "conversation_default": "Es buena práctica apuntar las cosas. Lo puedes hacer en el Metafón.",
           "dialogos": {
             "inicio": [
-              "El algoritmo de matlog, solo lo comprenden las personas con profundo deseo de aprender.",
+              "El algoritmo de Matlog solo lo comprenden los que tienen un profundo deseo de aprender.",
               "Es bueno escribir el conocimiento, ya que las palabras se las lleva el viento."
             ],
             "en_progreso": [
-              "El algoritmo de matlog, solo lo comprenden las personas con profundo deseo de aprender.",
-              "Mi teoria es que ese algoritmo Es originado por los Indilianos,",
-              "Pero los reptilianos la robaron para hackear nuestros sistemas de daos y energeticos.",
-              "Si alguien comprendiera el algoritmo de Matlog, yo iria al centro de control,",
-              "Que está en el centro del laberinto en la subestación.",
-              "Y si es verdad que alguien lo comprendió, El nos libraria de este infierno."
+              "Mi teoría es que ese algoritmo fue originado por los indilianos,",
+              "pero los reptilianos lo usan para hackear nuestros sistemas de datos y energéticos.",
+              "Si alguien comprendiera el algoritmo de Matlog, yo iría al centro de control,",
+              "que está en el centro del laberinto, en la subestación.",
+              "Y si es verdad que alguien lo comprendió,",
+              "él nos libraría de este infierno."
             ],
             "completado": [
-              "Escuche por ahí que alguien comoprndió el algoritmo de Matlog...",
-              "Wow, despues de 100 años...!!",
-              "Quien será?? quisiera que me enseñe que significa...!!",
-              "Yo lo apuntaria en las notas del metafon para nunca olvidarlo."
+              "Escuché por ahí que alguien comprendió el algoritmo de Matlog...",
+              "¡Wow, después de 100 años...!",
+              "¿Quién será? Quisiera que me enseñe qué significa.",
+              "Yo lo anotaría en las notas del Metafón para nunca olvidarlo."
             ]
           }
         }
@@ -1217,13 +1218,13 @@
           "id": "m5s1",
           "tipo": "hablar_npc",
           "npcId": "npc11",
-          "titulo": "Habla con El capitan Valem",
-          "descripcion": "El capitan te pondrá en contexto con respecto al estado actual del enemigo.",
+          "titulo": "Habla con el capitán Valen",
+          "descripcion": "El capitán te pondrá en contexto con respecto al estado actual del enemigo.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Velem.png",
+            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
             "posicion": {
               "x": 1889,
               "y": 4718
@@ -1235,8 +1236,8 @@
           "step": 2,
           "id": "m5s2",
           "tipo": "completar_reto",
-          "titulo": "Encuentra el Criptograma de Matlog",
-          "descripcion": "Busca el criptograma de Matlog, en el ala superior derecha del laberinto.",
+          "titulo": "Encuentra el criptograma de Matlog",
+          "descripcion": "Busca el criptograma de Matlog en el ala superior derecha del laberinto.",
           "retoId": "resolverCriptogramaDeMatlog",
           "llamar_funcion_reto": "resolverCriptogramaDeMatlog()",
           "estadoInicial": false,
@@ -1255,10 +1256,10 @@
           "step": 3,
           "id": "m5s3",
           "tipo": "completar_reto",
-          "titulo": "Pon el codex en el Pedestal de Matlog",
+          "titulo": "Pon el Codex en el pedestal de Matlog",
           "descripcion": "Pon el criptograma en el pedestal y comprende el algoritmo de Matlog.",
-          "retoId": "misterioAlgoritmoDeMatlog",
-          "llamar_funcion_reto": "misterioAlgoritmoDeMatlog()",
+          "retoId": "insertarCodexEnPedestal",
+          "llamar_funcion_reto": "insertarCodexEnPedestal()",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "objeto",
@@ -1276,16 +1277,16 @@
           "id": "m5s4",
           "tipo": "hablar_npc",
           "npcId": "npc12",
-          "titulo": "Habla con El Ingeniero Solis",
-          "descripcion": "El ingeniero Solis Tiene una idea de como darle fin a esto.",
+          "titulo": "Habla con el ingeniero Solis",
+          "descripcion": "El ingeniero Solis tiene una idea de cómo ponerle fin a esto.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
-            "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Velem.png",
+            "objetivoId": "npc12",
+            "imagen": "../assets/avatares/npc/mapa1/Solis.png",
             "posicion": {
-              "x": 1889,
-              "y": 4718
+              "x": 2256,
+              "y": 4232
             }
           },
           "otorgaItems": []
@@ -1295,16 +1296,16 @@
           "id": "m5s5",
           "tipo": "hablar_npc",
           "npcId": "npc13",
-          "titulo": "Habla con El Doctor Axion",
-          "descripcion": "Confirma la teoria del Hackeo en la subestación de generación con el doctor Axiom.",
+          "titulo": "Habla con el doctor Axiom",
+          "descripcion": "Confirma la teoría del hackeo en la subestación de generación con el doctor Axiom.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
-            "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Velem.png",
+            "objetivoId": "npc13",
+            "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
             "posicion": {
-              "x": 1889,
-              "y": 4718
+              "x": 2189,
+              "y": 4320
             }
           },
           "otorgaItems": []
@@ -1313,8 +1314,8 @@
           "step": 6,
           "id": "m5s6",
           "tipo": "completar_reto",
-          "titulo": "Resuelve el siver ataque en la subestación",
-          "descripcion": "Resuelve y rompe la incriptación en la subestación en el centro del laberinto",
+          "titulo": "Resuelve el ciberataque en la subestación",
+          "descripcion": "Resuelve y rompe la encriptación en la subestación, en el centro del laberinto.",
           "retoId": "DesencriptarCentral",
           "llamar_funcion_reto": "DesencriptarCentral()",
           "estadoInicial": false,
@@ -1331,16 +1332,16 @@
         },
         {
           "step": 7,
-          "id": "m5s1",
+          "id": "m5s7",
           "tipo": "hablar_npc",
           "npcId": "npc11",
-          "titulo": "Habla con El capitan Valem",
-          "descripcion": "Contextualiza al capitan, y dile que ya somos libres de la invación alienigena.",
+          "titulo": "Habla con el capitán Valen",
+          "descripcion": "Habla con el capitán y dile que ya somos libres de la invasión alienígena.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Velem.png",
+            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
             "posicion": {
               "x": 1889,
               "y": 4718
