@@ -1,7 +1,7 @@
 let efectVolumen = 0.8;
 
-let userPostX = 2500;
-let userPostY = 4320;
+let userPostX = 120;
+let userPostY = 3140;
 
 function getSettingSfxVolume() {
   const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
@@ -7191,6 +7191,522 @@ function continuarTrasGameOver() {
     randomizeBoard();
   };
 
+  /*Mision aliado (incio) */
+  window.conexionAutomataMaese = function () {
+    const missionId = window.missionSystem?.activeMissionId;
+
+    if (missionId === "m6") {
+      const mission = window.missionsData?.missions?.find(m => m.id === missionId);
+      const stepIndex = window.missionSystem?.activeStepIndexByMission?.[missionId] ?? -1;
+      const step = mission?.pasos?.[stepIndex];
+
+      if (step?.id === "m6s2" && typeof validarPasoRecolectarItems === "function") {
+        validarPasoRecolectarItems("m6");
+
+        const nuevoStepIndex = window.missionSystem?.activeStepIndexByMission?.[missionId] ?? -1;
+        const nuevoStep = mission?.pasos?.[nuevoStepIndex];
+
+        if (nuevoStep?.id !== "m6s3") {
+          if (typeof showPopupFeedback === "function") {
+            showPopupFeedback({
+              title: "Faltan baterías",
+              message: "Necesitas reunir 8 baterías antes de usar la mesa.",
+              type: "warning",
+              duration: 3500
+            });
+          }
+          return false;
+        }
+      }
+    }
+
+    const existente = document.getElementById("conexion-automata-overlay");
+    if (existente) existente.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "conexion-automata-overlay";
+    document.body.appendChild(overlay);
+
+    const BAT_IMG = "../assets/items/bateria.svg";
+    const circuitoSlots = Array(8).fill(null);
+    function contarBateriasInventario() {
+      return (window.inventarioUser || [])
+        .filter(item => (item?.id ?? item?.item_id) === "bateria")
+        .reduce((total, item) => total + Number(item.cantidad || 1), 0);
+    }
+
+    const cantidadBaterias = Math.min(8, contarBateriasInventario());
+
+    const inventarioSlots = Array.from({ length: 8 }, (_, i) => {
+      return i < cantidadBaterias ? { id: `bateria_${i + 1}` } : null;
+    });
+
+    function cerrarConexionAutomata() {
+      const el = document.getElementById("conexion-automata-overlay");
+      if (el) el.remove();
+    }
+
+    function bateriasColocadas() {
+      return circuitoSlots.filter(Boolean).length;
+    }
+
+    function calcularVoltaje() {
+      const rama1 = circuitoSlots.slice(0, 4).filter(Boolean).length;
+      const rama2 = circuitoSlots.slice(4, 8).filter(Boolean).length;
+
+      const ramasCompletas = [rama1, rama2].filter(n => n === 4).length;
+
+      if (ramasCompletas === 0) return 0;
+      return 4 * 1.5;
+    }
+
+    function calcularCorriente() {
+      const rama1 = circuitoSlots.slice(0, 4).filter(Boolean).length;
+      const rama2 = circuitoSlots.slice(4, 8).filter(Boolean).length;
+
+      let corriente = 0;
+      if (rama1 === 4) corriente += 1;
+      if (rama2 === 4) corriente += 1;
+
+      return corriente;
+    }
+
+    function calcularPotencia() {
+      return calcularVoltaje() * calcularCorriente();
+    }
+
+    function tomarBateriaInventario(index) {
+      const bateria = inventarioSlots[index];
+      if (!bateria) return;
+
+      const slotLibre = circuitoSlots.findIndex(s => s === null);
+      if (slotLibre === -1) return;
+
+      circuitoSlots[slotLibre] = bateria;
+      inventarioSlots[index] = null;
+
+      if (typeof playtockSound === "function") playtockSound();
+
+      render();
+    }
+
+    function devolverBateriaCircuito(index) {
+      const bateria = circuitoSlots[index];
+      if (!bateria) return;
+
+      const slotLibre = inventarioSlots.findIndex(s => s === null);
+      if (slotLibre === -1) return;
+
+      inventarioSlots[slotLibre] = bateria;
+      circuitoSlots[index] = null;
+
+      if (typeof playtockSound === "function") playtockSound();
+
+      render();
+    }
+
+    function renderBateriaHTML(bateria, tipo, index) {
+      if (!bateria) {
+        return `
+        <button 
+          class="slot-bateria ${tipo}" 
+          data-${tipo}-index="${index}"
+          type="button"
+        ></button>
+      `;
+      }
+
+      return `
+      <button 
+        class="slot-bateria ${tipo} has-bateria" 
+        data-${tipo}-index="${index}"
+        type="button"
+      >
+        <img src="${BAT_IMG}" alt="Batería">
+      </button>
+    `;
+    }
+
+    function render() {
+      const voltaje = calcularVoltaje();
+      const corriente = calcularCorriente();
+      const potencia = calcularPotencia();
+      const usadas = bateriasColocadas();
+
+      overlay.innerHTML = `
+      <div style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.82);
+        z-index:999999;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:10px;
+        box-sizing:border-box;
+      ">
+        <div style="
+          width:min(94vw, 390px);
+          max-height:94vh;
+          background:#071018;
+          border:2px solid #6ef7ff;
+          box-shadow:0 0 20px rgba(110,247,255,.25);
+          color:#fff;
+          font-family:arcade, monospace;
+          padding:10px;
+          box-sizing:border-box;
+          display:flex;
+          flex-direction:column;
+          gap:8px;
+          overflow:hidden;
+        ">
+          <style>
+            .slot-bateria {
+              width:42px;
+              height:42px;
+              border:2px solid #6ef7ff;
+              background:#02070c;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              padding:2px;
+              box-sizing:border-box;
+              cursor:pointer;
+              flex:0 0 auto;
+            }
+
+            .slot-bateria img {
+              max-width:100%;
+              max-height:100%;
+              object-fit:contain;
+              pointer-events:none;
+            }
+
+            .slot-bateria.has-bateria {
+              background:#14202c;
+              box-shadow:0 0 8px rgba(110,247,255,.35);
+            }
+
+            .slot-bateria.inventario {
+              border-color:#ffffff;
+            }
+
+            .linea-circuito {
+              height:4px;
+              background:#6ef7ff;
+              box-shadow:0 0 8px rgba(110,247,255,.6);
+              flex:1;
+              min-width:8px;
+            }
+
+            .rama-circuito {
+              display:flex;
+              align-items:center;
+              gap:4px;
+              width:100%;
+            }
+
+            @media (max-width:420px) {
+              .slot-bateria {
+                width:36px;
+                height:36px;
+              }
+            }
+          </style>
+
+          <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+          ">
+            <div style="
+              font-size:13px;
+              color:#6ef7ff;
+              line-height:1.3;
+            ">
+              Mesa de robótica
+            </div>
+
+            <button id="cerrar-conexion-automata" type="button" style="
+              width:34px;
+              height:34px;
+              border:2px solid #fff;
+              background:#111;
+              color:#fff;
+              font-family:arcade, monospace;
+              cursor:pointer;
+            ">X</button>
+          </div>
+
+          <div style="
+            border:2px solid #ffffff;
+            background:#dfe7e9;
+            color:#000;
+            text-align:center;
+            padding:8px 4px;
+            font-size:20px;
+            line-height:1.2;
+          ">
+            6V × 2A = 12W
+          </div>
+
+          <div style="
+            border:2px solid #6ef7ff;
+            background:#0b1520;
+            padding:10px;
+            box-sizing:border-box;
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+          ">
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              font-size:11px;
+              color:#cfefff;
+              gap:6px;
+              flex-wrap:wrap;
+            ">
+              <span>Actual: ${voltaje}V × ${corriente}A = ${potencia}W</span>
+              <span>${usadas}/8 baterías</span>
+            </div>
+
+            <div style="
+              display:flex;
+              align-items:center;
+              gap:8px;
+            ">
+              <div style="
+                width:12px;
+                height:92px;
+                border-left:4px solid #6ef7ff;
+                border-top:4px solid #6ef7ff;
+                border-bottom:4px solid #6ef7ff;
+                box-sizing:border-box;
+              "></div>
+
+              <div style="
+                flex:1;
+                display:flex;
+                flex-direction:column;
+                gap:18px;
+              ">
+                <div class="rama-circuito">
+                  <div class="linea-circuito"></div>
+                  ${circuitoSlots.slice(0, 4).map((b, i) => renderBateriaHTML(b, "circuito", i)).join("")}
+                  <div class="linea-circuito"></div>
+                </div>
+
+                <div class="rama-circuito">
+                  <div class="linea-circuito"></div>
+                  ${circuitoSlots.slice(4, 8).map((b, i) => renderBateriaHTML(b, "circuito", i + 4)).join("")}
+                  <div class="linea-circuito"></div>
+                </div>
+              </div>
+
+              <div style="
+                width:12px;
+                height:92px;
+                border-right:4px solid #6ef7ff;
+                border-top:4px solid #6ef7ff;
+                border-bottom:4px solid #6ef7ff;
+                box-sizing:border-box;
+              "></div>
+            </div>
+
+            <div style="
+              font-size:10px;
+              color:#ffe082;
+              text-align:center;
+              line-height:1.4;
+            ">
+              Coloca 4 baterías en cada rama. Cada rama da 6V y ambas ramas suman 2A.
+            </div>
+          </div>
+
+          <div style="
+            border:2px solid #ffffff;
+            background:#111;
+            padding:8px;
+            box-sizing:border-box;
+          ">
+            <div style="
+              font-size:11px;
+              color:#fff;
+              margin-bottom:8px;
+            ">
+              Inventario de la misión
+            </div>
+
+            <div style="
+              display:grid;
+              grid-template-columns:repeat(4, 1fr);
+              gap:7px;
+              justify-items:center;
+            ">
+              ${inventarioSlots.map((b, i) => renderBateriaHTML(b, "inventario", i)).join("")}
+            </div>
+          </div>
+
+          <button id="validar-conexion-automata" type="button" style="
+            width:100%;
+            height:42px;
+            border:2px solid #00ff88;
+            background:#11261a;
+            color:#fff;
+            font-family:arcade, monospace;
+            cursor:pointer;
+          ">Validar conexión</button>
+        </div>
+      </div>
+    `;
+
+      document.getElementById("cerrar-conexion-automata").onclick = cerrarConexionAutomata;
+
+      document.querySelectorAll(".slot-bateria.inventario").forEach(btn => {
+        btn.onclick = function () {
+          tomarBateriaInventario(Number(btn.dataset.inventarioIndex));
+        };
+      });
+
+      document.querySelectorAll(".slot-bateria.circuito").forEach(btn => {
+        btn.onclick = function () {
+          devolverBateriaCircuito(Number(btn.dataset.circuitoIndex));
+        };
+      });
+
+      document.getElementById("validar-conexion-automata").onclick = validarConexion;
+    }
+
+    function validarConexion() {
+      const voltaje = calcularVoltaje();
+      const corriente = calcularCorriente();
+      const potencia = calcularPotencia();
+      const bateriasUsadas = bateriasColocadas();
+
+      const correcto =
+        bateriasUsadas === 8 &&
+        voltaje === 6 &&
+        corriente === 2 &&
+        potencia === 12;
+
+      if (!correcto) {
+        if (typeof playerrorSound === "function") playerrorSound();
+
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Conexión incorrecta",
+            message: "Debes formar 2 ramas en paralelo, con 4 baterías en serie cada una.",
+            type: "warning",
+            duration: 3500
+          });
+        }
+
+        return false;
+      }
+
+      if (typeof playgoodSound === "function") playgoodSound();
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Autómata energizado",
+          message: "La conexión entrega 6V, 2A y 12W correctamente.",
+          type: "success",
+          duration: 4000
+        });
+      }
+
+      if (typeof consumirItemsDelInventario === "function") {
+        consumirItemsDelInventario([{ id: "bateria", cantidad: 8 }]);
+      } else {
+        let restantes = 8;
+
+        for (let i = window.inventarioUser.length - 1; i >= 0 && restantes > 0; i--) {
+          const item = window.inventarioUser[i];
+          const itemId = item?.id ?? item?.item_id;
+
+          if (itemId !== "bateria") continue;
+
+          const cantidad = Number(item.cantidad || 1);
+
+          if (cantidad > restantes) {
+            item.cantidad = cantidad - restantes;
+            restantes = 0;
+          } else {
+            restantes -= cantidad;
+            window.inventarioUser.splice(i, 1);
+          }
+        }
+
+        if (typeof refreshInventarioUI === "function") {
+          refreshInventarioUI();
+        }
+      }
+
+      const aliadoScriptSrc = "../globalScripts/aliado.js";
+      const aliadoModuleId = "aliado_reptiliano_test";
+
+      function iniciarAliadoDespuesDeCargar() {
+        const moduloAliado =
+          window.enyGlobalModules?.loaded?.[aliadoModuleId] ||
+          window.enyGlobalModules?.registry?.[aliadoModuleId];
+
+        const estadoAliado = window.enyGlobalModules?.state?.[aliadoModuleId];
+
+        if (!window.__aliado_automata_creado__) {
+          if (moduloAliado?.onInit && estadoAliado) {
+            moduloAliado.onInit();
+
+            window.__aliado_automata_creado__ = true;
+
+            console.log("🤖 Aliado creado UNA sola vez");
+          }
+        }
+      }
+
+      const aliadoYaCargado = Array.from(document.scripts).some(script =>
+        script.src.includes("globalScripts/aliado.js")
+      );
+
+      if (!aliadoYaCargado) {
+        const script = document.createElement("script");
+        script.src = aliadoScriptSrc;
+
+        script.onload = function () {
+          iniciarAliadoDespuesDeCargar();
+        };
+
+        document.body.appendChild(script);
+      } else {
+        iniciarAliadoDespuesDeCargar();
+      }
+
+      if (typeof window.completarRetoMission === "function") {
+        window.completarRetoMission("conexionAutomataMaese");
+      }
+
+      cerrarConexionAutomata();
+      return true;
+    }
+    if (contarBateriasInventario() < 8) {
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Faltan baterías",
+          message: "Necesitas tener 8 baterías reales en el inventario.",
+          type: "warning",
+          duration: 3500
+        });
+      }
+
+      return false;
+    }
+    render();
+  };
+
+  /*Mision aliado (fin) */
+
+
   window.reptilianoApagaLuz = function () {
     const missionId = "m4";
     const mission = getMissionById(missionId);
@@ -12352,7 +12868,16 @@ function continuarTrasGameOver() {
           }
 
           const restante = nuevaCantidad - aSumar;
-          if (restante <= 0) return true;
+
+          if (restante <= 0) {
+            const activeMissionId = window.missionSystem?.activeMissionId;
+
+            if (activeMissionId && typeof validarPasoRecolectarItems === "function") {
+              validarPasoRecolectarItems(activeMissionId);
+            }
+
+            return true;
+          }
 
           nuevoItem = {
             ...nuevoItem,

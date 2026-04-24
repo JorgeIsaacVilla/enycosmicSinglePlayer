@@ -7948,5 +7948,89 @@
     "h": 220,
     "imagen": null,
     "zIndexBase": 3300
+  },
+  {
+    "zona_id": "mesa_lab_Robotica",
+    "color": null,
+    "tipo": "visual cliqueable",
+    "funcion": "conexionAutomataMaese",
+    "x": 600,
+    "y": 3195,
+    "w": 220,
+    "h": 220,
+    "imagen": "../assets/spriteAmbiente/labElectronica.svg",
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "coli_mesa_lab_robotica",
+    "color": null,
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 600,
+    "y": 3265,
+    "w": 220,
+    "h": 115,
+    "imagen": null,
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "paredes_lab_Robotica",
+    "color": null,
+    "tipo": "visual",
+    "funcion": null,
+    "x": 325,
+    "y": 3065,
+    "w": 680,
+    "h": 400,
+    "imagen": "../assets/spriteAmbiente/cerramiento3.png",
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "coli_lab_robotica_01",
+    "color": null,
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 365,
+    "y": 3145,
+    "w": 600,
+    "h": 60,
+    "imagen": null,
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "coli_lab_robotica_02",
+    "color": null,
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 363,
+    "y": 3300,
+    "w": 15,
+    "h": 165,
+    "imagen": null,
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "coli_lab_robotica_03",
+    "color": null,
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 953,
+    "y": 3196,
+    "w": 15,
+    "h": 268,
+    "imagen": null,
+    "zIndexBase": 3300
+  },
+  {
+    "zona_id": "coli_lab_robotica_02",
+    "color": "#303030",
+    "tipo": "colisionables",
+    "funcion": null,
+    "x": 360,
+    "y": 3456,
+    "w": 500,
+    "h": 15,
+    "imagen": null,
+    "zIndexBase": 3300
   }
 ]

@@ -11952,7 +11952,16 @@ function continuarTrasGameOver() {
           }
 
           const restante = nuevaCantidad - aSumar;
-          if (restante <= 0) return true;
+
+          if (restante <= 0) {
+            const activeMissionId = window.missionSystem?.activeMissionId;
+
+            if (activeMissionId && typeof validarPasoRecolectarItems === "function") {
+              validarPasoRecolectarItems(activeMissionId);
+            }
+
+            return true;
+          }
 
           nuevoItem = {
             ...nuevoItem,
