@@ -8038,12 +8038,12 @@
     "color": null,
     "tipo": "visual",
     "funcion": null,
-    "sonido_ambiente": "../assets/song/ambiente/Zaap.mp4",
+    "sonido_ambiente": "../assets/song/ambiente/zaap.mp4",
     "x": 4455,
     "y": 2980,
     "w": 180,
     "h": 180,
-    "imagen": "../assets/spriteAmbiente/zaap.png",
+    "imagen": "../assets/spriteAmbiente/Zaap.png",
     "zIndexBase": 3300
   }
 ]
