@@ -1,218 +1,249 @@
 [
   {
-    "imagen": "../assets/avatares/npc/mapa1/Neris.png",
-    "nombre": "Neris",
+    "imagen": "../assets/avatares/npc/mapa1/Karina.png",
+    "nombre": "Karina",
     "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Las estrellas guardan secretos antiguos.",
-      "No todo lo que brilla es energía cósmica.",
-      "Sigue observando el cielo."
+      "Rayos, sin mi metafon no sé dónde estoy.",
+      "Con el metamap me ubicaría mucho más rápido.",
+      "Creo que abriré el metamap antes de perderme.",
+      "Estoy aburrida... jugaré gusanito en mi metafon."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
       "¡Nos atacan!",
-      "¡Corran, rápido!",
-      "¡Hay enemigos cerca!"
+      "¡Corran!",
+      "¡Hay enemigos!"
     ],
-    "x": 120,
-    "y": 3320
+    "x": 1400,
+    "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Thera.png",
-    "nombre": "Thera",
-    "velocidad": 1.1,
+    "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+    "nombre": "Eira",
+    "velocidad": 1.2,
     "dialogos_automaticos": [
-      "La energía del mapa cambia constantemente.",
-      "A veces las respuestas están más cerca de lo que crees.",
-      "Escucha el entorno."
+      "Olvidé la lección; debí usar el cuaderno.",
+      "Menos mal apunté el criptograma en metafon.",
+      "Si no anoto las cosas, luego se me olvidan.",
+      "El cuaderno del metafon me salva la memoria."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
       "¡Corran!",
-      "¡Nos descubrieron!",
-      "¡Hay peligro!"
+      "¡Nos vieron!",
+      "¡Peligro!"
     ],
-    "x": 760,
-    "y": 3560
+    "x": 293,
+    "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Karina.png",
-    "nombre": "Karina",
-    "velocidad": 1.3,
+    "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+    "nombre": "Aelys",
+    "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Las misiones revelan más que recompensas.",
-      "El conocimiento también es poder.",
-      "Sigue explorando."
+      "Al sureste vi un tipo raro con un carrito.",
+      "Ese vendedor me mira como si supiera algo.",
+      "Me da miedo ese tipo, pero vende cosas útiles.",
+      "Quizá deba buscar al vendedor del sureste."
     ],
     "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡Tenemos que huir!",
-      "¡Un enemigo!",
+      "¡Auxilio!",
+      "¡Huyan!",
+      "¡Nos siguen!",
+      "¡Un enemigo!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Lira.png",
+    "nombre": "Lira",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "¿Dónde estará el tipo que vende cosas raras?",
+      "Ese vendedor cobra caro; debería demandarlo.",
+      "Sus cosas parecen ilegales... qué sospechoso.",
+      "No sé de dónde saca todo, pero necesito comprar."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Peligro!",
       "¡No se acerquen!"
     ],
-    "x": 1180,
-    "y": 3180
+    "x": 1400,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+    "nombre": "Sena",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Necesito mi metafon para revisar el metamap.",
+      "Si me pierdo, el metamap debería ayudarme.",
+      "Creo que revisaré mis misiones en el metafon.",
+      "Tal vez el cuaderno tenga algo que olvidé."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigos!"
+    ],
+    "x": 293,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Samder.png",
+    "nombre": "Samder",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Hace calor; necesito un vaso para tomar agua.",
+      "Si consigo plástico, puedo crear un vaso.",
+      "Con un vaso podría beber agua de la fuente.",
+      "Debo buscar plástico en la basura, qué pena."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Huyan!",
+      "¡Peligro!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+    "nombre": "Orion",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Oí que Maese trabaja en un androide aliado.",
+      "Ojalá Maese termine pronto ese androide.",
+      "Falta personal; ese robot nos ayudaría mucho.",
+      "Si ese androide dispara, quizá sobrevivamos."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigo!"
+    ],
+    "x": 1400,
+    "y": 3798
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Armin",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "He visto viajeros pasar por aquí.",
-      "Algunos regresan con respuestas.",
-      "Otros con más preguntas."
+      "La barricada cayó; ellos pueden romperla.",
+      "No confiaré solo en muros contra reptilianos.",
+      "Debo reforzar todo antes del próximo ataque.",
+      "Si rompen la defensa, tendré que improvisar."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
       "¡Defiéndanse!",
       "¡Corran!",
-      "¡Un reptiliano!"
+      "¡Reptiliano!"
     ],
-    "x": 1580,
-    "y": 3720
+    "x": 293,
+    "y": 3798
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Darius",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los portales no siempre aparecen donde esperas.",
-      "A veces el camino correcto parece incorrecto.",
-      "Observa bien el terreno."
+      "Los reptilianos siguen el fuego, ¡qué miedo!",
+      "Si uso fuego, quizá pueda escapar de ellos.",
+      "Pondría antorcha en arcilla para distraerlos.",
+      "Si siguen la antorcha, yo podría huir."
     ],
     "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡Nos están persiguiendo!",
+      "¡Auxilio!",
+      "¡Nos siguen!",
       "¡Huyan!",
       "¡Peligro!"
     ],
-    "x": 1960,
-    "y": 3380
+    "x": 3233,
+    "y": 3135
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Lucan",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "El mapa guarda patrones.",
-      "Si miras suficiente tiempo los verás.",
-      "Nada es casualidad."
+      "Creo que buscan fuego por ser sangre fría.",
+      "Con fuego se ponen tontos y se distraen.",
+      "Si prendo una antorcha, quizá la sigan.",
+      "El fuego me asusta, pero también me salva."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
+      "¡Corran!",
       "¡Nos atacan!",
-      "¡Corran ya!",
-      "¡Enemigo al frente!"
+      "¡Enemigo!"
     ],
-    "x": 2360,
-    "y": 3840
+    "x": 1400,
+    "y": 3798
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Rael",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los viajeros sabios escuchan antes de actuar.",
-      "La paciencia también es una herramienta.",
-      "No subestimes los detalles."
+      "Cuando cortaron energía, usé una antorcha.",
+      "La antorcha se apaga rápido; qué problema.",
+      "Debo reunir madera para crear más antorchas.",
+      "Sin energía, el fuego puede salvarme la vida."
     ],
     "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡Retrocedan!",
+      "¡Auxilio!",
       "¡Corran!",
-      "¡Vienen hacia acá!"
+      "¡Vienen!",
+      "¡Peligro!"
     ],
-    "x": 2760,
-    "y": 3260
+    "x": 293,
+    "y": 3798
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Korin",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "La energía aquí fluctúa.",
-      "A veces abre rutas nuevas.",
-      "Mantente atento."
+      "Le pediré al profe encender palos con cables.",
+      "Con batería y cables podría crear más fuego.",
+      "Nunca se sabe cuándo volverán a cortar luz.",
+      "Mejor preparo antorchas antes del desastre."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
-      "¡Nos invaden!",
-      "¡Corran, deprisa!",
-      "¡Hay un enemigo!"
-    ],
-    "x": 3180,
-    "y": 3620
-  },
-  {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
-    "nombre": "Centinela-Valen",
-    "velocidad": 1,
-    "dialogos_automaticos": [
-      "Los símbolos antiguos no son decoración.",
-      "Cada uno tiene un propósito.",
-      "Aprende a reconocerlos."
-    ],
-    "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡No se detengan!",
-      "¡Huyan!",
-      "¡Nos alcanzarán!"
-    ],
-    "x": 3560,
-    "y": 3120
-  },
-  {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
-    "nombre": "Centinela-Tarek",
-    "velocidad": 1,
-    "dialogos_automaticos": [
-      "Los exploradores curiosos llegan más lejos.",
-      "Pero también se pierden más.",
-      "Equilibra ambas cosas."
-    ],
-    "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡A correr!",
-      "¡Nos siguen!",
-      "¡Un monstruo!"
-    ],
-    "x": 3960,
-    "y": 3480
-  },
-  {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
-    "nombre": "Centinela-Marek",
-    "velocidad": 1,
-    "dialogos_automaticos": [
-      "Hay zonas donde la gravedad se comporta extraño.",
-      "No todo sigue las reglas normales.",
-      "Experimenta."
-    ],
-    "dialogos_miedo": [
-      "¡Ayuda!",
       "¡Nos atacan!",
       "¡Corran!",
-      "¡No quiero morir!"
+      "¡Peligro!"
     ],
-    "x": 4380,
-    "y": 3240
+    "x": 3233,
+    "y": 3135
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Orion",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Las rutas más seguras no siempre son las mejores.",
-      "A veces debes arriesgarte.",
-      "El universo recompensa a los valientes."
+      "¿Dónde estará el centinela guardián?",
+      "Ojalá el arma que le di aún le sirva.",
+      "Si el guardián cae, todos estaremos mal.",
+      "Debo encontrarlo antes de que sea tarde."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
-      "¡Peligro!",
-      "¡Corran ahora!",
-      "¡Enemigos cerca!"
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigos!"
     ],
-    "x": 4700,
-    "y": 3700
+    "x": 1400,
+    "y": 3798
   }
 ]

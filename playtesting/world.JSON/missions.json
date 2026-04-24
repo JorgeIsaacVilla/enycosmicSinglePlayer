@@ -102,7 +102,7 @@
           "id": "m1s2",
           "tipo": "recolectar_items",
           "titulo": "Recolecta los ingredientes",
-          "descripcion": "Reúne 1 vaso_de_agua, 1 sal y 1 limón.",
+          "descripcion": "Reúne 1 vaso de agua, 1 sal y 1 limón. Puedes buscar un baso y llenarla con agua de la fuente.",
           "objetivosItems": [
             {
               "id": "baso_de_agua",
@@ -330,7 +330,7 @@
           "id": "m2s4",
           "tipo": "recolectar_items",
           "titulo": "Crea tu primera arma",
-          "descripcion": "Crea 1 espada_de_madera combinando materiales.",
+          "descripcion": "Crea 1 'espada de madera' combinando materiales.",
           "objetivosItems": [
             {
               "id": "espada_de_madera",
@@ -376,6 +376,14 @@
           {
             "id": "espada_de_madera",
             "cantidad": 3
+          },
+          {
+            "id": "bumerang",
+            "cantidad": 3
+          },
+          {
+            "id": "antorcha_de_fuego",
+            "cantidad": 15
           }
         ],
         "codigoSecreto": null
@@ -386,7 +394,7 @@
       "nombre": "En las manos del alfarero",
       "tipo": "secundaria",
       "clasificacion": "diaria",
-      "descripcion": "Un buen alfarero conoce la mejor tierra para crear maravillas.",
+      "descripcion": "Un buen alfddarero conoce la mejor tierra para crear maravillas.",
       "estadoFinalizacion": {
         "tipo": "automatica",
         "condicion": "todos_los_pasos",
@@ -433,6 +441,46 @@
               "O simplemente presiona el botón de acción en pantalla.",
               "Te daré 3 picos para que destruyas fácilmente los bloques.",
               "Aunque también puedes hacerlo con cualquier arma de impacto."
+            ]
+          }
+        },
+        {
+          "id": "npc-complement-04",
+          "nombre": "Alfarero Manuel",
+          "rol": "complemento",
+          "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+          "posicion": {
+            "x": 1958,
+            "y": 3273
+          },
+          "conversation_default": "Lo que me enseña mi maestra es importante. Tengo que apuntarlo en el metafon.",
+          "dialogos": {
+            "inicio": [
+              "Lo que mi maestra me enseñó es muy importante.",
+              "Tengo que apuntarlo en el metafon",
+              "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+              "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+              "La otra vez tome un plastico del canasto del laboratorio,",
+              "Y lo combertí en baso para poder tomar agua de esta fuente.",
+              "Mi arte vale ese nivel de recursividad."
+            ],
+            "en_progreso": [
+              "Lo que mi maestra me enseñó es muy importante.",
+              "Tengo que apuntarlo en el metafon",
+              "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+              "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+              "La otra vez tome un plastico del canasto del laboratorio,",
+              "Y lo combertí en baso para poder tomar agua de esta fuente.",
+              "Mi arte vale ese nivel de recursividad."
+            ],
+            "completado": [
+              "Lo que mi maestra me enseñó es muy importante.",
+              "Tengo que apuntarlo en el metafon",
+              "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+              "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+              "La otra vez tome un plastico del canasto del laboratorio,",
+              "Y lo combertí en baso para poder tomar agua de esta fuente.",
+              "Mi arte vale ese nivel de recursividad."
             ]
           }
         }
@@ -719,13 +767,14 @@
               "Estamos en un grave problema.",
               "Los reptilianos invadieron la caldera de generación.",
               "Siguen el fuego como zombis, sin pensar.",
-              "Si tienes antorcha_de_fuego y bloques de arcilla, úsalos.",
+              "Si tienes antorcha de fuego y bloques de arcilla, úsalos.",
+              "Crea Todas las antorchas de fuego y bloques de arcilla que puedas.",
               "Pon la arcilla en el campo y luego activa la antorcha.",
               "Usa tu ingenio para tenderles trampas.",
               "Abre paso y llega hasta la caldera.",
               "Está en el ala superior izquierda del laberinto.",
               "Bloquea el paso para que los enemigos no tengan acceso al fuego de la caldera.",
-              "¡NO PUEDE SER...! ¡APAGARON LA CALDERA...!",
+              "¡Revisa el estado de generación en el computador a mi derecha!",
               "¡DATE PRISA...!!!"
             ],
             "completado": [
@@ -751,7 +800,8 @@
             "en_progreso": [
               "Gracias por encender la caldera.",
               "Reiniciando protocolos de generación...",
-              "Prueba accionar el imterruptor del transformador."
+              "Prueba accionar el totalizador de la subestación.",
+              "Está justo detras de mi."
             ],
             "completado": [
               "El domo vuelve a tener energía.",
@@ -784,6 +834,43 @@
             "completado": [
               "Por el bien de todos me quedaré a cuidar la caldera.",
               "Dile a mis tesoros que las amo."
+            ]
+          }
+        },
+        {
+          "id": "npc-complement-08",
+          "nombre": "Profesor Orbek",
+          "rol": "historia",
+          "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+          "posicion": {
+            "x": 2810,
+            "y": 4153
+          },
+          "conversation_default": "Que el sentinela no se entere que perdí su arma en la basura.",
+          "dialogos": {
+            "inicio": [
+              "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+              "Si el sentinela mayor lo descubre me matará.",
+              "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+              "Nunca he usado un arma.",
+              "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+              "Pero nada del arma."
+            ],
+            "en_progreso": [
+              "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+              "Si el sentinela mayor lo descubre me matará.",
+              "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+              "Nunca he usado un arma.",
+              "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+              "Pero nada del arma."
+            ],
+            "completado": [
+              "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+              "Si el sentinela mayor lo descubre me matará.",
+              "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+              "Nunca he usado un arma.",
+              "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+              "Pero nada del arma."
             ]
           }
         }
@@ -832,7 +919,7 @@
           "id": "m4s3",
           "tipo": "recolectar_items",
           "titulo": "Crea el cable",
-          "descripcion": "Combina materiales hasta crear 2 cables.",
+          "descripcion": "Combina materiales hasta crear 2 cables. Busca 2 cobre y combinalos en tu inventario.",
           "objetivosItems": [
             {
               "id": "cable",
@@ -894,7 +981,7 @@
           "id": "m4s6",
           "tipo": "recolectar_items",
           "titulo": "Crea la batería",
-          "descripcion": "Combina limón, cobre e hierro para crear 1 batería.",
+          "descripcion": "Combina 1 limón, 1 cobre y 1 hierro para crear 1 batería.",
           "objetivosItems": [
             {
               "id": "bateria",
@@ -937,7 +1024,7 @@
           "id": "m4s8",
           "tipo": "recolectar_items",
           "titulo": "Crea la antorcha",
-          "descripcion": "Crea 1 antorcha_de_fuego con los materiales reunidos.",
+          "descripcion": "Crea 1 'antorcha de fuego' con los materiales reunidos. combina 1 'palo de madera' 2 cables 1 bateria.",
           "objetivosItems": [
             {
               "id": "antorcha_de_fuego",
@@ -980,7 +1067,7 @@
           "id": "m4s10",
           "tipo": "interactuar_objeto",
           "titulo": "Revisar estado de generación",
-          "descripcion": "Revisa en uno de los computadores el estado actual de la caldera.",
+          "descripcion": "Revisa el computador a la derecha de la capitana Alira el estado de generación de la caldera",
           "retoId": "reptilianoApagaLuz",
           "llamar_funcion_reto": "reptilianoApagaLuz()",
           "estadoInicial": false,
@@ -1000,7 +1087,7 @@
           "id": "m4s11",
           "tipo": "completar_reto",
           "titulo": "Enciende la caldera de generación",
-          "descripcion": "Vuelve a encender la caldera para recuperar el fuego de generación.",
+          "descripcion": "Vuelve a encender la caldera para recuperar el fuego de generación. usa la antorcha y acercate a la avertura de la caldera para encenderla. Ten cuidado con quemarte.",
           "retoId": "reestablecerFuegoEnCaldera",
           "llamar_funcion_reto": "reestablecerFuegoEnCaldera()",
           "estadoInicial": false,
@@ -1039,7 +1126,7 @@
           "id": "m4s13",
           "tipo": "reestablecer_energia",
           "titulo": "Restablece la energía",
-          "descripcion": "Ve al transformador de la subestación y restablece la energía del convoy.",
+          "descripcion": "Ve al totalizador de la subestación y restablece la energía del convoy.",
           "retoId": "reestablecerEnergia",
           "llamar_funcion_reto": "reestablecerEnergia()",
           "estadoInicial": false,
@@ -1076,7 +1163,7 @@
       ],
       "recompensas": {
         "iq": 15,
-        "cosmonedas": 20,
+        "cosmonedas": 120,
         "items": [
           {
             "id": "pistola_lazer",
@@ -1102,7 +1189,7 @@
         "requiereNPCFinal": false
       },
       "condiciones": {
-        "nivelIQMinimo": 3,
+        "nivelIQMinimo": 15,
         "misionesRequeridas": [
           "m1",
           "m2",
@@ -1147,7 +1234,7 @@
             ],
             "completado": [
               "Lo has logrado, cosmonauta.",
-              "Has descifrado el Codex y dominado el algoritmo alienígena.",
+              "Has descifrado el Codex y dominado el algoritmo de Matlog.",
               "La humanidad está a salvo gracias a tu ingenio y valentía."
             ]
           }
@@ -1392,14 +1479,17 @@
             "x": 473,
             "y": 3270
           },
-          "conversation_default": "La tecnología antigua aún puede cambiarlo todo.",
+          "conversation_default": "La opsolecencia programada no es impedimento para mí.",
           "dialogos": {
             "inicio": [
-              "Acabo de construir un acompañante con inteligencia artificial, y un cuerpo robótico que funciona con microprocesadores PIC.",
+              "Acabo de construir un acompañante con inteligencia artificial, y un cuerpo robótico.",
+              "funciona con microprocesadores PIC.",
               "Es una tecnología muy vieja, pero acá escasean los recursos.",
-              "No he podido energizarlo, pero si puedes, consigue 8 pilas.",
+              "Tube que buscar hasta en la basura, jejejeje... hayy..!! Dios...!",
+              "No he podido energizarlo; pero si puedes, consigue 8 pilas.",
               "Cada pila tiene hasta 1.5V y 1A.",
-              "Necesitas poner 4 pilas en serie y 2 en paralelo, para que dé la potencia que necesitamos para que funcione el robot.",
+              "Necesitas poner 4 pilas en serie y 2 en paralelo",
+              "para que dé la potencia que necesitamos para que funcione el robot.",
               "Pero ten cuidado de pasarte con el voltaje, porque puedes quemar el circuito."
             ],
             "en_progreso": [
@@ -1411,7 +1501,12 @@
               "En la electrónica, la conexión en serie es función del voltaje; eso quiere decir que el voltaje aumenta.",
               "La conexión en paralelo es en función de la corriente; eso quiere decir que la corriente aumenta.",
               "Cuando combinamos ambas, generamos la potencia eléctrica necesaria.",
-              "Excelente trabajo. Ahora mi autómata puede funcionar."
+              "Excelente trabajo. Ahora mi autómata puede funcionar.",
+              "Te lo presto para que tengas compañero de batalla,",
+              "Pero intenta no destruirlo. Es el unico que me queda.",
+              "Casi lo Olvido, por ahí escuche de un mercader.",
+              "Si lo encuentras, porfa compra cosas utiles para mí. Te dejo cosmonedas,",
+              "Y un poco de agua para que no te refresques mientras lo buscas."
             ]
           }
         }
@@ -1503,7 +1598,20 @@
       "recompensas": {
         "iq": 15,
         "cosmonedas": 250,
-        "items": [],
+        "items": [
+          {
+            "id": "cable",
+            "cantidad": 16
+          },
+          {
+            "id": "bateria",
+            "cantidad": 8
+          },
+          {
+            "id": "baso_de_agua",
+            "cantidad": 8
+          }
+        ],
         "codigoSecreto": null
       }
     }
