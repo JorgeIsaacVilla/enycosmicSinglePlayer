@@ -7991,9 +7991,93 @@ function continuarTrasGameOver() {
     }
   }
 
+  function contarItemEnInventarioSeguro(itemId) {
+    let total = 0;
+
+    for (const item of (window.inventarioUser || [])) {
+      if (!item) continue;
+
+      const id = item.id ?? item.item_id;
+      if (id !== itemId) continue;
+
+      total += Number(item.cantidad || 1);
+    }
+
+    return total;
+  }
+
+  function validarCondicionesMision(mission) {
+    if (!mission) {
+      return {
+        ok: false,
+        message: "La misión no existe."
+      };
+    }
+
+    const condiciones = mission.condiciones || {};
+
+    const nivelMinimo = Number(condiciones.nivelIQMinimo || 0);
+    const iqActual = Number(IQuser || 0);
+
+    if (iqActual < nivelMinimo) {
+      return {
+        ok: false,
+        message: `Necesitas nivel IQ ${nivelMinimo} para aceptar esta misión.`
+      };
+    }
+
+    const misionesRequeridas = condiciones.misionesRequeridas || [];
+
+    for (const requiredMissionId of misionesRequeridas) {
+      if (!window.missionSystem?.completedMissionIds?.includes(requiredMissionId)) {
+        const requiredMission = getMissionById(requiredMissionId);
+        return {
+          ok: false,
+          message: `Debes completar primero: ${requiredMission?.nombre || requiredMissionId}.`
+        };
+      }
+    }
+
+    const itemsRequeridos = condiciones.itemsRequeridos || [];
+
+    for (const itemReq of itemsRequeridos) {
+      const cantidadActual = contarItemEnInventarioSeguro(itemReq.id);
+      const cantidadNecesaria = Number(itemReq.cantidad || 1);
+
+      if (cantidadActual < cantidadNecesaria) {
+        return {
+          ok: false,
+          message: `Necesitas ${cantidadNecesaria} de ${itemReq.id} para aceptar esta misión.`
+        };
+      }
+    }
+
+    return {
+      ok: true,
+      message: "Condiciones cumplidas."
+    };
+  }
+
   function acceptMission(missionId) {
     const mission = getMissionById(missionId);
     if (!mission) return;
+
+    const validacion = validarCondicionesMision(mission);
+
+    if (!validacion.ok) {
+      if (typeof playerrorSound === "function") playerrorSound();
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Misión bloqueada",
+          message: validacion.message,
+          type: "warning",
+          duration: 5000
+        });
+      }
+
+      return false;
+    }
 
     if (!window.missionSystem.acceptedMissionIds.includes(missionId)) {
       window.missionSystem.acceptedMissionIds.push(missionId);
