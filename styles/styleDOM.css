@@ -43,6 +43,130 @@ canvas{
 /* =========================
    BASE MODAL / PANEL SYSTEM
    ========================= */
+#abandon-mission-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.abandon-mission-box {
+  background: #0a0f1a;
+  border: 2px solid #fff;
+  padding: 20px;
+  width: 260px;
+  text-align: center;
+  font-family: arcade, monospace;
+}
+
+.abandon-title {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.abandon-text {
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.abandon-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.abandon-btn {
+  padding: 6px 10px;
+  border: 1px solid #fff;
+  background: #111;
+  color: #fff;
+}
+
+.abandon-btn.confirm {
+  background: #3a0b0b;
+}
+.ui-mission-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ui-mission-title-row .ui-mission-title {
+  margin: 0;
+  flex: 1;
+}
+.abandon-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.abandon-box {
+  width: min(90vw, 320px);
+  background: #081019;
+  border: 2px solid #ff6464;
+  color: #fff;
+  font-family: arcade, monospace;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.abandon-title {
+  font-size: 16px;
+  color: #ff8a80;
+  margin-bottom: 12px;
+}
+
+.abandon-text {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #d8f3ff;
+  margin-bottom: 16px;
+}
+
+.abandon-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.abandon-btn {
+  flex: 1;
+  height: 38px;
+  border: 2px solid #fff;
+  background: #111;
+  color: #fff;
+  font-family: arcade, monospace;
+  cursor: pointer;
+}
+
+.abandon-btn.confirm {
+  border: 2px solid #ff6464;
+  background: #3a0b0b;
+}
+.ui-mission-abandon-btn {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  background: #220b0b;
+  color: #fff;
+  font-family: arcade, monospace;
+  line-height: 1;
+}
 
 .dom-overlay,
 #npc-dialog-overlay,

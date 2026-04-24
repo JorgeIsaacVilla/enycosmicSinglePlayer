@@ -7044,6 +7044,43 @@ function continuarTrasGameOver() {
     refreshMissionPanelIfOpen();
   }
 
+  window.abandonarMision = function (missionId) {
+    if (!missionId || !window.missionSystem) return false;
+
+    const mission = getMissionById(missionId);
+    if (!mission) return false;
+
+    if (isMissionCompleted(missionId)) return false;
+
+    window.missionSystem.acceptedMissionIds =
+      window.missionSystem.acceptedMissionIds.filter(id => id !== missionId);
+
+    delete window.missionSystem.activeStepIndexByMission[missionId];
+    delete window.missionSystem.revealedStepIndexes[missionId];
+    delete window.missionSystem.completedSteps[missionId];
+
+    if (window.missionSystem.activeMissionId === missionId) {
+      window.missionSystem.activeMissionId = null;
+    }
+
+    coordenadasMisionsX = 0;
+    coordenadasMisionsY = 0;
+    coordenadasMisionState = false;
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Misión abandonada",
+        message: `Has abandonado la misión: ${mission.nombre}.`,
+        type: "warning",
+        duration: 3500
+      });
+    }
+
+    refreshMissionPanelIfOpen();
+
+    return true;
+  };
+
   function getActiveMission() {
     return getMissionById(window.missionSystem.activeMissionId);
   }
@@ -8002,9 +8039,20 @@ function continuarTrasGameOver() {
         data-mission-id="${mission.id}"
         ${completed ? "" : `data-selectable-mission="1"`}
       >
-        <p class="ui-mission-title ${isActive ? "ui-mission-title-active" : ""}">
-          ${mission.tipo === "principal" ? "➜ " : ""}${completed ? "✔ " : ""}${mission.nombre}
-        </p>
+<div class="ui-mission-title-row">
+  <p class="ui-mission-title ${isActive ? "ui-mission-title-active" : ""}">
+    ${mission.tipo === "principal" ? "➜ " : ""}${completed ? "✔ " : ""}${mission.nombre}
+  </p>
+
+  ${accepted && !completed ? `
+    <button 
+      class="ui-mission-abandon-btn" 
+      type="button"
+      data-abandon-mission-id="${mission.id}"
+      title="Abandonar misión"
+    >X</button>
+  ` : ""}
+</div>
         ${pasosHTML}
       </div>
     `;
@@ -8094,6 +8142,103 @@ function continuarTrasGameOver() {
 
     bodyEl.innerHTML = buildMissionsHTML();
   }
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest?.("[data-abandon-mission-id]");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const missionId = btn.dataset.abandonMissionId;
+
+    function openAbandonMissionPopup(missionId) {
+      const mission = getMissionById(missionId);
+      if (!mission) return;
+
+      const old = document.getElementById("abandon-mission-overlay");
+      if (old) old.remove();
+
+      const overlay = document.createElement("div");
+      overlay.id = "abandon-mission-overlay";
+
+      overlay.innerHTML = `
+    <div class="abandon-overlay">
+      <div class="abandon-box">
+
+        <div class="abandon-title">
+          Abandonar misión
+        </div>
+
+        <div class="abandon-text">
+          ¿Seguro que quieres abandonar esta misión?
+          <br><br>
+          ${mission.nombre}
+          <br><br>
+          Perderás todo el progreso de esta misión.
+        </div>
+
+        <div class="abandon-actions">
+          <button id="cancelar-abandonar-mision" class="abandon-btn cancel">
+            Cancelar
+          </button>
+
+          <button id="confirmar-abandonar-mision" class="abandon-btn confirm">
+            Abandonar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+      document.body.appendChild(overlay);
+
+      function cerrarPopup() {
+        overlay.remove();
+      }
+
+      document.getElementById("cancelar-abandonar-mision").onclick = cerrarPopup;
+
+      document.getElementById("confirmar-abandonar-mision").onclick = function () {
+        cerrarPopup();
+
+        if (typeof window.abandonarMision === "function") {
+          window.abandonarMision(missionId);
+        }
+      };
+
+      overlay.addEventListener("pointerdown", function (e) {
+        if (e.target.classList.contains("abandon-overlay")) {
+          cerrarPopup();
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest?.("[data-abandon-mission-id]");
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const missionId = btn.dataset.abandonMissionId;
+
+      openAbandonMissionPopup(missionId);
+    });
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest?.("[data-abandon-mission-id]");
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const missionId = btn.dataset.abandonMissionId;
+
+      openAbandonMissionPopup(missionId);
+    });
+  });
 
   document.addEventListener("click", (e) => {
     const card = e.target.closest?.("#container-interfas[data-panel='misions'] .ui-mission-card");

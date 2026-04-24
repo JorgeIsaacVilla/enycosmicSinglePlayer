@@ -1669,7 +1669,7 @@
           "id": "npc027",
           "nombre": "Maese_Ion",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Maese_Ion.png",
+          "imagen": "../assets/avatares/npc/mapa1/Maese.png",
           "posicion": {
             "x": 3480,
             "y": 1280
