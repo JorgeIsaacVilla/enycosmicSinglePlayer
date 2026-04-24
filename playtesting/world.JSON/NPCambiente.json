@@ -23,10 +23,10 @@
     "nombre": "Eira",
     "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Olvidé la lección; debí usar el cuaderno.",
-      "Menos mal apunté el criptograma en metafon.",
-      "Si no anoto las cosas, luego se me olvidan.",
-      "El cuaderno del metafon me salva la memoria."
+      "Olvidé la lección; debí usar el cuaderno del Metafon.",
+      "Menos mal apunté el criptograma en mi Metafon. Es muy complejo de recordar.",
+      "Si no anoto las cosas, luego se me olvidan. Menos mal mi metafon Tiene una App para eso.",
+      "El cuaderno del metafon es muy practico para apuntar cosas que son dificiles de recordar."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -42,10 +42,10 @@
     "nombre": "Aelys",
     "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Al sureste vi un tipo raro con un carrito.",
+      "Que cosa! Al sureste vi un tipo raro con un carrito. Pero vende cosas utiles. Donde lo conseguirá?.",
       "Ese vendedor me mira como si supiera algo.",
       "Me da miedo ese tipo, pero vende cosas útiles.",
-      "Quizá deba buscar al vendedor del sureste."
+      "Me falta un arma por si nos invaden nuevamente. Quizá deba buscar al vendedor del sureste."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -64,7 +64,7 @@
       "¿Dónde estará el tipo que vende cosas raras?",
       "Ese vendedor cobra caro; debería demandarlo.",
       "Sus cosas parecen ilegales... qué sospechoso.",
-      "No sé de dónde saca todo, pero necesito comprar."
+      "No sé de dónde saca todo, pero necesito comprarle."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -100,9 +100,9 @@
     "velocidad": 1.2,
     "dialogos_automaticos": [
       "Hace calor; necesito un vaso para tomar agua.",
-      "Si consigo plástico, puedo crear un vaso.",
+      "Si consigo plástico, puedo crear un vaso en mi inventario, pero ya no hay. tendré que buscar en la basura. QUE ASCO!.",
       "Con un vaso podría beber agua de la fuente.",
-      "Debo buscar plástico en la basura, qué pena."
+      "Con la maderá puedo hacer de todo. Intentaré hacer bumerangs, pero la antorcha es más dificil. Necesito un palo de madera, baterias y cables. Que complejo!"
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -118,9 +118,9 @@
     "nombre": "Orion",
     "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Oí que Maese trabaja en un androide aliado.",
-      "Ojalá Maese termine pronto ese androide.",
-      "Falta personal; ese robot nos ayudaría mucho.",
+      "Oí que Maese trabaja en un androide aliado. Como irá con eso?",
+      "Ojalá Maese termine pronto ese androide. Escuche que es antireptiliano. Seria un aliado Genial",
+      "Falta personal; ese robot nos ayudaría mucho con su IA avanzada.",
       "Si ese androide dispara, quizá sobrevivamos."
     ],
     "dialogos_miedo": [
@@ -137,10 +137,10 @@
     "nombre": "Centinela-Armin",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "La barricada cayó; ellos pueden romperla.",
-      "No confiaré solo en muros contra reptilianos.",
-      "Debo reforzar todo antes del próximo ataque.",
-      "Si rompen la defensa, tendré que improvisar."
+      "Los reptilinaos pueden romper la barricada. lo hacen mas rapido en grupos. Debería armar una estrategia con los bloques de arcilla, y las antorcha, ya que siguen el fuego",
+      "No confiaré solo en muros contra reptilianos. Armaré mi propia estrategia. Especialmente contra los que disparan",
+      "Debo Prepararme antes del próximo ataque. Aver..!! Necesitaria por lo menos 25 bloques de arcillas, y al menos 12 antorchas de fuego; y muuchas armas.",
+      "Si El enemigo rompen la defensa, tendré que improvisar."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -156,10 +156,10 @@
     "nombre": "Centinela-Darius",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los reptilianos siguen el fuego, ¡qué miedo!",
-      "Si uso fuego, quizá pueda escapar de ellos.",
-      "Pondría antorcha en arcilla para distraerlos.",
-      "Si siguen la antorcha, yo podría huir."
+      "Los reptilianos siguen el fuego como zombies, ¡qué miedo!, pero me sirve para uir como la última vez.",
+      "Si uso una antorcha de fuego encima de una arcilla, quizá pueda escapar de ellos.",
+      "Pondría antorcha en arcilla para distraerlos. y luego huiria",
+      "Si siguen la antorcha, yo podría escapar, y luego poner bloques de arcilla que les bloqueen el paso. eso me daria más tiempo"
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -175,10 +175,10 @@
     "nombre": "Centinela-Lucan",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Creo que buscan fuego por ser sangre fría.",
-      "Con fuego se ponen tontos y se distraen.",
-      "Si prendo una antorcha, quizá la sigan.",
-      "El fuego me asusta, pero también me salva."
+      "Creo que los reptilianos buscan fuego por ser sangre fría.",
+      "Los reptilianos con fuego se ponen tontos y se distraen.",
+      "Si prendo una antorcha, me ilumina en la oscuridad. pondré varios serca de mi campamento por si se corta la energia como la ultima vez.",
+      "La oscuridad me asusta. Menos mal tengo muchas antorchas que arme combinando Palos de madera con baterias y cables. mejor haré más porque no duran nada."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -194,10 +194,9 @@
     "nombre": "Centinela-Rael",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Cuando cortaron energía, usé una antorcha.",
+      "Cuando Los reptilianos cortaron energía, usé una antorcha.",
       "La antorcha se apaga rápido; qué problema.",
-      "Debo reunir madera para crear más antorchas.",
-      "Sin energía, el fuego puede salvarme la vida."
+      "Debo reunir madera para crear más antorchas."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",

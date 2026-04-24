@@ -1,7 +1,7 @@
 let efectVolumen = 0.8;
 
-let userPostX = 120;
-let userPostY = 3140;
+let userPostX = 4511;
+let userPostY = 3108;
 
 function getSettingSfxVolume() {
   const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
@@ -170,7 +170,7 @@ let username = "jaisaac";
 let avatar = localStorage.getItem("avatar");
 let profession = localStorage.getItem("profession");
 
-let cosmonedas = 3000; //50 Inicial el saldo se gurdará en la base de datos
+let cosmonedas = 350; //50 Inicial el saldo se gurdará en la base de datos
 
 // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -3747,29 +3747,34 @@ function preloadAvatars(characters) {
 /*Profesiones (Inicio) */
 const professions = [
   {
-    id: "warrior",
-    name: "Guerrero",
-    description: "Especialista en combate cuerpo a cuerpo. Alta resistencia y fuerza física."
+    id: "arqueologo_planetario",
+    name: "Arqueólogo Planetario",
+    description: "Paciente e intuitivo, descifras ruinas antiguas y revelas secretos en mundos desconocidos que esperan ser comprendidos"
   },
   {
-    id: "engineer",
-    name: "Ingeniero",
-    description: "Experto en tecnología y mecanismos. Puede reparar y mejorar dispositivos."
+    id: "astronomo",
+    name: "Astrónomo",
+    description: "Tranquilo y observador, interpretas el cielo y descubres patrones del universo que guían tu camino"
   },
   {
-    id: "scientist",
-    name: "Científico",
-    description: "Analiza el entorno y descubre secretos ocultos. Alta inteligencia."
+    id: "astrofisico",
+    name: "Astrofísico",
+    description: "Racional y metódico, comprendes las leyes del universo y las aplicas para dominar cada desafío"
   },
   {
-    id: "medic",
-    name: "Médico",
-    description: "Capaz de curar y asistir a otros. Fundamental para la supervivencia."
+    id: "ingeniero_cuantico",
+    name: "Ingeniero Cuántico",
+    description: "Creativo y resolutivo, construyes soluciones avanzadas y transformas ideas complejas en realidades útiles"
   },
   {
-    id: "explorer",
-    name: "Explorador",
-    description: "Ágil y observador. Se mueve rápido y detecta rutas ocultas."
+    id: "explorador_planetario",
+    name: "Explorador Planetario",
+    description: "Valiente y curioso, te adentras en lo desconocido y avanzas con determinación en cada nuevo mundo"
+  },
+  {
+    id: "criptografo",
+    name: "Criptógrafo",
+    description: "Analítico y estratégico, descifras códigos complejos y revelas mensajes ocultos en sistemas avanzados"
   }
 ];
 /*Profesiones (fin) */
@@ -12862,7 +12867,7 @@ function continuarTrasGameOver() {
     ctx.restore();
   }
 
-  /*// 🔧 Items de prueba para el inventario*/
+  /*// 🔧 Items de prueba para el inventario
   window.inventarioUser.push({
     id: "antorcha_de_fuego",
     nombre_item: "Antorcha de fuego",
@@ -12885,7 +12890,7 @@ function continuarTrasGameOver() {
     cantidad: 25,
     usos: 1,
     usos_maximos: 1
-  });
+  });*/
 
 
   async function cargarItemsJSON() {

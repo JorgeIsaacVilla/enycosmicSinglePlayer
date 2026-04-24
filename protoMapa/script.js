@@ -3842,29 +3842,34 @@ function preloadAvatars(characters) {
 /*Profesiones (Inicio) */
 const professions = [
   {
-    id: "warrior",
-    name: "Guerrero",
-    description: "Especialista en combate cuerpo a cuerpo. Alta resistencia y fuerza física."
+    id: "arqueologo_planetario",
+    name: "Arqueólogo Planetario",
+    description: "Paciente e intuitivo, descifras ruinas antiguas y revelas secretos en mundos desconocidos que esperan ser comprendidos"
   },
   {
-    id: "engineer",
-    name: "Ingeniero",
-    description: "Experto en tecnología y mecanismos. Puede reparar y mejorar dispositivos."
+    id: "astronomo",
+    name: "Astrónomo",
+    description: "Tranquilo y observador, interpretas el cielo y descubres patrones del universo que guían tu camino"
   },
   {
-    id: "scientist",
-    name: "Científico",
-    description: "Analiza el entorno y descubre secretos ocultos. Alta inteligencia."
+    id: "astrofisico",
+    name: "Astrofísico",
+    description: "Racional y metódico, comprendes las leyes del universo y las aplicas para dominar cada desafío"
   },
   {
-    id: "medic",
-    name: "Médico",
-    description: "Capaz de curar y asistir a otros. Fundamental para la supervivencia."
+    id: "ingeniero_cuantico",
+    name: "Ingeniero Cuántico",
+    description: "Creativo y resolutivo, construyes soluciones avanzadas y transformas ideas complejas en realidades útiles"
   },
   {
-    id: "explorer",
-    name: "Explorador",
-    description: "Ágil y observador. Se mueve rápido y detecta rutas ocultas."
+    id: "explorador_planetario",
+    name: "Explorador Planetario",
+    description: "Valiente y curioso, te adentras en lo desconocido y avanzas con determinación en cada nuevo mundo"
+  },
+  {
+    id: "criptografo",
+    name: "Criptógrafo",
+    description: "Analítico y estratégico, descifras códigos complejos y revelas mensajes ocultos en sistemas avanzados"
   }
 ];
 /*Profesiones (fin) */
