@@ -281,7 +281,7 @@
           "id": "m2s2",
           "tipo": "recolectar_items",
           "titulo": "Recolecta la madera",
-          "descripcion": "Reúne 3 maderas.",
+          "descripcion": "Reúne 3 maderas. Puedes tomarlo dando clic a los arboles del campo.",
           "objetivosItems": [
             {
               "id": "madera",
@@ -826,7 +826,7 @@
               "Espero llegar pronto a casa y ver a mi esposa y mi hija."
             ],
             "en_progreso": [
-              "Son demasiados centinelas. Estoy herido, pero me quedaré.",
+              "Son demasiados reptilianos. Estoy herido, pero me quedaré.",
               "Por el bien de mis amadas, alguien tiene que quedarse a cuidar el fuego de la caldera.",
               "Por favor, antes de irte, bloquea la salida y déjame.",
               "Dile a mis tesoros que las amo."
@@ -1096,8 +1096,8 @@
             "objetivoId": "chimenea_mapa_01",
             "imagen": "../assets/spriteAmbiente/caldera.svg",
             "posicion": {
-              "x": 55,
-              "y": -120
+              "x": 171,
+              "y": 72
             }
           },
           "otorgaItems": []
@@ -1458,7 +1458,7 @@
       "nombre": "Mi amigo autómata",
       "tipo": "secundaria",
       "clasificacion": "diaria",
-      "descripcion": "Ayuda al ingeniero Maese a energizar su acompañante robótico construyendo una conexión correcta con pilas.",
+      "descripcion": "Ayuda al ingeniero Maese a energizar su acompañante robótico construyendo una conexión correcta con baterias.",
       "estadoFinalizacion": {
         "tipo": "automatica",
         "condicion": "todos_los_pasos",
@@ -1482,31 +1482,33 @@
           "conversation_default": "La opsolecencia programada no es impedimento para mí.",
           "dialogos": {
             "inicio": [
-              "Acabo de construir un acompañante con inteligencia artificial, y un cuerpo robótico.",
+              "Acabo de construir un robot con inteligencia artificial.",
               "funciona con microprocesadores PIC.",
               "Es una tecnología muy vieja, pero acá escasean los recursos.",
               "Tube que buscar hasta en la basura, jejejeje... hayy..!! Dios...!",
-              "No he podido energizarlo; pero si puedes, consigue 8 pilas.",
-              "Cada pila tiene hasta 1.5V y 1A.",
-              "Necesitas poner 4 pilas en serie y 2 en paralelo",
+              "No he podido energizarlo; pero si puedes, consigue 8 baterias.",
+              "Cada bateria tiene hasta 1.5V y 1A.",
+              "Necesitas poner 4 baterias en serie y 2 en paralelo",
               "para que dé la potencia que necesitamos para que funcione el robot.",
               "Pero ten cuidado de pasarte con el voltaje, porque puedes quemar el circuito."
             ],
             "en_progreso": [
-              "Necesitamos 8 pilas.",
+              "Necesitamos 8 baterias.",
               "Luego usa la mesa para hacer la conexión.",
               "Recuerda: en serie aumenta el voltaje, en paralelo aumenta la corriente."
             ],
             "completado": [
-              "En la electrónica, la conexión en serie es función del voltaje; eso quiere decir que el voltaje aumenta.",
-              "La conexión en paralelo es en función de la corriente; eso quiere decir que la corriente aumenta.",
+              "En la electrónica, la conexión en serie es función del voltaje;",
+              "eso quiere decir que el voltaje aumenta.",
+              "La conexión en paralelo es en función de la corriente; ",
+              "eso quiere decir que la corriente aumenta.",
               "Cuando combinamos ambas, generamos la potencia eléctrica necesaria.",
               "Excelente trabajo. Ahora mi autómata puede funcionar.",
               "Te lo presto para que tengas compañero de batalla,",
               "Pero intenta no destruirlo. Es el unico que me queda.",
               "Casi lo Olvido, por ahí escuche de un mercader.",
               "Si lo encuentras, porfa compra cosas utiles para mí. Te dejo cosmonedas,",
-              "Y un poco de agua para que no te refresques mientras lo buscas."
+              "Y un poco de agua para que te refresques mientras lo buscas."
             ]
           }
         }
