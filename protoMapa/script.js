@@ -1,5 +1,5 @@
 //Versión estable de juego
-//Ver. 3.14.4
+//Ver. 3.14.5
 
 /*
 Slogan: El nivel te lo quedas tu.
@@ -102,7 +102,13 @@ let userPostX = 2500;
 let userPostY = 4300;
 
 function getSettingSfxVolume() {
-  const v = Number(localStorage.getItem(LS_SETTINGS.sfxVolume));
+  const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
+
+  if (raw === null || raw === "" || raw === "null" || raw === "undefined") {
+    return 0.8;
+  }
+
+  const v = Number(raw);
   return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.8;
 }
 
@@ -1690,7 +1696,13 @@ let tutorialIndex = 0;
 
 // Helpers storage
 function getSettingVolume() {
-  const v = Number(localStorage.getItem(LS_SETTINGS.volume));
+  const raw = localStorage.getItem(LS_SETTINGS.volume);
+
+  if (raw === null || raw === "" || raw === "null" || raw === "undefined") {
+    return 0.8;
+  }
+
+  const v = Number(raw);
   return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.8;
 }
 function setSettingVolume(v) {
