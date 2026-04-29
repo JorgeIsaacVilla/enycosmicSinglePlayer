@@ -103,15 +103,37 @@ button{
   touch-action:none;
 }
 
+/* Base estilo retro */
 .joy-base{
   position:absolute;
   inset:0;
   border-radius:50%;
-  background:rgba(255,255,255,0.20);
-  border:2px solid rgba(255,255,255,0.35);
-  backdrop-filter: blur(2px);
+  background:black;
+  border:3px solid #18f5e1;
+  box-shadow:
+    0 0 4px #18f5e1,
+    0 0 10px rgba(24,245,225,.8),
+    inset 0 0 8px rgba(24,245,225,.3);
 }
 
+/* Patrón tipo scanline retro */
+.joy-base::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(24,245,225,.08) 0px,
+      rgba(24,245,225,.08) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  pointer-events:none;
+}
+
+/* Stick retro */
 .joy-stick{
   position:absolute;
   left:50%;
@@ -121,11 +143,108 @@ button{
   margin-left:-26px;
   margin-top:-26px;
   border-radius:50%;
-  background:rgba(255,255,255,0.70);
-  border:2px solid rgba(0,0,0,0.25);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-  transition: transform 0.08s ease;
+  background:#18f5e1;
+  border:3px solid #003c3a;
+  box-shadow:
+    0 0 6px #18f5e1,
+    inset 0 0 6px rgba(0,0,0,.6);
+  transition: transform 0.05s linear;
 }
+
+/* Estado activo tipo arcade */
+.joystick:active .joy-stick{
+  background:#00fff0;
+  box-shadow:
+    0 0 10px #00fff0,
+    0 0 18px #00fff0;
+}
+
+/* Pixel feel (opcional pero recomendado) */
+.joystick,
+.joy-base,
+.joy-stick{
+  image-rendering: pixelated;
+}
+/*Joistic Subrealista (inicio)
+.joystick{
+  position:absolute;
+  right:12px;
+  bottom:60px;
+  width:120px;
+  height:120px;
+  z-index:10;
+  touch-action:none;
+}
+
+// Base alienígena 
+.joy-base{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background: radial-gradient(circle at center,
+    rgba(24,245,225,.18) 0%,
+    rgba(0,0,0,.65) 70%
+  );
+  border:2px solid rgba(24,245,225,.9);
+  box-shadow:
+    0 0 12px rgba(24,245,225,.8),
+    inset 0 0 18px rgba(24,245,225,.35);
+  backdrop-filter: blur(3px);
+}
+
+// Anillo interno (detalle pro) 1
+.joy-base::after{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border-radius:50%;
+  border:1px dashed rgba(24,245,225,.5);
+  opacity:.6;
+}
+
+// Stick principal 
+.joy-stick{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:52px;
+  height:52px;
+  margin-left:-26px;
+  margin-top:-26px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%,
+    #ffffff 0%,
+    #18f5e1 40%,
+    rgba(24,245,225,.4) 100%
+  );
+  border:2px solid rgba(24,245,225,1);
+  box-shadow:
+    0 0 12px rgba(24,245,225,.9),
+    0 0 28px rgba(24,245,225,.45),
+    inset 0 0 10px rgba(255,255,255,.5);
+  transition: transform 0.06s ease;
+}
+
+// Glow cuando se usa
+.joystick:active .joy-stick{
+  box-shadow:
+    0 0 18px rgba(24,245,225,1),
+    0 0 40px rgba(24,245,225,.8),
+    inset 0 0 12px rgba(255,255,255,.7);
+}
+
+// Micro animación (vida) 
+.joy-base{
+  animation: pulseJoy 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseJoy{
+  0% { box-shadow: 0 0 10px rgba(24,245,225,.5), inset 0 0 12px rgba(24,245,225,.2); }
+  50% { box-shadow: 0 0 18px rgba(24,245,225,1), inset 0 0 20px rgba(24,245,225,.5); }
+  100% { box-shadow: 0 0 10px rgba(24,245,225,.5), inset 0 0 12px rgba(24,245,225,.2); }
+}
+Joistuck subrealista (Fin)*/
+
 
 /* Responsive menor a 600px */
 @media (max-width: 600px) {

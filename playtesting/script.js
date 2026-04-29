@@ -1,3 +1,6 @@
+//Versión estable de juego
+//Ver. 3.14.4
+
 let efectVolumen = 0.8;
 
 let userPostX = 4511;

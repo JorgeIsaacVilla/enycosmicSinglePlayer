@@ -1,3 +1,6 @@
+//Versión estable de juego
+//Ver. 3.14.4
+
 /*
 Slogan: El nivel te lo quedas tu.
  
