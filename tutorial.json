@@ -1,19 +1,34 @@
 {
   "slides": [
     {
-      "titulo": "Movimiento básico",
-      "descripcion": "Aprende a moverte por el mapa y controlar tu personaje.",
-      "video": "./assets/tutorial/video1.mp4"
+      "titulo": "Sistema de Configuración",
+      "descripcion": "Ajusta el volumen de la música y de los efectos de sonido. También puedes personalizar el modo de pantalla para mejorar tu experiencia de juego. Desde aquí, podrás consultar información adicional y restablecer la configuración predeterminada en cualquier momento.",
+      "video": "../assets/tutorialImage/conf.mp4"
     },
     {
-      "titulo": "Inventario",
-      "descripcion": "Descubre cómo abrir el inventario, combinar items y equiparlos.",
-      "video": "./assets/tutorial/video2.mp4"
+      "titulo": "Mapas de Juego",
+      "descripcion": "Desde el Metafón, podrás acceder a los mapas del juego. En ellos encontrarás misiones, atajos, puntos de interés y tu progreso general dentro de la aventura.",
+      "video": "../assets/tutorialImage/metaMap.mp4"
     },
     {
-      "titulo": "Misiones",
-      "descripcion": "Interactúa con NPCs y completa objetivos para avanzar.",
-      "video": "./assets/tutorial/video3.mp4"
+      "titulo": "Libro de Misiones",
+      "descripcion": "Al aceptar una misión, entrarás automáticamente en el modo de misión. Usa el Metamap para orientarte y resolver acertijos. Mantente siempre alerta: tu entorno puede esconder pistas, peligros o nuevas oportunidades.",
+      "video": "../assets/tutorialImage/missionBook.mp4"
+    },
+    {
+      "titulo": "Creación de Ítems",
+      "descripcion": "Explora la naturaleza en busca de recursos y combínalos de forma inteligente. Cualquier elemento puede ser útil para fabricar herramientas, armas u objetos que fortalezcan tu estrategia ofensiva, defensiva o de escape.",
+      "video": "../assets/tutorialImage/crearItems.mp4"
+    },
+    {
+      "titulo": "Equipamiento y Armas",
+      "descripcion": "Equipa objetos y recursos desde tu inventario, y asígnalos a los cuadros de acción ubicados en la parte lateral izquierda de la pantalla. En dispositivos móviles y PC, puedes seleccionarlos directamente desde los cuadros de acción. En la versión de escritorio, también puedes usar las teclas 'Q' y 'E'. Para moverte, utiliza las teclas 'W', 'A', 'S' y 'D', o las teclas de dirección.",
+      "video": "../assets/tutorialImage/equipItems.mp4"
+    },
+    {
+      "titulo": "Cuaderno",
+      "descripcion": "Registra tus descubrimientos en el cuaderno del Metafón. Organiza tus estrategias, guarda aprendizajes importantes y anota códigos secretos que te ayudarán a avanzar en tu aventura.",
+      "video": "../assets/tutorialImage/cuaderno.mp4"
     }
   ]
 }
