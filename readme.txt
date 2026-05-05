@@ -1,5 +1,29 @@
-Versión: 3.9.2 (Estable en proceso de desarrollo)
+Versión: 3.14.5 (Estable en proceso de desarrollo)
 
+ENTORNO DE PRUEBA
+(local / repo / testing)
+│
+├── desarrollo
+├── pruebas
+├── nuevos scripts
+├── nuevos GLOBAL_SCRIPTS
+└── protomapas
+
+↓
+
+MAPA APROBADO
+
+↓
+
+WORDPRESS (producción)
+│
+├── mapa.html aprobado
+├── scripts aprobados
+├── monetización
+├── usuarios reales
+└── progreso real
+
+https://www.youtube.com/watch?v=cLJJ6pI5rC4 // Anuncios con google ADS programación en wordpress
 https://www.figma.com/design/4I6dlSCN6tx1BAvZ76SyXd/Metaverso?node-id=252-2&p=f&t=T6KSXkhtqqTFbXTt-0 ///Figma metaverso
 
 https://www.deviantart.com/diegowt/art/Alola-Female-Swimmer-1-1071600113 // sprites gratuitos

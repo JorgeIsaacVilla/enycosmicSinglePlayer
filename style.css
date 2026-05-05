@@ -18,7 +18,8 @@
 
 @font-face {
   font-family: "arcade";
-  src: url("./assets/font/RetroGaming.ttf") format("truetype");
+  /*src: url("./assets/font/RetroGaming.ttf") format("truetype");*/
+  src: url("https://enycosmicplayer.vercel.app/assets/font/RetroGaming.ttf") format("truetype");
 }
 
 /* Evita gestos por defecto del navegador dentro del juego */
@@ -37,18 +38,22 @@ body{
   place-items:center;
   overflow:hidden;
   touch-action:none;
-cursor: url("./assets/src/puntero.svg") 0 0, auto;
+/*cursor: url("./assets/src/puntero.svg") 0 0, auto;*/
+cursor: url("https://enycosmicplayer.vercel.app/assets/src/puntero.svg") 0 0, auto;
   margin: 0;
   height: 100%;
-  background-image: url('./assets/backgrounds/backgroundWrap.svg');
+  /*/*background-image: url('./assets/backgrounds/backgroundWrap.svg');*/*/
+  /*background-image: url('./assets/backgrounds/backgroundWrap.svg');*/
   background-position: center;
   background-size: cover;
 }
 canvas{
-  cursor: url("./assets/src/puntero.svg") 0 0, auto;
+  /*cursor: url("./assets/src/puntero.svg") 0 0, auto;*/
+  cursor: url("https://enycosmicplayer.vercel.app/assets/src/puntero.svg") 0 0, auto;
 }
 button{
-  cursor: url("./assets/src/puntero.svg") 0 0, auto;
+  /*cursor: url("./assets/src/puntero.svg") 0 0, auto;*/
+  cursor: url("https://enycosmicplayer.vercel.app/assets/src/puntero.svg") 0 0, auto;
 }
 /* Contenedor responsivo */
 .wrap{
@@ -255,26 +260,32 @@ Joistuck subrealista (Fin)*/
 }
 
 #misions{
-  background-image: url('./assets/panelOptions/misiones.png');
+  /*background-image: url('./assets/panelOptions/misiones.png');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/misiones.png');
 }
 #novedades{
-  background-image: url('./assets/panelOptions/novedad.svg');
+  /*background-image: url('./assets/panelOptions/novedad.svg');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/novedad.svg');
 }
 #iq{
-  background-image: url('./assets/panelOptions/IQ.svg');
+  /*background-image: url('./assets/panelOptions/IQ.svg');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/IQ.svg');
 }
 #inventario{
-  background-image: url('./assets/panelOptions/inventario.svg');
+  /*background-image: url('./assets/panelOptions/inventario.svg');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/inventario.svg');
 }
 #setting{
-  background-image: url('./assets/panelOptions/setting.svg');
+  /*background-image: url('./assets/panelOptions/setting.svg');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/setting.svg');
 }
 
 #metafon{
   position: absolute;
   bottom: 80px;
   left: 24px;
-  background-image: url('./assets/panelOptions/metafon.svg');
+  /*background-image: url('./assets/panelOptions/metafon.svg');*/
+  background-image: url('https://enycosmicplayer.vercel.app/assets/panelOptions/metafon.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -298,6 +309,7 @@ Joistuck subrealista (Fin)*/
   background:black;
   outline:2px solid #00ffcc;
   border-radius:12px;
+  /*/*background-image: url('./assets/backgrounds/backgrounGame.svg');*/
   /*background-image: url('./assets/backgrounds/backgrounGame.svg');*/
   image-rendering: pixelated;
   background-position: center;
