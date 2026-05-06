@@ -1,0 +1,248 @@
+[
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Karina.png",
+    "nombre": "Karina",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Rayos, sin mi metafon no sé dónde estoy.",
+      "Con el metamap me ubicaría mucho más rápido.",
+      "Creo que abriré el metamap antes de perderme.",
+      "Estoy aburrida... jugaré gusanito en mi metafon."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Corran!",
+      "¡Hay enemigos!"
+    ],
+    "x": 1400,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+    "nombre": "Eira",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Olvidé la lección; debí usar el cuaderno del Metafon.",
+      "Menos mal apunté el criptograma en mi Metafon. Es muy complejo de recordar.",
+      "Si no anoto las cosas, luego se me olvidan. Menos mal mi metafon Tiene una App para eso.",
+      "El cuaderno del metafon es muy practico para apuntar cosas que son dificiles de recordar."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos vieron!",
+      "¡Peligro!"
+    ],
+    "x": 293,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+    "nombre": "Aelys",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Que cosa! Al sureste vi un tipo raro con un carrito. Pero vende cosas utiles. Donde lo conseguirá?.",
+      "Ese vendedor me mira como si supiera algo.",
+      "Me da miedo ese tipo, pero vende cosas útiles.",
+      "Me falta un arma por si nos invaden nuevamente. Quizá deba buscar al vendedor del sureste."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Huyan!",
+      "¡Nos siguen!",
+      "¡Un enemigo!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Lira.png",
+    "nombre": "Lira",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "¿Dónde estará el tipo que vende cosas raras?",
+      "Ese vendedor cobra caro; debería demandarlo.",
+      "Sus cosas parecen ilegales... qué sospechoso.",
+      "No sé de dónde saca todo, pero necesito comprarle."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Peligro!",
+      "¡No se acerquen!"
+    ],
+    "x": 1400,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+    "nombre": "Sena",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Necesito mi metafon para revisar el metamap.",
+      "Si me pierdo, el metamap debería ayudarme.",
+      "Creo que revisaré mis misiones en el metafon.",
+      "Tal vez el cuaderno tenga algo que olvidé."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigos!"
+    ],
+    "x": 293,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Samder.png",
+    "nombre": "Samder",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Hace calor; necesito un vaso para tomar agua.",
+      "Si consigo plástico, puedo crear un vaso en mi inventario, pero ya no hay. tendré que buscar en la basura. QUE ASCO!.",
+      "Con un vaso podría beber agua de la fuente.",
+      "Con la maderá puedo hacer de todo. Intentaré hacer bumerangs, pero la antorcha es más dificil. Necesito un palo de madera, baterias y cables. Que complejo!"
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Huyan!",
+      "¡Peligro!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+    "nombre": "Orion",
+    "velocidad": 1.2,
+    "dialogos_automaticos": [
+      "Oí que Maese trabaja en un androide aliado. Como irá con eso?",
+      "Ojalá Maese termine pronto ese androide. Escuche que es antireptiliano. Seria un aliado Genial",
+      "Falta personal; ese robot nos ayudaría mucho con su IA avanzada.",
+      "Si ese androide dispara, quizá sobrevivamos."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigo!"
+    ],
+    "x": 1400,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Armin",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los reptilinaos pueden romper la barricada. lo hacen mas rapido en grupos. Debería armar una estrategia con los bloques de arcilla, y las antorcha, ya que siguen el fuego",
+      "No confiaré solo en muros contra reptilianos. Armaré mi propia estrategia. Especialmente contra los que disparan",
+      "Debo Prepararme antes del próximo ataque. Aver..!! Necesitaria por lo menos 25 bloques de arcillas, y al menos 12 antorchas de fuego; y muuchas armas.",
+      "Si El enemigo rompen la defensa, tendré que improvisar."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Defiéndanse!",
+      "¡Corran!",
+      "¡Reptiliano!"
+    ],
+    "x": 293,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Darius",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Los reptilianos siguen el fuego como zombies, ¡qué miedo!, pero me sirve para uir como la última vez.",
+      "Si uso una antorcha de fuego encima de una arcilla, quizá pueda escapar de ellos.",
+      "Pondría antorcha en arcilla para distraerlos. y luego huiria",
+      "Si siguen la antorcha, yo podría escapar, y luego poner bloques de arcilla que les bloqueen el paso. eso me daria más tiempo"
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos siguen!",
+      "¡Huyan!",
+      "¡Peligro!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Lucan",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Creo que los reptilianos buscan fuego por ser sangre fría.",
+      "Los reptilianos con fuego se ponen tontos y se distraen.",
+      "Si prendo una antorcha, me ilumina en la oscuridad. pondré varios serca de mi campamento por si se corta la energia como la ultima vez.",
+      "La oscuridad me asusta. Menos mal tengo muchas antorchas que arme combinando Palos de madera con baterias y cables. mejor haré más porque no duran nada."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigo!"
+    ],
+    "x": 1400,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Rael",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Cuando Los reptilianos cortaron energía, usé una antorcha.",
+      "La antorcha se apaga rápido; qué problema.",
+      "Debo reunir madera para crear más antorchas."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Vienen!",
+      "¡Peligro!"
+    ],
+    "x": 293,
+    "y": 3798
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Korin",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "Le pediré al profe encender palos con cables.",
+      "Con batería y cables podría crear más fuego.",
+      "Nunca se sabe cuándo volverán a cortar luz.",
+      "Mejor preparo antorchas antes del desastre."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Nos atacan!",
+      "¡Corran!",
+      "¡Peligro!"
+    ],
+    "x": 3233,
+    "y": 3135
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "nombre": "Centinela-Orion",
+    "velocidad": 1,
+    "dialogos_automaticos": [
+      "¿Dónde estará el centinela guardián?",
+      "Ojalá el arma que le di aún le sirva.",
+      "Si el guardián cae, todos estaremos mal.",
+      "Debo encontrarlo antes de que sea tarde."
+    ],
+    "dialogos_miedo": [
+      "¡Auxilio!",
+      "¡Corran!",
+      "¡Nos atacan!",
+      "¡Enemigos!"
+    ],
+    "x": 1400,
+    "y": 3798
+  }
+]
