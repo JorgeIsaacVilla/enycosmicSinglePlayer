@@ -175,7 +175,7 @@ const maxIQ = 700; //Nivel maximo de IQ del juego
 // =============================
 // Datos avatar User
 // =============================
-let username = "jaisaac";
+let username = "Avatar-user";
 let avatar = localStorage.getItem("avatar");
 let profession = localStorage.getItem("profession");
 
