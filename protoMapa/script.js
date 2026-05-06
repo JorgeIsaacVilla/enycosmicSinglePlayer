@@ -1,5 +1,5 @@
 //Versión estable de juego
-//Ver. 3.14.5
+//Ver. 3.14.6
 
 /*
 Slogan: El nivel te lo quedas tu.
@@ -98,8 +98,8 @@ Así en el futuro cambias una sola ruta y no todo script.js.
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-let userPostX = 2500;
-let userPostY = 4300;
+let userPostX = 2555;
+let userPostY = 2336;
 
 function getSettingSfxVolume() {
   const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
@@ -8847,6 +8847,7 @@ function continuarTrasGameOver() {
     actionsEl.innerHTML = "";
   }
 
+  /*
   function renderNPCDialog() {
     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
 
@@ -8882,6 +8883,40 @@ function continuarTrasGameOver() {
     }
 
     lineEl.textContent = window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
+
+    buildNPCDialogButtons();
+  }
+*/
+  function renderNPCDialog() {
+    if (!window.npcDialogEl || !window.npcDialogState.npc) return;
+
+    const frameX = 0;
+    const frameY = 10;
+    const frameW = 64;
+    const frameH = 64;
+
+    const scale = 1.6;
+
+    const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
+    const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
+    const lineEl = window.npcDialogEl.querySelector("#npc-dialog-line");
+
+    titleEl.textContent = window.npcDialogState.npc.nombre || "NPC";
+
+    const npc = window.npcDialogState.npc;
+
+    portraitEl.src = npc.imageSrc || "";
+
+    portraitEl.style.width = `${frameW}px`;
+    portraitEl.style.height = `${frameH}px`;
+    portraitEl.style.objectFit = "none";
+    portraitEl.style.objectPosition = `-${frameX}px -${frameY}px`;
+    portraitEl.style.imageRendering = "pixelated";
+    portraitEl.style.transform = `scale(${scale})`;
+    portraitEl.style.transformOrigin = "center center";
+
+    lineEl.textContent =
+      window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
 
     buildNPCDialogButtons();
   }

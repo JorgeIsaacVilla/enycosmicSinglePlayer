@@ -1,5 +1,5 @@
 //Versión estable de juego
-//Ver. 3.14.5
+//Ver. 3.14.6
 
 let efectVolumen = 0.8;
 
@@ -383,7 +383,7 @@ let ambienteViewX = 0;
 let ambienteViewY = 0;
 
 async function cargarAmbiente() {
-  const res = await fetch("./world.JSON/ambiente.json");
+  const res = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/scripts.mapas/0.playtesting/1.0.0world.JSON/ambiente.json");
   const data = await res.json();
 
   const lista = Array.isArray(data) ? data : (data.objetos || []);
@@ -6493,7 +6493,7 @@ function continuarTrasGameOver() {
 
   //--Enemigos
   async function cargarEnemigos() {
-    const response = await fetch("./world.JSON/enemy.json");
+    const response = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/scripts.mapas/0.playtesting/1.0.0world.JSON/enemy.json");
     const data = await response.json();
 
     const lista = Array.isArray(data) ? data : (data.enemigos || []);
@@ -6595,7 +6595,7 @@ function continuarTrasGameOver() {
 
   //--lógica NPC's ambiente
   async function cargarNPCsAmbiente() {
-    const response = await fetch("./world.JSON/NPCambiente.json");
+    const response = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/scripts.mapas/0.playtesting/1.0.0world.JSON/NPCambiente.json");
     const data = await response.json();
 
     const lista = Array.isArray(data) ? data : (data.npcs || []);
@@ -6747,7 +6747,7 @@ function continuarTrasGameOver() {
 
   //-- lógica de misiones
   async function cargarNPCsDesdeMisiones() {
-    const response = await fetch("./world.JSON/missions.json");
+    const response = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/scripts.mapas/0.playtesting/1.0.0world.JSON/missions.json");
     const data = await response.json();
 
     window.missionsData = data;
@@ -6952,7 +6952,7 @@ function continuarTrasGameOver() {
       <div id="matlog-criptograma-box" style="
         width: 100%;
         max-width: 520px;
-        background-image: url('../assets/backgrounds/texturaAlien.png');
+        background-image: url('https://enycosmicplayer.vercel.app/assets/backgrounds/texturaAlien.png');
         background-size: 100% 100%;
         border: 3px solid #6ef7ff;
         box-shadow: 0 0 25px rgba(110,247,255,.35);
@@ -7009,14 +7009,14 @@ function continuarTrasGameOver() {
           border: 1px solid #6ef7ff;
           overflow: hidden;
         ">
-          <div data-piece="0" style="position:absolute;top:0;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="1" style="position:absolute;top:0;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="2" style="position:absolute;top:0;left:200px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 0;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="3" style="position:absolute;top:100px;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="4" style="position:absolute;top:100px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="5" style="position:absolute;top:100px;left:200px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 50%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="6" style="position:absolute;top:200px;left:0;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 100%;transition:top .25s linear,left .25s linear;"></div>
-          <div data-piece="7" style="position:absolute;top:200px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('../assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="0" style="position:absolute;top:0;left:0;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="1" style="position:absolute;top:0;left:100px;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="2" style="position:absolute;top:0;left:200px;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 0;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="3" style="position:absolute;top:100px;left:0;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="4" style="position:absolute;top:100px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="5" style="position:absolute;top:100px;left:200px;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:100% 50%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="6" style="position:absolute;top:200px;left:0;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:0 100%;transition:top .25s linear,left .25s linear;"></div>
+          <div data-piece="7" style="position:absolute;top:200px;left:100px;width:100px;height:100px;border:1px solid #000;background:url('https://enycosmicplayer.vercel.app/assets/spriteAmbiente/criptograma.svg') no-repeat;background-size:300px 300px;background-position:50% 100%;transition:top .25s linear,left .25s linear;"></div>
           <div data-piece="8" style="position:absolute;top:200px;left:200px;width:100px;height:100px;border:1px solid #000;background:none;background-color:#000;z-index:0;"></div>
         </div>
 
@@ -9669,6 +9669,10 @@ function continuarTrasGameOver() {
     actionsEl.innerHTML = "";
   }
 
+
+
+
+  /*
   function renderNPCDialog() {
     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
 
@@ -9704,6 +9708,40 @@ function continuarTrasGameOver() {
     }
 
     lineEl.textContent = window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
+
+    buildNPCDialogButtons();
+  }
+*/
+  function renderNPCDialog() {
+    if (!window.npcDialogEl || !window.npcDialogState.npc) return;
+
+    const frameX = 0;
+    const frameY = 10;
+    const frameW = 64;
+    const frameH = 64;
+
+    const scale = 1.6;
+
+    const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
+    const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
+    const lineEl = window.npcDialogEl.querySelector("#npc-dialog-line");
+
+    titleEl.textContent = window.npcDialogState.npc.nombre || "NPC";
+
+    const npc = window.npcDialogState.npc;
+
+    portraitEl.src = npc.imageSrc || "";
+
+    portraitEl.style.width = `${frameW}px`;
+    portraitEl.style.height = `${frameH}px`;
+    portraitEl.style.objectFit = "none";
+    portraitEl.style.objectPosition = `-${frameX}px -${frameY}px`;
+    portraitEl.style.imageRendering = "pixelated";
+    portraitEl.style.transform = `scale(${scale})`;
+    portraitEl.style.transformOrigin = "center center";
+
+    lineEl.textContent =
+      window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
 
     buildNPCDialogButtons();
   }
@@ -12910,7 +12948,7 @@ function continuarTrasGameOver() {
 
   async function cargarItemsJSON() {
 
-    const res = await fetch("https://enycosmicplayer.vercel.app/items.json");
+    const res = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/items.json");
     const data = await res.json();
 
     itemsData = data.items;

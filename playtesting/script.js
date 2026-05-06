@@ -1,5 +1,5 @@
 //Versión estable de juego
-//Ver. 3.14.5
+//Ver. 3.14.6
 
 let efectVolumen = 0.8;
 
@@ -9669,41 +9669,76 @@ function continuarTrasGameOver() {
     actionsEl.innerHTML = "";
   }
 
+  /*
+   function renderNPCDialog() {
+     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
+ 
+     const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
+     const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
+     const lineEl = window.npcDialogEl.querySelector("#npc-dialog-line");
+ 
+     titleEl.textContent = window.npcDialogState.npc.nombre || "NPC";
+     const npcImg = window.npcDialogState.npc?.img;
+ 
+     if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
+       const frameW = 64;
+       const frameH = 64;
+ 
+       const tempCanvas = document.createElement("canvas");
+       tempCanvas.width = 96;
+       tempCanvas.height = 120;
+ 
+       const tctx = tempCanvas.getContext("2d");
+       tctx.imageSmoothingEnabled = false;
+ 
+       tctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+ 
+       tctx.drawImage(
+         npcImg,
+         0, 0, frameW, frameH,
+         0, 0, 96, 96
+       );
+ 
+       portraitEl.src = tempCanvas.toDataURL("image/png");
+     } else {
+       portraitEl.src = window.npcDialogState.npc.imageSrc || "";
+     }
+ 
+     lineEl.textContent = window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
+ 
+     buildNPCDialogButtons();
+   }
+ */
   function renderNPCDialog() {
     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
+
+    const frameX = 0;
+    const frameY = 10;
+    const frameW = 64;
+    const frameH = 64;
+
+    const scale = 1.6;
 
     const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
     const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
     const lineEl = window.npcDialogEl.querySelector("#npc-dialog-line");
 
     titleEl.textContent = window.npcDialogState.npc.nombre || "NPC";
-    const npcImg = window.npcDialogState.npc?.img;
 
-    if (npcImg && npcImg.complete && npcImg.naturalWidth > 0) {
-      const frameW = 64;
-      const frameH = 64;
+    const npc = window.npcDialogState.npc;
 
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = 96;
-      tempCanvas.height = 120;
+    portraitEl.src = npc.imageSrc || "";
 
-      const tctx = tempCanvas.getContext("2d");
-      tctx.imageSmoothingEnabled = false;
+    portraitEl.style.width = `${frameW}px`;
+    portraitEl.style.height = `${frameH}px`;
+    portraitEl.style.objectFit = "none";
+    portraitEl.style.objectPosition = `-${frameX}px -${frameY}px`;
+    portraitEl.style.imageRendering = "pixelated";
+    portraitEl.style.transform = `scale(${scale})`;
+    portraitEl.style.transformOrigin = "center center";
 
-      tctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-      tctx.drawImage(
-        npcImg,
-        0, 0, frameW, frameH,
-        0, 0, 96, 96
-      );
-
-      portraitEl.src = tempCanvas.toDataURL("image/png");
-    } else {
-      portraitEl.src = window.npcDialogState.npc.imageSrc || "";
-    }
-
-    lineEl.textContent = window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
+    lineEl.textContent =
+      window.npcDialogState.lines[window.npcDialogState.lineIndex] || "...";
 
     buildNPCDialogButtons();
   }

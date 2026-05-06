@@ -1310,9 +1310,9 @@
       "npcs": [
         {
           "id": "npc023",
-          "nombre": "Samnder",
+          "nombre": "Samder",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+          "imagen": "../assets/avatares/npc/mapa1/Samder.png",
           "posicion": {
             "x": 2680,
             "y": 1820
@@ -1360,13 +1360,13 @@
           "id": "m9s1",
           "tipo": "hablar_npc",
           "npcId": "npc023",
-          "titulo": "Habla con Samnder",
+          "titulo": "Habla con Samder",
           "descripcion": "Recibe la orden de reparación de la consola fría.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
-            "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+            "imagen": "../assets/avatares/npc/mapa1/Samder.png",
             "posicion": {
               "x": 2680,
               "y": 1820
@@ -1436,13 +1436,13 @@
           "id": "m9s4",
           "tipo": "hablar_npc",
           "npcId": "npc023",
-          "titulo": "Regresa con Samnder",
+          "titulo": "Regresa con Samder",
           "descripcion": "Confirma que la consola quedó operativa.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc023",
-            "imagen": "../assets/avatares/npc/mapa1/Samnder.png",
+            "imagen": "../assets/avatares/npc/mapa1/Samder.png",
             "posicion": {
               "x": 2680,
               "y": 1820
