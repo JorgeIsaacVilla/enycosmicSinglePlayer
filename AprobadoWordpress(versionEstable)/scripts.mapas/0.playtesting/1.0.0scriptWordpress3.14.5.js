@@ -6037,7 +6037,7 @@ function continuarTrasGameOver() {
   /*Sistema de antorchas y chimeneas (inicio) */
 
   async function cargarIlumSistemaMapa() {
-    const res = await fetch("./world.JSON/ilumSistemMapa.json");
+    const res = await fetch("https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/scripts.mapas/0.playtesting/1.0.0world.JSON/ilumSistemMapa.json");
     const data = await res.json();
 
     const lista = Array.isArray(data) ? data : (data.objetos || []);
