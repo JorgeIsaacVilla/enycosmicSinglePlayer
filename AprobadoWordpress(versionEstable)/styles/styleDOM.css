@@ -34,10 +34,10 @@
   --dom-line: 1.35;
 }
 body{
-  cursor: url("../assets/src/puntero.svg") 0 0, auto;
+  cursor: url("https://enycosmicplayer.vercel.app/assets/src/puntero.svg") 0 0, auto;
 }
 canvas{
-  cursor: url("../assets/src/puntero.svg") 0 0, auto;
+  cursor: url("https://enycosmicplayer.vercel.app/assets/src/puntero.svg") 0 0, auto;
 }
 
 /* =========================
