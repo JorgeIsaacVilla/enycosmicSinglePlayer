@@ -21,7 +21,7 @@
           "id": "npc01",
           "nombre": "Doctor Cyron",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Cyron.png",
           "posicion": {
             "x": 4592,
             "y": 3400
@@ -48,7 +48,7 @@
           "id": "npc02",
           "nombre": "Darek",
           "rol": "intercambio",
-          "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Darek.png",
           "posicion": {
             "x": 760,
             "y": 4324
@@ -89,7 +89,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc01",
-            "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Cyron.png",
             "posicion": {
               "x": 4592,
               "y": 3400
@@ -121,7 +121,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "mezcla_medicinal_01",
-            "imagen": "../assets/items/basoAgua.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/basoAgua.svg",
             "posicion": {
               "x": 760,
               "y": 4324
@@ -154,7 +154,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc02",
-            "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Darek.png",
             "posicion": {
               "x": 760,
               "y": 4324
@@ -173,7 +173,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc01",
-            "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Cyron.png",
             "posicion": {
               "x": 4592,
               "y": 3400
@@ -227,7 +227,7 @@
           "id": "npc03",
           "nombre": "Artesano Hector",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Hector.png",
           "posicion": {
             "x": 986,
             "y": 4849
@@ -268,7 +268,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc03",
-            "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Hector.png",
             "posicion": {
               "x": 986,
               "y": 4849
@@ -292,7 +292,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "recolectar_madera_01",
-            "imagen": "../assets/items/madera.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/madera.svg",
             "posicion": {
               "x": 620,
               "y": 3585
@@ -317,7 +317,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc03",
-            "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Hector.png",
             "posicion": {
               "x": 986,
               "y": 4849
@@ -341,7 +341,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "crear_arma_01",
-            "imagen": "../assets/items/espadaMadera.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/espadaMadera.svg",
             "posicion": {
               "x": 620,
               "y": 3585
@@ -360,7 +360,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc03",
-            "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Hector.png",
             "posicion": {
               "x": 986,
               "y": 4849
@@ -410,7 +410,7 @@
           "id": "npc04",
           "nombre": "Alfarera Vexa",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Vexa.png",
           "posicion": {
             "x": 691,
             "y": 4712
@@ -448,7 +448,7 @@
           "id": "npc-complement-04",
           "nombre": "Alfarero Manuel",
           "rol": "complemento",
-          "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Manuel.png",
           "posicion": {
             "x": 1958,
             "y": 3273
@@ -497,7 +497,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc04",
-            "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Vexa.png",
             "posicion": {
               "x": 691,
               "y": 4712
@@ -554,7 +554,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc04",
-            "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Vexa.png",
             "posicion": {
               "x": 691,
               "y": 4712
@@ -578,7 +578,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "crear_bloque_de_arcilla_01",
-            "imagen": "../assets/items/espadaMadera.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/espadaMadera.svg",
             "posicion": {
               "x": 620,
               "y": 3585
@@ -597,7 +597,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc04",
-            "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Vexa.png",
             "posicion": {
               "x": 691,
               "y": 4712
@@ -643,7 +643,7 @@
           "id": "npc05",
           "nombre": "Arkon",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Arkon.png",
           "posicion": {
             "x": 2593,
             "y": 4250
@@ -673,7 +673,7 @@
           "id": "npc06",
           "nombre": "Syra",
           "rol": "guia",
-          "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Syra.png",
           "posicion": {
             "x": 900,
             "y": 4300
@@ -708,7 +708,7 @@
           "id": "npc07",
           "nombre": "Lyra",
           "rol": "guia",
-          "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Lyra.png",
           "posicion": {
             "x": 4631,
             "y": 4262
@@ -747,7 +747,7 @@
           "id": "npc08",
           "nombre": "Alira",
           "rol": "historia",
-          "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Alira.png",
           "posicion": {
             "x": 4312,
             "y": 4177
@@ -787,7 +787,7 @@
           "id": "npc09",
           "nombre": "Kael",
           "rol": "final",
-          "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Kael.png",
           "posicion": {
             "x": 2811,
             "y": 4592
@@ -813,7 +813,7 @@
           "id": "npc10",
           "nombre": "Centinela Guardian",
           "rol": "complemento",
-          "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
           "posicion": {
             "x": 71,
             "y": 186
@@ -841,7 +841,7 @@
           "id": "npc-complement-08",
           "nombre": "Profesor Orbek",
           "rol": "historia",
-          "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Orbek.png",
           "posicion": {
             "x": 2810,
             "y": 4153
@@ -887,7 +887,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc05",
-            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Arkon.png",
             "posicion": {
               "x": 2593,
               "y": 4250
@@ -906,7 +906,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc06",
-            "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Syra.png",
             "posicion": {
               "x": 900,
               "y": 4300
@@ -930,7 +930,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "crear_cable_01",
-            "imagen": "../assets/items/cable.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/cable.svg",
             "posicion": {
               "x": 1788,
               "y": 4105
@@ -949,7 +949,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc05",
-            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Arkon.png",
             "posicion": {
               "x": 2593,
               "y": 4250
@@ -968,7 +968,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc07",
-            "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Lyra.png",
             "posicion": {
               "x": 4631,
               "y": 4262
@@ -992,7 +992,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "crear_bateria_01",
-            "imagen": "../assets/items/bateria.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/bateria.svg",
             "posicion": {
               "x": 825,
               "y": 3699
@@ -1011,7 +1011,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc05",
-            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Arkon.png",
             "posicion": {
               "x": 2593,
               "y": 4250
@@ -1035,7 +1035,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "crear_antorcha_01",
-            "imagen": "../assets/items/antorchaFuego.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/antorchaFuego.svg",
             "posicion": {
               "x": 3241,
               "y": 4359
@@ -1054,7 +1054,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc08",
-            "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Alira.png",
             "posicion": {
               "x": 4312,
               "y": 4177
@@ -1074,7 +1074,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "laboratiorio_03_oficina_01",
-            "imagen": "../assets/spriteAmbiente/oficina1.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/oficina1.svg",
             "posicion": {
               "x": 4376,
               "y": 4035
@@ -1094,7 +1094,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "chimenea_mapa_01",
-            "imagen": "../assets/spriteAmbiente/caldera.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/caldera.svg",
             "posicion": {
               "x": 171,
               "y": 72
@@ -1113,7 +1113,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc09",
-            "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Kael.png",
             "posicion": {
               "x": 2811,
               "y": 4592
@@ -1133,7 +1133,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "reestablecer_energia",
-            "imagen": "../assets/items/antorchaFuego.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/antorchaFuego.svg",
             "posicion": {
               "x": 2747,
               "y": 4498
@@ -1152,7 +1152,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc09",
-            "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Kael.png",
             "posicion": {
               "x": 2811,
               "y": 4592
@@ -1203,7 +1203,7 @@
           "id": "npc11",
           "nombre": "Capitán Valen",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Valen.png",
           "posicion": {
             "x": 1889,
             "y": 4718
@@ -1244,7 +1244,7 @@
           "id": "npc12",
           "nombre": "Ingeniero Solis",
           "rol": "contacto",
-          "imagen": "../assets/avatares/npc/mapa1/Solis.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Solis.png",
           "posicion": {
             "x": 2256,
             "y": 4232
@@ -1272,7 +1272,7 @@
           "id": "npc13",
           "nombre": "Doctor Axiom",
           "rol": "cierre",
-          "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Dr_Axiom.png",
           "posicion": {
             "x": 2189,
             "y": 4320
@@ -1312,7 +1312,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Valen.png",
             "posicion": {
               "x": 1889,
               "y": 4718
@@ -1332,7 +1332,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "criptograma_de_matlog",
-            "imagen": "../assets/spriteAmbiente/PC-alien1.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/PC-alien1.png",
             "posicion": {
               "x": 4741,
               "y": 80
@@ -1352,7 +1352,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "Algoritmo_de_matlog",
-            "imagen": "../assets/spriteAmbiente/pedestalAlgoritmo.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/pedestalAlgoritmo.png",
             "posicion": {
               "x": 1530,
               "y": 4530
@@ -1371,7 +1371,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc12",
-            "imagen": "../assets/avatares/npc/mapa1/Solis.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Solis.png",
             "posicion": {
               "x": 2256,
               "y": 4232
@@ -1390,7 +1390,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc13",
-            "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Dr_Axiom.png",
             "posicion": {
               "x": 2189,
               "y": 4320
@@ -1410,7 +1410,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "Incriptación_Central",
-            "imagen": "../assets/spriteAmbiente/pedestalAlgoritmo.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/pedestalAlgoritmo.png",
             "posicion": {
               "x": 2500,
               "y": 180
@@ -1429,7 +1429,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc11",
-            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Valen.png",
             "posicion": {
               "x": 1889,
               "y": 4718
@@ -1475,7 +1475,7 @@
           "id": "npc14",
           "nombre": "Ingeniero Maese",
           "rol": "inicio",
-          "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+          "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Maese.png",
           "posicion": {
             "x": 473,
             "y": 3270
@@ -1526,7 +1526,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc14",
-            "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Maese.png",
             "posicion": {
               "x": 473,
               "y": 3270
@@ -1550,7 +1550,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "recolectar_bateria_01",
-            "imagen": "../assets/items/bateria.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/items/bateria.svg",
             "posicion": {
               "x": 600,
               "y": 3195
@@ -1570,7 +1570,7 @@
           "verificador": {
             "tipoObjetivo": "objeto",
             "objetivoId": "mesa_lab_Robotica",
-            "imagen": "../assets/spriteAmbiente/labElectronica.svg",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/labElectronica.svg",
             "posicion": {
               "x": 600,
               "y": 3195
@@ -1589,7 +1589,7 @@
           "verificador": {
             "tipoObjetivo": "npc",
             "objetivoId": "npc14",
-            "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+            "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Maese.png",
             "posicion": {
               "x": 473,
               "y": 3270

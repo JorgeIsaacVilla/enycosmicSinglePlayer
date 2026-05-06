@@ -3821,7 +3821,7 @@ function wrapText(ctx, text, maxWidth) {
 const GLOBAL_SCRIPTS = [
   //"https://enycosmicplayer.vercel.app/globalScripts/linterna.js",
   //"https://enycosmicplayer.vercel.app/globalScripts/aliado.js",
-  "https://enycosmicplayer.vercel.app/globalScripts/metacam.js",
+  "https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/globalScripts/metacam.js",
   //"https://enycosmicplayer.vercel.app/globalScripts/interruptorOscuridad.js",
   //"https://enycosmicplayer.vercel.app/globalScripts/timerOscuridad15s.js"
 ];
@@ -7664,7 +7664,7 @@ function continuarTrasGameOver() {
         }
       }
 
-      const aliadoScriptSrc = "https://enycosmicplayer.vercel.app/globalScripts/aliado.js";
+      const aliadoScriptSrc = "https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/globalScripts/aliado.js";
       const aliadoModuleId = "aliado_reptiliano_test";
 
       function iniciarAliadoDespuesDeCargar() {

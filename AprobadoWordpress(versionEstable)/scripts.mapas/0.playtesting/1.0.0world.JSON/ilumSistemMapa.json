@@ -2,7 +2,7 @@
   {
     "nombre_id": "chimenea_mapa_01",
     "tipo": "chimenea",
-    "imagen": "../assets/spriteAmbiente/caldera.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/caldera.svg",
     "w": 300,
     "h": 300,
     "x": 55,
@@ -13,7 +13,7 @@
   {
     "nombre_id": "antorcha_segura_01",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 600,
@@ -22,7 +22,7 @@
   {
     "nombre_id": "antorcha_segura_02",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 900,
@@ -31,7 +31,7 @@
   {
     "nombre_id": "antorcha_segura_03",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 1300,
@@ -40,7 +40,7 @@
   {
     "nombre_id": "antorcha_segura_04",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 1700,
@@ -49,7 +49,7 @@
   {
     "nombre_id": "antorcha_segura_05",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2100,
@@ -58,7 +58,7 @@
   {
     "nombre_id": "antorcha_segura_06",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2500,
@@ -67,7 +67,7 @@
   {
     "nombre_id": "antorcha_segura_07",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2900,
@@ -76,7 +76,7 @@
   {
     "nombre_id": "antorcha_segura_08",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3300,
@@ -85,7 +85,7 @@
   {
     "nombre_id": "antorcha_segura_09",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3700,
@@ -94,7 +94,7 @@
   {
     "nombre_id": "antorcha_segura_10",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4100,
@@ -103,7 +103,7 @@
   {
     "nombre_id": "antorcha_segura_11",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4500,
@@ -112,7 +112,7 @@
   {
     "nombre_id": "antorcha_segura_12",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4800,
@@ -121,7 +121,7 @@
   {
     "nombre_id": "antorcha_entrada_01",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 1500,
@@ -130,7 +130,7 @@
   {
     "nombre_id": "antorcha_entrada_02",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 1800,
@@ -139,7 +139,7 @@
   {
     "nombre_id": "antorcha_entrada_03",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2100,
@@ -148,7 +148,7 @@
   {
     "nombre_id": "antorcha_entrada_04",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2400,
@@ -157,7 +157,7 @@
   {
     "nombre_id": "antorcha_entrada_05",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2700,
@@ -166,7 +166,7 @@
   {
     "nombre_id": "antorcha_entrada_06",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3000,
@@ -175,7 +175,7 @@
   {
     "nombre_id": "antorcha_entrada_07",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3300,
@@ -184,7 +184,7 @@
   {
     "nombre_id": "antorcha_entrada_08",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3600,
@@ -193,7 +193,7 @@
   {
     "nombre_id": "antorcha_entrada_09",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3900,
@@ -202,7 +202,7 @@
   {
     "nombre_id": "antorcha_entrada_10",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4200,
@@ -211,7 +211,7 @@
   {
     "nombre_id": "antorcha_entrada_11",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4500,
@@ -220,7 +220,7 @@
   {
     "nombre_id": "antorcha_entrada_12",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4800,
@@ -229,7 +229,7 @@
   {
     "nombre_id": "antorcha_right_01",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2304,
@@ -238,7 +238,7 @@
   {
     "nombre_id": "antorcha_right_02",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 2638,
@@ -247,7 +247,7 @@
   {
     "nombre_id": "antorcha_right_03",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3800,
@@ -256,7 +256,7 @@
   {
     "nombre_id": "antorcha_right_04",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 3900,
@@ -265,7 +265,7 @@
   {
     "nombre_id": "antorcha_right_05",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4000,
@@ -274,7 +274,7 @@
   {
     "nombre_id": "antorcha_right_06",
     "tipo": "antorcha",
-    "imagen": "../assets/spriteAmbiente/antorcha.svg",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/spriteAmbiente/antorcha.svg",
     "w": 60,
     "h": 60,
     "x": 4100,

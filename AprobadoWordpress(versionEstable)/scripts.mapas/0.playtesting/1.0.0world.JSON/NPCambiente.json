@@ -1,6 +1,6 @@
 [
   {
-    "imagen": "../assets/avatares/npc/mapa1/Karina.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Karina.png",
     "nombre": "Karina",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -19,7 +19,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Eira.png",
     "nombre": "Eira",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -38,7 +38,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Aelys.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Aelys.png",
     "nombre": "Aelys",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -57,7 +57,7 @@
     "y": 3135
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Lira.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Lira.png",
     "nombre": "Lira",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -76,7 +76,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Sena.png",
     "nombre": "Sena",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -95,7 +95,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Samder.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Samder.png",
     "nombre": "Samder",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -114,7 +114,7 @@
     "y": 3135
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Orion.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Orion.png",
     "nombre": "Orion",
     "velocidad": 1.2,
     "dialogos_automaticos": [
@@ -133,7 +133,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Armin",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -152,7 +152,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Darius",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -171,7 +171,7 @@
     "y": 3135
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Lucan",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -190,7 +190,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Rael",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -208,7 +208,7 @@
     "y": 3798
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Korin",
     "velocidad": 1,
     "dialogos_automaticos": [
@@ -227,7 +227,7 @@
     "y": 3135
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+    "imagen": "https://enycosmicplayer.vercel.app/assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Orion",
     "velocidad": 1,
     "dialogos_automaticos": [
