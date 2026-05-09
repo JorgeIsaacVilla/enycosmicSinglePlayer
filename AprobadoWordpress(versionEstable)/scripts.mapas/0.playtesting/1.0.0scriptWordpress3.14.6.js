@@ -169,17 +169,506 @@ let coordenadasMisionState = false;
 // =============================
 // IQ GLOBAL
 // =============================
-let IQuser = 3; //nivel IQ del jugador
+/*--//Sincronizar wordpress(Inicio)--*/
+let IQuser = 0; //nivel IQ del jugador
 const maxIQ = 700; //Nivel maximo de IQ del juego
+
+
+function syncIQFromWordPress() {
+
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+
+    IQuser = parseInt(wpUser.iq || 0);
+
+    console.log("IQ sincronizado:", IQuser);
+
+    return true;
+  }
+
+  return false;
+}
+
+syncIQFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncIQFromWordPress);
+window.addEventListener("load", syncIQFromWordPress);
+
+let enyIQIntentos = 0;
+
+const enyIQInterval = setInterval(() => {
+
+  enyIQIntentos++;
+
+  if (syncIQFromWordPress() || enyIQIntentos >= 50) {
+    clearInterval(enyIQInterval);
+  }
+
+}, 100);
+
+/*--//Sincronizar wordpress(fin)--*/
 
 // =============================
 // Datos avatar User
 // =============================
-let username = "Avatar-user";
-let avatar = localStorage.getItem("avatar");
-let profession = localStorage.getItem("profession");
 
-let cosmonedas = 350; //50 Inicial el saldo se gurdará en la base de datos
+
+
+
+/*--//Sincronizar wordpress(Inicio)--*/
+let username = "Avatar-user";
+
+function syncUsernameFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn && wpUser?.username) {
+    username = wpUser.username;
+    console.log("USERNAME sincronizado desde WordPress:", username);
+    return true;
+  }
+
+  return false;
+}
+
+syncUsernameFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncUsernameFromWordPress);
+window.addEventListener("load", syncUsernameFromWordPress);
+
+let enyUserIntentos = 0;
+
+const enyUserInterval = setInterval(() => {
+  enyUserIntentos++;
+
+  if (syncUsernameFromWordPress() || enyUserIntentos >= 50) {
+    clearInterval(enyUserInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+/*--//Sincronizar wordpress(inicio)--*/
+//let avatar = localStorage.getItem("avatar");
+let avatar = "";
+let avatarId = "";
+let avatarSprites = "";
+let avatarProfile = "";
+let avatarGender = "";
+
+function syncAvatarFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+    avatarId = wpUser.avatarId || "";
+    avatarProfile = wpUser.avatarProfile || "";
+    avatarGender = wpUser.avatarGender || "";
+    avatar = wpUser.avatar || "";
+    avatarSprites = wpUser.avatarSprites || "";
+
+    if (avatarId) localStorage.setItem("avatarId", avatarId);
+    if (avatarProfile) localStorage.setItem("avatarProfile", avatarProfile);
+    if (avatarGender) localStorage.setItem("avatarGender", avatarGender);
+    if (avatar) localStorage.setItem("avatar", avatar);
+
+    /*--//Sincronizar wordpress(inicio)--*/
+    //if (avatarSprites) localStorage.setItem("avatarSprites", avatarSprites);
+    if (avatarSprites) localStorage.setItem("avatar", avatarSprites);
+    /*--//Sincronizar wordpress(fin)--*/
+
+    return true;
+  }
+
+  return false;
+}
+
+syncAvatarFromWordPress();
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarAvatarEnWordPress(avatarSeleccionado) {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn || !avatarSeleccionado) {
+    return;
+  }
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_avatar");
+  formData.append("avatar_id", avatarSeleccionado.id || "");
+  formData.append("avatar_profile", avatarSeleccionado.profile || "");
+  formData.append("avatar_gender", avatarSeleccionado.gender || "");
+  formData.append("avatar_img", avatarSeleccionado.avatar || "");
+  formData.append("avatar_sprites", avatarSeleccionado.sprites || "");
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Avatar guardado en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando avatar en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarMisionesTerminadasEnWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const completedSeguro = Array.isArray(window.missionSystem?.completedMissionIds)
+    ? window.missionSystem.completedMissionIds
+    : [];
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_completed_missions");
+  formData.append("completed_missions", JSON.stringify(completedSeguro));
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Misiones terminadas guardadas en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando misiones terminadas en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarProfessionEnWordPress(professionSeleccionada) {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn || !professionSeleccionada) {
+    return;
+  }
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_profession");
+  formData.append("profession", professionSeleccionada.id || "");
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Profesión guardada en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando profesión en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarIQEnWordPress(nuevoIQ) {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_iq");
+  formData.append("iq", Number(nuevoIQ) || 0);
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("IQ guardado en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando IQ en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarCosmonedasEnWordPress(nuevoSaldo) {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_cosmonedas");
+  formData.append("cosmonedas", Number(nuevoSaldo) || 0);
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Cosmonedas guardadas en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando cosmonedas en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarInventarioEnWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const inventarioSeguro = Array.isArray(window.inventarioUser)
+    ? window.inventarioUser
+    : [];
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_inventory");
+  formData.append("inventory", JSON.stringify(inventarioSeguro));
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Inventario guardado en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando inventario en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarEquipadosEnWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const equipadosSeguro = Array.isArray(window.equipSlots)
+    ? window.equipSlots
+    : [null, null];
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_equip_slots");
+  formData.append("equip_slots", JSON.stringify(equipadosSeguro));
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Equipados guardados en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando equipados en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarCombinacionEnWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const combinacionSegura = Array.isArray(combinacionSlots)
+    ? combinacionSlots
+    : [null, null, null, null];
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_combine_slots");
+  formData.append("combine_slots", JSON.stringify(combinacionSegura));
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Combinación guardada en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando combinación en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+/*--//Sincronizar wordpress(Inicio)--*/
+function guardarGlobalScriptsEnWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) {
+    return;
+  }
+
+  const scriptsUsuario = Array.isArray(GLOBAL_SCRIPTS)
+    ? GLOBAL_SCRIPTS.filter(src => !GLOBAL_SCRIPTS_BASE.includes(src))
+    : [];
+
+  const stateSeguro =
+    window.enyGlobalModules?.state &&
+      typeof window.enyGlobalModules.state === "object" &&
+      !Array.isArray(window.enyGlobalModules.state)
+      ? window.enyGlobalModules.state
+      : {};
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "eny_guardar_global_scripts");
+  formData.append("global_scripts", JSON.stringify(scriptsUsuario));
+  formData.append("global_scripts_state", JSON.stringify(stateSeguro));
+
+  fetch(wpUser.ajaxUrl || "/wp-admin/admin-ajax.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("GLOBAL_SCRIPTS guardados en WordPress:", data);
+    })
+    .catch(err => {
+      console.error("Error guardando GLOBAL_SCRIPTS en WordPress:", err);
+    });
+}
+/*--//Sincronizar wordpress(fin)--*/
+
+window.addEventListener("DOMContentLoaded", syncAvatarFromWordPress);
+window.addEventListener("load", syncAvatarFromWordPress);
+
+let enyAvatarIntentos = 0;
+
+const enyAvatarInterval = setInterval(() => {
+  enyAvatarIntentos++;
+
+  if (syncAvatarFromWordPress() || enyAvatarIntentos >= 50) {
+    clearInterval(enyAvatarInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+/*--//Sincronizar wordpress(inicio)--*/
+//let profession = localStorage.getItem("profession");
+let profession = "";
+
+function syncProfessionFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+    profession = wpUser.profession || "";
+    console.log("Profesión sincronizada:", profession);
+    return true;
+  }
+
+  return false;
+}
+
+syncProfessionFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncProfessionFromWordPress);
+window.addEventListener("load", syncProfessionFromWordPress);
+
+let enyProfessionIntentos = 0;
+
+const enyProfessionInterval = setInterval(() => {
+  enyProfessionIntentos++;
+
+  if (syncProfessionFromWordPress() || enyProfessionIntentos >= 50) {
+    clearInterval(enyProfessionInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+
+/*--//Sincronizar wordpress(Inicio)--*/
+let cosmonedas = 0;
+
+function syncCosmonedasFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+    cosmonedas = parseInt(wpUser.cosmonedas || 0);
+    console.log("Cosmonedas sincronizadas:", cosmonedas);
+    return true;
+  }
+
+  return false;
+}
+
+syncCosmonedasFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncCosmonedasFromWordPress);
+window.addEventListener("load", syncCosmonedasFromWordPress);
+
+let enyCosmonedasIntentos = 0;
+
+const enyCosmonedasInterval = setInterval(() => {
+  enyCosmonedasIntentos++;
+
+  if (syncCosmonedasFromWordPress() || enyCosmonedasIntentos >= 50) {
+    clearInterval(enyCosmonedasInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+
+
 
 // =============================
 // TOP 15 (estático MVP) manejo incial de forma manual
@@ -219,9 +708,99 @@ cargarNovedades()
 // =======================================================================================
 
 //Combinaciones de inventario
+/*--//Sincronizar wordpress(Inicio)--*/
 let combinacionSlots = [null, null, null, null];
+
+function syncCombineSlotsFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+    if (Array.isArray(wpUser.combineSlots)) {
+      combinacionSlots = wpUser.combineSlots;
+    } else {
+      combinacionSlots = [null, null, null, null];
+    }
+
+    /*
+    if (typeof refreshInventarioUI === "function") {
+      refreshInventarioUI();
+    }
+    */
+
+    return true;
+  }
+
+  return false;
+}
+
+syncCombineSlotsFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncCombineSlotsFromWordPress);
+window.addEventListener("load", syncCombineSlotsFromWordPress);
+
+let enyCombineSlotsIntentos = 0;
+
+const enyCombineSlotsInterval = setInterval(() => {
+  enyCombineSlotsIntentos++;
+
+  if (syncCombineSlotsFromWordPress() || enyCombineSlotsIntentos >= 50) {
+    clearInterval(enyCombineSlotsInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+
+
 let combinacionResultado = null;
+
+
+
+
+
+/*--//Sincronizar wordpress(Inicio)--*/
 window.equipSlots = [null, null];  //Elementos equipados en avatar items/armas/equipo Sincronizar con base de datos wordpress
+
+function syncEquipSlotsFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (wpUser?.isLoggedIn) {
+    if (Array.isArray(wpUser.equipSlots)) {
+      window.equipSlots = wpUser.equipSlots;
+    } else {
+      window.equipSlots = [null, null];
+    }
+
+    /*
+    if (typeof refreshInventarioUI === "function") {
+      refreshInventarioUI();
+    }
+    */
+    return true;
+  }
+
+  return false;
+}
+
+syncEquipSlotsFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncEquipSlotsFromWordPress);
+window.addEventListener("load", syncEquipSlotsFromWordPress);
+
+let enyEquipSlotsIntentos = 0;
+
+const enyEquipSlotsInterval = setInterval(() => {
+  enyEquipSlotsIntentos++;
+
+  if (syncEquipSlotsFromWordPress() || enyEquipSlotsIntentos >= 50) {
+    clearInterval(enyEquipSlotsInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+
+
 
 // ================================================
 // Función llamado de metafon.html a index.html (inicio)
@@ -1879,6 +2458,10 @@ function devolverItemDesdeEquipado(slotIndex) {
 
   refreshInventarioUI();
   restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  guardarEquipadosEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
 }
 
 window.devolverItemDesdeEquipado = devolverItemDesdeEquipado;
@@ -1942,6 +2525,13 @@ function equiparItemDelInventario(slotIndex) {
       closeInventarioPopup();
 
       refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarInventarioEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
+
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       return;
     }
   }
@@ -2002,6 +2592,12 @@ function equiparItemDelInventario(slotIndex) {
   closeInventarioPopup();
 
   refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarEquipadosEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
 }
 
 function ensureCraftInfoPopupStyles() {
@@ -2244,12 +2840,17 @@ function comprarItemDeTienda(itemId) {
 
   cosmonedas -= precio;
 
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarCosmonedasEnWordPress(cosmonedas);
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+
   refreshInventarioUI();
   restoreElementScrollState("#container-interfas .ui-body", scrollInventario);
 
   showPopupFeedback({
     title: "Compra realizada",
-    message: `Haz comprado ${item.nombre_item || item.nombre || "este item"}.`,
+    message: `Has comprado ${item.nombre_item || item.nombre || "este item"}.`,
     type: "success",
     duration: 5000
   });
@@ -2676,6 +3277,7 @@ function commitInventarioDragDrop(clientX, clientY) {
   if (drop?.type === "destroy") {
     if (typeof window.destruirItemDelInventario === "function") {
       window.destruirItemDelInventario(slotIndex);
+
     }
     resetInventarioDragState();
     return true;
@@ -3818,13 +4420,13 @@ function wrapText(ctx, text, maxWidth) {
 // GLOBAL SCRIPTS SYSTEM (inicio)
 // =======================================================
 
-const GLOBAL_SCRIPTS = [
-  //"https://enycosmicplayer.vercel.app/globalScripts/linterna.js",
-  //"https://enycosmicplayer.vercel.app/globalScripts/aliado.js",
+
+/*--//Sincronizar wordpress(Inicio)--*/
+const GLOBAL_SCRIPTS_BASE = [
   "https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/globalScripts/metacam.js",
-  //"https://enycosmicplayer.vercel.app/globalScripts/interruptorOscuridad.js",
-  //"https://enycosmicplayer.vercel.app/globalScripts/timerOscuridad15s.js"
 ];
+
+let GLOBAL_SCRIPTS = [...GLOBAL_SCRIPTS_BASE];
 
 window.enyGlobalModules = {
   loaded: {},
@@ -3845,6 +4447,55 @@ window.enyGlobalModules = {
   },
   state: {}
 };
+function syncGlobalScriptsFromWordPress() {
+  const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+  if (!wpUser?.isLoggedIn) return false;
+
+  const userScripts = Array.isArray(wpUser.globalScripts)
+    ? wpUser.globalScripts
+    : [];
+
+  const savedState =
+    wpUser.globalScriptsState &&
+      typeof wpUser.globalScriptsState === "object" &&
+      !Array.isArray(wpUser.globalScriptsState)
+      ? wpUser.globalScriptsState
+      : {};
+
+  GLOBAL_SCRIPTS = [
+    ...new Set([
+      ...GLOBAL_SCRIPTS_BASE,
+      ...userScripts
+    ])
+  ];
+
+  window.enyGlobalModules.state = {
+    ...(window.enyGlobalModules.state || {}),
+    ...savedState
+  };
+
+  return true;
+}
+
+syncGlobalScriptsFromWordPress();
+
+window.addEventListener("DOMContentLoaded", syncGlobalScriptsFromWordPress);
+window.addEventListener("load", syncGlobalScriptsFromWordPress);
+
+let enyGlobalScriptsIntentos = 0;
+
+const enyGlobalScriptsInterval = setInterval(() => {
+  enyGlobalScriptsIntentos++;
+
+  if (syncGlobalScriptsFromWordPress() || enyGlobalScriptsIntentos >= 50) {
+    clearInterval(enyGlobalScriptsInterval);
+  }
+}, 100);
+/*--//Sincronizar wordpress(fin)--*/
+
+
+
 
 window.registerGlobalModule = function registerGlobalModule(moduleId, moduleConfig) {
   if (!moduleId || !moduleConfig) return;
@@ -4014,11 +4665,14 @@ let cosmonedaImg = null;
 //Previoo de cosmonedas
 function recibirCosmonedas(amount) {
   cosmonedas += amount;       // actualización visual inmediata
-  enviarCosmonedasAlServidor(amount);
+  /*enviarCosmonedasAlServidor(amount);*/
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarCosmonedasEnWordPress(cosmonedas);
+  /*--//Sincronizar wordpress(fin)--*/
 }
 
 
-/*Función para mandar cosmonedas al servidor */
+/*Función para mandar cosmonedas al servidor 
 function enviarCosmonedasAlServidor(amount) {
   fetch(ajaxurl, {
     method: "POST",
@@ -4034,7 +4688,7 @@ function enviarCosmonedasAlServidor(amount) {
         cosmonedas = data.balance; // 🔥 aquí sincronizas con el valor REAL
       }
     });
-}
+}*/
 /*-----------------------Saldo Cosmonedas (Fin)------------------------------------*/
 
 function showCombinacionEstadoModal(tipo) {
@@ -4300,6 +4954,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       }
 
       //console.log("El usuario usará este item: corazon");
+
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
 
     case "bloque_de_arcilla": {
@@ -4309,6 +4967,10 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
       closeInventarioPopup();
 
       refreshInventarioUI({ restoreScroll: true, scrollState: scrollInventario });
+
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
 
       break;
     }
@@ -4335,6 +4997,9 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
         }
       }
 
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
@@ -4369,6 +5034,9 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
         }
       }
 
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
@@ -4394,7 +5062,9 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
           restoreInventarioScrollState(scrollInventario);
         }
       }
-
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
@@ -4427,7 +5097,9 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
           restoreInventarioScrollState(scrollInventario);
         }
       }
-
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
@@ -4454,6 +5126,9 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
         }
       }
 
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
@@ -4475,11 +5150,16 @@ function usarItemEquipadoDesdeHUD(slotIndex) {
           restoreInventarioScrollState(scrollInventario);
         }
       }
-
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     }
 
     case "escudo_de_madera":
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarEquipadosEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
       break;
     case "patines":
       break;
@@ -4627,6 +5307,9 @@ function continuarTrasGameOver() {
   }
 
   cosmonedas -= 3;
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarCosmonedasEnWordPress(cosmonedas);
+  /*--//Sincronizar wordpress(fin)--*/
 
   removeGameOverDOMOverlay();
 
@@ -5961,6 +6644,9 @@ function continuarTrasGameOver() {
       const bodyEl = interfasEl.querySelector(".ui-body");
       if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
     }
+    /*--//Sincronizar wordpress(Inicio)--*/
+    guardarInventarioEnWordPress();
+    /*--//Sincronizar wordpress(fin)--*/
   }
 
   // Mouse hover en desktop
@@ -6783,6 +7469,7 @@ function continuarTrasGameOver() {
   // ESTADO Y LÓGICA DE MISIONES
   // =======================================================
 
+  /*--//Sincronizar wordpress(inicio)--*/
   //Estado de misiones
   window.missionSystem = {
     acceptedMissionIds: [],
@@ -6792,6 +7479,43 @@ function continuarTrasGameOver() {
     revealedStepIndexes: {},
     completedSteps: {}
   };
+
+  function syncCompletedMissionsFromWordPress() {
+    const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+    if (wpUser?.isLoggedIn) {
+      const completed = Array.isArray(wpUser.completedMissions)
+        ? wpUser.completedMissions
+        : [];
+
+      if (!window.missionSystem) {
+        window.missionSystem = {};
+      }
+
+      window.missionSystem.completedMissionIds = completed;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  syncCompletedMissionsFromWordPress();
+
+  window.addEventListener("DOMContentLoaded", syncCompletedMissionsFromWordPress);
+  window.addEventListener("load", syncCompletedMissionsFromWordPress);
+
+  let enyCompletedMissionsIntentos = 0;
+
+  const enyCompletedMissionsInterval = setInterval(() => {
+    enyCompletedMissionsIntentos++;
+
+    if (syncCompletedMissionsFromWordPress() || enyCompletedMissionsIntentos >= 50) {
+      clearInterval(enyCompletedMissionsInterval);
+    }
+  }, 100);
+  /*--//Sincronizar wordpress(fin)--*/
+
 
   function getMissionById(missionId) {
     return window.missionsData?.missions?.find(m => m.id === missionId) || null;
@@ -7662,6 +8386,10 @@ function continuarTrasGameOver() {
         if (typeof refreshInventarioUI === "function") {
           refreshInventarioUI();
         }
+
+        /*--//Sincronizar wordpress(Inicio)--*/
+        guardarInventarioEnWordPress();
+        /*--//Sincronizar wordpress(fin)--*/
       }
 
       const aliadoScriptSrc = "https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/globalScripts/aliado.js";
@@ -7681,6 +8409,10 @@ function continuarTrasGameOver() {
             window.__aliado_automata_creado__ = true;
 
             console.log("🤖 Aliado creado UNA sola vez");
+            /*--//Sincronizar wordpress(Inicio)--*/
+            guardarGlobalScriptsEnWordPress();
+            /*--//Sincronizar wordpress(fin)--*/
+
           }
         }
       }
@@ -8303,6 +9035,13 @@ function continuarTrasGameOver() {
 
     if (!window.missionSystem.completedMissionIds.includes(mission.id)) {
       window.missionSystem.completedMissionIds.push(mission.id);
+
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarIQEnWordPress(IQuser);
+      guardarCosmonedasEnWordPress(cosmonedas);
+      guardarInventarioEnWordPress();
+      guardarMisionesTerminadasEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
     }
 
     delete window.missionSystem.activeStepIndexByMission[mission.id];
@@ -8919,11 +9658,27 @@ function continuarTrasGameOver() {
   function buildMissionsHTML() {
     ensureMissionUIStyles();
 
+    /*--sincronizar wordpress(inicio)--*/
+    /*
     const acceptedIds = window.missionSystem.acceptedMissionIds || [];
     const missions = acceptedIds
       .map(id => getMissionById(id))
       .filter(Boolean);
+    */
 
+    const acceptedIds = window.missionSystem.acceptedMissionIds || [];
+    const completedIds = window.missionSystem.completedMissionIds || [];
+
+    const missionIds = [...new Set([
+      ...acceptedIds,
+      ...completedIds
+    ])];
+
+    const missions = missionIds
+      .map(id => getMissionById(id))
+      .filter(Boolean);
+
+    /*--sincronizar wordpress(inicio)--*/
     if (!missions.length) {
       return `
       <div class="ui-missions-root">
@@ -9668,9 +10423,6 @@ function continuarTrasGameOver() {
 
     actionsEl.innerHTML = "";
   }
-
-
-
 
   /*
   function renderNPCDialog() {
@@ -12415,6 +13167,8 @@ function continuarTrasGameOver() {
 
         if (clickedContinue) {
           playUISound();
+          /*--//Sincronizar wordpress(Inicio)--*/
+          /*
           localStorage.setItem("avatar", selectedAvatar.sprites);
           localStorage.setItem("avatarId", selectedAvatar.id);
           localStorage.setItem("gender", selectedAvatar.gender);
@@ -12423,6 +13177,25 @@ function continuarTrasGameOver() {
           checkingStep = "profession";
           professionScroll = 0;
           return;
+          */
+          localStorage.setItem("avatar", selectedAvatar.sprites);
+          localStorage.setItem("avatarId", selectedAvatar.id);
+          localStorage.setItem("gender", selectedAvatar.gender);
+          localStorage.setItem("avatarProfile", selectedAvatar.profile);
+          localStorage.setItem("avatarImg", selectedAvatar.avatar);
+
+          avatar = selectedAvatar.sprites;
+          avatarId = selectedAvatar.id;
+          avatarProfile = selectedAvatar.profile;
+          avatarGender = selectedAvatar.gender;
+          avatarSprites = selectedAvatar.sprites;
+
+          guardarAvatarEnWordPress(selectedAvatar);
+
+          checkingStep = "profession";
+          professionScroll = 0;
+          return;
+          /*--//Sincronizar wordpress(fin)--*/
         }
       }
 
@@ -12500,7 +13273,8 @@ function continuarTrasGameOver() {
         mouseX >= hit.x && mouseX <= hit.x + hit.w &&
         mouseY >= hit.y && mouseY <= hit.y + hit.h;
 
-      if (clickedContinue) {
+      /*--//Sincronizar wordpress(Inicio)--*/
+      /*if (clickedContinue) {
         playUISound();
         const current = professions[professionIndex];
         localStorage.setItem("profession", current.id);
@@ -12514,8 +13288,28 @@ function continuarTrasGameOver() {
           gameMode = "playing";
         }
         return;
-      }
+      }*/
+      if (clickedContinue) {
+        playUISound();
 
+        const current = professions[professionIndex];
+
+        localStorage.setItem("profession", current.id);
+
+        guardarProfessionEnWordPress(current);
+
+        profession = localStorage.getItem("profession");
+        avatar = localStorage.getItem("avatar");
+
+        await loadGameAssets();
+
+        if (images.map && images.hero && images.shadow) {
+          gameMode = "playing";
+        }
+
+        return;
+      }
+      /*--//Sincronizar wordpress(fin)--*/
       return;
     }
   }
@@ -12813,8 +13607,50 @@ function continuarTrasGameOver() {
     }
   }
 
+  /*--//Sincronizar wordpress(inicio)--*/
   window.inventarioUser = []; //Sincronizar con base de datos wordpress
 
+  function syncInventarioFromWordPress() {
+    const wpUser = window.ENY_USER || window.parent?.ENY_USER || null;
+
+    if (wpUser?.isLoggedIn) {
+      if (Array.isArray(wpUser.inventory)) {
+        window.inventarioUser = wpUser.inventory;
+      } else {
+        window.inventarioUser = [];
+      }
+
+      // console.log("Inventario sincronizado:", window.inventarioUser);
+
+      if (typeof refreshInventarioUI === "function") {
+        refreshInventarioUI();
+      }
+
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarInventarioEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
+
+      return true;
+    }
+
+    return false;
+  }
+
+  syncInventarioFromWordPress();
+
+  window.addEventListener("DOMContentLoaded", syncInventarioFromWordPress);
+  window.addEventListener("load", syncInventarioFromWordPress);
+
+  let enyInventarioIntentos = 0;
+
+  const enyInventarioInterval = setInterval(() => {
+    enyInventarioIntentos++;
+
+    if (syncInventarioFromWordPress() || enyInventarioIntentos >= 50) {
+      clearInterval(enyInventarioInterval);
+    }
+  }, 100);
+  /*--//Sincronizar wordpress(fin)--*/
 
   let hoveredItem = null;
 
@@ -13207,6 +14043,10 @@ function continuarTrasGameOver() {
       const bodyEl = interfasEl.querySelector(".ui-body");
       if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
     }
+
+    /*--//Sincronizar wordpress(Inicio)--*/
+    guardarInventarioEnWordPress();
+    /*--//Sincronizar wordpress(fin)--*/
   }
 
 
@@ -13256,6 +14096,11 @@ function continuarTrasGameOver() {
       if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
       restoreInventarioScrollState(scrollInventario);
     }
+
+    /*--//Sincronizar wordpress(Inicio)--*/
+    guardarInventarioEnWordPress();
+    guardarCombinacionEnWordPress();
+    /*--//Sincronizar wordpress(fin)--*/
   }
 
   function devolverItemDesdeCombinacion(slotIndex) {
@@ -13284,6 +14129,10 @@ function continuarTrasGameOver() {
       const bodyEl = interfasEl.querySelector(".ui-body");
       if (bodyEl) bodyEl.innerHTML = buildInventarioHTML();
     }
+    /*--//Sincronizar wordpress(Inicio)--*/
+    guardarInventarioEnWordPress();
+    guardarCombinacionEnWordPress();
+    /*--//Sincronizar wordpress(fin)--*/
   }
 
   window.devolverItemDesdeCombinacion = devolverItemDesdeCombinacion;
@@ -13353,6 +14202,9 @@ function continuarTrasGameOver() {
             restoreInventarioScrollState(scrollInventario);
           }
         }
+        /*--//Sincronizar wordpress(Inicio)--*/
+        guardarCombinacionEnWordPress();
+        /*--//Sincronizar wordpress(fin)--*/
         return;
       }
 
@@ -13366,6 +14218,10 @@ function continuarTrasGameOver() {
       }
 
       showCombinacionEstadoModal("ok");
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarInventarioEnWordPress();
+      guardarCombinacionEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
     } else {
       limpiarSlotsDeCombinacionUsados(resultadoActual);
       combinacionResultado = null;
@@ -13378,6 +14234,9 @@ function continuarTrasGameOver() {
       }
 
       showCombinacionEstadoModal("fail");
+      /*--//Sincronizar wordpress(Inicio)--*/
+      guardarCombinacionEnWordPress();
+      /*--//Sincronizar wordpress(fin)--*/
     }
   }
 
@@ -16319,6 +17178,10 @@ function tomarAguaDeFuente() {
     refreshInventarioUI();
   }
 
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
@@ -16384,6 +17247,10 @@ function tomarTimonDeArbol() {
     refreshInventarioUI();
   }
 
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
@@ -16426,9 +17293,15 @@ function tomarItemDeBasura() {
     duration: 5000
   });
 
+
   if (typeof refreshInventarioUI === "function") {
     refreshInventarioUI();
   }
+
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);
@@ -16473,6 +17346,11 @@ function tomarItemDeArcilla() {
   if (typeof refreshInventarioUI === "function") {
     refreshInventarioUI();
   }
+
+  /*--//Sincronizar wordpress(Inicio)--*/
+  guardarInventarioEnWordPress();
+  /*--//Sincronizar wordpress(fin)--*/
+
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);

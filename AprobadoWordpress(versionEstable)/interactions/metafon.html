@@ -1469,6 +1469,9 @@ function sgDie(){
   }
 
 //Mandar a ejecutar funciones en index
+
+//sincronizar con wordpress (inicio)
+/*
   function sendToGame(action, payload = {}){
     window.parent.postMessage({
       source: "metafon",
@@ -1476,7 +1479,17 @@ function sgDie(){
       payload
     }, window.location.origin);
 }
+*/
 
+function sendToGame(action, payload = {}){
+  window.parent.postMessage({
+    source: "metafon",
+    action,
+    payload
+  }, "*");
+}
+
+//sincronizar con wordpress (fin)
 function initNotebook(){
 
   const input = document.getElementById("nbInput");
