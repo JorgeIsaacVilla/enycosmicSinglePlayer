@@ -617,7 +617,6 @@
     }
   }
 
-  /*
   function onInit() {
     const state = getState();
     if (!state) return;
@@ -637,34 +636,6 @@
     };
 
     img.src = SPRITE_SRC;
-    syncEnemyTargetProxy(state);
-  }
-  */
-
-  function onInit() {
-    const state = getState();
-    if (!state) return;
-
-    state.img = null;
-    state.ready = false;
-    state.spriteSrc = SPRITE_SRC;
-
-    const img = new Image();
-
-    img.onload = () => {
-      state.img = img;
-      state.ready = true;
-      console.log("Sprite aliado cargado");
-    };
-
-    img.onerror = () => {
-      state.img = null;
-      state.ready = false;
-      console.warn("No cargó sprite del aliado:", SPRITE_SRC);
-    };
-
-    img.src = SPRITE_SRC;
-
     syncEnemyTargetProxy(state);
   }
 
@@ -816,74 +787,73 @@
     }
 
     drawLifeBar(ctx, state);
-    if (state.ready && state.img) {
-      const sx = state.frame * FRAME_W;
-      const sy = rowForFacing(state.facing) * FRAME_H;
+    if (!state.img || !(state.img instanceof HTMLImageElement)) {
+      state.img = new Image();
 
-      if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
-        ctx.globalAlpha = 0.45;
-      }
+      state.img.onload = () => {
+        state.ready = true;
+        console.log("Sprite aliado recargado desde afterDrawWorld");
+      };
 
-      if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
-        ctx.globalAlpha = 0.45;
-      }
+      state.img.onerror = () => {
+        state.ready = false;
+        console.warn("No se pudo recargar sprite aliado:", SPRITE_SRC);
+      };
 
-      ctx.drawImage(
-        state.img,
-        sx, sy, FRAME_W, FRAME_H,
-        state.posX, state.posY, drawW, drawH
-      );
-    } else {
+      state.img.src = SPRITE_SRC;
+    }
+
+    if (state.img && state.img.complete && state.img.naturalWidth > 0) { else {
       ctx.fillStyle = "red";
       ctx.fillRect(state.posX, state.posY, 30, 30);
     }
 
-    for (const shot of state.shots) {
-      ctx.save();
-      ctx.fillStyle = "#00ffcc";
-      ctx.shadowColor = "#00ffcc";
-      ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
-      ctx.fill();
+      for (const shot of state.shots) {
+        ctx.save();
+        ctx.fillStyle = "#00ffcc";
+        ctx.shadowColor = "#00ffcc";
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
       ctx.restore();
     }
 
-    ctx.restore();
-  }
+    window.enyGetAliadoTarget = function () {
+      const state = getState();
+      if (!state || !state.alive || state.posX === null || state.posY === null) return null;
 
-  window.enyGetAliadoTarget = function () {
-    const state = getState();
-    if (!state || !state.alive || state.posX === null || state.posY === null) return null;
+      const rect = getAllyRect(state);
 
-    const rect = getAllyRect(state);
-
-    return {
-      x: rect.x,
-      y: rect.y,
-      w: rect.w,
-      h: rect.h,
-      centerX: rect.x + rect.w / 2,
-      centerY: rect.y + rect.h / 2,
-      moduleId: MODULE_ID,
-      tipo: "aliado"
+      return {
+        x: rect.x,
+        y: rect.y,
+        w: rect.w,
+        h: rect.h,
+        centerX: rect.x + rect.w / 2,
+        centerY: rect.y + rect.h / 2,
+        moduleId: MODULE_ID,
+        tipo: "aliado"
+      };
     };
-  };
 
-  window.enyDamageAliado = function (amount, enemy = null) {
-    const state = getState();
-    return damageAlly(state, amount, enemy);
-  };
+    window.enyDamageAliado = function (amount, enemy = null) {
+      const state = getState();
+      return damageAlly(state, amount, enemy);
+    };
 
-  window.enyIsAliadoAlive = function () {
-    const state = getState();
-    return !!state?.alive;
-  };
+    window.enyIsAliadoAlive = function () {
+      const state = getState();
+      return !!state?.alive;
+    };
 
-  window.registerGlobalModule(MODULE_ID, {
-    getInitialState,
-    onInit,
-    beforeUpdate,
-    afterDrawWorld
-  });
-})();
+    window.registerGlobalModule(MODULE_ID, {
+      getInitialState,
+      onInit,
+      beforeUpdate,
+      afterDrawWorld
+    });
+  }) ();
