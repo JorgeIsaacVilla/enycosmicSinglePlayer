@@ -803,57 +803,74 @@
       state.img.src = SPRITE_SRC;
     }
 
-    if (state.img && state.img.complete && state.img.naturalWidth > 0) { else {
+    if (state.img && state.img.complete && state.img.naturalWidth > 0) {
+      const sx = state.frame * FRAME_W;
+      const sy = rowForFacing(state.facing) * FRAME_H;
+
+      if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
+        ctx.globalAlpha = 0.45;
+      }
+
+      if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
+        ctx.globalAlpha = 0.45;
+      }
+
+      ctx.drawImage(
+        state.img,
+        sx, sy, FRAME_W, FRAME_H,
+        state.posX, state.posY, drawW, drawH
+      );
+    } else {
       ctx.fillStyle = "red";
       ctx.fillRect(state.posX, state.posY, 30, 30);
     }
 
-      for (const shot of state.shots) {
-        ctx.save();
-        ctx.fillStyle = "#00ffcc";
-        ctx.shadowColor = "#00ffcc";
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
+    for (const shot of state.shots) {
+      ctx.save();
+      ctx.fillStyle = "#00ffcc";
+      ctx.shadowColor = "#00ffcc";
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
 
-    window.enyGetAliadoTarget = function () {
-      const state = getState();
-      if (!state || !state.alive || state.posX === null || state.posY === null) return null;
+    ctx.restore();
+  }
 
-      const rect = getAllyRect(state);
+  window.enyGetAliadoTarget = function () {
+    const state = getState();
+    if (!state || !state.alive || state.posX === null || state.posY === null) return null;
 
-      return {
-        x: rect.x,
-        y: rect.y,
-        w: rect.w,
-        h: rect.h,
-        centerX: rect.x + rect.w / 2,
-        centerY: rect.y + rect.h / 2,
-        moduleId: MODULE_ID,
-        tipo: "aliado"
-      };
+    const rect = getAllyRect(state);
+
+    return {
+      x: rect.x,
+      y: rect.y,
+      w: rect.w,
+      h: rect.h,
+      centerX: rect.x + rect.w / 2,
+      centerY: rect.y + rect.h / 2,
+      moduleId: MODULE_ID,
+      tipo: "aliado"
     };
+  };
 
-    window.enyDamageAliado = function (amount, enemy = null) {
-      const state = getState();
-      return damageAlly(state, amount, enemy);
-    };
+  window.enyDamageAliado = function (amount, enemy = null) {
+    const state = getState();
+    return damageAlly(state, amount, enemy);
+  };
 
-    window.enyIsAliadoAlive = function () {
-      const state = getState();
-      return !!state?.alive;
-    };
+  window.enyIsAliadoAlive = function () {
+    const state = getState();
+    return !!state?.alive;
+  };
 
-    window.registerGlobalModule(MODULE_ID, {
-      getInitialState,
-      onInit,
-      beforeUpdate,
-      afterDrawWorld
-    });
-  }) ();
+  window.registerGlobalModule(MODULE_ID, {
+    getInitialState,
+    onInit,
+    beforeUpdate,
+    afterDrawWorld
+  });
+})();
