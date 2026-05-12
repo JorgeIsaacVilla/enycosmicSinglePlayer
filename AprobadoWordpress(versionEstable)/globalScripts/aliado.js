@@ -617,6 +617,7 @@
     }
   }
 
+  /*
   function onInit() {
     const state = getState();
     if (!state) return;
@@ -636,6 +637,34 @@
     };
 
     img.src = SPRITE_SRC;
+    syncEnemyTargetProxy(state);
+  }
+  */
+
+  function onInit() {
+    const state = getState();
+    if (!state) return;
+
+    state.img = null;
+    state.ready = false;
+    state.spriteSrc = SPRITE_SRC;
+
+    const img = new Image();
+
+    img.onload = () => {
+      state.img = img;
+      state.ready = true;
+      console.log("Sprite aliado cargado");
+    };
+
+    img.onerror = () => {
+      state.img = null;
+      state.ready = false;
+      console.warn("No cargó sprite del aliado:", SPRITE_SRC);
+    };
+
+    img.src = SPRITE_SRC;
+
     syncEnemyTargetProxy(state);
   }
 

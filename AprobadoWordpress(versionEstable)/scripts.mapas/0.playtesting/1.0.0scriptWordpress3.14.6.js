@@ -4106,7 +4106,7 @@ const metafonButton = document.getElementById("metafon");
 const wrapContainer = document.getElementById("wrap");
 
 // ✅ AJUSTA ESTA RUTA
-const METAFON_SRC = "https://enycosmicplayer.vercel.app/interactions/metafon.html";
+const METAFON_SRC = "https://enycosmicplayer.vercel.app/AprobadoWordpress(versionEstable)/interactions/metafon.html";
 
 // ---- Scroll lock SOLO cuando el panel está abierto ----
 function preventScrollWhenMetafonOpen(e) {
