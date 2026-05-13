@@ -9717,7 +9717,7 @@ function continuarTrasGameOver() {
     const frameW = 64;
     const frameH = 64;
 
-    const scale = 1.4;
+    const scale = 1.3;
 
     const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
     const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");
