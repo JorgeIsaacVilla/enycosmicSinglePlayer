@@ -2,11 +2,11 @@
 //tomar como base para tener varios aliados - evaluar si se puede en ese mapa hacer que los enemigos ataquen a los aliados
 
 
-//versión 1.0.4 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca
+//versión 1.0.9 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca. esta versión ya reproduce el sprite del aliado de manera correcta, aunque se reinicie el juego
 
 (function () {
   const MODULE_ID = "aliado_reptiliano_test";
-  const SPRITE_SRC = "../assets/avatares/armaduras/armadura1.svg";
+  const SPRITE_SRC = "https://enycosmicplayer.vercel.app/assets/avatares/armaduras/armadura1.svg";
 
   const FRAME_W = 64;
   const FRAME_H = 64;
@@ -38,37 +38,37 @@
   const ALLY_BAR_W = 42;
   const ALLY_BAR_H = 6;
 
-const LazerSound = new Audio("../assets/song/efect/lazer.mp3");
+  const LazerSound = new Audio("https://enycosmicplayer.vercel.app/assets/song/efect/lazer.mp3");
 
-function playLazerSound() {
-  const s = LazerSound.cloneNode();
-  s.volume = efectVolumen;
-  s.play().catch(()=>{});
-}
+  function playLazerSound() {
+    const s = LazerSound.cloneNode();
+    s.volume = efectVolumen;
+    s.play().catch(() => { });
+  }
 
-function getInitialState() {
-  return {
-    img: null,
-    ready: false,
-    frame: 0,
-    frameTimer: 0,
-    facing: "down",
-    posX: null,
-    posY: null,
-    targetX: null,
-    targetY: null,
-    attackCooldown: 0,
-    shots: [],
+  function getInitialState() {
+    return {
+      img: null,
+      ready: false,
+      frame: 0,
+      frameTimer: 0,
+      facing: "down",
+      posX: null,
+      posY: null,
+      targetX: null,
+      targetY: null,
+      attackCooldown: 0,
+      shots: [],
 
-    avoidanceSide: 1,
-    avoidanceLockMs: 0,
+      avoidanceSide: 1,
+      avoidanceLockMs: 0,
 
-    hp: ALLY_MAX_HP,
-    maxHp: ALLY_MAX_HP,
-    alive: true,
-    blinkTimer: 0
-  };
-}
+      hp: ALLY_MAX_HP,
+      maxHp: ALLY_MAX_HP,
+      alive: true,
+      blinkTimer: 0
+    };
+  }
 
   function getState() {
     return window.enyGlobalModules.state[MODULE_ID];
@@ -145,54 +145,54 @@ function getInitialState() {
     };
   }
 
-function ensureAliadoPopUpCSS() {
-  if (document.getElementById("popup-feedback-css-link")) return;
+  function ensureAliadoPopUpCSS() {
+    if (document.getElementById("popup-feedback-css-link")) return;
 
-  const link = document.createElement("link");
-  link.id = "popup-feedback-css-link";
-  link.rel = "stylesheet";
-  link.href = "../styles/popUp.css";
-  document.head.appendChild(link);
-}
-
-let aliadoPopupFeedbackTimer = null;
-
-function closeAliadoPopupFeedback() {
-  const popup = document.getElementById("popup-feedback");
-  if (!popup) return;
-
-  popup.classList.add("popup-feedback--closing");
-
-  setTimeout(() => {
-    popup.remove();
-  }, 220);
-}
-
-function showAliadoPopupFeedback({
-  title = "Notificación",
-  message = "",
-  type = "warning",
-  duration = 5000
-} = {}) {
-  ensureAliadoPopUpCSS();
-
-  if (aliadoPopupFeedbackTimer) {
-    clearTimeout(aliadoPopupFeedbackTimer);
-    aliadoPopupFeedbackTimer = null;
+    const link = document.createElement("link");
+    link.id = "popup-feedback-css-link";
+    link.rel = "stylesheet";
+    link.href = "https://enycosmicplayer.vercel.app/styles/popUp.css";
+    document.head.appendChild(link);
   }
 
-  const oldPopup = document.getElementById("popup-feedback");
-  if (oldPopup) oldPopup.remove();
+  let aliadoPopupFeedbackTimer = null;
 
-  const icon = type === "warning"
-    ? "⛔"
-    : `<img src="https://art.pixilart.com/thumb/sr5z082f4e339daws3.png" style="width:100%;height:100%;image-rendering:pixelated;" />`;
+  function closeAliadoPopupFeedback() {
+    const popup = document.getElementById("popup-feedback");
+    if (!popup) return;
 
-  const popup = document.createElement("div");
-  popup.id = "popup-feedback";
-  popup.className = `popup-feedback popup-feedback--${type}`;
+    popup.classList.add("popup-feedback--closing");
 
-  popup.innerHTML = `
+    setTimeout(() => {
+      popup.remove();
+    }, 220);
+  }
+
+  function showAliadoPopupFeedback({
+    title = "Notificación",
+    message = "",
+    type = "warning",
+    duration = 5000
+  } = {}) {
+    ensureAliadoPopUpCSS();
+
+    if (aliadoPopupFeedbackTimer) {
+      clearTimeout(aliadoPopupFeedbackTimer);
+      aliadoPopupFeedbackTimer = null;
+    }
+
+    const oldPopup = document.getElementById("popup-feedback");
+    if (oldPopup) oldPopup.remove();
+
+    const icon = type === "warning"
+      ? "⛔"
+      : `<img src="https://art.pixilart.com/thumb/sr5z082f4e339daws3.png" style="width:100%;height:100%;image-rendering:pixelated;" />`;
+
+    const popup = document.createElement("div");
+    popup.id = "popup-feedback";
+    popup.className = `popup-feedback popup-feedback--${type}`;
+
+    popup.innerHTML = `
     <div class="popup-feedback__box">
       <div class="popup-feedback__icon">${icon}</div>
       <div class="popup-feedback__content">
@@ -202,14 +202,14 @@ function showAliadoPopupFeedback({
     </div>
   `;
 
-  document.body.appendChild(popup);
+    document.body.appendChild(popup);
 
-  aliadoPopupFeedbackTimer = setTimeout(() => {
-    closeAliadoPopupFeedback();
-    aliadoPopupFeedbackTimer = null;
-  }, duration);
-}
-  
+    aliadoPopupFeedbackTimer = setTimeout(() => {
+      closeAliadoPopupFeedback();
+      aliadoPopupFeedbackTimer = null;
+    }, duration);
+  }
+
   function killAlly(state) {
     if (!state || !state.alive) return;
 
@@ -228,14 +228,14 @@ function showAliadoPopupFeedback({
       );
     }
 
-console.log("El aliado ha muerto");
+    console.log("El aliado ha muerto");
 
-showAliadoPopupFeedback({
-  title: "Aliado caído",
-  message: "Tu aliado ha muerto.",
-  type: "warning",
-  duration: 5000
-});
+    showAliadoPopupFeedback({
+      title: "Aliado caído",
+      message: "Tu aliado ha muerto.",
+      type: "warning",
+      duration: 5000
+    });
   }
 
   function damageAlly(state, amount, enemy = null) {
@@ -639,90 +639,90 @@ showAliadoPopupFeedback({
     syncEnemyTargetProxy(state);
   }
 
-function beforeUpdate({ dt, player, enemigos }) {
-  const state = getState();
-  if (!state || !player) return;
+  function beforeUpdate({ dt, player, enemigos }) {
+    const state = getState();
+    if (!state || !player) return;
 
-  const drawW = 64;
-  const drawH = 64;
+    const drawW = 64;
+    const drawH = 64;
 
-  if (state.blinkTimer > 0) {
-    state.blinkTimer = Math.max(0, state.blinkTimer - dt);
-  }
-
-  if (!state.alive) {
-    state.shots.length = 0;
-    return;
-  }
-
-  if (state.attackCooldown > 0) {
-    state.attackCooldown = Math.max(0, state.attackCooldown - dt);
-  }
-
-  const playerCenterX = player.x + 32;
-  const playerCenterY = player.y + 32;
-  const offset = getFollowOffset(player.facing || "down");
-
-  const followX = playerCenterX + offset.x - (drawW / 2);
-  const followY = playerCenterY + offset.y - (drawH / 2);
-
-  if (state.posX === null || state.posY === null) {
-    state.posX = followX;
-    state.posY = followY;
-  }
-
-  state.targetX = followX;
-  state.targetY = followY;
-
-  let moving = false;
-
-  const nearest = getNearestEnemy(state, enemigos);
-
-  if (nearest && nearest.dist <= CHASE_RANGE) {
-    const enemy = nearest.enemy;
-    const enemyCenter = getEnemyCenter(enemy);
-    const allyCenter = getAllyCenter(state);
-
-    const dxEnemy = enemyCenter.x - allyCenter.x;
-    const dyEnemy = enemyCenter.y - allyCenter.y;
-    const distEnemy = Math.hypot(dxEnemy, dyEnemy);
-
-    updateFacingFromVector(state, dxEnemy, dyEnemy);
-
-    const realAttackRange = ATTACK_RANGE + enemyCenter.radius;
-
-    if (distEnemy <= realAttackRange) {
-      shootAtEnemy(state, enemy);
-      moving = false;
-    } else {
-      const safeDist = Math.max(1, distEnemy);
-      const standOff = Math.max(90, enemyCenter.radius + 30);
-
-      const targetAttackX =
-        enemyCenter.x - (dxEnemy / safeDist) * standOff - (drawW / 2);
-
-      const targetAttackY =
-        enemyCenter.y - (dyEnemy / safeDist) * standOff - (drawH / 2);
-
-      moving = moveTowards(state, targetAttackX, targetAttackY, dt);
+    if (state.blinkTimer > 0) {
+      state.blinkTimer = Math.max(0, state.blinkTimer - dt);
     }
-  } else {
-    const distToPlayer = Math.hypot(
-      playerCenterX - (state.posX + drawW / 2),
-      playerCenterY - (state.posY + drawH / 2)
-    );
 
-    if (distToPlayer > TELEPORT_DISTANCE) {
+    if (!state.alive) {
+      state.shots.length = 0;
+      return;
+    }
+
+    if (state.attackCooldown > 0) {
+      state.attackCooldown = Math.max(0, state.attackCooldown - dt);
+    }
+
+    const playerCenterX = player.x + 32;
+    const playerCenterY = player.y + 32;
+    const offset = getFollowOffset(player.facing || "down");
+
+    const followX = playerCenterX + offset.x - (drawW / 2);
+    const followY = playerCenterY + offset.y - (drawH / 2);
+
+    if (state.posX === null || state.posY === null) {
       state.posX = followX;
       state.posY = followY;
-    } else {
-      moving = moveTowards(state, followX, followY, dt);
     }
-  }
 
-  updateShots(state, dt, enemigos);
-  animar(state, dt, moving || state.attackCooldown > ATTACK_COOLDOWN_MS - 120);
-}
+    state.targetX = followX;
+    state.targetY = followY;
+
+    let moving = false;
+
+    const nearest = getNearestEnemy(state, enemigos);
+
+    if (nearest && nearest.dist <= CHASE_RANGE) {
+      const enemy = nearest.enemy;
+      const enemyCenter = getEnemyCenter(enemy);
+      const allyCenter = getAllyCenter(state);
+
+      const dxEnemy = enemyCenter.x - allyCenter.x;
+      const dyEnemy = enemyCenter.y - allyCenter.y;
+      const distEnemy = Math.hypot(dxEnemy, dyEnemy);
+
+      updateFacingFromVector(state, dxEnemy, dyEnemy);
+
+      const realAttackRange = ATTACK_RANGE + enemyCenter.radius;
+
+      if (distEnemy <= realAttackRange) {
+        shootAtEnemy(state, enemy);
+        moving = false;
+      } else {
+        const safeDist = Math.max(1, distEnemy);
+        const standOff = Math.max(90, enemyCenter.radius + 30);
+
+        const targetAttackX =
+          enemyCenter.x - (dxEnemy / safeDist) * standOff - (drawW / 2);
+
+        const targetAttackY =
+          enemyCenter.y - (dyEnemy / safeDist) * standOff - (drawH / 2);
+
+        moving = moveTowards(state, targetAttackX, targetAttackY, dt);
+      }
+    } else {
+      const distToPlayer = Math.hypot(
+        playerCenterX - (state.posX + drawW / 2),
+        playerCenterY - (state.posY + drawH / 2)
+      );
+
+      if (distToPlayer > TELEPORT_DISTANCE) {
+        state.posX = followX;
+        state.posY = followY;
+      } else {
+        moving = moveTowards(state, followX, followY, dt);
+      }
+    }
+
+    updateShots(state, dt, enemigos);
+    animar(state, dt, moving || state.attackCooldown > ATTACK_COOLDOWN_MS - 120);
+  }
 
   function drawLifeBar(ctx, state) {
     const ratio = Math.max(0, Math.min(1, state.hp / state.maxHp));
@@ -782,12 +782,28 @@ function beforeUpdate({ dt, player, enemigos }) {
     drawLifeBar(ctx, state);
 
     if (!state.alive) {
-  ctx.restore();
-  return;
-}
+      ctx.restore();
+      return;
+    }
 
-drawLifeBar(ctx, state);
-    if (state.ready && state.img) {
+    drawLifeBar(ctx, state);
+    if (!state.img || !(state.img instanceof HTMLImageElement)) {
+      state.img = new Image();
+
+      state.img.onload = () => {
+        state.ready = true;
+        console.log("Sprite aliado recargado desde afterDrawWorld");
+      };
+
+      state.img.onerror = () => {
+        state.ready = false;
+        console.warn("No se pudo recargar sprite aliado:", SPRITE_SRC);
+      };
+
+      state.img.src = SPRITE_SRC;
+    }
+
+    if (state.img && state.img.complete && state.img.naturalWidth > 0) {
       const sx = state.frame * FRAME_W;
       const sy = rowForFacing(state.facing) * FRAME_H;
 
@@ -795,15 +811,15 @@ drawLifeBar(ctx, state);
         ctx.globalAlpha = 0.45;
       }
 
-if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
-  ctx.globalAlpha = 0.45;
-}
+      if (state.blinkTimer > 0 && Math.floor(state.blinkTimer / 40) % 2 === 0) {
+        ctx.globalAlpha = 0.45;
+      }
 
-ctx.drawImage(
-  state.img,
-  sx, sy, FRAME_W, FRAME_H,
-  state.posX, state.posY, drawW, drawH
-);
+      ctx.drawImage(
+        state.img,
+        sx, sy, FRAME_W, FRAME_H,
+        state.posX, state.posY, drawW, drawH
+      );
     } else {
       ctx.fillStyle = "red";
       ctx.fillRect(state.posX, state.posY, 30, 30);

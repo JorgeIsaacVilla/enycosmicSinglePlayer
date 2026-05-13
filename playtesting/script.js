@@ -9713,11 +9713,11 @@ function continuarTrasGameOver() {
     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
 
     const frameX = 0;
-    const frameY = 10;
+    const frameY = 0;
     const frameW = 64;
     const frameH = 64;
 
-    const scale = 1.6;
+    const scale = 1.4;
 
     const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
     const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");

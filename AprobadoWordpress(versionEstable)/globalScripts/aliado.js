@@ -2,7 +2,7 @@
 //tomar como base para tener varios aliados - evaluar si se puede en ese mapa hacer que los enemigos ataquen a los aliados
 
 
-//versión 1.0.4 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca
+//versión 1.0.9 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca. esta versión ya reproduce el sprite del aliado de manera correcta, aunque se reinicie el juego
 
 (function () {
   const MODULE_ID = "aliado_reptiliano_test";

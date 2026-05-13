@@ -98,8 +98,8 @@ Así en el futuro cambias una sola ruta y no todo script.js.
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-let userPostX = 2555;
-let userPostY = 2336;
+let userPostX = 2054;
+let userPostY = 1860;
 
 function getSettingSfxVolume() {
   const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
@@ -8891,11 +8891,11 @@ function continuarTrasGameOver() {
     if (!window.npcDialogEl || !window.npcDialogState.npc) return;
 
     const frameX = 0;
-    const frameY = 10;
+    const frameY = 0;
     const frameW = 64;
     const frameH = 64;
 
-    const scale = 1.6;
+    const scale = 1.4;
 
     const titleEl = window.npcDialogEl.querySelector("#npc-dialog-title");
     const portraitEl = window.npcDialogEl.querySelector("#npc-dialog-portrait");

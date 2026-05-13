@@ -8409,7 +8409,16 @@ function continuarTrasGameOver() {
             window.__aliado_automata_creado__ = true;
 
             console.log("🤖 Aliado creado UNA sola vez");
+
             /*--//Sincronizar wordpress(Inicio)--*/
+            if (typeof aliadoScriptSrc === "string" && aliadoScriptSrc) {
+              GLOBAL_SCRIPTS = Array.isArray(GLOBAL_SCRIPTS) ? GLOBAL_SCRIPTS : [];
+
+              if (!GLOBAL_SCRIPTS.includes(aliadoScriptSrc)) {
+                GLOBAL_SCRIPTS.push(aliadoScriptSrc);
+              }
+            }
+
             guardarGlobalScriptsEnWordPress();
             /*--//Sincronizar wordpress(fin)--*/
 
