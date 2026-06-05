@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Sprite Ambiente - Enycosmic</title>
+
+  <style>
+    :root {
+      --bg: #0d111b;
+      --panel: #151c2b;
+      --panel-2: #1d2638;
+      --line: #2d3a52;
+      --text: #ecf3ff;
+      --muted: #92a0ba;
+      --accent: #58d8ff;
+      --accent-2: #9ef2ff;
+      --danger: #ff5d76;
+      --ok: #65f0a4;
+      --canvas-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.15s;
+      font-size: 13px;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      color: var(--accent-2);
+    }
+
+    button.primary {
+      background: linear-gradient(180deg, #128db2, #0b6480);
+      border-color: #31cfff;
+      color: #ffffff;
+    }
+
+    button.danger {
+      border-color: #763345;
+      color: #ffb2bf;
+    }
+
+    button.small {
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+
+    input,
+    select {
+      background: #0f1522;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 7px;
+      outline: none;
+      width: 100%;
+    }
+
+    input[type="color"] {
+      padding: 2px;
+      height: 34px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: 56px 1fr 150px;
+      grid-template-areas:
+        "top top top"
+        "left center right"
+        "timeline timeline timeline";
+    }
+
+    .topbar {
+      grid-area: top;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #0b101a;
+    }
+
+    .brand {
+      font-size: 16px;
+      letter-spacing: 0.3px;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    .topbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 8px;
+      border-left: 1px solid var(--line);
+    }
+
+    .topbar-group input {
+      width: 72px;
+    }
+
+    .left-panel {
+      grid-area: left;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .right-panel {
+      grid-area: right;
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+      overflow: auto;
+    }
+
+    .center {
+      grid-area: center;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 1fr 180px;
+      background:
+        radial-gradient(circle at top, rgba(89, 216, 255, 0.07), transparent 35%),
+        #0c111c;
+    }
+
+    .canvas-zone {
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      position: relative;
+      padding: 24px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      padding: 14px;
+      background: #080c14;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    #editorCanvas {
+      display: block;
+      background:
+        linear-gradient(45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(-45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #d8d8d8 75%),
+        linear-gradient(-45deg, transparent 75%, #d8d8d8 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      image-rendering: pixelated;
+      border: 1px solid #1f2d45;
+    }
+
+    .canvas-help {
+      position: absolute;
+      left: 22px;
+      top: 22px;
+      color: rgba(236, 243, 255, 0.65);
+      font-size: 12px;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+
+    .preview-zone {
+      border-top: 1px solid var(--line);
+      background: #0b101a;
+      padding: 12px;
+      overflow: auto;
+    }
+
+    .preview-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    #spriteOutput {
+      display: block;
+      max-width: none;
+      background:
+        linear-gradient(45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(-45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #d8d8d8 75%),
+        linear-gradient(-45deg, transparent 75%, #d8d8d8 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      image-rendering: pixelated;
+      border: 1px solid var(--line);
+    }
+
+    .timeline {
+      grid-area: timeline;
+      background: #0b101a;
+      border-top: 1px solid var(--line);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+    }
+
+    .timeline-controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      align-content: start;
+    }
+
+    .frames {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(80px, 1fr));
+      gap: 8px;
+      align-content: start;
+    }
+
+    .frame-btn {
+      height: 74px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding: 6px;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    .frame-btn.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(88, 216, 255, 0.18) inset;
+    }
+
+    .frame-thumb {
+      width: 100%;
+      height: 44px;
+      border-radius: 6px;
+      background: #ffffff;
+      image-rendering: pixelated;
+      object-fit: contain;
+      border: 1px solid #22324c;
+    }
+
+    .frame-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .section {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--accent-2);
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .resource-drop {
+      border: 1px dashed #477088;
+      background: rgba(88, 216, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      overflow: auto;
+      padding-right: 4px;
+      max-height: 230px;
+    }
+
+    .resource-item {
+      background: #0f1522;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 6px;
+      cursor: grab;
+      min-width: 0;
+    }
+
+    .resource-item:hover {
+      border-color: var(--accent);
+    }
+
+    .resource-item img {
+      width: 100%;
+      height: 54px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      display: block;
+      background:
+        linear-gradient(45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(-45deg, #d8d8d8 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #d8d8d8 75%),
+        linear-gradient(-45deg, transparent 75%, #d8d8d8 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+      border-radius: 6px;
+    }
+
+    .resource-name {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .layers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .layer-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+      align-items: center;
+      background: #0f1522;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 7px;
+      cursor: pointer;
+    }
+
+    .layer-row.active {
+      border-color: var(--accent);
+    }
+
+    .layer-name {
+      min-width: 0;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .layer-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .props-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .props-row {
+      margin-bottom: 10px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .pixel-editor {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    #pixelCanvas {
+      width: 240px;
+      height: 240px;
+      image-rendering: pixelated;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      cursor: crosshair;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 5px;
+    }
+
+    .swatch {
+      height: 22px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+    }
+
+    .swatch.active {
+      outline: 2px solid var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      top: 70px;
+      background: #0d1827;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+      transition: 0.2s;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .kbd {
+      background: #0b101a;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 2px 5px;
+      color: var(--accent-2);
+      font-size: 11px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">Generador de Sprite Ambiente</div>
+
+      <div class="topbar-group">
+        <label>
+          Ancho frame
+          <input id="frameWidthInput" type="number" min="8" value="120" />
+        </label>
+        <label>
+          Alto frame
+          <input id="frameHeightInput" type="number" min="8" value="120" />
+        </label>
+        <label>
+          Zoom
+          <select id="zoomInput">
+            <option value="2">200%</option>
+            <option value="3" selected>300%</option>
+            <option value="4">400%</option>
+            <option value="5">500%</option>
+            <option value="6">600%</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="topbar-group">
+        <button id="applySizeBtn">Aplicar tamaño</button>
+        <button id="playBtn">Reproducir</button>
+        <button id="stopBtn">Detener</button>
+        <button id="generateBtn" class="primary">Generar sprite ambiente</button>
+        <button id="downloadBtn">Descargar PNG</button>
+      </div>
+    </header>
+
+    <aside class="left-panel">
+      <section class="section">
+        <div class="section-title">Recursos</div>
+        <div id="dropZone" class="resource-drop">
+          Arrastra imágenes PNG aquí o usa el selector.
+        </div>
+        <input id="resourceInput" type="file" accept="image/*" multiple />
+        <div class="hint" style="margin-top:8px;">
+          Click sobre un recurso para ponerlo en el canvas. También puedes arrastrarlo.
+        </div>
+      </section>
+
+      <section class="section" style="min-height: 280px;">
+        <div class="section-title">Biblioteca</div>
+        <div id="resourceGrid" class="resource-grid"></div>
+      </section>
+
+      <section class="section" style="flex:1; min-height:0;">
+        <div class="section-title">Capas</div>
+        <div id="layersList" class="layers-list"></div>
+      </section>
+    </aside>
+
+    <main class="center">
+      <div class="canvas-zone" id="canvasZone">
+        <div class="canvas-wrap">
+          <div class="canvas-help">
+            Frame actual: <span id="currentFrameText">1</span>/10 · mover con mouse · cuadrado azul: tamaño · cuadrado amarillo: giro
+          </div>
+          <canvas id="editorCanvas" width="120" height="120"></canvas>
+        </div>
+      </div>
+
+      <div class="preview-zone">
+        <div class="preview-title">Resultado generado</div>
+        <canvas id="spriteOutput" width="1200" height="120"></canvas>
+      </div>
+    </main>
+
+    <aside class="right-panel">
+      <section class="section">
+        <div class="section-title">Propiedades del objeto</div>
+
+        <div id="noSelection" class="hint">
+          Selecciona un elemento del canvas o una capa para editar sus propiedades.
+        </div>
+
+        <div id="propsPanel" style="display:none;">
+          <div class="props-row">
+            <label>Nombre</label>
+            <input id="propName" type="text" />
+          </div>
+
+          <div class="props-grid">
+            <div>
+              <label>X</label>
+              <input id="propX" type="number" step="1" />
+            </div>
+            <div>
+              <label>Y</label>
+              <input id="propY" type="number" step="1" />
+            </div>
+            <div>
+              <label>Ancho</label>
+              <input id="propW" type="number" step="1" min="1" />
+            </div>
+            <div>
+              <label>Alto</label>
+              <input id="propH" type="number" step="1" min="1" />
+            </div>
+            <div>
+              <label>Rotación</label>
+              <input id="propRot" type="number" step="1" />
+            </div>
+            <div>
+              <label>Opacidad</label>
+              <input id="propOpacity" type="number" step="0.05" min="0" max="1" />
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="flipXBtn">Voltear H</button>
+            <button id="flipYBtn">Voltear V</button>
+            <button id="frontBtn">Adelante</button>
+            <button id="backBtn">Atrás</button>
+            <button id="duplicateBtn">Duplicar</button>
+            <button id="deleteBtn" class="danger">Eliminar</button>
+          </div>
+
+          <div class="button-row">
+            <button id="copyPrevBtn">Copiar estado anterior</button>
+            <button id="deleteKeyframeBtn" class="danger">Eliminar keyframe actual</button>
+          </div>
+
+          <p class="hint">
+            Cada cambio se guarda en el frame actual y se mantiene desde ese frame hacia adelante.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Pixel art rápido</div>
+
+        <div class="pixel-editor">
+          <canvas id="pixelCanvas" width="16" height="16"></canvas>
+
+          <div class="props-grid">
+            <div>
+              <label>Color</label>
+              <input id="pixelColor" type="color" value="#58d8ff" />
+            </div>
+            <div>
+              <label>Herramienta</label>
+              <select id="pixelTool">
+                <option value="pen">Lápiz</option>
+                <option value="eraser">Borrador</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="mirrorXBtn">Simetría H</button>
+            <button id="mirrorYBtn">Simetría V</button>
+            <button id="clearPixelBtn">Limpiar</button>
+            <button id="addPixelResourceBtn" class="primary">Agregar como recurso</button>
+          </div>
+
+          <div id="palette" class="palette"></div>
+
+          <p class="hint">
+            Este editor crea recursos simples de 16x16. Luego puedes escalarlos en el canvas principal.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Atajos</div>
+        <p class="hint">
+          <span class="kbd">Supr</span> elimina seleccionado ·
+          <span class="kbd">← →</span> cambia frame ·
+          <span class="kbd">Ctrl + D</span> duplica ·
+          <span class="kbd">Esc</span> deselecciona
+        </p>
+      </section>
+    </aside>
+
+    <footer class="timeline">
+      <div class="timeline-controls">
+        <button id="prevFrameBtn">Frame anterior</button>
+        <button id="nextFrameBtn">Frame siguiente</button>
+        <button id="clearFrameKeyframesBtn" class="danger">Limpiar keyframes del frame</button>
+        <button id="resetProjectBtn" class="danger">Reiniciar proyecto</button>
+      </div>
+
+      <div id="frames" class="frames"></div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const TOTAL_FRAMES = 10;
+
+    const state = {
+      frameWidth: 120,
+      frameHeight: 120,
+      zoom: 3,
+      currentFrame: 0,
+      resources: [],
+      objects: [],
+      selectedObjectId: null,
+      dragResourceId: null,
+      isPlaying: false,
+      playTimer: null,
+      objectCounter: 1,
+      resourceCounter: 1,
+      isDraggingObject: false,
+      isResizingObject: false,
+      isRotatingObject: false,
+      dragOffsetX: 0,
+      dragOffsetY: 0,
+      resizeStart: null,
+      rotationStart: null
+    };
+
+    const canvas = document.getElementById("editorCanvas");
+    const ctx = canvas.getContext("2d");
+    const outputCanvas = document.getElementById("spriteOutput");
+    const outputCtx = outputCanvas.getContext("2d");
+
+    const resourceInput = document.getElementById("resourceInput");
+    const resourceGrid = document.getElementById("resourceGrid");
+    const dropZone = document.getElementById("dropZone");
+    const framesEl = document.getElementById("frames");
+    const layersList = document.getElementById("layersList");
+    const currentFrameText = document.getElementById("currentFrameText");
+    const toastEl = document.getElementById("toast");
+
+    const propsPanel = document.getElementById("propsPanel");
+    const noSelection = document.getElementById("noSelection");
+    const propName = document.getElementById("propName");
+    const propX = document.getElementById("propX");
+    const propY = document.getElementById("propY");
+    const propW = document.getElementById("propW");
+    const propH = document.getElementById("propH");
+    const propRot = document.getElementById("propRot");
+    const propOpacity = document.getElementById("propOpacity");
+
+    const pixelCanvas = document.getElementById("pixelCanvas");
+    const pixelCtx = pixelCanvas.getContext("2d");
+    const pixelColor = document.getElementById("pixelColor");
+    const pixelTool = document.getElementById("pixelTool");
+    const paletteEl = document.getElementById("palette");
+
+    const pixelState = {
+      size: 16,
+      cells: [],
+      isDrawing: false,
+      mirrorX: false,
+      mirrorY: false,
+      palette: [
+        "#000000", "#ffffff", "#58d8ff", "#9ef2ff",
+        "#ff5d76", "#65f0a4", "#ffd166", "#9b5de5",
+        "#2d3a52", "#8d99ae", "#ef476f", "#06d6a0",
+        "#118ab2", "#073b4c", "#f78c6b", "#caffbf"
+      ]
+    };
+
+    function init() {
+      setupCanvasSize();
+      setupFrames();
+      setupPixelEditor();
+      bindEvents();
+      renderAll();
+      generateSpriteSheet(false);
+    }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      setTimeout(() => toastEl.classList.remove("show"), 1800);
+    }
+
+    function setupCanvasSize() {
+      canvas.width = state.frameWidth;
+      canvas.height = state.frameHeight;
+      canvas.style.width = `${state.frameWidth * state.zoom}px`;
+      canvas.style.height = `${state.frameHeight * state.zoom}px`;
+
+      outputCanvas.width = state.frameWidth * TOTAL_FRAMES;
+      outputCanvas.height = state.frameHeight;
+      outputCanvas.style.width = `${state.frameWidth * TOTAL_FRAMES}px`;
+      outputCanvas.style.height = `${state.frameHeight}px`;
+    }
+
+    function setupFrames() {
+      framesEl.innerHTML = "";
+
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const btn = document.createElement("button");
+        btn.className = "frame-btn";
+        btn.dataset.frame = i;
+
+        const thumb = document.createElement("canvas");
+        thumb.width = state.frameWidth;
+        thumb.height = state.frameHeight;
+        thumb.className = "frame-thumb";
+
+        const label = document.createElement("div");
+        label.className = "frame-label";
+        label.textContent = `Frame ${i + 1}`;
+
+        btn.appendChild(thumb);
+        btn.appendChild(label);
+
+        btn.addEventListener("click", () => {
+          state.currentFrame = i;
+          renderAll();
+        });
+
+        framesEl.appendChild(btn);
+      }
+    }
+
+    function bindEvents() {
+      resourceInput.addEventListener("change", (event) => {
+        loadFilesAsResources([...event.target.files]);
+        resourceInput.value = "";
+      });
+
+      dropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropZone.style.borderColor = "#58d8ff";
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.style.borderColor = "#477088";
+      });
+
+      dropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dropZone.style.borderColor = "#477088";
+        loadFilesAsResources([...event.dataTransfer.files]);
+      });
+
+      canvas.addEventListener("dragover", (event) => event.preventDefault());
+
+      canvas.addEventListener("drop", (event) => {
+        event.preventDefault();
+
+        if (state.dragResourceId) {
+          const pos = getCanvasMouse(event);
+          addObjectFromResource(state.dragResourceId, pos.x, pos.y);
+          state.dragResourceId = null;
+          return;
+        }
+
+        const files = [...event.dataTransfer.files];
+        if (files.length) {
+          loadFilesAsResources(files, (firstResource) => {
+            const pos = getCanvasMouse(event);
+            addObjectFromResource(firstResource.id, pos.x, pos.y);
+          });
+        }
+      });
+
+      canvas.addEventListener("mousedown", onCanvasMouseDown);
+      window.addEventListener("mousemove", onWindowMouseMove);
+      window.addEventListener("mouseup", onWindowMouseUp);
+
+      document.getElementById("applySizeBtn").addEventListener("click", applyFrameSize);
+      document.getElementById("zoomInput").addEventListener("change", applyZoom);
+
+      document.getElementById("prevFrameBtn").addEventListener("click", () => changeFrame(-1));
+      document.getElementById("nextFrameBtn").addEventListener("click", () => changeFrame(1));
+      document.getElementById("playBtn").addEventListener("click", playAnimation);
+      document.getElementById("stopBtn").addEventListener("click", stopAnimation);
+
+      document.getElementById("generateBtn").addEventListener("click", () => {
+        generateSpriteSheet(true);
+        showToast("Sprite ambiente generado.");
+      });
+
+      document.getElementById("downloadBtn").addEventListener("click", downloadSpriteSheet);
+
+      document.getElementById("flipXBtn").addEventListener("click", () => toggleSelected("flipX"));
+      document.getElementById("flipYBtn").addEventListener("click", () => toggleSelected("flipY"));
+      document.getElementById("frontBtn").addEventListener("click", bringSelectedForward);
+      document.getElementById("backBtn").addEventListener("click", sendSelectedBackward);
+      document.getElementById("duplicateBtn").addEventListener("click", duplicateSelected);
+      document.getElementById("deleteBtn").addEventListener("click", deleteSelected);
+      document.getElementById("copyPrevBtn").addEventListener("click", copyPreviousStateToCurrent);
+      document.getElementById("deleteKeyframeBtn").addEventListener("click", deleteCurrentKeyframe);
+      document.getElementById("clearFrameKeyframesBtn").addEventListener("click", clearCurrentFrameKeyframes);
+      document.getElementById("resetProjectBtn").addEventListener("click", resetProject);
+
+      [propName, propX, propY, propW, propH, propRot, propOpacity].forEach(input => {
+        input.addEventListener("input", onPropInput);
+      });
+
+      window.addEventListener("keydown", onKeyDown);
+    }
+
+    function loadFilesAsResources(files, callback) {
+      const imageFiles = files.filter(file => file.type.startsWith("image/"));
+
+      if (!imageFiles.length) {
+        showToast("Selecciona imágenes válidas.");
+        return;
+      }
+
+      let loaded = 0;
+      let firstResource = null;
+
+      imageFiles.forEach(file => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const img = new Image();
+
+          img.onload = () => {
+            const resource = {
+              id: `res_${state.resourceCounter++}`,
+              name: file.name,
+              src: reader.result,
+              image: img,
+              width: img.width,
+              height: img.height
+            };
+
+            state.resources.push(resource);
+            if (!firstResource) firstResource = resource;
+
+            loaded++;
+            if (loaded === imageFiles.length) {
+              renderResources();
+              if (callback) callback(firstResource);
+              showToast("Recursos cargados.");
+            }
+          };
+
+          img.src = reader.result;
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderResources() {
+      resourceGrid.innerHTML = "";
+
+      state.resources.forEach(resource => {
+        const item = document.createElement("div");
+        item.className = "resource-item";
+        item.draggable = true;
+        item.dataset.id = resource.id;
+
+        const img = document.createElement("img");
+        img.src = resource.src;
+
+        const name = document.createElement("div");
+        name.className = "resource-name";
+        name.textContent = resource.name;
+
+        item.appendChild(img);
+        item.appendChild(name);
+
+        item.addEventListener("dragstart", () => {
+          state.dragResourceId = resource.id;
+        });
+
+        item.addEventListener("dragend", () => {
+          state.dragResourceId = null;
+        });
+
+        item.addEventListener("click", () => {
+          addObjectFromResource(
+            resource.id,
+            state.frameWidth / 2,
+            state.frameHeight / 2
+          );
+        });
+
+        resourceGrid.appendChild(item);
+      });
+    }
+
+    function addObjectFromResource(resourceId, x, y) {
+      const resource = state.resources.find(item => item.id === resourceId);
+      if (!resource) return;
+
+      const maxSize = Math.min(state.frameWidth, state.frameHeight) * 0.65;
+      const ratio = resource.width / resource.height;
+      let width = resource.width;
+      let height = resource.height;
+
+      if (width > maxSize || height > maxSize) {
+        if (ratio >= 1) {
+          width = maxSize;
+          height = maxSize / ratio;
+        } else {
+          height = maxSize;
+          width = maxSize * ratio;
+        }
+      }
+
+      const object = {
+        id: `obj_${state.objectCounter++}`,
+        name: resource.name.replace(/\.[^/.]+$/, ""),
+        resourceId,
+        zIndex: getNextZIndex(),
+        keyframes: {
+          [state.currentFrame]: {
+            x: Math.round(x - width / 2),
+            y: Math.round(y - height / 2),
+            width: Math.round(width),
+            height: Math.round(height),
+            rotation: 0,
+            opacity: 1,
+            flipX: false,
+            flipY: false,
+            visible: true
+          }
+        }
+      };
+
+      state.objects.push(object);
+      state.selectedObjectId = object.id;
+      renderAll();
+    }
+
+    function getNextZIndex() {
+      if (!state.objects.length) return 1;
+      return Math.max(...state.objects.map(obj => obj.zIndex)) + 1;
+    }
+
+    function getResource(resourceId) {
+      return state.resources.find(resource => resource.id === resourceId);
+    }
+
+    function getSelectedObject() {
+      return state.objects.find(object => object.id === state.selectedObjectId);
+    }
+
+    function getObjectState(object, frame = state.currentFrame) {
+      const frames = Object.keys(object.keyframes)
+        .map(Number)
+        .filter(index => index <= frame)
+        .sort((a, b) => a - b);
+
+      const base = {
+        x: 0,
+        y: 0,
+        width: 16,
+        height: 16,
+        rotation: 0,
+        opacity: 1,
+        flipX: false,
+        flipY: false,
+        visible: true
+      };
+
+      frames.forEach(index => {
+        Object.assign(base, object.keyframes[index]);
+      });
+
+      return base;
+    }
+
+    function setObjectKeyframe(object, changes, frame = state.currentFrame) {
+      const current = getObjectState(object, frame);
+      object.keyframes[frame] = {
+        ...current,
+        ...object.keyframes[frame],
+        ...changes
+      };
+
+      renderAll();
+    }
+
+    function renderAll() {
+      currentFrameText.textContent = state.currentFrame + 1;
+
+      renderEditor();
+      renderTimeline();
+      renderLayers();
+      renderProperties();
+      generateSpriteSheet(false);
+    }
+
+    function renderEditor() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      renderFrameToContext(ctx, state.currentFrame, 0, 0, true);
+    }
+
+    function renderFrameToContext(targetCtx, frame, offsetX = 0, offsetY = 0, includeSelection = false) {
+      const ordered = [...state.objects].sort((a, b) => a.zIndex - b.zIndex);
+
+      ordered.forEach(object => {
+        const resource = getResource(object.resourceId);
+        if (!resource) return;
+
+        const objectState = getObjectState(object, frame);
+        if (!objectState.visible) return;
+
+        drawObject(targetCtx, resource.image, objectState, offsetX, offsetY);
+
+        if (includeSelection && object.id === state.selectedObjectId) {
+          drawSelection(targetCtx, objectState);
+        }
+      });
+    }
+
+    function drawObject(targetCtx, image, objectState, offsetX = 0, offsetY = 0) {
+      const cx = offsetX + objectState.x + objectState.width / 2;
+      const cy = offsetY + objectState.y + objectState.height / 2;
+
+      targetCtx.save();
+      targetCtx.globalAlpha = clamp(objectState.opacity, 0, 1);
+      targetCtx.translate(cx, cy);
+      targetCtx.rotate(degToRad(objectState.rotation || 0));
+      targetCtx.scale(objectState.flipX ? -1 : 1, objectState.flipY ? -1 : 1);
+      targetCtx.imageSmoothingEnabled = false;
+      targetCtx.drawImage(
+        image,
+        -objectState.width / 2,
+        -objectState.height / 2,
+        objectState.width,
+        objectState.height
+      );
+      targetCtx.restore();
+    }
+
+    function drawSelection(targetCtx, objectState) {
+      const w = objectState.width;
+      const h = objectState.height;
+      const cx = objectState.x + w / 2;
+      const cy = objectState.y + h / 2;
+      const rotation = objectState.rotation || 0;
+
+      targetCtx.save();
+      targetCtx.translate(cx, cy);
+      targetCtx.rotate(degToRad(rotation));
+
+      targetCtx.fillStyle = "rgba(88, 216, 255, 0.16)";
+      targetCtx.fillRect(-w / 2, -h / 2, w, h);
+
+      targetCtx.strokeStyle = "#58d8ff";
+      targetCtx.lineWidth = 1;
+      targetCtx.setLineDash([4, 3]);
+      targetCtx.strokeRect(-w / 2 + 0.5, -h / 2 + 0.5, w, h);
+      targetCtx.setLineDash([]);
+
+      targetCtx.strokeStyle = "#ffd166";
+      targetCtx.beginPath();
+      targetCtx.moveTo(0, -h / 2);
+      targetCtx.lineTo(0, -h / 2 - 24);
+      targetCtx.stroke();
+
+      targetCtx.fillStyle = "#ffd166";
+      targetCtx.fillRect(-5, -h / 2 - 29, 10, 10);
+
+      targetCtx.fillStyle = "#58d8ff";
+      targetCtx.fillRect(w / 2 - 5, h / 2 - 5, 10, 10);
+
+      targetCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
+      targetCtx.fillRect(-2, -2, 4, 4);
+
+      targetCtx.restore();
+    }
+
+    function renderTimeline() {
+      const buttons = [...framesEl.querySelectorAll(".frame-btn")];
+
+      buttons.forEach((button, index) => {
+        button.classList.toggle("active", index === state.currentFrame);
+
+        const thumb = button.querySelector("canvas");
+        thumb.width = state.frameWidth;
+        thumb.height = state.frameHeight;
+
+        const thumbCtx = thumb.getContext("2d");
+        thumbCtx.clearRect(0, 0, thumb.width, thumb.height);
+        renderFrameToContext(thumbCtx, index, 0, 0, false);
+      });
+    }
+
+    function renderLayers() {
+      layersList.innerHTML = "";
+
+      const ordered = [...state.objects].sort((a, b) => b.zIndex - a.zIndex);
+
+      ordered.forEach(object => {
+        const row = document.createElement("div");
+        row.className = "layer-row";
+        row.classList.toggle("active", object.id === state.selectedObjectId);
+
+        const name = document.createElement("div");
+        name.className = "layer-name";
+        name.textContent = object.name;
+
+        const actions = document.createElement("div");
+        actions.className = "layer-actions";
+
+        const up = document.createElement("button");
+        up.className = "small";
+        up.textContent = "↑";
+        up.title = "Subir capa";
+        up.addEventListener("click", (event) => {
+          event.stopPropagation();
+          state.selectedObjectId = object.id;
+          bringSelectedForward();
+        });
+
+        const down = document.createElement("button");
+        down.className = "small";
+        down.textContent = "↓";
+        down.title = "Bajar capa";
+        down.addEventListener("click", (event) => {
+          event.stopPropagation();
+          state.selectedObjectId = object.id;
+          sendSelectedBackward();
+        });
+
+        actions.appendChild(up);
+        actions.appendChild(down);
+
+        row.appendChild(name);
+        row.appendChild(actions);
+
+        row.addEventListener("click", () => {
+          state.selectedObjectId = object.id;
+          renderAll();
+        });
+
+        layersList.appendChild(row);
+      });
+    }
+
+    function renderProperties() {
+      const object = getSelectedObject();
+
+      if (!object) {
+        propsPanel.style.display = "none";
+        noSelection.style.display = "block";
+        return;
+      }
+
+      const objectState = getObjectState(object);
+
+      noSelection.style.display = "none";
+      propsPanel.style.display = "block";
+
+      propName.value = object.name;
+      propX.value = Math.round(objectState.x);
+      propY.value = Math.round(objectState.y);
+      propW.value = Math.round(objectState.width);
+      propH.value = Math.round(objectState.height);
+      propRot.value = Math.round(objectState.rotation || 0);
+      propOpacity.value = objectState.opacity;
+    }
+
+    function onPropInput(event) {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      if (event.target === propName) {
+        object.name = propName.value || object.name;
+        renderAll();
+        return;
+      }
+
+      const changes = {
+        x: Number(propX.value) || 0,
+        y: Number(propY.value) || 0,
+        width: Math.max(1, Number(propW.value) || 1),
+        height: Math.max(1, Number(propH.value) || 1),
+        rotation: Number(propRot.value) || 0,
+        opacity: clamp(Number(propOpacity.value), 0, 1)
+      };
+
+      setObjectKeyframe(object, changes);
+    }
+
+    function onCanvasMouseDown(event) {
+      const pos = getCanvasMouse(event);
+      const selected = getSelectedObject();
+
+      if (selected) {
+        const selectedState = getObjectState(selected);
+
+        if (isInRotateHandle(pos, selectedState)) {
+          state.isRotatingObject = true;
+          state.isDraggingObject = false;
+          state.isResizingObject = false;
+          state.rotationStart = {
+            center: getObjectCenter(selectedState)
+          };
+          canvas.style.cursor = "grabbing";
+          return;
+        }
+
+        if (isInResizeHandle(pos, selectedState)) {
+          state.isResizingObject = true;
+          state.isDraggingObject = false;
+          state.isRotatingObject = false;
+          state.resizeStart = {
+            objectState: { ...selectedState }
+          };
+          canvas.style.cursor = "nwse-resize";
+          return;
+        }
+      }
+
+      const hit = hitTestObjects(pos.x, pos.y);
+
+      if (hit) {
+        state.selectedObjectId = hit.object.id;
+        const objectState = getObjectState(hit.object);
+
+        state.isDraggingObject = true;
+        state.isResizingObject = false;
+        state.isRotatingObject = false;
+        state.dragOffsetX = pos.x - objectState.x;
+        state.dragOffsetY = pos.y - objectState.y;
+
+        renderAll();
+      } else {
+        state.selectedObjectId = null;
+        renderAll();
+      }
+    }
+
+    function onWindowMouseMove(event) {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      const pos = getCanvasMouse(event);
+
+      if (state.isRotatingObject) {
+        const current = getObjectState(object);
+        const center = getObjectCenter(current);
+        const angle = Math.atan2(pos.y - center.y, pos.x - center.x) * 180 / Math.PI + 90;
+
+        setObjectKeyframe(object, {
+          ...current,
+          rotation: normalizeAngle(angle)
+        });
+
+        return;
+      }
+
+      if (state.isDraggingObject) {
+        const current = getObjectState(object);
+
+        setObjectKeyframe(object, {
+          x: Math.round(pos.x - state.dragOffsetX),
+          y: Math.round(pos.y - state.dragOffsetY),
+          width: current.width,
+          height: current.height,
+          rotation: current.rotation,
+          opacity: current.opacity,
+          flipX: current.flipX,
+          flipY: current.flipY,
+          visible: current.visible
+        });
+
+        return;
+      }
+
+      if (state.isResizingObject && state.resizeStart) {
+        const current = getObjectState(object);
+        const local = screenToLocal(pos, current);
+
+        setObjectKeyframe(object, {
+          ...current,
+          width: Math.max(1, Math.round(Math.abs(local.x) * 2)),
+          height: Math.max(1, Math.round(Math.abs(local.y) * 2))
+        });
+      }
+    }
+
+    function onWindowMouseUp() {
+      state.isDraggingObject = false;
+      state.isResizingObject = false;
+      state.isRotatingObject = false;
+      state.resizeStart = null;
+      state.rotationStart = null;
+      canvas.style.cursor = "default";
+    }
+
+    function getCanvasMouse(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left) * (canvas.width / rect.width),
+        y: (event.clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    function hitTestObjects(x, y) {
+      const ordered = [...state.objects].sort((a, b) => b.zIndex - a.zIndex);
+
+      for (const object of ordered) {
+        const objectState = getObjectState(object);
+        const local = screenToLocal({ x, y }, objectState);
+
+        if (
+          local.x >= -objectState.width / 2 &&
+          local.x <= objectState.width / 2 &&
+          local.y >= -objectState.height / 2 &&
+          local.y <= objectState.height / 2
+        ) {
+          return { object, objectState };
+        }
+      }
+
+      return null;
+    }
+
+    function getObjectCenter(objectState) {
+      return {
+        x: objectState.x + objectState.width / 2,
+        y: objectState.y + objectState.height / 2
+      };
+    }
+
+    function rotatePoint(localX, localY, objectState) {
+      const center = getObjectCenter(objectState);
+      const angle = degToRad(objectState.rotation || 0);
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+
+      return {
+        x: center.x + localX * cos - localY * sin,
+        y: center.y + localX * sin + localY * cos
+      };
+    }
+
+    function screenToLocal(pos, objectState) {
+      const center = getObjectCenter(objectState);
+      const angle = degToRad(-(objectState.rotation || 0));
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const dx = pos.x - center.x;
+      const dy = pos.y - center.y;
+
+      return {
+        x: dx * cos - dy * sin,
+        y: dx * sin + dy * cos
+      };
+    }
+
+    function getResizeHandlePoint(objectState) {
+      return rotatePoint(objectState.width / 2, objectState.height / 2, objectState);
+    }
+
+    function getRotateHandlePoint(objectState) {
+      return rotatePoint(0, -objectState.height / 2 - 24, objectState);
+    }
+
+    function isNearHandle(pos, handle, size = 14) {
+      return (
+        pos.x >= handle.x - size / 2 &&
+        pos.x <= handle.x + size / 2 &&
+        pos.y >= handle.y - size / 2 &&
+        pos.y <= handle.y + size / 2
+      );
+    }
+
+    function isInResizeHandle(pos, objectState) {
+      return isNearHandle(pos, getResizeHandlePoint(objectState), 16);
+    }
+
+    function isInRotateHandle(pos, objectState) {
+      return isNearHandle(pos, getRotateHandlePoint(objectState), 18);
+    }
+
+    function normalizeAngle(angle) {
+      let normalized = ((angle % 360) + 360) % 360;
+      if (normalized > 180) normalized -= 360;
+      return Math.round(normalized);
+    }
+
+    function toggleSelected(prop) {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      const current = getObjectState(object);
+      setObjectKeyframe(object, {
+        ...current,
+        [prop]: !current[prop]
+      });
+    }
+
+    function bringSelectedForward() {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      object.zIndex = getNextZIndex();
+      normalizeZIndex();
+      renderAll();
+    }
+
+    function sendSelectedBackward() {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      object.zIndex = Math.min(...state.objects.map(item => item.zIndex)) - 1;
+      normalizeZIndex();
+      renderAll();
+    }
+
+    function normalizeZIndex() {
+      const ordered = [...state.objects].sort((a, b) => a.zIndex - b.zIndex);
+      ordered.forEach((object, index) => {
+        object.zIndex = index + 1;
+      });
+    }
+
+    function duplicateSelected() {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      const current = getObjectState(object);
+
+      const clone = {
+        id: `obj_${state.objectCounter++}`,
+        name: `${object.name} copia`,
+        resourceId: object.resourceId,
+        zIndex: getNextZIndex(),
+        keyframes: {
+          [state.currentFrame]: {
+            ...current,
+            x: current.x + 8,
+            y: current.y + 8
+          }
+        }
+      };
+
+      state.objects.push(clone);
+      state.selectedObjectId = clone.id;
+      renderAll();
+    }
+
+    function deleteSelected() {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      state.objects = state.objects.filter(item => item.id !== object.id);
+      state.selectedObjectId = null;
+      renderAll();
+    }
+
+    function copyPreviousStateToCurrent() {
+      const object = getSelectedObject();
+      if (!object || state.currentFrame === 0) return;
+
+      const previous = getObjectState(object, state.currentFrame - 1);
+      object.keyframes[state.currentFrame] = { ...previous };
+      renderAll();
+    }
+
+    function deleteCurrentKeyframe() {
+      const object = getSelectedObject();
+      if (!object) return;
+
+      if (state.currentFrame === 0) {
+        showToast("El frame 1 necesita un estado base.");
+        return;
+      }
+
+      delete object.keyframes[state.currentFrame];
+      renderAll();
+    }
+
+    function clearCurrentFrameKeyframes() {
+      if (state.currentFrame === 0) {
+        showToast("El frame 1 conserva los estados base.");
+        return;
+      }
+
+      state.objects.forEach(object => {
+        delete object.keyframes[state.currentFrame];
+      });
+
+      renderAll();
+    }
+
+    function resetProject() {
+      const ok = confirm("¿Seguro que quieres reiniciar el proyecto? Se borrarán objetos, recursos y sprites.");
+      if (!ok) return;
+
+      state.resources = [];
+      state.objects = [];
+      state.selectedObjectId = null;
+      state.currentFrame = 0;
+      state.objectCounter = 1;
+      state.resourceCounter = 1;
+
+      renderResources();
+      renderAll();
+      showToast("Proyecto reiniciado.");
+    }
+
+    function changeFrame(delta) {
+      state.currentFrame = clamp(state.currentFrame + delta, 0, TOTAL_FRAMES - 1);
+      renderAll();
+    }
+
+    function playAnimation() {
+      if (state.isPlaying) return;
+
+      state.isPlaying = true;
+      state.playTimer = setInterval(() => {
+        state.currentFrame = (state.currentFrame + 1) % TOTAL_FRAMES;
+        renderAll();
+      }, 140);
+    }
+
+    function stopAnimation() {
+      state.isPlaying = false;
+      clearInterval(state.playTimer);
+      state.playTimer = null;
+    }
+
+    function applyFrameSize() {
+      const width = Number(document.getElementById("frameWidthInput").value);
+      const height = Number(document.getElementById("frameHeightInput").value);
+
+      if (width < 8 || height < 8) {
+        showToast("Usa un tamaño mínimo de 8x8.");
+        return;
+      }
+
+      state.frameWidth = Math.round(width);
+      state.frameHeight = Math.round(height);
+
+      setupCanvasSize();
+      setupFrames();
+      renderAll();
+
+      showToast("Tamaño aplicado.");
+    }
+
+    function applyZoom() {
+      state.zoom = Number(document.getElementById("zoomInput").value);
+      setupCanvasSize();
+      renderAll();
+    }
+
+    function generateSpriteSheet(showResult = true) {
+      outputCanvas.width = state.frameWidth * TOTAL_FRAMES;
+      outputCanvas.height = state.frameHeight;
+      outputCanvas.style.width = `${state.frameWidth * TOTAL_FRAMES}px`;
+      outputCanvas.style.height = `${state.frameHeight}px`;
+
+      outputCtx.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+      outputCtx.imageSmoothingEnabled = false;
+
+      for (let frame = 0; frame < TOTAL_FRAMES; frame++) {
+        renderFrameToContext(
+          outputCtx,
+          frame,
+          frame * state.frameWidth,
+          0,
+          false
+        );
+      }
+
+      if (showResult) {
+        outputCanvas.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    function downloadSpriteSheet() {
+      generateSpriteSheet(false);
+
+      const link = document.createElement("a");
+      link.download = "sprite-ambiente-enycosmic.png";
+      link.href = outputCanvas.toDataURL("image/png");
+      link.click();
+    }
+
+    function onKeyDown(event) {
+      if (event.target.tagName === "INPUT" || event.target.tagName === "SELECT") return;
+
+      if (event.key === "Delete") {
+        deleteSelected();
+      }
+
+      if (event.key === "Escape") {
+        state.selectedObjectId = null;
+        renderAll();
+      }
+
+      if (event.key === "ArrowLeft") {
+        changeFrame(-1);
+      }
+
+      if (event.key === "ArrowRight") {
+        changeFrame(1);
+      }
+
+      if (event.ctrlKey && event.key.toLowerCase() === "d") {
+        event.preventDefault();
+        duplicateSelected();
+      }
+    }
+
+    function setupPixelEditor() {
+      pixelState.cells = Array.from({ length: pixelState.size }, () =>
+        Array.from({ length: pixelState.size }, () => null)
+      );
+
+      pixelCanvas.style.width = "240px";
+      pixelCanvas.style.height = "240px";
+
+      renderPalette();
+      renderPixelCanvas();
+
+      pixelCanvas.addEventListener("mousedown", (event) => {
+        pixelState.isDrawing = true;
+        paintPixel(event);
+      });
+
+      pixelCanvas.addEventListener("mousemove", (event) => {
+        if (pixelState.isDrawing) paintPixel(event);
+      });
+
+      window.addEventListener("mouseup", () => {
+        pixelState.isDrawing = false;
+      });
+
+      document.getElementById("mirrorXBtn").addEventListener("click", () => {
+        pixelState.mirrorX = !pixelState.mirrorX;
+        document.getElementById("mirrorXBtn").classList.toggle("primary", pixelState.mirrorX);
+      });
+
+      document.getElementById("mirrorYBtn").addEventListener("click", () => {
+        pixelState.mirrorY = !pixelState.mirrorY;
+        document.getElementById("mirrorYBtn").classList.toggle("primary", pixelState.mirrorY);
+      });
+
+      document.getElementById("clearPixelBtn").addEventListener("click", () => {
+        pixelState.cells = Array.from({ length: pixelState.size }, () =>
+          Array.from({ length: pixelState.size }, () => null)
+        );
+        renderPixelCanvas();
+      });
+
+      document.getElementById("addPixelResourceBtn").addEventListener("click", addPixelArtAsResource);
+    }
+
+    function renderPalette() {
+      paletteEl.innerHTML = "";
+
+      pixelState.palette.forEach(color => {
+        const swatch = document.createElement("div");
+        swatch.className = "swatch";
+        swatch.style.background = color;
+        swatch.classList.toggle("active", pixelColor.value.toLowerCase() === color.toLowerCase());
+
+        swatch.addEventListener("click", () => {
+          pixelColor.value = color;
+          renderPalette();
+        });
+
+        paletteEl.appendChild(swatch);
+      });
+
+      pixelColor.addEventListener("input", renderPalette);
+    }
+
+    function paintPixel(event) {
+      const rect = pixelCanvas.getBoundingClientRect();
+      const x = Math.floor((event.clientX - rect.left) / (rect.width / pixelState.size));
+      const y = Math.floor((event.clientY - rect.top) / (rect.height / pixelState.size));
+
+      setPixel(x, y);
+
+      if (pixelState.mirrorX) {
+        setPixel(pixelState.size - 1 - x, y);
+      }
+
+      if (pixelState.mirrorY) {
+        setPixel(x, pixelState.size - 1 - y);
+      }
+
+      if (pixelState.mirrorX && pixelState.mirrorY) {
+        setPixel(pixelState.size - 1 - x, pixelState.size - 1 - y);
+      }
+
+      renderPixelCanvas();
+    }
+
+    function setPixel(x, y) {
+      if (x < 0 || y < 0 || x >= pixelState.size || y >= pixelState.size) return;
+
+      if (pixelTool.value === "eraser") {
+        pixelState.cells[y][x] = null;
+      } else {
+        pixelState.cells[y][x] = pixelColor.value;
+      }
+    }
+
+    function renderPixelCanvas() {
+      pixelCtx.clearRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+      pixelCtx.imageSmoothingEnabled = false;
+
+      pixelCtx.fillStyle = "#ffffff";
+      pixelCtx.fillRect(0, 0, pixelCanvas.width, pixelCanvas.height);
+
+      for (let y = 0; y < pixelState.size; y++) {
+        for (let x = 0; x < pixelState.size; x++) {
+          const color = pixelState.cells[y][x];
+
+          if (color) {
+            pixelCtx.fillStyle = color;
+            pixelCtx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+
+      pixelCtx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+      pixelCtx.lineWidth = 0.04;
+
+      for (let i = 0; i <= pixelState.size; i++) {
+        pixelCtx.beginPath();
+        pixelCtx.moveTo(i, 0);
+        pixelCtx.lineTo(i, pixelState.size);
+        pixelCtx.stroke();
+
+        pixelCtx.beginPath();
+        pixelCtx.moveTo(0, i);
+        pixelCtx.lineTo(pixelState.size, i);
+        pixelCtx.stroke();
+      }
+    }
+
+    function addPixelArtAsResource() {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = pixelState.size;
+      tempCanvas.height = pixelState.size;
+
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      for (let y = 0; y < pixelState.size; y++) {
+        for (let x = 0; x < pixelState.size; x++) {
+          const color = pixelState.cells[y][x];
+
+          if (color) {
+            tempCtx.fillStyle = color;
+            tempCtx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+
+      const dataUrl = tempCanvas.toDataURL("image/png");
+      const img = new Image();
+
+      img.onload = () => {
+        const resource = {
+          id: `res_${state.resourceCounter++}`,
+          name: `pixel-art-${state.resourceCounter}.png`,
+          src: dataUrl,
+          image: img,
+          width: pixelState.size,
+          height: pixelState.size
+        };
+
+        state.resources.push(resource);
+        renderResources();
+        showToast("Pixel art agregado como recurso.");
+      };
+
+      img.src = dataUrl;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    init();
+  </script>
+</body>
+</html>

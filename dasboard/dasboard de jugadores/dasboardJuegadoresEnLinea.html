@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Enycosmic - Jugadores Conectados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #151b3f, #050814 55%);
+      color: #f5f7ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Contenedor principal */
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.92), rgba(30, 64, 175, 0.6));
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      z-index: 5;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: conic-gradient(from 160deg, #38bdf8, #a855f7, #22c55e, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.9);
+    }
+
+    .logo-circle span {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0b1120;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-text-title {
+      font-size: 18px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .logo-text-subtitle {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .badge-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.2);
+      border: 1px solid rgba(45, 212, 191, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+    }
+
+    .user-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-mini-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fbbf24, #fb7185);
+      border: 2px solid rgba(248, 250, 252, 0.7);
+    }
+
+    .user-mini-data {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .user-mini-name {
+      opacity: 0.95;
+    }
+
+    .user-mini-stats {
+      opacity: 0.75;
+      font-size: 11px;
+    }
+
+    /* Layout principal */
+    .main-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 290px;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    /* Panel lateral izquierdo (perfil + menú) */
+    .sidebar {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.8));
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .profile-card {
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.95));
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid rgba(59, 130, 246, 0.6);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f97316, #22c55e);
+      border: 3px solid rgba(248, 250, 252, 0.9);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.7);
+    }
+
+    .profile-info-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+    }
+
+    .profile-rank {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .stat-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .xp-bar-container {
+      margin-top: 6px;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(30, 64, 175, 0.9);
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 62%;
+      background: linear-gradient(90deg, #22c55e, #a3e635);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+    }
+
+    .side-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .side-menu-item {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .side-menu-item span {
+      opacity: 0.9;
+    }
+
+    .side-menu-item small {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .side-menu-item.active {
+      background: linear-gradient(90deg, rgba(30, 64, 175, 0.85), rgba(56, 189, 248, 0.7));
+      border-color: rgba(129, 140, 248, 0.9);
+      box-shadow: 0 0 18px rgba(37, 99, 235, 0.8);
+    }
+
+    .side-menu-item:hover {
+      border-color: rgba(148, 163, 184, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 11px;
+      opacity: 0.65;
+    }
+
+    /* Zona central */
+    .content {
+      background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.38), rgba(15, 23, 42, 0.95));
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .content-title {
+      font-size: 16px;
+    }
+
+    .content-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+    }
+
+    .content-badge {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.85);
+      opacity: 0.9;
+    }
+
+    .primary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-pill {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, #22c55e, #a3e635);
+      color: #020617;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(34, 197, 94, 0.7);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      font-weight: 600;
+    }
+
+    .btn-pill.secondary {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #020617;
+      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.7);
+    }
+
+    .btn-pill.ghost {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.7);
+      box-shadow: none;
+    }
+
+    .btn-pill:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .content-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .card-title {
+      font-size: 13px;
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    .missions-list {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .mission-item {
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mission-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mission-title {
+      font-size: 12px;
+    }
+
+    .mission-meta {
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    .mission-progress-pill {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(59, 130, 246, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .event-tag {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 250, 252, 0.7);
+      font-size: 10px;
+      opacity: 0.9;
+    }
+
+    .timeline {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(51, 65, 85, 0.8);
+    }
+
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-dot {
+      margin-top: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+    }
+
+    .timeline-text {
+      flex: 1;
+    }
+
+    .timeline-text-main {
+      font-size: 12px;
+    }
+
+    .timeline-text-meta {
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    /* Panel derecho: jugadores conectados */
+    .right-panel {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.88));
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .right-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+    }
+
+    .right-header-title {
+      font-size: 14px;
+    }
+
+    .right-header-meta {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .players-list {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .player-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      font-size: 12px;
+    }
+
+    .player-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #22c55e, #0ea5e9);
+      border: 2px solid rgba(248, 250, 252, 0.9);
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .player-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .player-name {
+      font-size: 12px;
+    }
+
+    .player-level {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(30, 64, 175, 0.85);
+      border: 1px solid rgba(129, 140, 248, 0.9);
+    }
+
+    .player-meta {
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    .player-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      font-size: 10px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(34, 197, 94, 0.85);
+      background: rgba(22, 101, 52, 0.35);
+    }
+
+    .status-pill.busy {
+      border-color: rgba(234, 179, 8, 0.85);
+      background: rgba(120, 53, 15, 0.4);
+    }
+
+    .status-pill.ingame {
+      border-color: rgba(59, 130, 246, 0.9);
+      background: rgba(30, 64, 175, 0.5);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+    }
+
+    .status-dot.yellow {
+      background: #facc15;
+      box-shadow: 0 0 8px rgba(250, 204, 21, 0.9);
+    }
+
+    .status-dot.blue {
+      background: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
+    }
+
+    .player-ping {
+      opacity: 0.7;
+    }
+
+    .right-footer {
+      margin-top: 6px;
+      font-size: 11px;
+      opacity: 0.7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .right-footer-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .footer-tag {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.8);
+      font-size: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1060px) {
+      .main-layout {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr);
+        grid-template-areas:
+          "sidebar sidebar"
+          "content right";
+      }
+
+      .sidebar {
+        grid-area: sidebar;
+        flex-direction: row;
+        gap: 14px;
+      }
+
+      .profile-card {
+        flex: 1;
+      }
+
+      .sidebar-secondary {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .main-layout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+          "sidebar"
+          "content"
+          "right";
+      }
+
+      .sidebar,
+      .content,
+      .right-panel {
+        min-height: auto;
+      }
+
+      .content-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .topbar-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Barra superior -->
+    <header class="topbar">
+      <div class="logo-area">
+        <div class="logo-circle">
+          <span>∞</span>
+        </div>
+        <div class="logo-text">
+          <div class="logo-text-title">Enycosmic Nexus</div>
+          <div class="logo-text-subtitle">Panel de jugadores conectados</div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="badge-pill">
+          <span class="badge-dot"></span>
+          <span id="online-count">12 jugadores en línea</span>
+        </div>
+        <div class="user-mini">
+          <div class="user-mini-data">
+            <div class="user-mini-name">Prota</div>
+            <div class="user-mini-stats">Nivel IQ 12 · 3 240 monedas</div>
+          </div>
+          <div class="user-mini-avatar"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Layout principal -->
+    <main class="main-layout">
+      <!-- Sidebar izquierdo -->
+      <aside class="sidebar">
+        <div class="profile-card">
+          <div class="profile-avatar"></div>
+          <div class="profile-info-main">
+            <div class="profile-name">Prota</div>
+            <div class="profile-rank">Explorador galáctico en entrenamiento</div>
+            <div class="profile-stats">
+              <div class="stat-pill">
+                <span>IQ 12</span>
+              </div>
+              <div class="stat-pill">
+                <span>★ 3 240</span>
+              </div>
+            </div>
+            <div class="xp-bar-container">
+              <div class="xp-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-secondary">
+          <div class="sidebar-title">Zona de control</div>
+          <nav class="side-menu">
+            <div class="side-menu-item active">
+              <span>Dashboard</span>
+              <small>Visión general</small>
+            </div>
+            <div class="side-menu-item">
+              <span>Misiones</span>
+              <small>Retos activos</small>
+            </div>
+            <div class="side-menu-item">
+              <span>Laboratorio</span>
+              <small>Retos científicos</small>
+            </div>
+            <div class="side-menu-item">
+              <span>Tienda cósmica</span>
+              <small>Avatares y mejoras</small>
+            </div>
+            <div class="side-menu-item">
+              <span>Perfil</span>
+              <small>Datos del jugador</small>
+            </div>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          Sesión segura · Servidor Enycosmic VAIPAS-01
+        </div>
+      </aside>
+
+      <!-- Contenido central -->
+      <section class="content">
+        <div class="content-header">
+          <div>
+            <div class="content-title">Centro de misión</div>
+            <div class="card-subtitle">
+              Elige cómo quieres continuar tu exploración hoy
+            </div>
+          </div>
+          <div class="content-badges">
+            <div class="content-badge">Eventos activos 3</div>
+            <div class="content-badge">Bonus de conexión +15% IQ</div>
+          </div>
+        </div>
+
+        <div class="primary-actions">
+          <button class="btn-pill">
+            Iniciar partida rápida
+          </button>
+          <button class="btn-pill secondary">
+            Sala multijugador
+          </button>
+          <button class="btn-pill ghost">
+            Entrenamiento individual
+          </button>
+        </div>
+
+        <div class="content-grid">
+          <!-- Card misiones -->
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Misiones recomendadas para hoy</div>
+              <div class="event-tag">Rotación diaria</div>
+            </div>
+            <div class="missions-list">
+              <div class="mission-item">
+                <div class="mission-main">
+                  <div class="mission-title">
+                    Decodifica la señal del cúmulo VAIPAS
+                  </div>
+                  <div class="mission-meta">
+                    Ciencia de datos · Dificultad media · Recompensa 220 IQ
+                  </div>
+                </div>
+                <div class="mission-progress-pill">
+                  Progreso 40%
+                </div>
+              </div>
+
+              <div class="mission-item">
+                <div class="mission-main">
+                  <div class="mission-title">
+                    Rescate de satélites en la órbita de Enya-3
+                  </div>
+                  <div class="mission-meta">
+                    Lógica y física · Recompensa 180 IQ · Modo cooperativo
+                  </div>
+                </div>
+                <div class="mission-progress-pill">
+                  Pendiente
+                </div>
+              </div>
+
+              <div class="mission-item">
+                <div class="mission-main">
+                  <div class="mission-title">
+                    Torneo relámpago de acertijos cósmicos
+                  </div>
+                  <div class="mission-meta">
+                    Evento por tiempo limitado · Ranking global
+                  </div>
+                </div>
+                <div class="mission-progress-pill">
+                  18 min restantes
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card actividad reciente -->
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">Actividad reciente de jugadores</div>
+              <div class="card-subtitle">
+                Actualizado en tiempo real
+              </div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-text">
+                  <div class="timeline-text-main">
+                    Lunaris alcanzó nivel IQ 18 en la misión "Códigos del eclipse".
+                  </div>
+                  <div class="timeline-text-meta">
+                    Hace 2 minutos · Servidor VAIPAS-01
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-text">
+                  <div class="timeline-text-main">
+                    OrionX completó un reto de laboratorio en tiempo récord.
+                  </div>
+                  <div class="timeline-text-meta">
+                    Hace 6 minutos · Laboratorio de lógica cuántica
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-text">
+                  <div class="timeline-text-main">
+                    NovaKid y Prota iniciaron una partida cooperativa.
+                  </div>
+                  <div class="timeline-text-meta">
+                    Hace 11 minutos · Modo multijugador
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel derecho: jugadores conectados -->
+      <aside class="right-panel">
+        <div class="right-header">
+          <div class="right-header-title">Jugadores conectados</div>
+          <div class="right-header-meta" id="right-meta">
+            Sincronizando...
+          </div>
+        </div>
+
+        <div class="players-list" id="players-list">
+          <!-- Aquí se llenan los jugadores por JS -->
+        </div>
+
+        <div class="right-footer">
+          <div class="right-footer-tags">
+            <div class="footer-tag">Región: VAIPAS-01</div>
+            <div class="footer-tag">Latencia promedio <span id="avg-ping">34 ms</span></div>
+          </div>
+          <div>
+            Colores de estado: verde = libre · azul = en partida · amarillo = ocupado
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // Datos de ejemplo de jugadores conectados
+    const jugadoresConectados = [
+      { nombre: "Lunaris", nivel: 18, iq: 18, monedas: 4210, estado: "online", ping: 23 },
+      { nombre: "OrionX", nivel: 21, iq: 21, monedas: 5890, estado: "ingame", ping: 35 },
+      { nombre: "NovaKid", nivel: 9, iq: 9, monedas: 980, estado: "online", ping: 42 },
+      { nombre: "Quasar", nivel: 14, iq: 14, monedas: 3120, estado: "busy", ping: 51 },
+      { nombre: "Nebula", nivel: 7, iq: 7, monedas: 640, estado: "online", ping: 29 },
+      { nombre: "Photon", nivel: 11, iq: 11, monedas: 2240, estado: "ingame", ping: 37 },
+      { nombre: "Astra", nivel: 5, iq: 5, monedas: 430, estado: "online", ping: 46 },
+      { nombre: "Cosmix", nivel: 13, iq: 13, monedas: 2790, estado: "online", ping: 32 },
+      { nombre: "Gamma", nivel: 16, iq: 16, monedas: 3670, estado: "ingame", ping: 39 },
+      { nombre: "Pulsar", nivel: 8, iq: 8, monedas: 720, estado: "busy", ping: 54 },
+      { nombre: "Zenith", nivel: 19, iq: 19, monedas: 4980, estado: "online", ping: 28 },
+      { nombre: "Echo", nivel: 4, iq: 4, monedas: 310, estado: "online", ping: 41 }
+    ];
+
+    function renderJugadores() {
+      const contenedor = document.getElementById("players-list");
+      contenedor.innerHTML = "";
+
+      let sumaPing = 0;
+
+      jugadoresConectados.forEach((jugador, index) => {
+        sumaPing += jugador.ping;
+
+        const item = document.createElement("div");
+        item.className = "player-item";
+
+        const avatar = document.createElement("div");
+        avatar.className = "player-avatar";
+        avatar.style.background = `radial-gradient(circle at 30% 20%, #${(index * 1234567).toString(16).slice(0, 6)}, #22c55e)`;
+
+        const info = document.createElement("div");
+        info.className = "player-info";
+
+        const nameRow = document.createElement("div");
+        nameRow.className = "player-name-row";
+
+        const name = document.createElement("div");
+        name.className = "player-name";
+        name.textContent = jugador.nombre;
+
+        const level = document.createElement("div");
+        level.className = "player-level";
+        level.textContent = "IQ " + jugador.nivel;
+
+        nameRow.appendChild(name);
+        nameRow.appendChild(level);
+
+        const meta = document.createElement("div");
+        meta.className = "player-meta";
+        meta.textContent = jugador.monedas.toLocaleString("es-ES") + " monedas";
+
+        info.appendChild(nameRow);
+        info.appendChild(meta);
+
+        const status = document.createElement("div");
+        status.className = "player-status";
+
+        const pill = document.createElement("div");
+        pill.className = "status-pill";
+
+        const dot = document.createElement("div");
+        dot.className = "status-dot";
+
+        let textoEstado = "";
+
+        if (jugador.estado === "online") {
+          textoEstado = "Disponible";
+        } else if (jugador.estado === "busy") {
+          pill.classList.add("busy");
+          dot.classList.add("yellow");
+          textoEstado = "Ocupado";
+        } else if (jugador.estado === "ingame") {
+          pill.classList.add("ingame");
+          dot.classList.add("blue");
+          textoEstado = "En partida";
+        }
+
+        const spanEstado = document.createElement("span");
+        spanEstado.textContent = textoEstado;
+
+        pill.appendChild(dot);
+        pill.appendChild(spanEstado);
+
+        const ping = document.createElement("div");
+        ping.className = "player-ping";
+        ping.textContent = jugador.ping + " ms";
+
+        status.appendChild(pill);
+        status.appendChild(ping);
+
+        item.appendChild(avatar);
+        item.appendChild(info);
+        item.appendChild(status);
+
+        contenedor.appendChild(item);
+      });
+
+      const promedioPing = Math.round(sumaPing / jugadoresConectados.length);
+      document.getElementById("avg-ping").textContent = promedioPing + " ms";
+      document.getElementById("online-count").textContent =
+        jugadoresConectados.length + " jugadores en línea";
+      document.getElementById("right-meta").textContent =
+        "Actualizado hace 3 s";
+    }
+
+    // Simula primera carga
+    renderJugadores();
+  </script>
+</body>
+</html>
+

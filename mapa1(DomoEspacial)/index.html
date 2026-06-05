@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Enycosmic Game Play</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="wrap" id="wrap">
+   <!---->
+    <div class="box-buttons-items" style="display: none;">
+      <button id="misions"></button>
+      <button id="novedades"></button><!--Noticias de actualizaciones, insentivar a compartir, donaciones y compras-->
+      <button id="iq"></button>   <!--Acá se vera tu nivel IQ actual, y se verá el nivel IQ de otros usuarios ACTIVOS en una lista-->
+      <button id="inventario"></button>   <!--Máximo 3x3 / y distintos trajes que se adquiere en el juego-->
+      <button id="setting"></button>   <!--Volumen, terminos y condiciones, reglas de privacidad, Donaciones, soporte,  cambiar musica ambiente, devolver a estado de fabrica(Esto se guardará en localStorage), pantalla completa, tutorial del juego-->
+
+    </div>
+
+    <button id="metafon" style="display: none;"></button>
+
+    <canvas id="game"></canvas>
+
+     <!--
+    <button onclick="pruebaDeItems()">Generar Items</button>  -->
+    <button onclick="reto_codificacion_01()">Reto 01</button>
+  
+    <button onclick="resetPlayerProfile()" style="position: absolute; top: 1%;">Reset Protocolos</button>
+      
+    <div class="joystick" style="display: none;" id="joy" aria-label="Palanca táctil">
+      <div class="joy-base"></div>
+      <div class="joy-stick" id="joyStick"></div>
+    </div>
+  </div>
+
+<script src="./script.js"></script>
+</body>
+</html>

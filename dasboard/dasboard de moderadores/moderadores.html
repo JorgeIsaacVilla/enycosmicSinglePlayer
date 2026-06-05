@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel de Moderación - Enycosmic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #020617, #020617 40%, #020617 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, rgba(15,23,42,0.96), rgba(30,64,175,0.8));
+      border-bottom: 1px solid rgba(148,163,184,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: conic-gradient(from 140deg,#38bdf8,#f97316,#22c55e,#38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(56,189,248,0.9);
+    }
+
+    .logo-circle span {
+      font-weight: 700;
+      font-size: 16px;
+      color: #020617;
+    }
+
+    .top-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 12px;
+    }
+
+    .top-title-main {
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .top-title-sub {
+      opacity: 0.8;
+      font-size: 11px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .badge-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(248,250,252,0.7);
+      background: rgba(15,23,42,0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+
+    .mod-user {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: right;
+    }
+
+    /* Layout */
+    .main-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: rgba(15,23,42,0.98);
+      border-radius: 16px;
+      border: 1px solid rgba(51,65,85,0.9);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.75;
+    }
+
+    .mod-profile-card {
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(59,130,246,0.7);
+      background: radial-gradient(circle at top, rgba(37,99,235,0.3), rgba(15,23,42,0.98));
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mod-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #22c55e, #0ea5e9);
+      border: 2px solid rgba(248,250,252,0.9);
+      box-shadow: 0 0 14px rgba(56,189,248,0.9);
+    }
+
+    .mod-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .mod-name {
+      font-size: 14px;
+    }
+
+    .mod-role {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .mod-perms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 10px;
+    }
+
+    .mod-perm-pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.9);
+    }
+
+    .filter-block {
+      margin-top: 4px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-row label {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    select, input[type="text"] {
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(75,85,99,0.9);
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .stats-box {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(75,85,99,0.9);
+      background: rgba(15,23,42,0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    /* Content */
+    .content {
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.45), rgba(15,23,42,0.98));
+      border-radius: 16px;
+      border: 1px solid rgba(51,65,85,0.9);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .content-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .content-title-main {
+      font-size: 16px;
+    }
+
+    .content-sub {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .btn {
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      cursor: pointer;
+      background: rgba(15,23,42,0.96);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg,#dc2626,#ea580c);
+      border-color: rgba(248,113,113,0.9);
+      box-shadow: 0 10px 25px rgba(220,38,38,0.7);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg,#0ea5e9,#6366f1);
+      border-color: rgba(96,165,250,0.9);
+      box-shadow: 0 10px 25px rgba(37,99,235,0.7);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.95);
+    }
+
+    .btn:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    /* Tabla jugadores */
+    .table-wrapper {
+      margin-top: 6px;
+      background: rgba(15,23,42,0.96);
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-header-row {
+      display: grid;
+      grid-template-columns: 70px 110px 110px 120px 70px 110px 150px 80px;
+      gap: 4px;
+      padding: 6px 10px;
+      font-size: 11px;
+      background: rgba(15,23,42,1);
+      border-bottom: 1px solid rgba(55,65,81,1);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .table-header-cell {
+      opacity: 0.75;
+      white-space: nowrap;
+    }
+
+    .table-body {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 70px 110px 110px 120px 70px 110px 150px 80px;
+      gap: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      align-items: center;
+      border-bottom: 1px solid rgba(31,41,55,0.8);
+    }
+
+    .table-row:nth-child(even) {
+      background: rgba(15,23,42,0.96);
+    }
+
+    .table-row:nth-child(odd) {
+      background: rgba(15,23,42,0.9);
+    }
+
+    .badge-small {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    /* Rol: botón editable */
+    .rol-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .rol-btn {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .rol-btn-natural {
+      background: rgba(31,41,55,0.95);
+      border-color: rgba(148,163,184,0.9);
+      color: #e5e7eb;
+    }
+
+    .rol-btn-centinela {
+      background: rgba(6,95,70,0.9);
+      border-color: rgba(52,211,153,0.9);
+      color: #ecfdf5;
+    }
+
+    .rol-btn-mod-centinela {
+      background: rgba(30,64,175,0.9);
+      border-color: rgba(129,140,248,0.9);
+      color: #e0f2fe;
+    }
+
+    .rol-btn-mod-maestro {
+      background: rgba(134,25,143,0.9);
+      border-color: rgba(244,114,182,0.9);
+      color: #fdf2ff;
+    }
+
+    .rol-menu {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      min-width: 160px;
+      background: rgba(15,23,42,0.98);
+      border: 1px solid rgba(55,65,81,0.9);
+      border-radius: 10px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.9);
+      padding: 4px;
+      display: none;
+      z-index: 20;
+    }
+
+    .rol-menu.open {
+      display: block;
+    }
+
+    .rol-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .rol-menu button:hover {
+      background: rgba(30,64,175,0.8);
+    }
+
+    .btn-chat {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,0.9);
+      background: rgba(15,23,42,0.95);
+      color: #bfdbfe;
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-chat:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      background: rgba(30,64,175,0.95);
+    }
+
+    /* Estado moderación (botón con menú) */
+    .estado-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .estado-btn {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 10px;
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .estado-btn-permitido {
+      border-color: rgba(34,197,94,0.9);
+      background: rgba(22,101,52,0.7);
+    }
+
+    .estado-btn-investigacion {
+      border-color: rgba(250,204,21,0.9);
+      background: rgba(120,53,15,0.7);
+    }
+
+    .estado-btn-baneado {
+      border-color: rgba(248,113,113,0.9);
+      background: rgba(127,29,29,0.8);
+    }
+
+    .estado-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+    }
+
+    .estado-dot-permitido {
+      background: #22c55e;
+      box-shadow: 0 0 9px rgba(34,197,94,0.9);
+    }
+
+    .estado-dot-investigacion {
+      background: #facc15;
+      box-shadow: 0 0 9px rgba(250,204,21,0.9);
+    }
+
+    .estado-dot-baneado {
+      background: #ef4444;
+      box-shadow: 0 0 9px rgba(248,113,113,0.9);
+    }
+
+    .estado-menu {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      min-width: 140px;
+      background: rgba(15,23,42,0.98);
+      border: 1px solid rgba(55,65,81,0.9);
+      border-radius: 10px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.9);
+      padding: 4px;
+      display: none;
+      z-index: 20;
+    }
+
+    .estado-menu.open {
+      display: block;
+    }
+
+    .estado-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .estado-menu button:hover {
+      background: rgba(30,64,175,0.8);
+    }
+
+    /* Modal chat */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      z-index: 50;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      border-radius: 14px;
+      background: rgba(15,23,42,0.98);
+      border: 1px solid rgba(55,65,81,0.9);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(55,65,81,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .chat-meta {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .chat-message {
+      padding: 6px 8px;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      max-width: 80%;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background: rgba(37,99,235,0.8);
+    }
+
+    .chat-message.other {
+      align-self: flex-start;
+      background: rgba(31,41,55,0.9);
+    }
+
+    .chat-time {
+      font-size: 10px;
+      opacity: 0.8;
+      margin-top: 2px;
+      text-align: right;
+    }
+
+    .modal-footer {
+      padding: 8px 14px;
+      border-top: 1px solid rgba(55,65,81,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .flag-pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px dashed rgba(248,113,113,0.9);
+      font-size: 10px;
+    }
+
+    .close-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      filter: brightness(1.05);
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .table-header-row,
+      .table-row {
+        grid-template-columns: 70px 110px 110px 90px 70px 110px 150px;
+      }
+      .table-header-row > :last-child,
+      .table-row > :last-child {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="logo-circle"><span>M</span></div>
+        <div class="top-title">
+          <div class="top-title-main">Enycosmic Sentinel</div>
+          <div class="top-title-sub">Panel maestro de moderación y protección al usuario</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="badge-pill">
+          <span class="badge-dot"></span>
+          <span id="players-online-resume">0 usuarios conectados</span>
+        </div>
+        <div class="mod-user">
+          <div>Moderador actual: Maestro_Enycosmic</div>
+          <div>Rol: Moderador Maestro · Permisos globales</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <aside class="sidebar">
+        <div class="sidebar-section-title">Perfil del moderador</div>
+        <div class="mod-profile-card">
+          <div class="mod-avatar"></div>
+          <div class="mod-info">
+            <div class="mod-name">Maestro_Enycosmic</div>
+            <div class="mod-role">Moderador Maestro · Metaverso al usuario</div>
+            <div class="mod-perms">
+              <div class="mod-perm-pill">Ban global</div>
+              <div class="mod-perm-pill">Revisión de chats</div>
+              <div class="mod-perm-pill">Control de roles</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section-title">Filtros rápidos</div>
+        <div class="filter-block">
+          <div class="filter-row">
+            <label for="filter-role">Tipo de usuario:</label>
+            <select id="filter-role">
+              <option value="todos">Todos</option>
+              <option value="Moderador Maestro">Moderador Maestro</option>
+              <option value="Moderador Centinela">Moderador Centinela</option>
+              <option value="Centinela">Centinela</option>
+              <option value="Natural">Natural</option>
+            </select>
+          </div>
+          <div class="filter-row">
+            <label for="filter-banned">Estado moderación:</label>
+            <select id="filter-banned">
+              <option value="todos">Todos</option>
+              <option value="permitido">Permitido</option>
+              <option value="investigacion">En investigación</option>
+              <option value="baneado">Baneado</option>
+            </select>
+          </div>
+          <div class="filter-row">
+            <label for="filter-search">Buscar (usuario / avatar / email):</label>
+            <input type="text" id="filter-search" placeholder="Ej: Prota, ExploradorSolar, correo@" />
+          </div>
+        </div>
+
+        <div class="sidebar-section-title">Resumen de seguridad</div>
+        <div class="stats-box" id="stats-box">
+          <div id="stat-total">Usuarios totales listados: 0</div>
+          <div id="stat-banned">Usuarios baneados: 0</div>
+          <div id="stat-mods">Moderadores: 0</div>
+          <div id="stat-flags">Cuentas con alertas: 0</div>
+        </div>
+
+        <div class="sidebar-footer">
+          Línea ética: Nunca se comparten datos de los niños fuera del sistema.  
+          Todas las acciones quedan registradas.
+        </div>
+      </aside>
+
+      <section class="content">
+        <div class="content-header">
+          <div>
+            <div class="content-title-main">Control de jugadores y cumplimiento de reglas</div>
+            <div class="content-sub">
+              Revisa comportamiento, chats y estados de baneo para mantener seguro el metaverso al usuario.
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button class="btn btn-primary">
+            Escanear lenguaje sospechoso
+          </button>
+          <button class="btn btn-secondary">
+            Ver sólo cuentas con alertas
+          </button>
+          <button class="btn btn-ghost">
+            Exportar reporte de sesión
+          </button>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header-row">
+            <div class="table-header-cell">Estado</div>
+            <div class="table-header-cell">Usuario</div>
+            <div class="table-header-cell">Nombre avatar</div>
+            <div class="table-header-cell">Profesión avatar</div>
+            <div class="table-header-cell">IQ</div>
+            <div class="table-header-cell">Tipo usuario</div>
+            <div class="table-header-cell">Correo asociado</div>
+            <div class="table-header-cell">Chat sesión</div>
+          </div>
+          <div class="table-body" id="players-table-body">
+            <!-- Filas llenadas por JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal de chat -->
+    <div class="modal-backdrop" id="chat-modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title" id="chat-modal-title">Chat del jugador</div>
+            <div class="chat-meta" id="chat-modal-meta"></div>
+          </div>
+          <button class="close-btn" id="chat-modal-close">Cerrar</button>
+        </div>
+        <div class="modal-body" id="chat-modal-body">
+          <!-- Mensajes de chat -->
+        </div>
+        <div class="modal-footer">
+          <div>
+            Cada línea aquí es parte de la sesión actual. El historial se guarda de forma segura para auditoría.
+          </div>
+          <div class="flag-pill" id="chat-flag-pill">
+            Palabras sensibles detectadas: 0
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Datos de ejemplo (en tu backend esto vendrá desde la BD)
+    const jugadores = [
+      {
+        estadoModeracion: "permitido",
+        usuario: "Prota",
+        nombreAvatar: "ExploradorSolar",
+        profesionAvatar: "Astrónomo interestelar",
+        nivelIQ: 12,
+        tipoUsuario: "Natural",
+        email: "prota@example.com",
+        conectado: true,
+        alertas: 0,
+        chat: [
+          { de: "Prota", mensaje: "Hola equipo, listo para la misión.", hora: "10:05" },
+          { de: "NovaKid", mensaje: "Vamos a rescatar los satélites.", hora: "10:06" },
+          { de: "Prota", mensaje: "Recuerden seguir las reglas del juego.", hora: "10:07" }
+        ]
+      },
+      {
+        estadoModeracion: "baneado",
+        usuario: "CuentaSospechosa01",
+        nombreAvatar: "LoboSolito",
+        profesionAvatar: "Viajero sin registro",
+        nivelIQ: 3,
+        tipoUsuario: "Natural",
+        email: "sospechoso01@example.com",
+        conectado: false,
+        alertas: 5,
+        chat: [
+          { de: "CuentaSospechosa01", mensaje: "¿Cuántos años tienes? ¿Estás solo?", hora: "09:40" },
+          { de: "Sistema", mensaje: "Advertencia enviada al jugador.", hora: "09:41" },
+          { de: "Moderador", mensaje: "Esta cuenta ha sido suspendida por comportamiento inapropiado.", hora: "09:42" }
+        ]
+      },
+      {
+        estadoModeracion: "investigacion",
+        usuario: "Centinela_Alpha",
+        nombreAvatar: "Centinela Alpha",
+        profesionAvatar: "Moderador Centinela",
+        nivelIQ: 25,
+        tipoUsuario: "Moderador Centinela",
+        email: "centinela.alpha@enycosmic.com",
+        conectado: true,
+        alertas: 1,
+        chat: [
+          { de: "Centinela_Alpha", mensaje: "Revisando reporte de lenguaje sospechoso.", hora: "10:10" },
+          { de: "Sistema", mensaje: "Se marcaron 3 mensajes como sensibles.", hora: "10:11" }
+        ]
+      },
+      {
+        estadoModeracion: "permitido",
+        usuario: "Maestro_Math",
+        nombreAvatar: "Profesor de estrellas",
+        profesionAvatar: "Maestro guía",
+        nivelIQ: 20,
+        tipoUsuario: "Moderador Maestro",
+        email: "maestro.math@enycosmic.com",
+        conectado: true,
+        alertas: 0,
+        chat: [
+          { de: "Maestro_Math", mensaje: "Buen trabajo con los acertijos de hoy.", hora: "09:55" }
+        ]
+      },
+      {
+        estadoModeracion: "permitido",
+        usuario: "NovaKid",
+        nombreAvatar: "NovaKid",
+        profesionAvatar: "Piloto de misiones",
+        nivelIQ: 9,
+        tipoUsuario: "Natural",
+        email: "novakid@example.com",
+        conectado: true,
+        alertas: 0,
+        chat: [
+          { de: "NovaKid", mensaje: "Estoy listo para la misión en equipo.", hora: "10:02" }
+        ]
+      }
+    ];
+
+    const tableBody = document.getElementById("players-table-body");
+    const filterRole = document.getElementById("filter-role");
+    const filterBanned = document.getElementById("filter-banned");
+    const filterSearch = document.getElementById("filter-search");
+    const statsBoxTotal = document.getElementById("stat-total");
+    const statsBoxBanned = document.getElementById("stat-banned");
+    const statsBoxMods = document.getElementById("stat-mods");
+    const statsBoxFlags = document.getElementById("stat-flags");
+    const playersOnlineResume = document.getElementById("players-online-resume");
+
+    const chatModalBackdrop = document.getElementById("chat-modal-backdrop");
+    const chatModalClose = document.getElementById("chat-modal-close");
+    const chatModalTitle = document.getElementById("chat-modal-title");
+    const chatModalMeta = document.getElementById("chat-modal-meta");
+    const chatModalBody = document.getElementById("chat-modal-body");
+    const chatFlagPill = document.getElementById("chat-flag-pill");
+
+    function coincideBusqueda(jugador, texto) {
+      if (!texto) return true;
+      const t = texto.toLowerCase();
+      return (
+        jugador.usuario.toLowerCase().includes(t) ||
+        jugador.nombreAvatar.toLowerCase().includes(t) ||
+        jugador.email.toLowerCase().includes(t)
+      );
+    }
+
+    function filtrarJugadores() {
+      const rol = filterRole.value;
+      const estado = filterBanned.value;
+      const texto = filterSearch.value.trim();
+
+      return jugadores.filter(j => {
+        let okRol = (rol === "todos") || (j.tipoUsuario === rol);
+        let okEstado = (estado === "todos") || (j.estadoModeracion === estado);
+        let okTexto = coincideBusqueda(j, texto);
+        return okRol && okEstado && okTexto;
+      });
+    }
+
+    function actualizarResumen(jugadoresFiltrados) {
+      const total = jugadoresFiltrados.length;
+      const baneados = jugadoresFiltrados.filter(j => j.estadoModeracion === "baneado").length;
+      const mods = jugadoresFiltrados.filter(j =>
+        j.tipoUsuario === "Moderador Maestro" ||
+        j.tipoUsuario === "Moderador Centinela" ||
+        j.tipoUsuario === "Centinela"
+      ).length;
+      const flags = jugadoresFiltrados.filter(j => j.alertas > 0).length;
+      const conectados = jugadores.filter(j => j.conectado).length;
+
+      statsBoxTotal.textContent = "Usuarios totales listados: " + total;
+      statsBoxBanned.textContent = "Usuarios baneados: " + baneados;
+      statsBoxMods.textContent = "Moderadores: " + mods;
+      statsBoxFlags.textContent = "Cuentas con alertas: " + flags;
+      playersOnlineResume.textContent = conectados + " usuarios conectados";
+    }
+
+    function crearCelda(texto) {
+      const div = document.createElement("div");
+      div.textContent = texto;
+      return div;
+    }
+
+    function construirBotonRol(j) {
+      const celda = document.createElement("div");
+      const wrapper = document.createElement("div");
+      wrapper.className = "rol-wrapper";
+
+      const btn = document.createElement("button");
+      btn.className = "rol-btn";
+
+      if (j.tipoUsuario === "Natural") {
+        btn.classList.add("rol-btn-natural");
+      } else if (j.tipoUsuario === "Centinela") {
+        btn.classList.add("rol-btn-centinela");
+      } else if (j.tipoUsuario === "Moderador Centinela") {
+        btn.classList.add("rol-btn-mod-centinela");
+      } else if (j.tipoUsuario === "Moderador Maestro") {
+        btn.classList.add("rol-btn-mod-maestro");
+      }
+
+      btn.textContent = j.tipoUsuario;
+
+      const menu = document.createElement("div");
+      menu.className = "rol-menu";
+
+      const opcionesRol = [
+        "Natural",
+        "Centinela",
+        "Moderador Centinela",
+        "Moderador Maestro"
+      ];
+
+      opcionesRol.forEach(rol => {
+        const opcion = document.createElement("button");
+        opcion.textContent = rol;
+        opcion.addEventListener("click", (e) => {
+          e.stopPropagation();
+          j.tipoUsuario = rol;
+
+          // Aquí enviarías el cambio al backend, por ejemplo:
+          // fetch("actualizar_rol_usuario.php", {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify({ usuario: j.usuario, nuevoRol: rol })
+          // });
+
+          renderTabla();
+        });
+        menu.appendChild(opcion);
+      });
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".rol-menu.open").forEach(m => {
+          if (m !== menu) m.classList.remove("open");
+        });
+        document.querySelectorAll(".estado-menu.open").forEach(m => m.classList.remove("open"));
+        menu.classList.toggle("open");
+      });
+
+      wrapper.appendChild(btn);
+      wrapper.appendChild(menu);
+      celda.appendChild(wrapper);
+      return celda;
+    }
+
+    function construirEstadoModeracion(j) {
+      const celdaBan = document.createElement("div");
+      const wrapperEstado = document.createElement("div");
+      wrapperEstado.className = "estado-wrapper";
+
+      const btnEstado = document.createElement("button");
+      btnEstado.className = "estado-btn";
+
+      const dotEstado = document.createElement("div");
+      dotEstado.className = "estado-dot";
+
+      let textoEstado = "";
+      if (j.estadoModeracion === "baneado") {
+        btnEstado.classList.add("estado-btn-baneado");
+        dotEstado.classList.add("estado-dot-baneado");
+        textoEstado = "Baneado";
+      } else if (j.estadoModeracion === "investigacion") {
+        btnEstado.classList.add("estado-btn-investigacion");
+        dotEstado.classList.add("estado-dot-investigacion");
+        textoEstado = "En investigación";
+      } else {
+        btnEstado.classList.add("estado-btn-permitido");
+        dotEstado.classList.add("estado-dot-permitido");
+        textoEstado = "Permitido";
+      }
+
+      const spanTextoEstado = document.createElement("span");
+      spanTextoEstado.textContent = textoEstado;
+
+      btnEstado.appendChild(dotEstado);
+      btnEstado.appendChild(spanTextoEstado);
+
+      const menuEstado = document.createElement("div");
+      menuEstado.className = "estado-menu";
+
+      const opciones = [
+        { valor: "permitido", texto: "Permitido" },
+        { valor: "investigacion", texto: "En investigación" },
+        { valor: "baneado", texto: "Baneado" }
+      ];
+
+      opciones.forEach(op => {
+        const btnOp = document.createElement("button");
+        btnOp.textContent = op.texto;
+        btnOp.addEventListener("click", (e) => {
+          e.stopPropagation();
+          j.estadoModeracion = op.valor;
+
+          // Aquí podrías llamar a tu backend para guardar el cambio:
+          // fetch("actualizar_estado_moderacion.php", { ... })
+
+          renderTabla();
+        });
+        menuEstado.appendChild(btnOp);
+      });
+
+      btnEstado.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".estado-menu.open").forEach(m => {
+          if (m !== menuEstado) m.classList.remove("open");
+        });
+        document.querySelectorAll(".rol-menu.open").forEach(m => m.classList.remove("open"));
+        menuEstado.classList.toggle("open");
+      });
+
+      wrapperEstado.appendChild(btnEstado);
+      wrapperEstado.appendChild(menuEstado);
+      celdaBan.appendChild(wrapperEstado);
+
+      return celdaBan;
+    }
+
+    function renderTabla() {
+      const filtrados = filtrarJugadores();
+      tableBody.innerHTML = "";
+
+      filtrados.forEach((j) => {
+        const row = document.createElement("div");
+        row.className = "table-row";
+
+        const celdaEstado = construirEstadoModeracion(j);
+        const celdaUsuario = crearCelda(j.usuario);
+        const celdaAvatar = crearCelda(j.nombreAvatar);
+        const celdaProf = crearCelda(j.profesionAvatar);
+        const celdaIQ = crearCelda("IQ " + j.nivelIQ);
+        const celdaRol = construirBotonRol(j);
+
+        const celdaEmail = document.createElement("div");
+        celdaEmail.textContent = j.email;
+        if (j.alertas > 0) {
+          const spanAlert = document.createElement("div");
+          spanAlert.className = "badge-small";
+          spanAlert.textContent = "Alertas: " + j.alertas;
+          celdaEmail.appendChild(spanAlert);
+        }
+
+        const celdaChat = document.createElement("div");
+        const btnChat = document.createElement("button");
+        btnChat.className = "btn-chat";
+        btnChat.textContent = "Ver chat";
+        btnChat.addEventListener("click", () => abrirChat(j));
+        celdaChat.appendChild(btnChat);
+
+        row.appendChild(celdaEstado);
+        row.appendChild(celdaUsuario);
+        row.appendChild(celdaAvatar);
+        row.appendChild(celdaProf);
+        row.appendChild(celdaIQ);
+        row.appendChild(celdaRol);
+        row.appendChild(celdaEmail);
+        row.appendChild(celdaChat);
+
+        tableBody.appendChild(row);
+      });
+
+      actualizarResumen(filtrados);
+    }
+
+    function abrirChat(jugador) {
+      chatModalTitle.textContent = "Chat de: " + jugador.usuario + " (" + jugador.nombreAvatar + ")";
+      chatModalMeta.textContent =
+        "Profesión del avatar: " + jugador.profesionAvatar +
+        " · Tipo de usuario: " + jugador.tipoUsuario +
+        " · Correo: " + jugador.email;
+
+      chatModalBody.innerHTML = "";
+      let palabrasSospechosas = 0;
+
+      const listaPalabrasSospechosas = [
+        "años",
+        "dirección",
+        "solo",
+        "estás solo",
+        "whatsapp",
+        "teléfono",
+        "secreto",
+        "en persona"
+      ];
+
+      jugador.chat.forEach(m => {
+        const msgDiv = document.createElement("div");
+        const texto = m.mensaje.toLowerCase();
+        let esSensible = false;
+        listaPalabrasSospechosas.forEach(p => {
+          if (texto.includes(p)) {
+            esSensible = true;
+            palabrasSospechosas++;
+          }
+        });
+
+        msgDiv.className = "chat-message " + (m.de === jugador.usuario ? "user" : "other");
+        msgDiv.textContent = m.de + ": " + m.mensaje;
+
+        const timeDiv = document.createElement("div");
+        timeDiv.className = "chat-time";
+        timeDiv.textContent = "Hora: " + m.hora + (esSensible ? " · posible lenguaje sensible" : "");
+        msgDiv.appendChild(timeDiv);
+
+        chatModalBody.appendChild(msgDiv);
+      });
+
+      chatFlagPill.textContent = "Palabras sensibles detectadas: " + palabrasSospechosas;
+      chatModalBackdrop.style.display = "flex";
+    }
+
+    chatModalClose.addEventListener("click", () => {
+      chatModalBackdrop.style.display = "none";
+    });
+
+    chatModalBackdrop.addEventListener("click", (e) => {
+      if (e.target === chatModalBackdrop) {
+        chatModalBackdrop.style.display = "none";
+      }
+    });
+
+    filterRole.addEventListener("change", renderTabla);
+    filterBanned.addEventListener("change", renderTabla);
+    filterSearch.addEventListener("input", renderTabla);
+
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".estado-menu.open").forEach(m => m.classList.remove("open"));
+      document.querySelectorAll(".rol-menu.open").forEach(m => m.classList.remove("open"));
+    });
+
+    renderTabla();
+  </script>
+</body>
+</html>
+
+
+

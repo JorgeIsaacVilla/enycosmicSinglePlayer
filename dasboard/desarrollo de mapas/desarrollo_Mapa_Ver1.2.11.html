@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Enycosmic - Generador JSON</title>
+  <style>
+    :root{--panel:rgba(9,18,45,.94);--panel2:rgba(12,28,66,.9);--line:rgba(64,220,255,.28);--line2:rgba(64,220,255,.68);--text:#e8fbff;--muted:#8fb8c7;--accent:#00eaff;--ok:#73ffcb;--danger:#ff4b7a;--warning:#ffd166;--violet:#b78cff;--radius:18px;--shadow:0 0 28px rgba(0,234,255,.14)}
+    *{box-sizing:border-box}body{margin:0;height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 20% 20%,rgba(0,234,255,.12),transparent 32%),radial-gradient(circle at 80% 12%,rgba(126,92,255,.16),transparent 30%),linear-gradient(135deg,#020411,#07142d 55%,#040716);color:var(--text);overflow:hidden}.app{width:100vw;height:100vh;display:grid;grid-template-columns:420px 1fr;gap:14px;padding:14px}.sidebar,.workspace{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.sidebar{display:flex;flex-direction:column}.brand{padding:16px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(0,234,255,.08),transparent)}.brand h1{margin:0 0 6px;font-size:20px}.brand p{margin:0;color:var(--muted);font-size:13px;line-height:1.42}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.18)}.controls{padding:14px;overflow:auto}.tab-panel{display:none}.tab-panel.active{display:block}.section{padding:13px;margin-bottom:13px;border:1px solid rgba(64,220,255,.16);background:var(--panel2);border-radius:14px}.section-title{position:sticky;top:0;z-index:20;margin:-13px -13px 12px;padding:12px 13px 10px;color:var(--accent);font-size:15px;letter-spacing:.9px;text-transform:uppercase;background:rgba(5,16,41,.84);backdrop-filter:blur(12px);border-bottom:1px solid rgba(64,220,255,.22);border-radius:14px 14px 0 0;box-shadow:0 8px 18px rgba(0,0,0,.18)}label{display:block;margin:9px 0 5px;color:var(--muted);font-size:12px}.check-label{display:flex;align-items:center;gap:8px;margin:9px 0;color:var(--text);font-size:12px;cursor:pointer}.check-label input{width:16px;height:16px;accent-color:var(--accent)}input[type=file],input[type=number],input[type=text],select,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.26);color:var(--text);padding:9px 10px;outline:none}textarea{min-height:86px;resize:vertical;font-family:Consolas,Monaco,monospace;font-size:12px;line-height:1.45}input[type=color]{width:100%;height:40px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.26);padding:4px;cursor:pointer}input[type=file]::file-selector-button{border:1px solid var(--line2);border-radius:10px;padding:7px 9px;margin-right:8px;background:rgba(0,234,255,.14);color:var(--text);cursor:pointer}input[type=range]{width:100%;accent-color:var(--accent)}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}button{border:1px solid var(--line);border-radius:11px;background:rgba(0,234,255,.1);color:var(--text);padding:9px 10px;cursor:pointer;transition:.18s ease}button:hover{border-color:var(--line2);background:rgba(0,234,255,.18)}button.active,.tab-btn.active{border-color:var(--ok);background:rgba(115,255,203,.14);color:var(--ok)}button.danger{border-color:rgba(255,75,122,.6);background:rgba(255,75,122,.1)}button.warning{border-color:rgba(255,209,102,.65);background:rgba(255,209,102,.1)}button.primary{border-color:var(--ok);background:rgba(115,255,203,.16)}button.violet{border-color:rgba(183,140,255,.7);background:rgba(183,140,255,.13)}.mini-btn{padding:6px 8px;border-radius:9px;font-size:11px}.hint{color:var(--muted);font-size:11px;line-height:1.42;margin:8px 0 0}.stats{display:grid;gap:7px;font-size:12px}.stat{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(64,220,255,.11);padding-bottom:6px}.stat span:first-child{color:var(--muted)}.stat span:last-child{text-align:right;overflow-wrap:anywhere}.list{max-height:190px;overflow:auto;border:1px solid rgba(64,220,255,.14);border-radius:12px;background:rgba(0,0,0,.18)}.list-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid rgba(64,220,255,.1);font-size:12px;cursor:pointer}.list-item:hover,.list-item.active{background:rgba(0,234,255,.08)}.list-item small{display:block;margin-top:3px;color:var(--muted);line-height:1.35}.json-preview{height:210px;min-height:210px}.workspace{display:grid;grid-template-rows:auto 1fr auto;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.18)}.topbar-left,.topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pill{border:1px solid rgba(64,220,255,.22);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:12px;background:rgba(0,0,0,.2)}.pill.ok{color:var(--ok);border-color:rgba(115,255,203,.35)}.pill.warn{color:var(--warning);border-color:rgba(255,209,102,.35)}.viewport{position:relative;overflow:hidden;background:linear-gradient(rgba(64,220,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(64,220,255,.05) 1px,transparent 1px),rgba(0,0,0,.26);background-size:40px 40px;cursor:default;user-select:none;touch-action:none}.viewport.dragging{cursor:grabbing}.viewport.draw-mode{cursor:crosshair}.map-stage{position:absolute;left:0;top:0;width:1000px;height:1000px;transform-origin:0 0;border:2px solid var(--accent);box-shadow:0 0 30px rgba(0,234,255,.24),inset 0 0 30px rgba(0,234,255,.12);background:rgba(4,10,28,.96);overflow:hidden}.map-image{width:100%;height:100%;display:block;pointer-events:none;object-fit:contain;opacity:0}.map-image.loaded{opacity:1}.map-placeholder{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:28px;color:var(--muted);background:radial-gradient(circle at center,rgba(0,234,255,.08),transparent 45%),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 50px),repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 50px);pointer-events:none}.map-placeholder.hidden{display:none}.map-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(115,255,203,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(115,255,203,.2) 1px,transparent 1px);background-size:250px 250px;opacity:.55;display:none;z-index:90}.map-grid.visible{display:block}.entities-layer{position:absolute;inset:0;z-index:20;pointer-events:auto}.layer-hidden{display:none}.map-border-label{position:absolute;right:12px;bottom:12px;padding:8px 10px;border-radius:10px;border:1px solid rgba(64,220,255,.36);background:rgba(0,0,0,.55);font-size:12px;pointer-events:none;z-index:110}.dropzone{position:absolute;inset:18px;border:2px dashed rgba(64,220,255,.28);border-radius:18px;pointer-events:none;display:none;z-index:200}.dropzone.visible{display:block;border-color:var(--ok)}.bottombar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid var(--line);background:rgba(0,0,0,.18);color:var(--muted);font-size:12px}.node{position:absolute;border:2px solid rgba(255,255,255,.92);outline:2px solid rgba(0,0,0,.55);background-size:100% 100%;background-repeat:no-repeat;background-position:center;min-width:4px;min-height:4px;cursor:move}.node::before{content:attr(data-label);position:absolute;left:0;top:-23px;max-width:300px;padding:3px 6px;border:1px solid rgba(64,220,255,.36);border-radius:6px;background:rgba(0,0,0,.74);color:#fff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;display:none}.node.selected{border-color:var(--ok);box-shadow:0 0 0 2px rgba(115,255,203,.4),0 0 22px rgba(115,255,203,.22)}.node.selected::before{display:block}.node.drawing{pointer-events:none;border-style:dashed;border-color:var(--warning)}.node.enemy{border-color:#ff8a00}.node.item{border-color:#00eaff;border-radius:8px}.node.light{border-color:#ffd166;border-radius:50%}.node.npc{border-color:#b78cff;border-radius:10px}.node.missionNpc{border-color:#73ffcb;border-radius:10px}.resize-handle{position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border:2px solid rgba(0,0,0,.7);background:var(--ok);border-radius:50%;cursor:nwse-resize;display:none}.node.selected .resize-handle{display:block}.node-tools{position:absolute;right:-2px;top:-28px;display:none;gap:4px}.node.selected .node-tools{display:flex}.node-tool{width:23px;height:23px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.72);border-radius:7px;font-size:12px;cursor:pointer}.line-preview{position:absolute;border:2px dashed var(--warning);pointer-events:none;z-index:1000}.measure-preview{position:absolute;pointer-events:none;z-index:1200}.measure-line{position:absolute;border-color:var(--accent);filter:drop-shadow(0 0 6px rgba(0,234,255,.55))}.measure-label{position:absolute;transform:translate(-50%,-130%);padding:5px 8px;border:1px solid rgba(64,220,255,.55);border-radius:8px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;white-space:nowrap}.json-modal-backdrop{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:rgba(0,0,0,.58);backdrop-filter:blur(8px);padding:18px}.json-modal-backdrop[hidden]{display:none}.json-modal{width:min(500px,calc(100vw - 28px));height:min(500px,calc(100vh - 28px));display:grid;grid-template-rows:auto 1fr auto;gap:10px;border:1px solid var(--line2);border-radius:18px;background:rgba(7,18,45,.97);box-shadow:0 0 38px rgba(0,234,255,.22);padding:12px}.json-modal-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.json-modal-title{font-size:15px;color:var(--accent);text-transform:uppercase;letter-spacing:.6px}.json-modal textarea{height:100%;min-height:0;resize:none}.json-modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}.json-drop-hint{font-size:11px;color:var(--muted);line-height:1.35}.json-modal.dragover textarea{border-color:var(--ok);box-shadow:0 0 0 2px rgba(115,255,203,.18)}.sprite-crop{width:100%;height:100%;background-repeat:no-repeat;background-position:0 0;pointer-events:none}.node.amb-sprite-1x10{background-repeat:no-repeat!important;background-size:1000% 100%!important;background-position:0 0!important;animation:spriteAmbientePreview 1.1s steps(10) infinite}@keyframes spriteAmbientePreview{from{background-position:0 0}to{background-position:100% 0}}.notice{padding:10px 12px;border:1px solid rgba(255,209,102,.3);border-radius:12px;background:rgba(255,209,102,.08);color:var(--warning);font-size:12px;line-height:1.4}.catalog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:260px;overflow:auto;border:1px solid rgba(64,220,255,.14);border-radius:12px;background:rgba(0,0,0,.18);padding:8px}.catalog-card{display:grid;grid-template-columns:42px 1fr;gap:8px;align-items:center;border:1px solid rgba(64,220,255,.12);border-radius:11px;padding:7px;background:rgba(0,0,0,.2);cursor:pointer}.catalog-card:hover,.catalog-card.active{border-color:var(--ok);background:rgba(115,255,203,.1)}.catalog-thumb{width:42px;height:42px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}.catalog-card-title{font-size:12px;line-height:1.2}.catalog-card-title small{display:block;margin-top:3px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-like{display:block;text-align:center;border:1px solid var(--line);border-radius:11px;background:rgba(0,234,255,.1);color:var(--text);padding:9px 10px;cursor:pointer}.file-like:hover{border-color:var(--line2);background:rgba(0,234,255,.18)}.file-like input{display:none}.item-selected-preview{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px;border:1px solid rgba(64,220,255,.14);border-radius:12px;background:rgba(0,0,0,.18)}.item-selected-preview img{width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.06)}
+
+    .asset-preview{margin-top:8px;min-height:86px;border:1px solid rgba(64,220,255,.2);border-radius:12px;background:rgba(0,0,0,.22);display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;padding:8px;overflow:hidden}
+    .asset-preview img{width:72px;height:72px;object-fit:contain;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+    .asset-preview-empty{grid-column:1/-1;color:var(--muted);font-size:12px;text-align:center;padding:20px 8px}
+    .asset-preview-info{min-width:0;color:var(--text);font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+    .asset-preview-info small{display:block;color:var(--muted);margin-top:4px}
+
+    .node.amb-sprite-1x10{
+  background-repeat:no-repeat!important;
+  background-size:1000% 100%!important;
+  background-position:0 0!important;
+  animation:spriteAmbientePreview 1.1s steps(10) infinite;
+}
+
+@keyframes spriteAmbientePreview{
+  from{background-position:0 0}
+  to{background-position:100% 0}
+}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <aside class="sidebar">
+      <div class="brand"><h1>Dashboard Enycosmic</h1><p>Generador visual de JSON para protomapa: ambiente, enemigos, iluminación, NPCs y misiones.</p></div>
+      <div class="tabs"><button class="tab-btn active" data-tab="tabProyecto">Mapa</button><button class="tab-btn" data-tab="tabAmbiente">Ambiente</button><button class="tab-btn" data-tab="tabItems">Items</button><button class="tab-btn" data-tab="tabEnemy">Enemy</button><button class="tab-btn" data-tab="tabIlum">Ilum</button><button class="tab-btn" data-tab="tabNPC">NPC Amb.</button><button class="tab-btn" data-tab="tabMisiones">Misiones</button></div>
+      <div class="controls">
+        <section id="tabProyecto" class="tab-panel active">
+          <div class="section"><p class="section-title">1. Cargar mapa</p><label>Imagen del mapa</label><input id="mapFile" type="file" accept="image/*"><label>Ruta del mapa dentro de source</label><input id="mapSourcePath" type="text" value="source/mapa1-5000x5000.svg"><button id="loadMapSource" class="primary" style="width:100%;margin-top:8px">Cargar mapa desde source</button><p class="hint">Puedes cargar el mapa manualmente o usar una imagen ubicada junto al software dentro de source. Si usas source, el proyecto guardará la ruta local para recuperar el preview sin volver a cargar la imagen.</p></div>
+          <div class="section"><p class="section-title">2. Tamaño lógico</p><label>Tamaño cuadrado en píxeles</label><input id="mapSize" type="number" min="200" max="5000" step="1" value="5000"><input id="mapSizeRange" type="range" min="200" max="5000" step="1" value="5000"><div class="preset-grid" id="presetGrid"><button data-size="200">200</button><button data-size="500">500</button><button data-size="1000">1000</button><button data-size="2000">2000</button><button data-size="3000">3000</button><button data-size="5000" class="active">5000</button></div></div>
+          <div class="section"><p class="section-title">3. Vista</p><label>Modo de ajuste de imagen</label><select id="fitMode"><option value="contain" selected>Contener imagen completa</option><option value="cover">Llenar cuadrado recortando</option><option value="fill">Estirar al cuadrado</option></select><div class="row" style="margin-top:10px"><button id="toggleGrid">Ver grilla</button><button id="resetView">Ver mapa completo</button></div></div>
+          <div class="section"><p class="section-title">4. Guardar avance</p><div class="row"><button id="saveLocal" class="primary">Guardar avance</button><button id="loadLocal">Cargar avance</button></div><div class="row" style="margin-top:8px"><button id="downloadProject" class="violet">Descargar proyecto</button><button id="clearProject" class="danger">Limpiar todo</button></div><label>Importar proyecto guardado</label><input id="importProject" type="file" accept="application/json"><p class="hint">El sistema guarda en localStorage y también permite descargar un respaldo completo.</p></div>
+          <div class="section"><p class="section-title">Estado general</p><div class="stats"><div class="stat"><span>Mapa</span><span id="statFile">Sin imagen</span></div><div class="stat"><span>Formato real</span><span id="statRealSize">-</span></div><div class="stat"><span>Mapa lógico</span><span id="statLogicalSize">5000 x 5000</span></div><div class="stat"><span>Zoom</span><span id="statZoom">-</span></div><div class="stat"><span>Cursor</span><span id="statCursor">x: -, y: -</span></div><div class="stat"><span>Ambiente</span><span id="countAmbiente">0</span></div><div class="stat"><span>Items</span><span id="countItems">0</span></div><div class="stat"><span>Enemigos</span><span id="countEnemy">0</span></div><div class="stat"><span>Iluminación</span><span id="countIlum">0</span></div><div class="stat"><span>NPC Ambiente</span><span id="countNPC">0</span></div><div class="stat"><span>Misiones</span><span id="countMisiones">0</span></div></div></div>
+        </section>
+        <section id="tabAmbiente" class="tab-panel">
+          <div class="section"><p class="section-title">Herramienta ambiente</p><div class="section">
+  <p class="section-title">Bloques de arcilla</p>
+
+  <div class="row">
+    <button id="arcillaToolPlace">Ubicar arcilla</button>
+    <button id="arcillaToolLine">Línea de arcilla</button>
+  </div>
+
+  <label>Prefijo zona_id</label>
+  <input id="arcillaPrefix" type="text" value="bloque_arcilla">
+
+  <label>Imagen preview</label>
+  <input id="arcillaImageFile" type="file" accept="image/*"><div id="arcillaImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin imagen cargada.</div></div>
+
+  <label>Ruta imagen JSON</label>
+  <input id="arcillaImagePath" type="text" value="../assets/items/bloqueArcilla.svg">
+
+  <div class="row-3">
+    <div>
+      <label>W</label>
+      <input id="arcillaW" type="number" value="64">
+    </div>
+    <div>
+      <label>H</label>
+      <input id="arcillaH" type="number" value="64">
+    </div>
+    <div>
+      <label>zIndexBase</label>
+      <input id="arcillaZ" type="number" value="3300">
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>PDR actual</label>
+      <input id="arcillaPdr" type="number" value="12">
+    </div>
+    <div>
+      <label>PDR máximo</label>
+      <input id="arcillaPdrMax" type="number" value="12">
+    </div>
+  </div>
+
+  <label>Función opcional</label>
+  <input id="arcillaFunction" type="text">
+
+  <div class="row" style="margin-top:10px">
+    <button id="arcillaApply">Aplicar arcilla seleccionada</button>
+    <button id="arcillaDuplicate">Duplicar</button>
+  </div>
+
+  <button id="arcillaDelete" class="danger" style="width:100%;margin-top:8px">Eliminar arcilla seleccionada</button>
+
+  <p class="hint">Estos bloques se guardan dentro de ambiente.json con subtipo bloque_arcilla.</p>
+</div><div class="row"><button id="ambToolPan">Mover/editar</button><button id="ambToolDraw">Dibujar con configuración actual</button></div><button id="ambPresetRed" class="danger" style="width:100%;margin-top:8px">Dibujar colisionable rojo a medida</button><p class="hint">Cruz: eliminar. Pincel: duplicar. Lápiz: dibujar línea con ese bloque.</p></div>
+          <div class="section"><p class="section-title">Configuración de bloque</p><label>Prefijo zona_id</label><input id="ambPrefix" type="text" value="bloque_ambiente"><div class="row"><div><label>Tipo 1</label><select id="ambTipo1"><option value="visual">visual</option><option value="colisionables">colisionables</option><option value="cliqueable">cliqueable</option></select></div><div><label>Tipo 2 opcional</label><select id="ambTipo2"><option value="">sin combinación</option><option value="visual">visual</option><option value="colisionables" selected>colisionables</option><option value="cliqueable">cliqueable</option></select></div></div><div class="row"><div><label>Color</label><input id="ambColor" type="color" value="#ff0000"></div><div><label>zIndexBase</label><input id="ambZ" type="number" value="3300"></div></div><label class="check-label"><input id="ambTransparent" type="checkbox"> Transparente / color null</label><label>Imagen para previsualizar</label><input id="ambImageFile" type="file" accept="image/*"><div id="ambImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin imagen cargada.</div></div><button id="sourceSystemsBtn" class="violet" style="width:100%;margin-top:8px">Elementos de sistemas</button><input id="sourceSystemsFolder" type="file" webkitdirectory multiple accept="image/*" style="display:none"><label>Buscar por nombre de archivo</label><input id="sourceSystemsSearch" type="text" placeholder="Ej: arbol, casa, roca, puente..."><p id="sourceSystemsCount" class="hint">Selecciona la carpeta source para ver los elementos disponibles.</p><div id="sourceSystemsGallery" class="catalog-grid" style="display:none;margin-top:8px"><div class="hint">Presiona “Elementos de sistemas” y selecciona la carpeta source.</div></div><p class="hint">Carga miniaturas desde ./source. El preview usa la imagen local, pero el JSON mantiene la ruta final del juego.</p><label class="check-label"><input id="ambUseRealSize" type="checkbox"> Usar tamaño real de la imagen al crear</label><div class="row"><div><label>Ancho real</label><input id="ambRealW" type="number" value="80"></div><div><label>Alto real</label><input id="ambRealH" type="number" value="80"></div></div><div class="row" style="margin-top:8px"><button id="ambToolReal">Ubicar visual tamaño real</button><button id="ambDetectSize">Detectar tamaño real</button></div><button id="ambApplyRealSize" style="width:100%;margin-top:8px">Actualizar tamaño real del seleccionado</button><label>Ruta imagen para JSON</label><input id="ambImagePath" type="text" placeholder="../assets/spriteAmbiente/objeto.svg"><label class="check-label"><input id="ambUseSprite" type="checkbox"> Usar sprite ambiente 1x10 para este componente</label>
+
+<label>Sprite ambiente 1x10</label>
+<input id="ambSpriteFile" type="file" accept="image/*">
+
+<div id="ambSpritePreview" class="asset-preview">
+  <div class="asset-preview-empty">Sin sprite 1x10 cargado.</div>
+</div>
+
+<p class="hint">En el dashboard se puede animar el sprite 1x10 para previsualizarlo. En ambiente.json se exporta como sprites_1x10 y la imagen queda null cuando este modo está activo.</p>
+
+<label>Ruta sprite ambiente 1x10 para JSON</label>
+<input id="ambSpritePath" type="text" placeholder="../assets/spriteAmbiente/sprite_ambiente.png">
+
+<label>Velocidad movimiento sprite</label>
+<input id="ambSpriteSpeed" type="number" value="1.1" step="0.1">
+
+<p class="hint">El sonido de ambiente se exporta como null por defecto. Luego lo puedes completar desde código.</p><label class="check-label"><input id="ambUseSprite" type="checkbox"> Usar sprite ambiente 1x10 para este componente</label><label>Sprite ambiente 1x10</label><input id="ambSpriteFile" type="file" accept="image/*"><div id="ambSpritePreview" class="asset-preview"><div class="asset-preview-empty">Sin sprite 1x10 cargado.</div></div><p class="hint">En el mapa del dashboard se anima el sprite 1x10 para previsualización. En ambiente.json se exporta como sprites_1x10 y la imagen queda null cuando este campo está activo.</p><label>Ruta sprite ambiente 1x10 para JSON</label><input id="ambSpritePath" type="text" placeholder="../assets/spriteAmbiente/sprites ambiente.png"><label>Velocidad movimiento sprite</label><input id="ambSpriteSpeed" type="number" value="1.1" step="0.1"><p class="hint">El sonido de ambiente se exporta como null por defecto. Puedes completarlo luego desde código.</p><label>Función al clic</label><input id="ambFunction" type="text"><label>Subtipo opcional</label><input id="ambSubtype" type="text"><div class="row" style="margin-top:10px"><button id="ambApply">Ubicar componente ambiente</button><button id="ambUpdateSelected">Actualizar seleccionado</button></div><div class="row" style="margin-top:8px"><button id="ambDuplicate">Duplicar</button><button id="ambDelete" class="danger">Eliminar</button></div><button id="ambClear" class="warning" style="width:100%;margin-top:8px">Limpiar ambiente</button></div>
+          <div class="section"><p class="section-title">Bloques dibujados</p><div class="list" id="ambList"></div></div><div class="section"><p class="section-title">Importar / exportar ambiente.json</p><label>Cargar ambiente.json</label><input id="importAmbiente" type="file" accept="application/json"><button id="downloadAmbiente" class="primary" style="width:100%">Descargar JSON de ambiente</button><label>Vista previa</label><textarea id="ambPreview" class="json-preview" readonly></textarea></div>
+        </section>
+
+        <section id="tabItems" class="tab-panel">
+          <div class="notice">Esta pestaña no descarga JSON. Genera el código del array itemsEnMapaConfig para pegarlo dentro del script del mapa.</div>
+          <div class="section"><p class="section-title">Catálogo source/items</p><label>Ruta del JSON de items</label><input id="itemCatalogPath" type="text" value="source/items/items.json"><div class="row" style="margin-top:8px"><button id="loadItemCatalog" class="primary">Cargar items del source</button><label class="file-like"><input id="importItemCatalog" type="file" accept="application/json">Cargar items.json manual</label></div><label class="file-like" style="margin-top:8px"><input id="importItemFolder" type="file" webkitdirectory multiple>Cargar carpeta source/items</label><p class="hint">Recomendado: presiona “Cargar carpeta source/items” y selecciona la carpeta items. El dashboard leerá items.json y tomará automáticamente las imágenes de esa misma carpeta solo para previsualizar. El código generado conserva las rutas finales del juego.</p><div id="itemCatalogGrid" class="catalog-grid" style="margin-top:10px"><div class="hint">Carga la carpeta source/items o items.json para ver el catálogo.</div></div></div>
+          <div class="section"><p class="section-title">Herramienta items</p><button id="itemToolPlace" style="width:100%">Ubicar item</button><p class="hint">Elige un item del catálogo y haz clic sobre el mapa. El sistema guardará instancia_id, item_id, x, y.</p></div>
+          <div class="section"><p class="section-title">Datos del item</p><label>Item del catálogo</label><select id="itemCatalogSelect"><option value="">Carga source/items/items.json</option></select><label>Prefijo instancia_id</label><input id="itemPrefix" type="text" value="itm_mapa"><label>item_id</label><input id="itemId" type="text" value="sal"><label>Imagen detectada desde JSON</label><input id="itemImagePath" type="text" value="../assets/items/sal.svg" readonly><p id="itemCatalogInfo" class="hint">Sin catálogo cargado todavía.</p><div id="itemSelectedPreview" class="item-selected-preview"><img id="itemSelectedImg" alt="Preview item"><span id="itemSelectedText">Sin item seleccionado.</span></div><div class="row"><div><label>Tamaño preview</label><input id="itemSize" type="number" value="32"></div><div><label>zIndex preview</label><input id="itemZ" type="number" value="3400"></div></div><div class="row" style="margin-top:10px"><button id="itemApply">Aplicar</button><button id="itemDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="itemDelete" class="danger">Eliminar</button><button id="itemClear" class="warning">Limpiar items</button></div></div>
+          <div class="section"><p class="section-title">Items ubicados</p><div class="list" id="itemList"></div></div>
+          <div class="section"><p class="section-title">Mini consola de código</p><textarea id="itemCodePreview" class="json-preview" readonly></textarea><div class="row" style="margin-top:8px"><button id="copyItemsCode" class="primary">Copiar código</button><button id="refreshItemsCode">Actualizar consola</button></div><button id="downloadItemsCode" class="violet" style="width:100%;margin-top:8px">Descargar código items</button><p class="hint">Copia este bloque y reemplaza el array itemsEnMapaConfig en el script del mapa.</p></div>
+        </section>
+        <section id="tabEnemy" class="tab-panel">
+          <div class="section"><p class="section-title">Herramienta enemy</p><div class="row"><button id="enemyToolPlace">Ubicar enemigo</button><button id="enemyToolLine">Línea enemigos</button></div></div>
+          <div class="section"><p class="section-title">Datos enemigo</p><label>ID base</label><input id="enemyPrefix" type="text" value="enemy_mapa_basico"><div class="row"><div><label>Nombre</label><input id="enemyName" type="text" value="Centinela Reptiliano"></div><div><label>Tipo</label><input id="enemyType" type="text" value="basico"></div></div><label>Sprite preview</label><input id="enemySpriteFile" type="file" accept="image/*"><div id="enemyImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin sprite cargado.</div></div><label>Ruta imagen JSON</label><input id="enemyImagePath" type="text"><div class="row-3"><div><label>W</label><input id="enemyW" type="number" value="64"></div><div><label>H</label><input id="enemyH" type="number" value="64"></div><div><label>Frames X</label><input id="enemyFramesX" type="number" value="1" min="1"></div></div><div class="row-3"><div><label>Vida</label><input id="enemyLife" type="number" value="43"></div><div><label>Ataque</label><input id="enemyAttack" type="number" value="6"></div><div><label>Velocidad</label><input id="enemySpeed" type="number" value="1.8" step="0.1"></div></div><div class="row"><div><label>Radio visión</label><input id="enemyVision" type="number" value="400"></div><div><label>Animación ataque</label><input id="enemyAttackAnim" type="text" value="ataqueEnemigoBasico"></div></div><label>Script al morir</label><input id="enemyDeathScript" type="text" value="dropItemBasico"><label>Diálogos normales</label><textarea id="enemyDialogs">grr...!!
+Gr...!!</textarea><label>Diálogos ataque</label><textarea id="enemyAttackDialogs">¡Intruso detectado!
+¡No escaparás!</textarea><div class="row" style="margin-top:10px"><button id="enemyApply">Aplicar</button><button id="enemyDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="enemyDelete" class="danger">Eliminar</button><button id="enemyClear" class="warning">Limpiar enemigos</button></div></div>
+          <div class="section"><p class="section-title">Enemigos</p><div class="list" id="enemyList"></div></div><div class="section"><p class="section-title">Importar / exportar enemy.json</p><label>Cargar enemy.json</label><input id="importEnemy" type="file" accept="application/json"><button id="downloadEnemy" class="primary" style="width:100%">Descargar JSON de enemy</button><label>Vista previa</label><textarea id="enemyPreview" class="json-preview" readonly></textarea></div>
+        </section>
+        <section id="tabIlum" class="tab-panel">
+          <div class="section"><p class="section-title">Herramienta iluminación</p><div class="row"><button id="lightToolPlace">Ubicar luz</button><button id="lightToolLine">Línea luces</button></div></div>
+          <div class="section"><p class="section-title">Datos ilumSistemMapa</p><label>ID base nombre_id</label><input id="lightPrefix" type="text" value="antorcha_mapa"><div class="row"><div><label>Tipo</label><input id="lightType" type="text" value="antorcha"></div><div><label>Color opcional</label><input id="lightColor" type="text"></div></div><label>Imagen preview</label><input id="lightImageFile" type="file" accept="image/*"><div id="lightImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin imagen cargada.</div></div><label>Ruta imagen JSON</label><input id="lightImagePath" type="text" value="../assets/spriteAmbiente/antorcha.svg"><div class="row-3"><div><label>W</label><input id="lightW" type="number" value="60"></div><div><label>H</label><input id="lightH" type="number" value="60"></div><div><label>Función</label><input id="lightFunction" type="text"></div></div><div class="row" style="margin-top:10px"><button id="lightApply">Aplicar</button><button id="lightDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="lightDelete" class="danger">Eliminar</button><button id="lightClear" class="warning">Limpiar luces</button></div></div>
+          <div class="section"><p class="section-title">Luces</p><div class="list" id="lightList"></div></div><div class="section"><p class="section-title">Importar / exportar ilumSistemMapa.json</p><label>Cargar ilumSistemMapa.json</label><input id="importLight" type="file" accept="application/json"><button id="downloadLight" class="primary" style="width:100%">Descargar JSON de iluminación</button><label>Vista previa</label><textarea id="lightPreview" class="json-preview" readonly></textarea></div>
+        </section>
+        <section id="tabNPC" class="tab-panel">
+          <div class="section"><p class="section-title">Herramienta NPC ambiente</p><button id="npcToolPlace" style="width:100%">Ubicar NPC ambiente</button></div>
+          <div class="section"><p class="section-title">Datos NPCambiente</p><label>Nombre</label><input id="npcName" type="text" value="Karina"><label>Imagen preview</label><input id="npcImageFile" type="file" accept="image/*"><div id="npcImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin imagen cargada.</div></div><label>Ruta imagen JSON</label><input id="npcImagePath" type="text"><div class="row-3"><div><label>W</label><input id="npcW" type="number" value="64"></div><div><label>H</label><input id="npcH" type="number" value="64"></div><div><label>Velocidad</label><input id="npcSpeed" type="number" value="1.2" step="0.1"></div></div><label>Diálogos automáticos</label><textarea id="npcDialogs">Necesito mi metafon para revisar el metamap.
+Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo</label><textarea id="npcFearDialogs">¡Auxilio!
+¡Corran!
+¡Peligro!</textarea><div class="row" style="margin-top:10px"><button id="npcApply">Aplicar</button><button id="npcDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="npcDelete" class="danger">Eliminar</button><button id="npcClear" class="warning">Limpiar NPCs</button></div></div>
+          <div class="section"><p class="section-title">NPCs ambiente</p><div class="list" id="npcList"></div></div><div class="section"><p class="section-title">Importar / exportar NPCambiente.json</p><label>Cargar NPCambiente.json</label><input id="importNpc" type="file" accept="application/json"><button id="downloadNpc" class="primary" style="width:100%">Descargar JSON de NPC ambiente</button><label>Vista previa</label><textarea id="npcPreview" class="json-preview" readonly></textarea></div>
+        </section>
+        <section id="tabMisiones" class="tab-panel">
+          <div class="notice">Llena los datos, ubica el NPC de misión, agrega pasos y presiona “Cargar misión”. Al final descarga missions.json.</div>
+          <div class="section"><p class="section-title">Misión actual</p><div class="row"><div><label>ID misión</label><input id="missionId" type="text" value="m1"></div><div><label>Nombre</label><input id="missionName" type="text" value="Nueva misión"></div></div><div class="row"><div><label>Tipo</label><select id="missionType"><option value="principal">principal</option><option value="secundaria" selected>secundaria</option><option value="diaria">diaria</option></select></div><div><label>Clasificación</label><input id="missionClass" type="text" value="diaria"></div></div><label>Descripción</label><textarea id="missionDesc">Describe aquí la misión.</textarea><div class="row-3"><div><label>IQ</label><input id="missionIq" type="number" value="3"></div><div><label>Cosmonedas</label><input id="missionCoins" type="number" value="10"></div><div><label>Código</label><input id="missionSecret" type="text"></div></div><label>Items recompensa: id,cantidad por línea</label><textarea id="missionRewardItems">corazon,1</textarea></div>
+          <div class="section"><p class="section-title">NPC de misión</p><button id="missionNpcTool" style="width:100%">Ubicar NPC de misión</button><div class="row"><div><label>ID NPC</label><input id="missionNpcId" type="text" value="npc01"></div><div><label>Nombre NPC</label><input id="missionNpcName" type="text" value="Doctor Cyron"></div></div><label>Sprite preview</label><input id="missionNpcFile" type="file" accept="image/*"><div id="missionNpcImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin sprite cargado.</div></div><label>Ruta imagen JSON</label><input id="missionNpcImagePath" type="text"><label>Diálogo 1</label><textarea id="missionNpcDialog1">Hola, cosmonauta.</textarea><label>Diálogo 2</label><textarea id="missionNpcDialog2">Aún no completas el objetivo.</textarea><label>Diálogo final</label><textarea id="missionNpcDialogFinal">Misión completada. Excelente trabajo.</textarea><label>Función de cumplimiento</label><input id="missionCompleteFunction" type="text"></div>
+          <div class="section"><p class="section-title">Agregar paso</p><div class="row"><div><label>Tipo de paso</label><select id="stepType"><option value="hablar_npc">hablar_npc</option><option value="hablar_npc_entrega">hablar_npc_entrega</option><option value="recolectar_items">recolectar_items</option><option value="funcion">funcion</option></select></div><div><label>Título</label><input id="stepTitle" type="text" value="Nuevo paso"></div></div><label>Descripción paso</label><textarea id="stepDesc">Describe el objetivo del paso.</textarea><div class="row"><div><label>NPC ID / objetivo</label><input id="stepNpcId" type="text" value="npc01"></div><div><label>Función siguiente paso</label><input id="stepFunction" type="text"></div></div><label>Items requeridos: id,cantidad</label><textarea id="stepItems"></textarea><label>Items que entrega el jugador</label><textarea id="stepEntregaItems"></textarea><label>Items que otorga el paso</label><textarea id="stepOtorgaItems"></textarea><div class="row" style="margin-top:10px"><button id="addStep" class="primary">Agregar paso</button><button id="clearSteps" class="warning">Limpiar pasos</button></div><div class="list" id="stepList" style="margin-top:10px"></div></div>
+          <div class="section"><p class="section-title">Cargar y exportar misiones</p><button id="loadMission" class="primary" style="width:100%;margin-bottom:8px">Cargar misión al JSON</button><label>Cargar missions.json</label><input id="importMissions" type="file" accept="application/json"><button id="downloadMissions" class="primary" style="width:100%">Descargar JSON de misiones</button><label>Misiones cargadas</label><div class="list" id="missionList"></div><label>Vista previa</label><textarea id="missionPreview" class="json-preview" readonly></textarea></div>
+        </section>
+      </div>
+    </aside>
+    <section class="workspace">
+      <header class="topbar"><div class="topbar-left"><span class="pill">Editor visual</span><span class="pill" id="topMapSize">5000 x 5000 px</span><span class="pill ok" id="topTool">Modo: mover</span><span class="pill warn" id="activeLayer">Capa: proyecto</span></div><div class="topbar-right"><button id="measureTool">Regla</button><span class="pill warn" id="measureReadout">Medida: -</span><button id="zoomOut">- Zoom</button><button id="zoomIn">+ Zoom</button><button id="zoom100">100%</button><button id="fitView">Encajar</button></div></header>
+      <div class="viewport" id="viewport"><div class="dropzone" id="dropzone"></div><div class="map-stage" id="mapStage"><img id="mapImage" class="map-image" alt="Mapa cargado"><div id="mapPlaceholder" class="map-placeholder"><div><div style="font-size:28px;color:var(--accent);margin-bottom:10px">Carga tu mapa</div><div>Luego usa cada pestaña para ubicar bloques, enemigos, luces, NPCs y misiones.</div></div></div><div class="entities-layer" id="ambLayer"></div><div class="entities-layer layer-hidden" id="enemyLayer"></div><div class="entities-layer layer-hidden" id="lightLayer"></div><div class="entities-layer layer-hidden" id="npcLayer"></div><div class="entities-layer layer-hidden" id="missionLayer"></div><div class="entities-layer" id="itemLayer"></div><div class="map-grid" id="mapGrid"></div><div class="map-border-label" id="mapBorderLabel">5000 x 5000</div></div></div>
+      <footer class="bottombar"><span>Rueda: zoom · Bolita: mover mapa · Regla: medir px · Lápiz del nodo: editar JSON</span><span id="bottomStatus">Listo</span></footer>
+    </section>
+  </main>
+
+  <div class="json-modal-backdrop" id="jsonModal" hidden>
+    <div class="json-modal" id="jsonModalBox">
+      <div class="json-modal-head">
+        <div class="json-modal-title" id="jsonModalTitle">Editar componente</div>
+        <button id="jsonModalClose" type="button" class="mini-btn">Cerrar</button>
+      </div>
+      <textarea id="jsonEditorText" spellcheck="false"></textarea>
+      <div>
+        <div class="json-drop-hint">Puedes arrastrar una imagen aquí para cambiar la ruta imagen o sprites_1x10 del componente. El editor no muestra campos internos de preview; la ruta final sigue siendo la del juego, no source.</div>
+        <div class="json-modal-actions">
+          <button id="jsonModalApplyImage" type="button" class="warning">Aplicar imagen arrastrada</button>
+          <button id="jsonModalSave" type="button" class="primary">Guardar JSON del componente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY='enycosmic_dashboard_v2'; const HISTORY_LIMIT=50;
+const history={undo:[],redo:[],locked:false};
+    const state={mapSize:5000,mapDataUrl:null,mapSourcePath:null,mapName:null,imageWidth:null,imageHeight:null,scale:1,minScale:.03,maxScale:4,offsetX:0,offsetY:0,activeTab:'tabProyecto',tool:'pan',gridVisible:false,draggingView:false,draggingNode:false,resizingNode:false,drawingRect:false,drawingLine:false,dragStart:null,nodeStart:null,lineStart:null,selected:{kind:null,id:null},measuring:false,measureStart:null,jsonEditor:{kind:null,id:null,lastImage:null,lastImageName:null,lastImageUrl:null},next:{ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1},previews:{ambiente:null,ambienteSprite:null,arcilla:null,item:null,enemy:null,light:null,npc:null,missionNpc:null},previewNames:{ambiente:null,ambienteSprite:null,arcilla:null,item:null,enemy:null,light:null,npc:null,missionNpc:null},itemCatalog:[],data:{ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[]}};
+    const $=id=>document.getElementById(id),clamp=(v,min,max)=>Math.max(min,Math.min(max,v)),round=v=>Math.round(Number(v)||0),lines=v=>String(v||'').split('\n').map(x=>x.trim()).filter(Boolean),pad=n=>String(n).padStart(2,'0');
+    const els={viewport:$('viewport'),mapStage:$('mapStage'),mapImage:$('mapImage'),mapPlaceholder:$('mapPlaceholder'),mapGrid:$('mapGrid'),dropzone:$('dropzone'),layers:{ambiente:$('ambLayer'),enemy:$('enemyLayer'),light:$('lightLayer'),npc:$('npcLayer'),missionNpc:$('missionLayer'),item:$('itemLayer')}};
+    const sourceItemsFiles=new Map();
+    const sourceSystemFiles=new Map();
+    const sessionPreviewUrls=new Set();
+    function safeId(t,f='item'){return String(t||f).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_]+/g,'_').replace(/^_+|_+$/g,'')||f}
+    function setStatus(t){$('bottomStatus').textContent=t}function uid(kind,prefix){return `${safeId(prefix,kind)}_${pad(state.next[kind]++)}`}function activeKind(){return({tabAmbiente:'ambiente',tabItems:'item',tabEnemy:'enemy',tabIlum:'light',tabNPC:'npc',tabMisiones:'missionNpc'})[state.activeTab]||null}
+    function setTab(id){state.activeTab=id;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===id));Object.values(els.layers).forEach(l=>l.classList.add('layer-hidden'));const k=activeKind();if(k&&els.layers[k])els.layers[k].classList.remove('layer-hidden');$('activeLayer').textContent='Capa: '+(k||'proyecto');setTool('pan');renderAll()}
+    function setTool(tool){state.tool=tool;els.viewport.classList.toggle('draw-mode',['amb-draw','line','place','amb-place','amb-real-place','arcilla-place','arcilla-line','item-place','measure'].includes(tool));$('topTool').textContent='Modo: '+tool;['measureTool','ambToolPan','ambToolDraw','ambApply','ambToolReal','arcillaToolPlace','arcillaToolLine','itemToolPlace','enemyToolPlace','enemyToolLine','lightToolPlace','lightToolLine','npcToolPlace','missionNpcTool'].forEach(id=>$(id)?.classList.remove('active'));if(tool==='measure')$('measureTool')?.classList.add('active');if(tool==='amb-draw')$('ambToolDraw')?.classList.add('active');if(tool==='amb-place')$('ambApply')?.classList.add('active');if(tool==='amb-real-place')$('ambToolReal')?.classList.add('active');if(tool==='arcilla-place')$('arcillaToolPlace')?.classList.add('active');if(tool==='arcilla-line')$('arcillaToolLine')?.classList.add('active');if(tool==='item-place')$('itemToolPlace')?.classList.add('active');if(tool==='place'){const k=activeKind();if(k==='enemy')$('enemyToolPlace')?.classList.add('active');if(k==='light')$('lightToolPlace')?.classList.add('active');if(k==='npc')$('npcToolPlace')?.classList.add('active');if(k==='missionNpc')$('missionNpcTool')?.classList.add('active')}if(tool==='line'){const k=activeKind();if(k==='enemy')$('enemyToolLine')?.classList.add('active');if(k==='light')$('lightToolLine')?.classList.add('active')}if(tool==='pan')$('ambToolPan')?.classList.add('active');setStatus(tool==='measure'?'Regla activa: arrastra en horizontal o vertical para medir pixeles.':tool==='pan'?'Modo mover/editar activo.':(tool==='line'||tool==='arcilla-line')?'Arrastra para crear una línea.':'Haz clic o arrastra sobre el mapa.')}
+    function screenToWorld(x,y){const r=els.viewport.getBoundingClientRect();return{x:(x-r.left-state.offsetX)/state.scale,y:(y-r.top-state.offsetY)/state.scale}}
+    function fitToView(){const pad=36,sc=Math.min((els.viewport.clientWidth-pad)/state.mapSize,(els.viewport.clientHeight-pad)/state.mapSize);state.scale=clamp(sc,state.minScale,state.maxScale);state.offsetX=Math.round((els.viewport.clientWidth-state.mapSize*state.scale)/2);state.offsetY=Math.round((els.viewport.clientHeight-state.mapSize*state.scale)/2);renderStage()}
+    function zoomAt(cx,cy,next){const old=state.scale,ns=clamp(next,state.minScale,state.maxScale);if(ns===old)return;const r=els.viewport.getBoundingClientRect(),px=cx-r.left,py=cy-r.top,wx=(px-state.offsetX)/old,wy=(py-state.offsetY)/old;state.scale=ns;state.offsetX=px-wx*ns;state.offsetY=py-wy*ns;renderStage()}
+    function renderStage(){els.mapStage.style.width=state.mapSize+'px';els.mapStage.style.height=state.mapSize+'px';els.mapStage.style.transform=`translate(${state.offsetX}px,${state.offsetY}px) scale(${state.scale})`;els.mapImage.style.objectFit=$('fitMode').value;els.mapGrid.classList.toggle('visible',state.gridVisible);$('mapBorderLabel').textContent=`${state.mapSize} x ${state.mapSize}`;$('topMapSize').textContent=`${state.mapSize} x ${state.mapSize} px`;$('statLogicalSize').textContent=`${state.mapSize} x ${state.mapSize}`;$('statZoom').textContent=Math.round(state.scale*100)+'%'}
+    function setMapSize(v){state.mapSize=round(clamp(Number(v)||5000,200,5000));$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;document.querySelectorAll('[data-size]').forEach(b=>b.classList.toggle('active',Number(b.dataset.size)===state.mapSize));fitToView();saveLocalSoon()}
+    function readFileAsDataURL(file,cb){if(!file)return;const fr=new FileReader();fr.onload=()=>cb(fr.result,file);fr.readAsDataURL(file)}
+    function setLoadedPreview(kind,url,file,pathInputId,folder,previewBoxId){state.previews[kind]=url;state.previewNames[kind]=file?.name||null;if(previewBoxId)setAssetPreview(previewBoxId,url,file?.name||'Preview');if(pathInputId&&$(pathInputId)&&file?.name)$(pathInputId).value=(folder||'')+file.name}
+    function isSystemImageFile(file){return !!file&&/\.(svg|png|jpe?g|webp|wep|gif)$/i.test(file.name||'')}
+    function isDirectSourceFile(file){const path=file.webkitRelativePath||file.name||'';const parts=path.split('/').filter(Boolean);if(parts.length<=1)return true;return String(parts[parts.length-2]||'').toLowerCase()==='source'}
+    function loadSourceSystemFolder(files){sourceSystemFiles.forEach(asset=>{if(asset&&asset.url&&isRuntimeOnlyUrl(asset.url))URL.revokeObjectURL(asset.url)});sourceSystemFiles.clear();[...(files||[])].forEach(file=>{if(!isSystemImageFile(file))return;if(!isDirectSourceFile(file))return;const url=URL.createObjectURL(file);sessionPreviewUrls.add(url);sourceSystemFiles.set(file.name,{file,name:file.name,url})});renderSourceSystemGallery();const total=sourceSystemFiles.size;setStatus(total?`Elementos de sistemas cargados: ${total}.`:'No encontré imágenes directamente dentro de source.')}
+    function renderSourceSystemGallery(){const box=$('sourceSystemsGallery'),countBox=$('sourceSystemsCount');if(!box)return;box.style.display='grid';box.innerHTML='';const normalizeSearch=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');const query=normalizeSearch($('sourceSystemsSearch')?.value||'');let assets=[...sourceSystemFiles.values()].sort((a,b)=>a.name.localeCompare(b.name));if(query)assets=assets.filter(asset=>normalizeSearch(asset.name).includes(query));if(countBox)countBox.textContent=sourceSystemFiles.size?`Mostrando ${assets.length} de ${sourceSystemFiles.size} elementos.`:'No hay elementos cargados todavía.';if(!sourceSystemFiles.size){box.innerHTML='<div class="hint">No hay imágenes cargadas. Selecciona la carpeta source.</div>';return}if(!assets.length){box.innerHTML='<div class="hint">No encontré elementos con ese nombre.</div>';return}assets.forEach(asset=>{const card=document.createElement('div');card.className='catalog-card';card.dataset.systemAsset=encodeURIComponent(asset.name);const img=document.createElement('img');img.className='catalog-thumb';img.src=asset.url;img.alt=asset.name;const title=document.createElement('div');title.className='catalog-card-title';title.innerHTML=`${asset.name}<small>./source/${asset.name}</small>`;card.appendChild(img);card.appendChild(title);box.appendChild(card)})}
+    async function selectSourceSystemAsset(fileName){const asset=sourceSystemFiles.get(fileName);if(!asset)return;setAmbUseSpriteMode(false);if($('ambUseSprite'))$('ambUseSprite').checked=false;if($('ambSpritePath'))$('ambSpritePath').value='';if($('ambSpritePreview'))setAssetPreview('ambSpritePreview',null);if($('ambImagePath'))$('ambImagePath').value='../assets/spriteAmbiente/'+asset.name;state.previews.ambiente=asset.url;state.previewNames.ambiente=asset.name;setAssetPreview('ambImagePreview',asset.url,asset.name);await detectAmbRealSize(true);setStatus(`Elemento de sistema listo para usar: ${asset.name}.`)}
+    function previewMatchesPath(kind,path){const loaded=state.previewNames?.[kind];if(!loaded)return false;return getFileNameFromPath(path)===loaded}
+    function safePreviewFor(kind,path){return previewMatchesPath(kind,path)?state.previews[kind]:null}
+    function spritePreviewForPath(path){return previewMatchesPath('ambienteSprite',path)?state.previews.ambienteSprite:null}
+    function finalAssetPath(folder,fileName){return fileName?(folder||'')+fileName:null}
+    function repairAmbienteImageRoute(item){if(!item)return item;if(item.sprites_1x10&&item.previewNameSprite){const current=getFileNameFromPath(item.sprites_1x10);if(current!==item.previewNameSprite)item.sprites_1x10=finalAssetPath('../assets/spriteAmbiente/',item.previewNameSprite)}if(item.imagen&&item.previewName){const current=getFileNameFromPath(item.imagen);if(current!==item.previewName){const folder=item.subtipo==='bloque_arcilla'?'../assets/items/':'../assets/spriteAmbiente/';item.imagen=finalAssetPath(folder,item.previewName)}}return item}
+    function imageSizeFromUrl(url){return new Promise((resolve,reject)=>{if(!url)return reject(new Error('sin imagen'));const img=new Image();img.onload=()=>resolve({w:img.naturalWidth||img.width,h:img.naturalHeight||img.height});img.onerror=()=>reject(new Error('no se pudo cargar imagen'));img.src=url})}
+    function setAmbRealSize(w,h){if($('ambRealW'))$('ambRealW').value=round(w)||80;if($('ambRealH'))$('ambRealH').value=round(h)||80}
+    function ambUseSpriteMode(){return !!$('ambUseSprite')?.checked&&!!($('ambSpritePath')?.value?.trim())}
+    function setAmbUseSpriteMode(value){if($('ambUseSprite'))$('ambUseSprite').checked=!!value}
+    async function detectAmbRealSize(silent=false){const spritePath=$('ambSpritePath')?.value?.trim()||'',imagePath=$('ambImagePath')?.value?.trim()||'',usingSprite=ambUseSpriteMode(),src=usingSprite?(state.previews.ambienteSprite||sourcePreviewPath(spritePath)||spritePath):(state.previews.ambiente||sourcePreviewPath(imagePath)||imagePath);if(!src){if(!silent)setStatus('Primero carga una imagen o escribe la ruta de imagen.');return null}try{const size=await imageSizeFromUrl(src);const frameSize=usingSprite?{w:Math.max(1,Math.round((size.w||120)/10)),h:Math.max(1,Math.round(size.h||120))}:size;setAmbRealSize(frameSize.w,frameSize.h);if(!silent)setStatus(usingSprite?`Tamaño del primer sprite detectado: ${round(frameSize.w)} x ${round(frameSize.h)}.`:`Tamaño real detectado: ${round(frameSize.w)} x ${round(frameSize.h)}.`);return frameSize}catch(e){if(!silent)setStatus('No pude detectar el tamaño. Revisa que la imagen exista en source o cárgala manualmente.');return null}}
+    function ambRealSizeValues(){return{w:Math.max(1,round($('ambRealW')?.value)||80),h:Math.max(1,round($('ambRealH')?.value)||80)}}
+    function getFileNameFromPath(path){return String(path||'').split(/[\\/]/).pop().split('?')[0].split('#')[0]}
+    function sourcePreviewPath(path,folder='source'){const file=getFileNameFromPath(path);if(!file)return null;if(folder&&folder!=='source')return `${folder}/${file}`;const raw=String(path||'').replace(/\\/g,'/').toLowerCase();if(raw.includes('/items/')||raw.includes('assets/items')||raw.includes('source/items'))return `source/items/${file}`;if(raw.includes('/mapas/')||raw.includes('source/mapas'))return `source/mapas/${file}`;return `source/${file}`}
+    function isRuntimeOnlyUrl(url){return /^blob:/i.test(String(url||''))}
+    function isStaleRuntimePreview(url){return isRuntimeOnlyUrl(url)&&!sessionPreviewUrls.has(url)}
+    function safeRuntimePreview(url){url=String(url||'');return url&&!isStaleRuntimePreview(url)?url:null}
+    function cleanRuntimeFields(value){if(Array.isArray(value))return value.map(cleanRuntimeFields);if(value&&typeof value==='object'){const out={};Object.keys(value).forEach(k=>{if(['preview','sourcePreview','lastImageUrl','pendingImage'].includes(k))return;if(k==='previewName'||k==='previewNameSprite'){out[k]=value[k];return}const v=value[k];if(typeof v==='string'&&isRuntimeOnlyUrl(v))return;out[k]=cleanRuntimeFields(v)});return out}return value}
+    function cleanProjectForStorage(project){const p=cleanRuntimeFields(project);if(p?.map&&typeof p.map.dataUrl==='string'&&isRuntimeOnlyUrl(p.map.dataUrl))p.map.dataUrl=null;return p}
+    function sanitizeGameAssetPath(path,currentPath=null){const s=String(path||'').trim();if(!s)return null;if(/^blob:/i.test(s)||/^data:/i.test(s))return currentPath&&!(/^blob:/i.test(String(currentPath))||/^data:/i.test(String(currentPath)))?currentPath:null;return s}
+    function sanitizeLoadedData(data){const cleaned=cleanRuntimeFields(data||{});['ambiente','items','enemy','light','npc','missionNpcs'].forEach(k=>{if(Array.isArray(cleaned[k]))cleaned[k]=cleaned[k].map(x=>{if(x&&typeof x==='object'){if('imagen'in x)x.imagen=sanitizeGameAssetPath(x.imagen,null);if('sprites_1x10'in x)x.sprites_1x10=sanitizeGameAssetPath(x.sprites_1x10,null)}return x})});return cleaned}
+    function itemPreviewCandidates(path){const file=getFileNameFromPath(path);if(!file)return[];const clean=file.replace(/\s+/g,'');const base=clean.replace(/\.([a-z0-9]+)$/i,'');const ext=(clean.match(/\.([a-z0-9]+)$/i)||['','.svg'])[1];const names=[file,clean,base+'.'+ext,base+'-.'+ext,base.replace(/-/g,'')+'.'+ext,base.replace(/_/g,'')+'.'+ext,base.replace(/[-_\s]+/g,'')+'.'+ext];return[...new Set(names.filter(Boolean))]}
+    function simplifyFileName(name){return String(name||'').toLowerCase().replace(/[^a-z0-9.]/g,'')}
+    function sourceFileUrlByName(name){if(!name)return null;if(sourceItemsFiles.has(name))return sourceItemsFiles.get(name);const lower=[...sourceItemsFiles.keys()].find(k=>k.toLowerCase()===String(name).toLowerCase());if(lower)return sourceItemsFiles.get(lower);const simple=simplifyFileName(name);const soft=[...sourceItemsFiles.keys()].find(k=>simplifyFileName(k)===simple);return soft?sourceItemsFiles.get(soft):null}
+    function itemPreviewFromImagePath(path){for(const name of itemPreviewCandidates(path)){const url=sourceFileUrlByName(name);if(url)return url}const file=getFileNameFromPath(path);return file?`source/items/${file}`:null}
+    function getPreviewSrc(item,kind){if(!item)return null;const runtime=safeRuntimePreview(item.preview);if(runtime)return runtime;if(kind==='item'||item.item_id){const itemSrc=itemPreviewFromImagePath(item.imagen)||safeRuntimePreview(item.sourcePreview)||item.imagen||null;return itemSrc&&!isStaleRuntimePreview(itemSrc)?itemSrc:null}const ambSrc=item.sprites_1x10||item.imagen||null;if(!ambSrc)return null;return sourcePreviewPath(ambSrc)||ambSrc}
+    const assetPreviewMap={ambiente:'ambImagePreview',arcilla:'arcillaImagePreview',enemy:'enemyImagePreview',light:'lightImagePreview',npc:'npcImagePreview',missionNpc:'missionNpcImagePreview'};
+    function setAssetPreview(previewId,src,label=''){const box=$(previewId);if(!box)return;if(!src){box.innerHTML='<div class="asset-preview-empty">Sin imagen cargada.</div>';return}box.innerHTML='';const img=new Image();const info=document.createElement('div');info.className='asset-preview-info';info.innerHTML=`Vista previa<small>${label||src}</small>`;img.alt='Vista previa del recurso';img.onload=()=>{const size=img.naturalWidth&&img.naturalHeight?`${img.naturalWidth} x ${img.naturalHeight}`:'';if(size)info.innerHTML=`Vista previa<small>${label||src}</small><small>${size}</small>`};img.onerror=()=>{box.innerHTML=`<div class="asset-preview-empty">No se pudo mostrar la imagen. Revisa que exista en source o vuelve a cargarla manualmente.<br>${label||src}</div>`};img.src=src;box.appendChild(img);box.appendChild(info)}
+    function previewFromPathInput(pathId,previewId,folder='source'){const el=$(pathId);if(!el)return;const path=el.value.trim();if(!path){setAssetPreview(previewId,null);return}const src=sourcePreviewPath(path,folder)||path;setAssetPreview(previewId,src,`Preview local: ${src}`)}
+    function normalizeItemDefinition(item){const id=String(item.id||item.item_id||'').trim();const imagen=item.imagen||item.image||item.sprite||item.icono||item.icon||null;return{...item,id,nombre_item:item.nombre_item||item.nombre||item.name||id||'Item',imagen,sourcePreview:itemPreviewFromImagePath(imagen)}}
+    function getItemDefinition(itemId){const id=String(itemId||'').trim();return(state.itemCatalog||[]).find(x=>String(x.id||x.item_id||'').trim()===id)||null}
+    function getItemsCatalogFromJson(json){if(Array.isArray(json))return json;if(Array.isArray(json.items))return json.items;if(Array.isArray(json.itemData))return json.itemData;if(Array.isArray(json.itemsData))return json.itemsData;if(Array.isArray(json.data))return json.data;if(json&&typeof json==='object')return Object.keys(json).map(k=>typeof json[k]==='object'?{id:json[k].id||k,...json[k]}:null).filter(Boolean);return[]}
+    function setImgWithFallback(img,path){if(!img)return;const candidates=itemPreviewCandidates(path);let i=0;function next(){if(i<candidates.length){const name=candidates[i++],url=sourceFileUrlByName(name);img.src=url||`source/items/${name}`;return}img.removeAttribute('src')}img.onerror=next;next()}
+    function renderItemCatalogGrid(){const grid=$('itemCatalogGrid');if(!grid)return;grid.innerHTML='';if(!state.itemCatalog.length){grid.innerHTML='<div class="hint">Carga la carpeta source/items o items.json para ver el catálogo.</div>';return}const current=$('itemCatalogSelect')?.value||$('itemId')?.value||'';state.itemCatalog.forEach(item=>{const card=document.createElement('div');card.className='catalog-card'+(item.id===current?' active':'');card.dataset.itemId=item.id;const img=document.createElement('img');img.className='catalog-thumb';img.alt=item.nombre_item||item.id;setImgWithFallback(img,item.imagen);const title=document.createElement('div');title.className='catalog-card-title';title.innerHTML=`${item.nombre_item||item.id}<small>${item.id}</small>`;card.appendChild(img);card.appendChild(title);card.addEventListener('click',()=>{const sel=$('itemCatalogSelect');if(sel)sel.value=item.id;if($('itemId'))$('itemId').value=item.id;applyCatalogSelection(true);renderItemCatalogGrid()});grid.appendChild(card)})}
+    function renderItemCatalogSelect(){const sel=$('itemCatalogSelect');if(!sel)return;const current=sel.value||$('itemId')?.value||'';sel.innerHTML='';if(!state.itemCatalog.length){sel.innerHTML='<option value="">Carga source/items/items.json</option>';renderItemCatalogGrid();return}state.itemCatalog.forEach(item=>{const opt=document.createElement('option');opt.value=item.id;opt.textContent=`${item.id} · ${item.nombre_item||item.id}`;sel.appendChild(opt)});if(current&&state.itemCatalog.some(i=>i.id===current))sel.value=current;else sel.selectedIndex=0;applyCatalogSelection(false);renderItemCatalogGrid()}
+    function applyCatalogSelection(announce=true){const sel=$('itemCatalogSelect'),id=(sel?.value||$('itemId')?.value||'').trim(),def=getItemDefinition(id);if(!def)return;if($('itemId'))$('itemId').value=def.id;if($('itemImagePath'))$('itemImagePath').value=def.imagen||'';const info=$('itemCatalogInfo');const file=getFileNameFromPath(def.imagen);if(info)info.textContent=`${def.nombre_item||def.id} · preview: ${file?`source/items/${file}`:'sin imagen'} · JSON final: ${def.imagen||'sin imagen'}`;const img=$('itemSelectedImg'),txt=$('itemSelectedText');if(img)setImgWithFallback(img,def.imagen);if(txt)txt.textContent=`${def.nombre_item||def.id} (${def.id})`;if(announce)setStatus(`Item seleccionado: ${def.id}`)}
+    function loadItemsCatalogData(json,origin='source/items/items.json'){const arr=getItemsCatalogFromJson(json).map(normalizeItemDefinition).filter(x=>x.id);state.itemCatalog=arr;renderItemCatalogSelect();saveLocalSoon();setStatus(`${arr.length} items cargados desde ${origin}.`)}
+    async function loadItemsCatalogFromSource(){const path=($('itemCatalogPath')?.value||'source/items/items.json').trim()||'source/items/items.json';if(location.protocol==='file:'){setStatus('Por seguridad, el navegador bloquea leer items.json con file://. Usa “Cargar carpeta source/items” y selecciona la carpeta items.');return}try{const res=await fetch(path,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const json=await res.json();loadItemsCatalogData(json,path)}catch(e){setStatus('No se pudo autocargar source/items/items.json. Usa “Cargar carpeta source/items” o “Cargar items.json manual”.')}}
+    function loadItemsFolder(files){sourceItemsFiles.forEach(url=>{if(isRuntimeOnlyUrl(url))URL.revokeObjectURL(url)});sourceItemsFiles.clear();const list=[...files];let jsonFile=list.find(f=>f.name.toLowerCase()==='items.json')||list.find(f=>f.name.toLowerCase().endsWith('.json'));list.filter(f=>/^image\//.test(f.type)||/\.(svg|png|jpg|jpeg|webp|gif)$/i.test(f.name)).forEach(f=>{const url=URL.createObjectURL(f);sessionPreviewUrls.add(url);sourceItemsFiles.set(f.name,url)});if(!jsonFile){renderItemCatalogGrid();setStatus('No encontré items.json dentro de la carpeta seleccionada.');return}const fr=new FileReader();fr.onload=()=>{try{loadItemsCatalogData(JSON.parse(fr.result),'carpeta source/items');setStatus(`${sourceItemsFiles.size} imágenes y ${state.itemCatalog.length} items cargados desde la carpeta.`)}catch(e){setStatus('No se pudo leer items.json dentro de la carpeta.')}};fr.readAsText(jsonFile)}
+    function setMapVisual(src,name,width=null,height=null){els.mapImage.src=src;els.mapImage.classList.add('loaded');els.mapPlaceholder.classList.add('hidden');$('statFile').textContent=name||'Mapa cargado';$('statRealSize').textContent=width&&height?`${width} x ${height}`:'Detectando...';fitToView()}
+    function loadMapFromSourcePath(path,opts={}){path=String(path||$('mapSourcePath')?.value||'').trim();if(!path)return setStatus('Escribe la ruta del mapa dentro de source.');const img=new Image();img.onload=()=>{state.mapSourcePath=path;state.mapDataUrl=null;state.mapName=getFileNameFromPath(path)||path;state.imageWidth=img.naturalWidth;state.imageHeight=img.naturalHeight;if($('mapSourcePath'))$('mapSourcePath').value=path;setMapVisual(path,state.mapName,img.naturalWidth,img.naturalHeight);if(!opts.noSave)saveLocalSoon();if(!opts.silent)setStatus('Mapa cargado desde source.')};img.onerror=()=>setStatus('No se pudo cargar el mapa desde source. Revisa el nombre y la ubicación del archivo.');img.src=path}
+    function loadMap(file){if(!file||!file.type.startsWith('image/'))return setStatus('Archivo de mapa no válido.');readFileAsDataURL(file,(url)=>{const img=new Image();img.onload=()=>{state.mapDataUrl=url;state.mapSourcePath=null;state.mapName=file.name;state.imageWidth=img.naturalWidth;state.imageHeight=img.naturalHeight;if($('mapSourcePath'))$('mapSourcePath').value=`source/${file.name}`;setMapVisual(url,file.name,img.naturalWidth,img.naturalHeight);saveLocalSoon();setStatus('Mapa cargado.')};img.src=url})}
+function cfgAmb(useRealSize=false){
+  const t=[$('ambTipo1').value,$('ambTipo2').value].filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,2);
+  const real=useRealSize||!!$('ambUseRealSize')?.checked;
+  const size=real?ambRealSizeValues():{w:80,h:80};
+  const spritePath=$('ambSpritePath')?.value.trim()||null;
+  const imgPath=$('ambImagePath')?.value.trim()||null;
+  const useSprite=ambUseSpriteMode();
+  const previewName=(!useSprite&&previewMatchesPath('ambiente',imgPath))?state.previewNames.ambiente:null;
+  const previewNameSprite=(useSprite&&previewMatchesPath('ambienteSprite',spritePath))?state.previewNames.ambienteSprite:null;
+
+  return{
+    zona_id:uid('ambiente',$('ambPrefix').value),
+    tipo:t.join(' ')||'visual',
+    color:$('ambTransparent').checked?null:$('ambColor').value,
+    funcion:$('ambFunction').value.trim()||null,
+    imagen:useSprite?null:imgPath,
+    preview:useSprite?spritePreviewForPath(spritePath):safePreviewFor('ambiente',imgPath),
+    previewName:useSprite?null:previewName,
+    previewNameSprite:useSprite?previewNameSprite:null,
+    zIndexBase:round($('ambZ').value)||3300,
+    subtipo:$('ambSubtype').value.trim()||null,
+    w:size.w,
+    h:size.h,
+    x:0,
+    y:0,
+    sprites_1x10:useSprite?spritePath:null,
+    velocidad_movimiento:useSprite?(Number($('ambSpriteSpeed')?.value)||1.1):null,
+    sonido_ambiente:null
+  };
+}
+    function resetAmbToRedCollision(){state.selected={kind:null,id:null};$('ambTipo1').value='colisionables';$('ambTipo2').value='';$('ambColor').value='#ff0000';$('ambTransparent').checked=false;$('ambImagePath').value='';$('ambSpritePath').value='';$('ambFunction').value='';$('ambSubtype').value='';$('ambUseRealSize').checked=false;setAmbUseSpriteMode(false);state.previews.ambiente=null;state.previewNames.ambiente=null;state.previews.ambienteSprite=null;state.previewNames.ambienteSprite=null;setAssetPreview('ambImagePreview',null);setAssetPreview('ambSpritePreview',null);renderAll();setStatus('Plantilla lista: bloque colisionable rojo. Usa “Dibujar bloque” o “Ubicar componente ambiente”.')}
+    function placeAmbConfigured(pos){const useReal=ambUseSpriteMode()||!!$('ambUseRealSize')?.checked,b=cfgAmb(useReal);b.x=round(clamp(pos.x,0,state.mapSize-(b.w||80)));b.y=round(clamp(pos.y,0,state.mapSize-(b.h||80)));state.data.ambiente.push(b);select('ambiente',b.zona_id);saveLocalSoon();setStatus('Componente ambiente ubicado.')}
+    async function placeAmbReal(pos){let size=ambRealSizeValues();if(!$('ambRealW')?.value||!$('ambRealH')?.value||$('ambUseRealSize')?.checked){const detected=await detectAmbRealSize(true);if(detected)size={w:round(detected.w),h:round(detected.h)}}const b=cfgAmb(true);b.tipo='visual';b.color=null;b.w=size.w;b.h=size.h;b.x=round(clamp(pos.x,0,state.mapSize-b.w));b.y=round(clamp(pos.y,0,state.mapSize-b.h));state.data.ambiente.push(b);select('ambiente',b.zona_id);saveLocalSoon();setStatus('Bloque visual con tamaño real creado.')}
+    async function applyAmbRealSizeSelected(){const {kind,id}=state.selected;if(kind!=='ambiente'||!id)return setStatus('Selecciona primero un bloque visual.');const it=getItem('ambiente',id);if(!it)return;const detected=await detectAmbRealSize(true),size=detected?{w:round(detected.w),h:round(detected.h)}:ambRealSizeValues(),spritePath=$('ambSpritePath')?.value.trim()||null,imgPath=$('ambImagePath')?.value.trim()||null,useSprite=ambUseSpriteMode();it.w=size.w;it.h=size.h;it.tipo=it.tipo||'visual';it.color=it.color??null;if(useSprite){it.sprites_1x10=spritePath;it.velocidad_movimiento=Number($('ambSpriteSpeed')?.value)||1.1;it.sonido_ambiente=null;it.imagen=null;it.preview=spritePreviewForPath(spritePath)||null;it.previewNameSprite=previewMatchesPath('ambienteSprite',spritePath)?state.previewNames.ambienteSprite:null;it.previewName=null}else{it.imagen=imgPath;it.sprites_1x10=null;it.velocidad_movimiento=null;it.sonido_ambiente=null;it.preview=safePreviewFor('ambiente',imgPath)||null;it.previewName=previewMatchesPath('ambiente',imgPath)?state.previewNames.ambiente:null;it.previewNameSprite=null}renderAll();saveLocalSoon();setStatus(useSprite?'Sprite 1x10 aplicado al bloque seleccionado.':'Imagen visual aplicada al bloque seleccionado.')}
+    function cfgArcilla(){const imgPath=$('arcillaImagePath').value.trim()||'../assets/items/bloqueArcilla.svg',previewName=previewMatchesPath('arcilla',imgPath)?state.previewNames.arcilla:null;return{zona_id:uid('arcilla',$('arcillaPrefix').value),color:null,tipo:'colisionables',subtipo:'bloque_arcilla',funcion:$('arcillaFunction').value.trim()||null,x:0,y:0,w:round($('arcillaW').value)||64,h:round($('arcillaH').value)||64,imagen:imgPath,preview:safePreviewFor('arcilla',imgPath),previewName,zIndexBase:round($('arcillaZ').value)||3300,sprites_1x10:null,velocidad_movimiento:null,sonido_ambiente:null,pdr:round($('arcillaPdr').value)||12,pdr_max:round($('arcillaPdrMax').value)||12}}
+function placeArcilla(pos){const b=cfgArcilla();b.x=round(pos.x);b.y=round(pos.y);state.data.ambiente.push(b);select('ambiente',b.zona_id);saveLocalSoon()}
+function applyArcillaSelected(){const {kind,id}=state.selected;if(kind!=='ambiente'||!id)return setStatus('Selecciona primero un bloque de arcilla.');const it=getItem('ambiente',id);if(!it)return;Object.assign(it,cfgArcilla(),{zona_id:it.zona_id,x:it.x,y:it.y});renderAll();saveLocalSoon();setStatus('Bloque de arcilla actualizado.')}
+function makeArcillaLine(start,end){const t=cfgArcilla(),w=Math.max(1,round(t.w)||64),h=Math.max(1,round(t.h)||64),dx=end.x-start.x,dy=end.y-start.y,isHorizontal=Math.abs(dx)>=Math.abs(dy),distance=Math.abs(isHorizontal?dx:dy),step=isHorizontal?w:h,dir=(isHorizontal?dx:dy)>=0?1:-1,count=Math.max(1,Math.floor(distance/step)+1);for(let i=0;i<count;i++){const b=cfgArcilla();b.x=isHorizontal?round(start.x+(i*step*dir)):round(start.x);b.y=isHorizontal?round(start.y):round(start.y+(i*step*dir));b.x=round(clamp(b.x,0,state.mapSize-b.w));b.y=round(clamp(b.y,0,state.mapSize-b.h));state.data.ambiente.push(b)}renderAll();saveLocalSoon();setStatus('Línea recta de bloques de arcilla creada.')}
+    function cfgItem(){const size=round($('itemSize').value)||32,itemId=($('itemId').value||$('itemCatalogSelect')?.value||'item').trim()||'item',def=getItemDefinition(itemId),inst=uid('item',$('itemPrefix').value),img=def?.imagen||$('itemImagePath').value.trim()||null;return{id:inst,instancia_id:inst,item_id:itemId,imagen:img,sourcePreview:itemPreviewFromImagePath(img),preview:null,nombre_item:def?.nombre_item||itemId,x:0,y:0,w:size,h:size,size:size,zIndexBase:round($('itemZ').value)||3400}}
+    function itemsArray(){return(state.data.items||[]).map(it=>({instancia_id:it.instancia_id||it.id,item_id:it.item_id,x:round(it.x),y:round(it.y)}))}
+    function itemCode(){return 'let itemsEnMapaConfig = '+JSON.stringify(itemsArray(),null,2)+';'}
+    function refreshItemsCode(){const box=$('itemCodePreview');if(box)box.value=itemCode()}
+    function placeItemMap(pos){applyCatalogSelection(false);const it=cfgItem();it.x=round(pos.x);it.y=round(pos.y);state.data.items.push(it);select('item',it.id);refreshItemsCode();saveLocalSoon()}
+    function applyItemSelected(){const {kind,id}=state.selected;if(kind!=='item'||!id)return setStatus('Selecciona primero un item.');const it=getItem('item',id);if(!it)return;applyCatalogSelection(false);const cfg=cfgItem();Object.assign(it,cfg,{id:it.id,instancia_id:it.instancia_id,x:it.x,y:it.y});renderAll();saveLocalSoon();setStatus('Item actualizado.')}
+
+
+function ambJson(){return state.data.ambiente.map(raw=>{const b=repairAmbienteImageRoute({...raw});const hasSprite=!!b.sprites_1x10;const o={zona_id:b.zona_id,color:b.color??null,tipo:b.tipo||'visual',funcion:b.funcion||null,x:round(b.x),y:round(b.y),w:round(b.w),h:round(b.h),imagen:hasSprite?null:(b.imagen||null),zIndexBase:round(b.zIndexBase||3300),sprites_1x10:b.sprites_1x10||null,velocidad_movimiento:hasSprite?(b.velocidad_movimiento??1.1):null,sonido_ambiente:null};if(b.subtipo)o.subtipo=b.subtipo;if(b.pdr!==undefined&&b.pdr!==null)o.pdr=round(b.pdr);if(b.pdr_max!==undefined&&b.pdr_max!==null)o.pdr_max=round(b.pdr_max);return o})}
+    function cfgEnemy(){return{id:uid('enemy',$('enemyPrefix').value),nombre:$('enemyName').value.trim()||'Enemigo',tipo:$('enemyType').value.trim()||'basico',imagen:$('enemyImagePath').value.trim()||null,preview:safePreviewFor('enemy',$('enemyImagePath').value.trim()),previewName:previewMatchesPath('enemy',$('enemyImagePath').value.trim())?state.previewNames.enemy:null,w:round($('enemyW').value)||64,h:round($('enemyH').value)||64,framesX:Math.max(1,round($('enemyFramesX').value)||1),vida:round($('enemyLife').value)||1,ataque:round($('enemyAttack').value)||1,speed:Number($('enemySpeed').value)||1,vision:round($('enemyVision').value)||400,attackAnim:$('enemyAttackAnim').value.trim()||null,deathScript:$('enemyDeathScript').value.trim()||null,dialogos:lines($('enemyDialogs').value),dialogosAtack:lines($('enemyAttackDialogs').value),x:0,y:0}}
+    function enemyJson(){return{enemigos:state.data.enemy.map(e=>({id:e.id,nombre:e.nombre,tipo:e.tipo,imagen:e.imagen,puntos_de_vida:e.vida,puntos_de_ataque:e.ataque,atackAnimation:e.attackAnim,Speed_enemy:e.speed,radioVision:e.vision,dialogos:e.dialogos,dialogos_Atack:e.dialogosAtack,tamano:{w:e.w,h:e.h},posicion:{x:round(e.x),y:round(e.y)},ejecucion_script:{al_morir:e.deathScript||null}}))}}
+    function cfgLight(){return{nombre_id:uid('light',$('lightPrefix').value),tipo:$('lightType').value.trim()||'antorcha',imagen:$('lightImagePath').value.trim()||null,preview:safePreviewFor('light',$('lightImagePath').value.trim()),previewName:previewMatchesPath('light',$('lightImagePath').value.trim())?state.previewNames.light:null,w:round($('lightW').value)||60,h:round($('lightH').value)||60,color:$('lightColor').value.trim()||null,functionName:$('lightFunction').value.trim()||null,x:0,y:0}}
+    function lightJson(){return state.data.light.map(l=>{const o={nombre_id:l.nombre_id,tipo:l.tipo,imagen:l.imagen,w:round(l.w),h:round(l.h),x:round(l.x),y:round(l.y)};if(l.color)o.color=l.color;if(l.functionName)o.function=l.functionName;return o})}
+    function cfgNpc(){return{imagen:$('npcImagePath').value.trim()||null,preview:safePreviewFor('npc',$('npcImagePath').value.trim()),previewName:previewMatchesPath('npc',$('npcImagePath').value.trim())?state.previewNames.npc:null,nombre:$('npcName').value.trim()||'NPC',velocidad:Number($('npcSpeed').value)||1.2,w:round($('npcW').value)||64,h:round($('npcH').value)||64,dialogos_automaticos:lines($('npcDialogs').value),dialogos_miedo:lines($('npcFearDialogs').value),x:0,y:0,id:uid('npc','npc_ambiente')}}
+    function npcJson(){return state.data.npc.map(n=>({imagen:n.imagen,nombre:n.nombre,velocidad:n.velocidad,dialogos_automaticos:n.dialogos_automaticos,dialogos_miedo:n.dialogos_miedo,x:round(n.x),y:round(n.y)}))}
+    function cfgMissionNpc(){return{id:$('missionNpcId').value.trim()||uid('missionNpc','npc_mision'),nombre:$('missionNpcName').value.trim()||'NPC Misión',rol:'inicio',imagen:$('missionNpcImagePath').value.trim()||null,preview:safePreviewFor('missionNpc',$('missionNpcImagePath').value.trim()),previewName:previewMatchesPath('missionNpc',$('missionNpcImagePath').value.trim())?state.previewNames.missionNpc:null,w:64,h:64,x:0,y:0,conversation_default:lines($('missionNpcDialog1').value)[0]||'',dialogos:{inicio:lines($('missionNpcDialog1').value),en_progreso:lines($('missionNpcDialog2').value),completado:lines($('missionNpcDialogFinal').value)},funcionCumplimiento:$('missionCompleteFunction').value.trim()||null}}
+    
+    function makeNode(kind,item){const el=document.createElement('div');el.className='node '+({ambiente:'amb',enemy:'enemy',light:'light',npc:'npc',missionNpc:'missionNpc',item:'item'}[kind]||'');const id=item.id||item.instancia_id||item.zona_id||item.nombre_id||item.nombre;el.dataset.kind=kind;el.dataset.id=id;el.style.left=round(item.x)+'px';el.style.top=round(item.y)+'px';el.style.width=round(item.w||item.size||64)+'px';el.style.height=round(item.h||item.size||64)+'px';el.style.zIndex=item.zIndexBase||3000;el.dataset.label=(item.instancia_id||item.zona_id||item.id||item.nombre_id||item.item_id||item.nombre)+' · '+round(item.x)+','+round(item.y);if(state.selected.kind===kind&&state.selected.id===id)el.classList.add('selected');if(kind==='ambiente'){const isSprite=!!item.sprites_1x10,imgSrc=isSprite?(item.preview||sourcePreviewPath(item.sprites_1x10)||item.sprites_1x10):getPreviewSrc(item,kind);el.style.backgroundColor=item.color||'rgba(255,255,255,.04)';if(imgSrc){el.style.backgroundImage=`url("${imgSrc}")`;if(isSprite){el.classList.add('amb-sprite-1x10');el.style.animationDuration=(Number(item.velocidad_movimiento)||1.1)+'s'}}}else{const src=getPreviewSrc(item,kind);if(src){const div=document.createElement('div');div.className='sprite-crop';div.style.backgroundImage=`url("${src}")`;div.style.backgroundSize=kind==='enemy'?`${(item.framesX||1)*100}% auto`:'contain';div.style.backgroundPosition='0 0';div.style.backgroundRepeat='no-repeat';el.appendChild(div)}else el.style.backgroundColor=kind==='light'?'rgba(255,209,102,.32)':kind==='item'?'rgba(0,234,255,.24)':'rgba(183,140,255,.25)'}const tools=document.createElement('div');tools.className='node-tools';tools.innerHTML='<span class="node-tool" data-action="delete" title="Eliminar">×</span><span class="node-tool" data-action="duplicate" title="Duplicar">🖌</span><span class="node-tool" data-action="line" title="Editar JSON">✎</span>';el.appendChild(tools);if(kind==='ambiente'){const h=document.createElement('div');h.className='resize-handle';el.appendChild(h)}return el}
+
+    
+    function arrFor(kind){if(kind==='missionNpc')return state.data.missionNpcs||[];if(kind==='item')return state.data.items||[];return state.data[kind]||[]}
+    function renderLayer(kind){const layer=els.layers[kind];if(!layer)return;layer.innerHTML='';arrFor(kind).forEach(item=>layer.appendChild(makeNode(kind,item)))}
+    function getItem(kind,id){return arrFor(kind).find(x=>(x.id||x.instancia_id||x.zona_id||x.nombre_id||x.nombre)===id)}
+    function itemIdentity(item){return item?.id||item?.instancia_id||item?.zona_id||item?.nombre_id||item?.nombre}
+    function editorImageFolder(kind,obj){if(kind==='item'||obj?.subtipo==='bloque_arcilla')return '../assets/items/';if(kind==='enemy')return '../assets/avatares/enemy/';if(kind==='npc'||kind==='missionNpc')return '../assets/avatares/npc/mapa1/';return '../assets/spriteAmbiente/'}
+    function cleanEditorObject(kind,it){const raw=cleanRuntimeFields(JSON.parse(JSON.stringify(it||{})));delete raw.preview;delete raw.sourcePreview;delete raw.previewName;delete raw.previewNameSprite;raw.imagen=sanitizeGameAssetPath(raw.imagen,null);raw.sprites_1x10=sanitizeGameAssetPath(raw.sprites_1x10,null);if(kind==='ambiente'){const hasSprite=!!raw.sprites_1x10;const o={zona_id:raw.zona_id||raw.id||'bloque_ambiente',color:raw.color??null,tipo:raw.tipo||'visual',funcion:raw.funcion||null,x:round(raw.x||0),y:round(raw.y||0),w:round(raw.w||80),h:round(raw.h||80),imagen:hasSprite?null:(raw.imagen||null),zIndexBase:round(raw.zIndexBase||3300),sprites_1x10:raw.sprites_1x10||null,velocidad_movimiento:hasSprite?(raw.velocidad_movimiento??1.1):null,sonido_ambiente:null};if(raw.subtipo)o.subtipo=raw.subtipo;if(raw.pdr!==undefined&&raw.pdr!==null)o.pdr=round(raw.pdr);if(raw.pdr_max!==undefined&&raw.pdr_max!==null)o.pdr_max=round(raw.pdr_max);return o}return raw}
+    function applyEditorPreviewMemory(kind,current,obj){const pending=state.jsonEditor?.pendingImage,merged={...cleanRuntimeFields(current),...obj};delete merged.preview;delete merged.sourcePreview;delete merged.previewName;delete merged.previewNameSprite;if(pending&&pending.kind===kind&&safeRuntimePreview(pending.url)){merged.preview=pending.url;if(pending.field==='sprites_1x10'){merged.previewNameSprite=pending.name;merged.previewName=null}else{merged.previewName=pending.name;merged.previewNameSprite=null}return merged}const route=merged.sprites_1x10||merged.imagen||'';const expected=getFileNameFromPath(route);const safeCurrentPreview=safeRuntimePreview(current?.preview);if(safeCurrentPreview&&expected&&((merged.sprites_1x10&&current.previewNameSprite===expected)||(!merged.sprites_1x10&&current.previewName===expected))){merged.preview=safeCurrentPreview;if(merged.sprites_1x10)merged.previewNameSprite=current.previewNameSprite;else merged.previewName=current.previewName}return merged}
+    function openJsonEditor(kind,id){const it=getItem(kind,id);if(!it){setStatus('No encontré el componente para editar.');return}state.jsonEditor={kind,id,lastImage:null,lastImageName:null,lastImageUrl:null,pendingImage:null};const modal=$('jsonModal');modal.dataset.kind=kind;modal.dataset.id=id;$('jsonModalTitle').textContent='Editar '+kind+' · '+id;$('jsonEditorText').value=JSON.stringify(cleanEditorObject(kind,it),null,2);modal.hidden=false;setTimeout(()=>$('jsonEditorText').focus(),30)}
+    function closeJsonEditor(){$('jsonModal').hidden=true;delete $('jsonModal').dataset.kind;delete $('jsonModal').dataset.id;state.jsonEditor={kind:null,id:null,lastImage:null,lastImageName:null,lastImageUrl:null,pendingImage:null}}
+    function normalizeEditorSavedObject(kind,current,obj){const clean=cleanEditorObject(kind,obj);const merged=applyEditorPreviewMemory(kind,current,clean);if(kind==='ambiente'){merged.zona_id=merged.zona_id||current.zona_id||uid('ambiente',$('ambPrefix')?.value||'bloque_ambiente');merged.tipo=merged.tipo||current.tipo||'visual';merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.w=Math.max(1,round(merged.w??current.w??80));merged.h=Math.max(1,round(merged.h??current.h??80));merged.zIndexBase=round(merged.zIndexBase??current.zIndexBase??3300);if(merged.sprites_1x10){merged.imagen=null;merged.velocidad_movimiento=merged.velocidad_movimiento??1.1;merged.sonido_ambiente=null}else{merged.sprites_1x10=null;merged.velocidad_movimiento=null;merged.sonido_ambiente=null}}if(kind==='item'){const identity=merged.instancia_id||merged.id||current.instancia_id||current.id||uid('item',$('itemPrefix')?.value||'itm_mapa');merged.id=identity;merged.instancia_id=identity;merged.item_id=merged.item_id||current.item_id||$('itemId')?.value||'item';merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.size=round(merged.size??merged.w??current.size??32);merged.w=round(merged.w??merged.size??32);merged.h=round(merged.h??merged.size??32);merged.zIndexBase=round(merged.zIndexBase??current.zIndexBase??3400)}if(kind==='enemy'){merged.id=merged.id||current.id||uid('enemy',$('enemyPrefix')?.value||'enemy');merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.w=round(merged.w??current.w??64);merged.h=round(merged.h??current.h??64)}if(kind==='light'){merged.nombre_id=merged.nombre_id||current.nombre_id||uid('light',$('lightPrefix')?.value||'luz');merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.w=round(merged.w??current.w??60);merged.h=round(merged.h??current.h??60)}if(kind==='npc'){merged.id=merged.id||current.id||uid('npc','npc_ambiente');merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.w=round(merged.w??current.w??64);merged.h=round(merged.h??current.h??64)}if(kind==='missionNpc'){merged.id=merged.id||current.id||uid('missionNpc','npc_mision');merged.x=round(merged.x??current.x??0);merged.y=round(merged.y??current.y??0);merged.w=round(merged.w??current.w??64);merged.h=round(merged.h??current.h??64)}return merged}
+    function saveJsonEditor(){const modal=$('jsonModal');const kind=modal.dataset.kind||state.jsonEditor?.kind;const id=modal.dataset.id||state.jsonEditor?.id;if(!kind||!id){setStatus('No hay componente activo para guardar. Vuelve a abrir el editor desde el lápiz.');return}let obj;try{obj=JSON.parse($('jsonEditorText').value)}catch(e){setStatus('El JSON tiene un error de sintaxis. Revísalo antes de guardar.');return}const arr=arrFor(kind);const idx=arr.findIndex(x=>itemIdentity(x)===id);if(idx<0){setStatus('No encontré el componente seleccionado para guardar.');return}try{const current=arr[idx];const merged=normalizeEditorSavedObject(kind,current,obj);arr.splice(idx,1,merged);const newId=itemIdentity(merged)||id;state.selected={kind,id:newId};fillForm(kind,merged);refreshFormPreview(kind,merged);renderAll();pushHistory();saveLocal();closeJsonEditor();setStatus('JSON del componente guardado y aplicado al mapa.')}catch(e){console.error(e);setStatus('No se pudo guardar el JSON. Revisa la consola para ver el detalle.')}}
+    function applyJsonEditorImage(file,url){const modal=$('jsonModal'),kind=modal.dataset.kind;if(!kind||!file||!url)return;let obj;try{obj=JSON.parse($('jsonEditorText').value)}catch(e){setStatus('El JSON tiene un error. Corrígelo antes de aplicar imagen.');return}const folder=editorImageFolder(kind,obj),path=folder+file.name;let field='imagen';if(kind==='ambiente'&&obj.sprites_1x10&&!obj.imagen){obj.sprites_1x10=path;obj.imagen=null;field='sprites_1x10'}else{obj.imagen=path;if(kind==='ambiente'){obj.sprites_1x10=null;obj.velocidad_movimiento=null;obj.sonido_ambiente=null}}$('jsonEditorText').value=JSON.stringify(cleanEditorObject(kind,obj),null,2);state.jsonEditor.lastImage=file;state.jsonEditor.lastImageName=file.name;state.jsonEditor.lastImageUrl=url;state.jsonEditor.pendingImage={kind,name:file.name,url,field};setStatus('Imagen aplicada al editor. Guarda el JSON del componente para confirmar.')}
+    function handleJsonEditorFile(file){if(!file||!(/^image\//.test(file.type)||/\.(svg|png|jpg|jpeg|webp|gif)$/i.test(file.name))){setStatus('Arrastra una imagen válida.');return}readFileAsDataURL(file,(url)=>applyJsonEditorImage(file,url))}
+    function renderGenericList(listId,kind){const box=$(listId),arr=arrFor(kind);box.innerHTML='';if(!arr.length){box.innerHTML='<div class="list-item"><div>No hay elementos todavía.</div></div>';return}arr.forEach(it=>{const id=it.id||it.instancia_id||it.zona_id||it.nombre_id||it.nombre,title=it.instancia_id||it.zona_id||it.id||it.nombre_id||it.nombre||it.item_id;const extra=kind==='item'&&it.item_id?`item_id:${it.item_id} `:'';const div=document.createElement('div');div.className='list-item'+(state.selected.kind===kind&&state.selected.id===id?' active':'');div.dataset.kind=kind;div.dataset.id=id;div.innerHTML=`<div>${title}<small>${extra}x:${round(it.x)} y:${round(it.y)} ${it.w?'w:'+round(it.w)+' h:'+round(it.h):''}</small></div><button class="mini-btn" data-del="${id}">x</button>`;box.appendChild(div)})}
+    function renderLists(){renderGenericList('ambList','ambiente');renderGenericList('itemList','item');renderGenericList('enemyList','enemy');renderGenericList('lightList','light');renderGenericList('npcList','npc');renderSteps();renderMissionList();$('ambPreview').value=JSON.stringify(ambJson(),null,2);$('enemyPreview').value=JSON.stringify(enemyJson(),null,2);$('lightPreview').value=JSON.stringify(lightJson(),null,2);$('npcPreview').value=JSON.stringify(npcJson(),null,2);$('missionPreview').value=JSON.stringify({missions:state.data.missions},null,2);refreshItemsCode();$('countAmbiente').textContent=state.data.ambiente.length;if($('countItems'))$('countItems').textContent=(state.data.items||[]).length;$('countEnemy').textContent=state.data.enemy.length;$('countIlum').textContent=state.data.light.length;$('countNPC').textContent=state.data.npc.length;$('countMisiones').textContent=state.data.missions.length}
+    function renderAll(){renderStage();['ambiente','item','enemy','light','npc','missionNpc'].forEach(renderLayer);renderLists()}
+    function refreshFormPreview(kind,it){if(!it)return;if(kind==='ambiente'){if(it.subtipo==='bloque_arcilla')setAssetPreview('arcillaImagePreview',getPreviewSrc(it,'ambiente'),it.imagen||'Arcilla');else{setAssetPreview('ambImagePreview',it.imagen?(sourcePreviewPath(it.imagen)||it.imagen):null,it.imagen||'Imagen ambiente');if($('ambSpritePreview'))setAssetPreview('ambSpritePreview',it.sprites_1x10?(sourcePreviewPath(it.sprites_1x10)||it.sprites_1x10):null,it.sprites_1x10||'Sprite ambiente 1x10')}}if(kind==='enemy')setAssetPreview('enemyImagePreview',getPreviewSrc(it,'enemy'),it.imagen||'Enemy');if(kind==='light')setAssetPreview('lightImagePreview',getPreviewSrc(it,'light'),it.imagen||'Iluminación');if(kind==='npc')setAssetPreview('npcImagePreview',getPreviewSrc(it,'npc'),it.imagen||'NPC ambiente');if(kind==='missionNpc')setAssetPreview('missionNpcImagePreview',getPreviewSrc(it,'missionNpc'),it.imagen||'NPC misión')}
+    function select(kind,id){state.selected={kind,id};const it=getItem(kind,id);fillForm(kind,it);refreshFormPreview(kind,it);renderAll()}
+    
+    function fillForm(kind,it){if(!it)return;if(kind==='ambiente'){
+      if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';
+if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;
+if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;
+      $('ambTipo1').value=(it.tipo||'visual').split(' ')[0]||'visual';$('ambTipo2').value=(it.tipo||'').split(' ')[1]||'';$('ambColor').value=it.color||'#ff0000';$('ambTransparent').checked=!it.color;$('ambZ').value=it.zIndexBase||3300;$('ambImagePath').value=it.imagen||'';$('ambFunction').value=it.funcion||'';$('ambSubtype').value=it.subtipo||'';if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;if($('ambRealW'))$('ambRealW').value=it.w||80;if($('ambRealH'))$('ambRealH').value=it.h||80;if(it.subtipo==='bloque_arcilla'){$('arcillaPrefix').value=(it.zona_id||'bloque_arcilla').replace(/_?\d+$/,'')||'bloque_arcilla';$('arcillaImagePath').value=it.imagen||'../assets/items/bloqueArcilla.svg';$('arcillaW').value=it.w||64;$('arcillaH').value=it.h||64;$('arcillaZ').value=it.zIndexBase||3300;$('arcillaPdr').value=it.pdr??12;$('arcillaPdrMax').value=it.pdr_max??12;$('arcillaFunction').value=it.funcion||''}}if(kind==='enemy'){$('enemyName').value=it.nombre;$('enemyType').value=it.tipo;$('enemyImagePath').value=it.imagen||'';$('enemyW').value=it.w;$('enemyH').value=it.h;$('enemyFramesX').value=it.framesX||1;$('enemyLife').value=it.vida;$('enemyAttack').value=it.ataque;$('enemySpeed').value=it.speed;$('enemyVision').value=it.vision;$('enemyAttackAnim').value=it.attackAnim||'';$('enemyDeathScript').value=it.deathScript||'';$('enemyDialogs').value=(it.dialogos||[]).join('\n');$('enemyAttackDialogs').value=(it.dialogosAtack||[]).join('\n')}if(kind==='light'){$('lightType').value=it.tipo;$('lightColor').value=it.color||'';$('lightImagePath').value=it.imagen||'';$('lightW').value=it.w;$('lightH').value=it.h;$('lightFunction').value=it.functionName||''}if(kind==='npc'){$('npcName').value=it.nombre;$('npcImagePath').value=it.imagen||'';$('npcW').value=it.w||64;$('npcH').value=it.h||64;$('npcSpeed').value=it.velocidad;$('npcDialogs').value=(it.dialogos_automaticos||[]).join('\n');$('npcFearDialogs').value=(it.dialogos_miedo||[]).join('\n')}if(kind==='item'){$('itemPrefix').value=(it.instancia_id||it.id||'itm_mapa').replace(/_?\d+$/,'')||'itm_mapa';$('itemId').value=it.item_id||'';if($('itemCatalogSelect')&&state.itemCatalog.some(x=>x.id===it.item_id))$('itemCatalogSelect').value=it.item_id;const def=getItemDefinition(it.item_id);$('itemImagePath').value=it.imagen||def?.imagen||'';$('itemSize').value=it.size||it.w||32;$('itemZ').value=it.zIndexBase||3400;const info=$('itemCatalogInfo');if(info){const img=it.imagen||def?.imagen||'';const file=getFileNameFromPath(img);info.textContent=`${def?.nombre_item||it.item_id||'Item'} · preview: ${file?`source/items/${file}`:'sin imagen'}`}}if(kind==='missionNpc'){$('missionNpcId').value=it.id;$('missionNpcName').value=it.nombre;$('missionNpcImagePath').value=it.imagen||'';$('missionNpcDialog1').value=(it.dialogos?.inicio||[]).join('\n');$('missionNpcDialog2').value=(it.dialogos?.en_progreso||[]).join('\n');$('missionNpcDialogFinal').value=(it.dialogos?.completado||[]).join('\n')}}
+
+    function placeItem(kind,pos){let item;if(kind==='ambiente'){item=cfgAmb();item.x=round(pos.x);item.y=round(pos.y);state.data.ambiente.push(item)}if(kind==='enemy'){item=cfgEnemy();item.x=round(pos.x);item.y=round(pos.y);state.data.enemy.push(item)}if(kind==='light'){item=cfgLight();item.x=round(pos.x);item.y=round(pos.y);state.data.light.push(item)}if(kind==='npc'){item=cfgNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.npc.push(item)}if(kind==='missionNpc'){item=cfgMissionNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.missionNpcs=[item]}if(item){select(kind,item.id||item.zona_id||item.nombre_id||item.nombre);saveLocalSoon()}}
+    function duplicate(kind,id,dx=20,dy=20){const arr=arrFor(kind),it=getItem(kind,id);if(!it)return;const copy=JSON.parse(JSON.stringify(it));if(kind==='ambiente')copy.zona_id=it.subtipo==='bloque_arcilla'?uid('arcilla',$('arcillaPrefix').value):uid('ambiente',$('ambPrefix').value);if(kind==='item'){const nid=uid('item',$('itemPrefix').value);copy.id=nid;copy.instancia_id=nid}if(kind==='enemy')copy.id=uid('enemy',$('enemyPrefix').value);if(kind==='light')copy.nombre_id=uid('light',$('lightPrefix').value);if(kind==='npc')copy.id=uid('npc','npc_ambiente');if(kind==='missionNpc')copy.id=uid('missionNpc','npc_mision');copy.x=round(clamp(it.x+dx,0,state.mapSize-(it.w||64)));copy.y=round(clamp(it.y+dy,0,state.mapSize-(it.h||64)));arr.push(copy);select(kind,copy.id||copy.zona_id||copy.nombre_id||copy.nombre);saveLocalSoon()}
+    function removeItem(kind,id){const arr=arrFor(kind),i=arr.findIndex(x=>(x.id||x.instancia_id||x.zona_id||x.nombre_id||x.nombre)===id);if(i>-1)arr.splice(i,1);state.selected={kind:null,id:null};renderAll();saveLocalSoon()}
+    function makeLine(kind,start,end,template){const w=template.w||64,h=template.h||64,step=Math.max(8,Math.max(w,h)+(kind==='ambiente'?8:20)),dx=end.x-start.x,dy=end.y-start.y,dist=Math.hypot(dx,dy),count=Math.max(1,Math.floor(dist/step)+1);for(let i=0;i<count;i++){duplicate(kind,template.id||template.instancia_id||template.zona_id||template.nombre_id||template.nombre,0,0);const arr=arrFor(kind),c=arr[arr.length-1],ratio=count===1?0:i/(count-1);c.x=round(start.x+dx*ratio);c.y=round(start.y+dy*ratio)}saveLocalSoon();renderAll()}
+    function applySelected(){const {kind,id}=state.selected;if(!id)return setStatus('No hay elemento seleccionado.');const it=getItem(kind,id);if(!it)return;if(kind==='ambiente'&&it.subtipo==='bloque_arcilla'){applyArcillaSelected();return}if(kind==='ambiente')Object.assign(it,cfgAmb(),{zona_id:it.zona_id,x:it.x,y:it.y,w:it.w,h:it.h});if(kind==='enemy')Object.assign(it,cfgEnemy(),{id:it.id,x:it.x,y:it.y});if(kind==='light')Object.assign(it,cfgLight(),{nombre_id:it.nombre_id,x:it.x,y:it.y});if(kind==='npc')Object.assign(it,cfgNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='missionNpc')Object.assign(it,cfgMissionNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='item'){applyItemSelected();return}renderAll();saveLocalSoon();setStatus(kind==='ambiente'?'Componente ambiente actualizado.':'Cambios aplicados.')}
+    function ambPrimaryAction(){state.selected={kind:null,id:null};setTool('amb-place');detectAmbRealSize(true);renderAll();setStatus('Modo ubicar componente ambiente activo. Haz clic sobre el mapa para colocarlo. Para modificar un bloque existente usa “Actualizar seleccionado”.')}
+    function parseItems(text){return lines(text).map(l=>{const [id,c='1']=l.split(',').map(x=>x.trim());return id?{id,cantidad:Number(c)||1}:null}).filter(Boolean)}
+    function renderSteps(){const box=$('stepList');box.innerHTML='';if(!state.data.missionSteps.length){box.innerHTML='<div class="list-item"><div>No hay pasos agregados.</div></div>';return}state.data.missionSteps.forEach((s,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${i+1}. ${s.titulo}<small>${s.tipo} · ${s.descripcion}</small></div><button class="mini-btn" data-stepdel="${i}">x</button>`;box.appendChild(div)})}
+    function addStep(){const mId=$('missionId').value.trim()||'m1',n=state.data.missionSteps.length+1,npcId=$('stepNpcId').value.trim()||$('missionNpcId').value.trim()||'npc01',tipo=$('stepType').value,npc=state.data.missionNpcs[0],pos=npc?{x:round(npc.x),y:round(npc.y)}:{x:0,y:0},img=npc?.imagen||$('missionNpcImagePath').value.trim()||null;const s={step:n,id:`${mId}s${n}`,tipo,npcId,titulo:$('stepTitle').value.trim()||`Paso ${n}`,descripcion:$('stepDesc').value.trim()||'',estadoInicial:false,verificador:{tipoObjetivo:tipo.includes('npc')?'npc':'objeto',objetivoId:npcId,imagen:img,posicion:pos},otorgaItems:parseItems($('stepOtorgaItems').value)};const objItems=parseItems($('stepItems').value),entrega=parseItems($('stepEntregaItems').value);if(objItems.length)s.objetivosItems=objItems;if(entrega.length)s.entregaItems=entrega;if($('stepFunction').value.trim())s.funcion_siguiente_paso=$('stepFunction').value.trim();state.data.missionSteps.push(s);renderSteps();saveLocalSoon()}
+    function loadMission(){const npc=state.data.missionNpcs[0]||cfgMissionNpc(),completeFunc=$('missionCompleteFunction').value.trim();const mission={id:$('missionId').value.trim()||`m${state.data.missions.length+1}`,nombre:$('missionName').value.trim()||'Misión',tipo:$('missionType').value,clasificacion:$('missionClass').value.trim()||'diaria',descripcion:$('missionDesc').value.trim()||'',estadoFinalizacion:{tipo:completeFunc?'funcion':'automatica',condicion:completeFunc||'todos_los_pasos',requiereNPCFinal:false},condiciones:{nivelIQMinimo:0,misionesRequeridas:[],itemsRequeridos:[]},npcs:[{id:npc.id,nombre:npc.nombre,rol:npc.rol||'inicio',imagen:npc.imagen,posicion:{x:round(npc.x||0),y:round(npc.y||0)},conversation_default:npc.conversation_default||'',dialogos:npc.dialogos}],pasos:[...state.data.missionSteps],recompensas:{iq:round($('missionIq').value)||0,cosmonedas:round($('missionCoins').value)||0,items:parseItems($('missionRewardItems').value),codigoSecreto:$('missionSecret').value.trim()||null}};if(completeFunc)mission.funcionCumplimiento=completeFunc;const idx=state.data.missions.findIndex(m=>m.id===mission.id);if(idx>-1)state.data.missions[idx]=mission;else state.data.missions.push(mission);state.data.missionSteps=[];renderAll();saveLocalSoon();setStatus('Misión cargada al JSON.')}
+    function renderMissionList(){const box=$('missionList');box.innerHTML='';if(!state.data.missions.length){box.innerHTML='<div class="list-item"><div>No hay misiones cargadas.</div></div>';return}state.data.missions.forEach((m,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${m.id} · ${m.nombre}<small>${m.pasos.length} pasos</small></div><button class="mini-btn" data-missiondel="${i}">x</button>`;box.appendChild(div)})}
+    function findAmbienteImageWarnings(){return state.data.ambiente.filter(b=>(b.previewName&&b.imagen&&getFileNameFromPath(b.imagen)!==b.previewName)||(b.previewNameSprite&&b.sprites_1x10&&getFileNameFromPath(b.sprites_1x10)!==b.previewNameSprite)).map(b=>`${b.zona_id}: ruta visual desincronizada`)}
+    function download(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);setStatus(`${name} descargado.`)}
+    function downloadText(name,text){const blob=new Blob([String(text||'')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);setStatus(`${name} descargado.`)}
+    function readJsonFile(file,callback){if(!file)return;const fr=new FileReader();fr.onload=()=>{try{callback(JSON.parse(fr.result));renderAll();saveLocalSoon();setStatus(`${file.name} cargado correctamente.`)}catch(e){setStatus('No se pudo leer el JSON. Revisa el formato.')}};fr.readAsText(file)}
+function nextFrom(arr){let max=0;arr.forEach(x=>{const id=String(x.id||x.zona_id||x.nombre_id||'');const m=id.match(/_(\d+)$/);if(m)max=Math.max(max,Number(m[1]))});return max+1}
+function syncNextCounters(){state.data.items=state.data.items||[];state.next.ambiente=Math.max(1,nextFrom(state.data.ambiente||[]));state.next.arcilla=Math.max(1,nextFrom((state.data.ambiente||[]).filter(x=>x.subtipo==='bloque_arcilla')));state.next.item=Math.max(1,nextFrom(state.data.items));state.next.enemy=Math.max(1,nextFrom(state.data.enemy||[]));state.next.light=Math.max(1,nextFrom(state.data.light||[]));state.next.npc=Math.max(1,nextFrom(state.data.npc||[]));state.next.missionNpc=Math.max(1,nextFrom(state.data.missionNpcs||[]))}
+function loadAmbienteImport(json){const arr=Array.isArray(json)?json:(json.ambiente||[]);state.data.ambiente=arr.map((b,i)=>({zona_id:b.zona_id||b.id||`bloque_importado_${pad(i+1)}`,tipo:b.tipo||'visual',color:b.color??null,funcion:b.funcion||b.function||null,imagen:b.imagen||null,preview:null,zIndexBase:round(b.zIndexBase||3300),subtipo:b.subtipo||null,sprites_1x10:b.sprites_1x10||null,velocidad_movimiento:b.velocidad_movimiento??null,sonido_ambiente:b.sonido_ambiente||null,previewName:b.previewName||null,previewNameSprite:b.previewNameSprite||null,pdr:b.pdr??null,pdr_max:b.pdr_max??null,x:round(b.x??b.posicion?.x??0),y:round(b.y??b.posicion?.y??0),w:round(b.w??b.width??b.tamano?.w??80),h:round(b.h??b.height??b.tamano?.h??80)}));syncNextCounters()}
+function loadEnemyImport(json){const arr=Array.isArray(json)?json:(json.enemigos||json.enemy||[]);state.data.enemy=arr.map((e,i)=>({id:e.id||`enemy_importado_${pad(i+1)}`,nombre:e.nombre||e.name||'Enemigo',tipo:e.tipo||'basico',imagen:e.imagen||null,preview:null,w:round(e.w??e.tamano?.w??64),h:round(e.h??e.tamano?.h??64),framesX:round(e.framesX||1),vida:round(e.vida??e.puntos_de_vida??1),ataque:round(e.ataque??e.puntos_de_ataque??1),speed:Number(e.speed??e.Speed_enemy??1),vision:round(e.vision??e.radioVision??400),attackAnim:e.attackAnim||e.atackAnimation||null,deathScript:e.deathScript||e.ejecucion_script?.al_morir||null,dialogos:e.dialogos||[],dialogosAtack:e.dialogosAtack||e.dialogos_Atack||[],x:round(e.x??e.posicion?.x??0),y:round(e.y??e.posicion?.y??0)}));syncNextCounters()}
+function loadLightImport(json){const arr=Array.isArray(json)?json:(json.luces||json.iluminacion||[]);state.data.light=arr.map((l,i)=>({nombre_id:l.nombre_id||l.id||`luz_importada_${pad(i+1)}`,tipo:l.tipo||'antorcha',imagen:l.imagen||null,preview:null,w:round(l.w??l.width??60),h:round(l.h??l.height??60),color:l.color||null,functionName:l.functionName||l.funcion||l['function']||null,x:round(l.x??l.posicion?.x??0),y:round(l.y??l.posicion?.y??0)}));syncNextCounters()}
+function loadNpcImport(json){const arr=Array.isArray(json)?json:(json.npcs||json.NPCambiente||[]);state.data.npc=arr.map((n,i)=>({id:n.id||`npc_ambiente_${pad(i+1)}`,imagen:n.imagen||null,preview:null,nombre:n.nombre||n.name||`NPC ${i+1}`,velocidad:Number(n.velocidad??n.speed??1.2),w:round(n.w??n.tamano?.w??64),h:round(n.h??n.tamano?.h??64),dialogos_automaticos:n.dialogos_automaticos||n.dialogosAutomaticos||[],dialogos_miedo:n.dialogos_miedo||n.dialogosMiedo||[],x:round(n.x??n.posicion?.x??0),y:round(n.y??n.posicion?.y??0)}));syncNextCounters()}
+function loadMissionsImport(json){const arr=Array.isArray(json)?json:(json.missions||json.misiones||[]);state.data.missions=arr;state.data.missionNpcs=[];arr.forEach(m=>(m.npcs||[]).forEach((n,i)=>state.data.missionNpcs.push({id:n.id||`npc_mision_${pad(i+1)}`,nombre:n.nombre||`NPC misión ${i+1}`,rol:n.rol||'inicio',imagen:n.imagen||null,preview:null,w:64,h:64,x:round(n.x??n.posicion?.x??0),y:round(n.y??n.posicion?.y??0),conversation_default:n.conversation_default||'',dialogos:n.dialogos||{inicio:[],en_progreso:[],completado:[]}})));syncNextCounters()}
+    function exportProject(){return cleanProjectForStorage({version:3,savedAt:new Date().toISOString(),map:{size:state.mapSize,dataUrl:state.mapDataUrl,sourcePath:state.mapSourcePath,name:state.mapName,width:state.imageWidth,height:state.imageHeight,fitMode:$('fitMode')?.value||'contain'},next:state.next,itemCatalog:state.itemCatalog,itemsEnMapaConfig:itemsArray(),itemsCode:itemCode(),data:{ambiente:state.data.ambiente||[],items:state.data.items||[],enemy:state.data.enemy||[],light:state.data.light||[],npc:state.data.npc||[],missionNpcs:state.data.missionNpcs||[],missionSteps:state.data.missionSteps||[],missions:state.data.missions||[]}})}
+    function importProjectData(p){if(!p)return;state.mapSize=p.map?.size||5000;state.mapDataUrl=p.map?.dataUrl||null;state.mapSourcePath=p.map?.sourcePath||null;state.mapName=p.map?.name||null;state.imageWidth=p.map?.width||null;state.imageHeight=p.map?.height||null;if($('fitMode')&&p.map?.fitMode)$('fitMode').value=p.map.fitMode;if($('mapSourcePath'))$('mapSourcePath').value=state.mapSourcePath||`source/${state.mapName||'mapa1-5000x5000.svg'}`;state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(p.next||{})};state.itemCatalog=((p.itemCatalog&&p.itemCatalog.length)?p.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);state.data=sanitizeLoadedData({ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[],...(p.data||{})});if((!state.data.items||!state.data.items.length)&&Array.isArray(p.itemsEnMapaConfig)){state.data.items=p.itemsEnMapaConfig.map((it,i)=>{const def=getItemDefinition(it.item_id);return{id:it.instancia_id||`itm_mapa_${pad(i+1)}`,instancia_id:it.instancia_id||`itm_mapa_${pad(i+1)}`,item_id:it.item_id,imagen:def?.imagen||null,sourcePreview:itemPreviewFromImagePath(def?.imagen),preview:null,nombre_item:def?.nombre_item||it.item_id,x:round(it.x),y:round(it.y),w:32,h:32,size:32,zIndexBase:3400}})}state.data.items=state.data.items||[];if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;$('statFile').textContent=state.mapName||'Mapa cargado';$('statRealSize').textContent=state.imageWidth?`${state.imageWidth} x ${state.imageHeight}`:'-';renderItemCatalogSelect();syncNextCounters();fitToView();renderAll()}
+    function historySnapshot(){
+  return JSON.stringify(cleanProjectForStorage({
+    mapSize:state.mapSize,
+    mapDataUrl:state.mapDataUrl,
+    mapSourcePath:state.mapSourcePath,
+    mapName:state.mapName,
+    imageWidth:state.imageWidth,
+    imageHeight:state.imageHeight,
+    next:state.next,
+    itemCatalog:state.itemCatalog,
+    data:state.data
+  }));
+}
+
+function pushHistory(){
+  if(history.locked)return;
+  const snap=historySnapshot();
+  if(history.undo[history.undo.length-1]===snap)return;
+  history.undo.push(snap);
+  if(history.undo.length>HISTORY_LIMIT)history.undo.shift();
+  history.redo=[];
+}
+
+function restoreHistorySnapshot(snap){
+  const data=JSON.parse(snap);
+  history.locked=true;
+  state.mapSize=data.mapSize||state.mapSize;
+  state.mapDataUrl=data.mapDataUrl??state.mapDataUrl;
+  state.mapSourcePath=data.mapSourcePath??state.mapSourcePath;
+  state.mapName=data.mapName??state.mapName;
+  state.imageWidth=data.imageWidth??state.imageWidth;
+  state.imageHeight=data.imageHeight??state.imageHeight;
+  state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(data.next||{})};
+  state.itemCatalog=((data.itemCatalog&&data.itemCatalog.length)?data.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);
+  state.data=sanitizeLoadedData({
+    ambiente:[],
+    items:[],
+    enemy:[],
+    light:[],
+    npc:[],
+    missionNpcs:[],
+    missionSteps:[],
+    missions:[],
+    ...(data.data||{})
+  });
+  if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});
+  renderItemCatalogSelect();
+  $('mapSize').value=state.mapSize;
+  $('mapSizeRange').value=state.mapSize;
+  fitToView();
+  renderAll();
+  saveLocal();
+  history.locked=false;
+}
+
+function undoAction(){
+  if(history.undo.length<=1){
+    setStatus('No hay más cambios para deshacer.');
+    return;
+  }
+  const current=history.undo.pop();
+  history.redo.push(current);
+  restoreHistorySnapshot(history.undo[history.undo.length-1]);
+  setStatus('Cambio deshecho.');
+}
+
+function redoAction(){
+  if(!history.redo.length){
+    setStatus('No hay cambios para rehacer.');
+    return;
+  }
+  const snap=history.redo.pop();
+  history.undo.push(snap);
+  restoreHistorySnapshot(snap);
+  setStatus('Cambio rehecho.');
+}
+    let saveTimer=null;function saveLocalSoon(){pushHistory();clearTimeout(saveTimer);saveTimer=setTimeout(saveLocal,350)}function saveLocal(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(exportProject()));setStatus('Avance guardado.')}catch(e){setStatus('No se pudo guardar en localStorage. Descarga el proyecto.')}}function loadLocal(){const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return setStatus('No hay avance guardado.');importProjectData(JSON.parse(raw));setStatus('Avance cargado.')}
+    function normRect(a,b){const x1=clamp(a.x,0,state.mapSize),y1=clamp(a.y,0,state.mapSize),x2=clamp(b.x,0,state.mapSize),y2=clamp(b.y,0,state.mapSize);return{x:round(Math.min(x1,x2)),y:round(Math.min(y1,y2)),w:round(Math.abs(x2-x1)),h:round(Math.abs(y2-y1))}}
+    function removeTemp(){document.querySelectorAll('#tempNode,#tempLine').forEach(x=>x.remove())}
+    function drawTempRect(a,b){removeTemp();const r=normRect(a,b),cfg=cfgAmb(),imgSrc=getPreviewSrc(cfg),el=document.createElement('div');el.id='tempNode';el.className='node drawing';el.style.left=r.x+'px';el.style.top=r.y+'px';el.style.width=r.w+'px';el.style.height=r.h+'px';el.style.backgroundColor=cfg.color||'rgba(255,255,255,.04)';if(imgSrc)el.style.backgroundImage=`url("${imgSrc}")`;els.layers.ambiente.appendChild(el)}
+    function drawLinePreview(a,b,axisLock=false){removeTemp();let end={x:b.x,y:b.y};if(axisLock){const dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)>=Math.abs(dy))end={x:b.x,y:a.y};else end={x:a.x,y:b.y}}const el=document.createElement('div');el.id='tempLine';el.className='line-preview';el.style.border='0';if(Math.abs(end.x-a.x)>=Math.abs(end.y-a.y)){el.style.left=Math.min(a.x,end.x)+'px';el.style.top=a.y+'px';el.style.width=Math.abs(end.x-a.x)+'px';el.style.height='0px';el.style.borderTop='3px dashed var(--warning)'}else{el.style.left=a.x+'px';el.style.top=Math.min(a.y,end.y)+'px';el.style.width='0px';el.style.height=Math.abs(end.y-a.y)+'px';el.style.borderLeft='3px dashed var(--warning)'}els.mapStage.appendChild(el)}
+    function axisLockedEnd(a,b){const dx=b.x-a.x,dy=b.y-a.y;return Math.abs(dx)>=Math.abs(dy)?{x:b.x,y:a.y,axis:'horizontal'}:{x:a.x,y:b.y,axis:'vertical'}}
+    function drawMeasurePreview(a,b){document.querySelectorAll('#tempMeasure').forEach(x=>x.remove());const end=axisLockedEnd(a,b),dist=round(end.axis==='horizontal'?Math.abs(end.x-a.x):Math.abs(end.y-a.y)),wrap=document.createElement('div'),line=document.createElement('div'),label=document.createElement('div');wrap.id='tempMeasure';wrap.className='measure-preview';line.className='measure-line';label.className='measure-label';label.textContent=dist+' px · '+(end.axis==='horizontal'?'horizontal':'vertical');if(end.axis==='horizontal'){wrap.style.left=Math.min(a.x,end.x)+'px';wrap.style.top=a.y+'px';wrap.style.width=Math.abs(end.x-a.x)+'px';wrap.style.height='0px';line.style.left='0';line.style.top='0';line.style.width='100%';line.style.height='0';line.style.borderTop='3px solid var(--accent)';label.style.left='50%';label.style.top='0'}else{wrap.style.left=a.x+'px';wrap.style.top=Math.min(a.y,end.y)+'px';wrap.style.width='0px';wrap.style.height=Math.abs(end.y-a.y)+'px';line.style.left='0';line.style.top='0';line.style.width='0';line.style.height='100%';line.style.borderLeft='3px solid var(--accent)';label.style.left='0';label.style.top='50%'}wrap.appendChild(line);wrap.appendChild(label);els.mapStage.appendChild(wrap);$('measureReadout').textContent='Medida: '+dist+' px';return{end,dist}}
+    function pointerDown(e){if(e.button===1){e.preventDefault();state.draggingView=true;state.dragStart={x:e.clientX,y:e.clientY};state.nodeStart={x:state.offsetX,y:state.offsetY};els.viewport.classList.add('dragging');els.viewport.setPointerCapture(e.pointerId);return}if(e.button!==0)return;const tool=e.target.closest('.node-tool');if(tool){const node=e.target.closest('.node'),{kind,id}=node.dataset;if(tool.dataset.action==='delete')removeItem(kind,id);if(tool.dataset.action==='duplicate')duplicate(kind,id);if(tool.dataset.action==='line'){select(kind,id);openJsonEditor(kind,id)}return}const node=e.target.closest('.node');if(node){const {kind,id}=node.dataset;select(kind,id);const it=getItem(kind,id),p=screenToWorld(e.clientX,e.clientY);state.dragStart=p;state.nodeStart=JSON.parse(JSON.stringify(it));state.resizingNode=!!e.target.closest('.resize-handle');state.draggingNode=!state.resizingNode;els.viewport.setPointerCapture(e.pointerId);return}const p=screenToWorld(e.clientX,e.clientY);if(p.x<0||p.y<0||p.x>state.mapSize||p.y>state.mapSize)return;if(state.tool==='measure'){state.measuring=true;state.measureStart=p;drawMeasurePreview(p,p);els.viewport.setPointerCapture(e.pointerId);return}if(state.tool==='amb-draw'){state.drawingRect=true;state.dragStart=p;drawTempRect(p,p);els.viewport.setPointerCapture(e.pointerId);return}if(state.tool==='amb-place'){placeAmbConfigured(p);return}if(state.tool==='amb-real-place'){placeAmbReal(p);return}if(state.tool==='arcilla-place'){placeArcilla(p);return}if(state.tool==='item-place'){placeItemMap(p);return}if(state.tool==='place'){placeItem(activeKind(),p);return}if((state.tool==='line'&&state.selected.id)||state.tool==='arcilla-line'){state.drawingLine=true;state.lineStart=p;drawLinePreview(p,p,state.tool==='arcilla-line');els.viewport.setPointerCapture(e.pointerId);return}}
+    function pointerMove(e){const p=screenToWorld(e.clientX,e.clientY);$('statCursor').textContent=(p.x>=0&&p.y>=0&&p.x<=state.mapSize&&p.y<=state.mapSize)?`x: ${round(p.x)}, y: ${round(p.y)}`:'x: -, y: -';if(state.measuring){drawMeasurePreview(state.measureStart,p);return}if(state.drawingRect){drawTempRect(state.dragStart,p);return}if(state.drawingLine){drawLinePreview(state.lineStart,p,state.tool==='arcilla-line');return}if(state.draggingNode||state.resizingNode){const {kind,id}=state.selected,it=getItem(kind,id);if(!it)return;const dx=p.x-state.dragStart.x,dy=p.y-state.dragStart.y;if(state.draggingNode){it.x=round(clamp(state.nodeStart.x+dx,0,state.mapSize-(it.w||64)));it.y=round(clamp(state.nodeStart.y+dy,0,state.mapSize-(it.h||64)))}else if(state.resizingNode&&kind==='ambiente'){it.w=round(clamp(state.nodeStart.w+dx,3,state.mapSize-it.x));it.h=round(clamp(state.nodeStart.h+dy,3,state.mapSize-it.y))}renderLayer(kind);renderLists();return}if(state.draggingView){state.offsetX=state.nodeStart.x+(e.clientX-state.dragStart.x);state.offsetY=state.nodeStart.y+(e.clientY-state.dragStart.y);renderStage()}}
+    function pointerUp(e){if(state.measuring){const p=screenToWorld(e.clientX,e.clientY),m=drawMeasurePreview(state.measureStart,p);state.measuring=false;setStatus('Medida: '+m.dist+' px en línea '+(m.end.axis==='horizontal'?'horizontal':'vertical')+'.');try{els.viewport.releasePointerCapture(e.pointerId)}catch(_){}return}if(state.drawingRect){const p=screenToWorld(e.clientX,e.clientY),r=normRect(state.dragStart,p);removeTemp();state.drawingRect=false;if(r.w>3&&r.h>3){const b=cfgAmb();Object.assign(b,r);state.data.ambiente.push(b);select('ambiente',b.zona_id)}}if(state.drawingLine){const p=screenToWorld(e.clientX,e.clientY);removeTemp();state.drawingLine=false;if(state.tool==='arcilla-line'){makeArcillaLine(state.lineStart,p)}else{const it=getItem(state.selected.kind,state.selected.id);if(it)makeLine(state.selected.kind,state.lineStart,p,it)}}state.draggingView=false;state.draggingNode=false;state.resizingNode=false;els.viewport.classList.remove('dragging');try{els.viewport.releasePointerCapture(e.pointerId)}catch(_){}saveLocalSoon()}
+    function pointerCancel(){removeTemp();state.draggingView=state.draggingNode=state.resizingNode=state.drawingRect=state.drawingLine=state.measuring=false;els.viewport.classList.remove('dragging')}
+    
+function initEvents(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+
+  $('mapFile').addEventListener('change',e=>loadMap(e.target.files[0]));
+  $('loadMapSource').addEventListener('click',()=>loadMapFromSourcePath($('mapSourcePath').value));
+  $('mapSize').addEventListener('input',e=>setMapSize(e.target.value));
+  $('mapSizeRange').addEventListener('input',e=>setMapSize(e.target.value));
+
+  $('presetGrid').addEventListener('click',e=>{
+    const b=e.target.closest('[data-size]');
+    if(b)setMapSize(b.dataset.size);
+  });
+
+  $('fitMode').addEventListener('change',renderStage);
+
+  $('toggleGrid').addEventListener('click',()=>{
+    state.gridVisible=!state.gridVisible;
+    $('toggleGrid').classList.toggle('active',state.gridVisible);
+    renderStage();
+  });
+
+  $('resetView').addEventListener('click',fitToView);
+  $('fitView').addEventListener('click',fitToView);
+
+  $('measureTool').addEventListener('click',()=>setTool(state.tool==='measure'?'pan':'measure'));
+
+  $('zoom100').addEventListener('click',()=>{
+    state.scale=1;
+    state.offsetX=(els.viewport.clientWidth-state.mapSize)/2;
+    state.offsetY=(els.viewport.clientHeight-state.mapSize)/2;
+    renderStage();
+  });
+
+  $('zoomIn').addEventListener('click',()=>zoomAt(innerWidth/2,innerHeight/2,state.scale*1.18));
+  $('zoomOut').addEventListener('click',()=>zoomAt(innerWidth/2,innerHeight/2,state.scale*.84));
+
+  $('saveLocal').addEventListener('click',saveLocal);
+  $('loadLocal').addEventListener('click',loadLocal);
+  $('downloadProject').addEventListener('click',()=>download('enycosmic-proyecto-dashboard.json',exportProject()));
+
+  $('clearProject').addEventListener('click',()=>{
+    if(confirm('¿Limpiar todo el proyecto actual?')){
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  });
+
+  $('importProject').addEventListener('change',e=>{
+    const f=e.target.files[0];
+    if(!f)return;
+    const fr=new FileReader();
+    fr.onload=()=>importProjectData(JSON.parse(fr.result));
+    fr.readAsText(f);
+  });
+
+  $('arcillaToolPlace')?.addEventListener('click',()=>setTool('arcilla-place'));
+  $('arcillaApply')?.addEventListener('click',applyArcillaSelected);
+
+  $('arcillaDuplicate')?.addEventListener('click',()=>{
+    if(state.selected.kind==='ambiente'&&state.selected.id){
+      duplicate('ambiente',state.selected.id);
+    }
+  });
+
+  $('arcillaDelete')?.addEventListener('click',()=>{
+    if(state.selected.kind==='ambiente'&&state.selected.id){
+      removeItem('ambiente',state.selected.id);
+    }
+  });
+
+  $('arcillaImageFile')?.addEventListener('change',e=>readFileAsDataURL(e.target.files[0],(url,file)=>{
+    setLoadedPreview('arcilla',url,file,'arcillaImagePath','../assets/items/','arcillaImagePreview');
+    setStatus('Imagen de arcilla cargada y ruta JSON sincronizada.');
+  }));
+
+  $('ambSpriteFile')?.addEventListener('change',e=>readFileAsDataURL(e.target.files[0],(url,file)=>{
+    setAmbUseSpriteMode(true);
+    setLoadedPreview('ambienteSprite',url,file,'ambSpritePath','../assets/spriteAmbiente/','ambSpritePreview');
+    setTimeout(()=>detectAmbRealSize(true),120);
+    setStatus('Sprite ambiente 1x10 cargado y ruta JSON sincronizada.');
+  }));
+
+  $('ambSpritePath')?.addEventListener('input',()=>{
+    setAmbUseSpriteMode(!!$('ambSpritePath')?.value.trim());
+    previewFromPathInput('ambSpritePath','ambSpritePreview');
+    setTimeout(()=>detectAmbRealSize(true),120);
+  });
+
+  $('ambUseSprite')?.addEventListener('change',()=>{
+    setTimeout(()=>detectAmbRealSize(true),120);
+    setStatus($('ambUseSprite')?.checked?'Modo sprite 1x10 activo para ambiente.':'Modo imagen visual activo para ambiente.');
+  });
+
+  $('ambImagePath')?.addEventListener('input',()=>{
+    setAmbUseSpriteMode(false);
+    previewFromPathInput('ambImagePath','ambImagePreview');
+  });
+
+  $('sourceSystemsBtn')?.addEventListener('click',()=>{
+    const input=$('sourceSystemsFolder');
+    if(!input)return;
+    input.value='';
+    input.click();
+  });
+
+  $('sourceSystemsFolder')?.addEventListener('change',e=>{
+    loadSourceSystemFolder(e.target.files);
+  });
+
+  $('sourceSystemsSearch')?.addEventListener('input',()=>{
+    renderSourceSystemGallery();
+  });
+
+  $('sourceSystemsGallery')?.addEventListener('click',e=>{
+    const card=e.target.closest('[data-system-asset]');
+    if(!card)return;
+    selectSourceSystemAsset(decodeURIComponent(card.dataset.systemAsset));
+  });
+
+  $('arcillaToolLine')?.addEventListener('click',()=>setTool('arcilla-line'));
+  $('ambToolPan').addEventListener('click',()=>setTool('pan'));
+  $('ambToolDraw').addEventListener('click',()=>setTool('amb-draw'));
+
+  $('ambPresetRed').addEventListener('click',()=>{
+    resetAmbToRedCollision();
+    setTool('amb-draw');
+  });
+
+  $('ambToolReal').addEventListener('click',()=>setTool('amb-real-place'));
+  $('ambDetectSize').addEventListener('click',()=>detectAmbRealSize(false));
+  $('ambApplyRealSize').addEventListener('click',applyAmbRealSizeSelected);
+
+  $('itemToolPlace').addEventListener('click',()=>setTool('item-place'));
+  $('loadItemCatalog').addEventListener('click',loadItemsCatalogFromSource);
+
+  $('importItemCatalog').addEventListener('change',e=>readJsonFile(e.target.files[0],json=>loadItemsCatalogData(json,e.target.files[0]?.name||'items.json')));
+  $('importItemFolder').addEventListener('change',e=>loadItemsFolder(e.target.files));
+
+  $('itemCatalogGrid').addEventListener('click',e=>{
+    const card=e.target.closest('[data-item-id]');
+    if(!card)return;
+    const sel=$('itemCatalogSelect');
+    if(sel)sel.value=card.dataset.itemId;
+    if($('itemId'))$('itemId').value=card.dataset.itemId;
+    applyCatalogSelection(true);
+    renderItemCatalogGrid();
+  });
+
+  $('itemCatalogSelect').addEventListener('change',()=>{
+    applyCatalogSelection(true);
+    renderItemCatalogGrid();
+  });
+
+  $('itemId').addEventListener('input',()=>applyCatalogSelection(false));
+
+  $('enemyToolPlace').addEventListener('click',()=>setTool('place'));
+  $('enemyToolLine').addEventListener('click',()=>setTool('line'));
+  $('lightToolPlace').addEventListener('click',()=>setTool('place'));
+  $('lightToolLine').addEventListener('click',()=>setTool('line'));
+  $('npcToolPlace').addEventListener('click',()=>setTool('place'));
+  $('missionNpcTool').addEventListener('click',()=>setTool('place'));
+
+  [
+    ['ambImageFile','ambiente','ambImagePath','../assets/spriteAmbiente/'],
+    ['enemySpriteFile','enemy','enemyImagePath','../assets/avatares/enemy/'],
+    ['lightImageFile','light','lightImagePath','../assets/spriteAmbiente/'],
+    ['npcImageFile','npc','npcImagePath','../assets/avatares/npc/mapa1/'],
+    ['missionNpcFile','missionNpc','missionNpcImagePath','../assets/avatares/npc/mapa1/']
+  ].forEach(([id,k,pathId,folder])=>{
+    $(id).addEventListener('change',e=>readFileAsDataURL(e.target.files[0],(url,file)=>{
+      setLoadedPreview(k,url,file,pathId,folder,assetPreviewMap[k]);
+      setStatus('Imagen cargada y ruta JSON sincronizada.');
+    }));
+  });
+
+  $('ambImageFile').addEventListener('change',e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    setAmbUseSpriteMode(false);
+    setTimeout(()=>detectAmbRealSize(true),120);
+  });
+
+  $('ambApply').addEventListener('click',ambPrimaryAction);
+
+  $('ambUpdateSelected').addEventListener('click',()=>{
+    if(state.selected.kind==='ambiente'&&state.selected.id)applySelected();
+    else setStatus('Selecciona primero un componente ambiente para actualizar.');
+  });
+
+  ['enemyApply','lightApply','npcApply'].forEach(id=>$(id).addEventListener('click',applySelected));
+
+  $('ambDuplicate').addEventListener('click',()=>state.selected.id&&duplicate(state.selected.kind,state.selected.id));
+  $('itemApply').addEventListener('click',applyItemSelected);
+
+  $('itemDuplicate').addEventListener('click',()=>{
+    if(state.selected.kind==='item'&&state.selected.id)duplicate('item',state.selected.id);
+  });
+
+  $('itemDelete').addEventListener('click',()=>{
+    if(state.selected.kind==='item'&&state.selected.id)removeItem('item',state.selected.id);
+  });
+
+  $('itemClear').addEventListener('click',()=>{
+    if(confirm('¿Limpiar items?')){
+      state.data.items=[];
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  $('copyItemsCode').addEventListener('click',async()=>{
+    refreshItemsCode();
+    try{
+      await navigator.clipboard.writeText($('itemCodePreview').value);
+      setStatus('Código de items copiado.');
+    }catch(e){
+      $('itemCodePreview').select();
+      document.execCommand('copy');
+      setStatus('Código de items copiado.');
+    }
+  });
+
+  $('refreshItemsCode').addEventListener('click',refreshItemsCode);
+  $('downloadItemsCode').addEventListener('click',()=>downloadText('itemsEnMapaConfig.js',itemCode()));
+
+  $('enemyDuplicate').addEventListener('click',()=>state.selected.id&&duplicate(state.selected.kind,state.selected.id));
+  $('lightDuplicate').addEventListener('click',()=>state.selected.id&&duplicate(state.selected.kind,state.selected.id));
+  $('npcDuplicate').addEventListener('click',()=>state.selected.id&&duplicate(state.selected.kind,state.selected.id));
+
+  $('ambDelete').addEventListener('click',()=>state.selected.id&&removeItem(state.selected.kind,state.selected.id));
+  $('enemyDelete').addEventListener('click',()=>state.selected.id&&removeItem(state.selected.kind,state.selected.id));
+  $('lightDelete').addEventListener('click',()=>state.selected.id&&removeItem(state.selected.kind,state.selected.id));
+  $('npcDelete').addEventListener('click',()=>state.selected.id&&removeItem(state.selected.kind,state.selected.id));
+
+  $('ambClear').addEventListener('click',()=>{
+    if(confirm('¿Limpiar ambiente?')){
+      state.data.ambiente=[];
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  $('enemyClear').addEventListener('click',()=>{
+    if(confirm('¿Limpiar enemigos?')){
+      state.data.enemy=[];
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  $('lightClear').addEventListener('click',()=>{
+    if(confirm('¿Limpiar iluminación?')){
+      state.data.light=[];
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  $('npcClear').addEventListener('click',()=>{
+    if(confirm('¿Limpiar NPC ambiente?')){
+      state.data.npc=[];
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  $('importAmbiente').addEventListener('change',e=>readJsonFile(e.target.files[0],loadAmbienteImport));
+  $('importEnemy').addEventListener('change',e=>readJsonFile(e.target.files[0],loadEnemyImport));
+  $('importLight').addEventListener('change',e=>readJsonFile(e.target.files[0],loadLightImport));
+  $('importNpc').addEventListener('change',e=>readJsonFile(e.target.files[0],loadNpcImport));
+  $('importMissions').addEventListener('change',e=>readJsonFile(e.target.files[0],loadMissionsImport));
+
+  $('downloadAmbiente').addEventListener('click',()=>{
+    const warnings=findAmbienteImageWarnings();
+    if(warnings.length)setStatus('Se corrigieron rutas de imagen desincronizadas antes de exportar.');
+    download('ambiente.json',ambJson());
+  });
+
+  $('downloadEnemy').addEventListener('click',()=>download('enemy.json',enemyJson()));
+  $('downloadLight').addEventListener('click',()=>download('ilumSistemMapa.json',lightJson()));
+  $('downloadNpc').addEventListener('click',()=>download('NPCambiente.json',npcJson()));
+  $('downloadMissions').addEventListener('click',()=>download('missions.json',{missions:state.data.missions}));
+
+  $('addStep').addEventListener('click',addStep);
+
+  $('clearSteps').addEventListener('click',()=>{
+    state.data.missionSteps=[];
+    renderSteps();
+    saveLocalSoon();
+  });
+
+  $('loadMission').addEventListener('click',loadMission);
+
+  $('stepList').addEventListener('click',e=>{
+    const b=e.target.closest('[data-stepdel]');
+    if(b){
+      state.data.missionSteps.splice(Number(b.dataset.stepdel),1);
+      state.data.missionSteps.forEach((s,i)=>s.step=i+1);
+      renderSteps();
+      saveLocalSoon();
+    }
+  });
+
+  $('missionList').addEventListener('click',e=>{
+    const b=e.target.closest('[data-missiondel]');
+    if(b){
+      state.data.missions.splice(Number(b.dataset.missiondel),1);
+      renderAll();
+      saveLocalSoon();
+    }
+  });
+
+  document.querySelectorAll('.list').forEach(list=>list.addEventListener('click',e=>{
+    const del=e.target.closest('[data-del]');
+    if(del){
+      const item=e.target.closest('[data-kind]');
+      if(item)removeItem(item.dataset.kind,del.dataset.del);
+      return;
+    }
+
+    const it=e.target.closest('[data-kind]');
+    if(it)select(it.dataset.kind,it.dataset.id);
+  }));
+
+  els.viewport.addEventListener('wheel',e=>{
+    e.preventDefault();
+    zoomAt(e.clientX,e.clientY,state.scale*(e.deltaY<0?1.12:.88));
+  },{passive:false});
+
+  els.viewport.addEventListener('pointerdown',pointerDown);
+  els.viewport.addEventListener('pointermove',pointerMove);
+  els.viewport.addEventListener('pointerup',pointerUp);
+  els.viewport.addEventListener('pointercancel',pointerCancel);
+  els.viewport.addEventListener('mouseleave',()=>$('statCursor').textContent='x: -, y: -');
+
+  els.viewport.addEventListener('dragover',e=>{
+    e.preventDefault();
+    els.dropzone.classList.add('visible');
+  });
+
+  els.viewport.addEventListener('dragleave',()=>els.dropzone.classList.remove('visible'));
+
+  els.viewport.addEventListener('drop',e=>{
+    e.preventDefault();
+    els.dropzone.classList.remove('visible');
+    loadMap(e.dataTransfer.files[0]);
+  });
+
+  $('jsonModalClose')?.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    closeJsonEditor();
+  });
+
+  $('jsonModalSave')?.addEventListener('pointerdown',e=>e.stopPropagation());
+
+  $('jsonModalSave')?.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    saveJsonEditor();
+  });
+
+  $('jsonModalApplyImage')?.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const f=state.jsonEditor.lastImage;
+    if(f&&state.jsonEditor.lastImageUrl)applyJsonEditorImage(f,state.jsonEditor.lastImageUrl);
+    else setStatus('Primero arrastra una imagen al editor JSON.');
+  });
+
+  $('jsonModal').addEventListener('click',e=>{
+    if(e.target.id==='jsonModal')closeJsonEditor();
+  });
+
+  $('jsonModalBox').addEventListener('dragover',e=>{
+    e.preventDefault();
+    $('jsonModalBox').classList.add('dragover');
+  });
+
+  $('jsonModalBox').addEventListener('dragleave',()=>$('jsonModalBox').classList.remove('dragover'));
+
+  $('jsonModalBox').addEventListener('drop',e=>{
+    e.preventDefault();
+    $('jsonModalBox').classList.remove('dragover');
+    handleJsonEditorFile(e.dataTransfer.files[0]);
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!$('jsonModal').hidden)closeJsonEditor();
+  });
+
+  window.addEventListener('resize',fitToView);
+
+  document.addEventListener('keydown',e=>{
+    const tag=(document.activeElement?.tagName||'').toLowerCase();
+    if(['input','textarea','select'].includes(tag))return;
+
+    const key=e.key.toLowerCase();
+
+    if((e.ctrlKey||e.metaKey)&&key==='z'){
+      e.preventDefault();
+      if(e.shiftKey)redoAction();
+      else undoAction();
+    }
+
+    if((e.ctrlKey||e.metaKey)&&key==='y'){
+      e.preventDefault();
+      redoAction();
+    }
+  });
+}
+    
+    function saveJsonEditor(){const modal=$('jsonModal');const kind=(modal?.dataset?.kind||state.jsonEditor?.kind||'').trim();const originalId=(modal?.dataset?.id||state.jsonEditor?.id||'').trim();if(!kind||!originalId){setStatus('No hay componente activo para guardar. Abre el editor desde el lápiz del componente.');return false}let obj;try{obj=JSON.parse($('jsonEditorText').value)}catch(e){console.error(e);setStatus('El JSON tiene un error de sintaxis. Revísalo antes de guardar.');return false}const arr=arrFor(kind);let idx=arr.findIndex(x=>String(itemIdentity(x))===String(originalId));if(idx<0&&state.selected?.kind===kind)idx=arr.findIndex(x=>String(itemIdentity(x))===String(state.selected.id));if(idx<0){setStatus('No encontré el componente seleccionado para guardar. Selecciónalo de nuevo y abre el lápiz.');return false}try{const current=arr[idx];const merged=normalizeEditorSavedObject(kind,current,obj);const newId=itemIdentity(merged)||originalId;arr[idx]=merged;state.selected={kind,id:newId};if(kind==='ambiente'){if(merged.sprites_1x10){state.previews.ambiente=null;state.previewNames.ambiente=null}else if(merged.imagen&&getFileNameFromPath(merged.imagen)!==state.previewNames.ambiente){state.previews.ambiente=null;state.previewNames.ambiente=null}}try{fillForm(kind,merged)}catch(e){console.warn('No se pudo refrescar el formulario después de guardar:',e)}try{refreshFormPreview(kind,merged)}catch(e){console.warn('No se pudo refrescar el preview después de guardar:',e)}renderAll();pushHistory();saveLocal();closeJsonEditor();setStatus('JSON del componente guardado y aplicado al mapa.');return true}catch(e){console.error(e);setStatus('No se pudo guardar el JSON. Revisa que el objeto tenga un formato válido.');return false}}
+    function wireSafeJsonEditorButtons(){const btn=$('jsonModalSave');if(btn&&!btn.dataset.safeJsonSave){btn.dataset.safeJsonSave='1';btn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopImmediatePropagation()},true);btn.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();saveJsonEditor();return false},true)}const apply=$('jsonModalApplyImage');if(apply&&!apply.dataset.safeJsonImage){apply.dataset.safeJsonImage='1';apply.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();const f=state.jsonEditor?.lastImage;if(f&&state.jsonEditor?.lastImageUrl)applyJsonEditorImage(f,state.jsonEditor.lastImageUrl);else setStatus('Primero arrastra una imagen al editor JSON.');return false},true)}}
+    function wireSourceSystemsGallery(){if($('sourceSystemsBtn')&&!$('sourceSystemsBtn').dataset.wired){$('sourceSystemsBtn').dataset.wired='1';$('sourceSystemsBtn').addEventListener('click',()=>{const input=$('sourceSystemsFolder');if(!input)return;input.value='';input.click()})}if($('sourceSystemsFolder')&&!$('sourceSystemsFolder').dataset.wired){$('sourceSystemsFolder').dataset.wired='1';$('sourceSystemsFolder').addEventListener('change',e=>loadSourceSystemFolder(e.target.files))}if($('sourceSystemsSearch')&&!$('sourceSystemsSearch').dataset.wired){$('sourceSystemsSearch').dataset.wired='1';$('sourceSystemsSearch').addEventListener('input',renderSourceSystemGallery)}if($('sourceSystemsGallery')&&!$('sourceSystemsGallery').dataset.wired){$('sourceSystemsGallery').dataset.wired='1';$('sourceSystemsGallery').addEventListener('click',e=>{const card=e.target.closest('[data-system-asset]');if(!card)return;selectSourceSystemAsset(decodeURIComponent(card.dataset.systemAsset))})}}
+    initEvents();wireSafeJsonEditorButtons();wireSourceSystemsGallery();setMapSize(5000);renderAll();if(location.protocol!=='file:')loadItemsCatalogFromSource();const auto=localStorage.getItem(STORAGE_KEY);if(auto){try{importProjectData(JSON.parse(auto));setStatus('Avance anterior cargado automáticamente.')}catch(e){setStatus('Listo')}}else if(location.protocol==='file:'){setStatus('Listo. Para cargar items con imágenes usa “Cargar carpeta source/items”.')}pushHistory();
+  </script>
+</body>
+</html>
