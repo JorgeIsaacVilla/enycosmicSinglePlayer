@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generador de Sprite Ambiente - Enycosmic v4</title>
+  <title>Generador de Sprite Ambiente - Enycosmic v5 giro central</title>
 
   <style>
     :root {
@@ -513,7 +513,7 @@
 <body>
   <div class="app">
     <header class="topbar">
-      <div class="brand">Generador de Sprite Ambiente v4</div>
+      <div class="brand">Generador de Sprite Ambiente v5</div>
 
       <div class="topbar-group">
         <label>
@@ -567,7 +567,7 @@
       <div class="canvas-zone" id="canvasZone">
         <div class="canvas-wrap">
           <div class="canvas-help">
-            Frame actual: <span id="currentFrameText">1</span>/10 · mover con mouse · cuadrado azul: tamaño · cuadrado amarillo: giro
+            Frame actual: <span id="currentFrameText">1</span>/10 · mover con mouse · cuadrado azul: tamaño · botón amarillo central: giro sobre su eje
           </div>
           <canvas id="editorCanvas" width="120" height="120"></canvas>
         </div>
@@ -1182,20 +1182,30 @@
       targetCtx.strokeRect(-w / 2 + 0.5, -h / 2 + 0.5, w, h);
       targetCtx.setLineDash([]);
 
-      targetCtx.strokeStyle = "#ffd166";
-      targetCtx.beginPath();
-      targetCtx.moveTo(0, -h / 2);
-      targetCtx.lineTo(0, -h / 2 - 24);
-      targetCtx.stroke();
-
-      targetCtx.fillStyle = "#ffd166";
-      targetCtx.fillRect(-5, -h / 2 - 29, 10, 10);
-
+      // Cuadro azul: agrandar / achicar desde la esquina inferior derecha.
       targetCtx.fillStyle = "#58d8ff";
       targetCtx.fillRect(w / 2 - 5, h / 2 - 5, 10, 10);
+      targetCtx.strokeStyle = "#0b101a";
+      targetCtx.strokeRect(w / 2 - 5.5, h / 2 - 5.5, 11, 11);
 
-      targetCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
-      targetCtx.fillRect(-2, -2, 4, 4);
+      // Botón amarillo central: giro sobre el propio eje del elemento.
+      targetCtx.beginPath();
+      targetCtx.fillStyle = "#ffd166";
+      targetCtx.arc(0, 0, 8, 0, Math.PI * 2);
+      targetCtx.fill();
+      targetCtx.strokeStyle = "#0b101a";
+      targetCtx.lineWidth = 1.5;
+      targetCtx.stroke();
+
+      // Pequeña marca visual tipo perilla para reconocer que este botón gira.
+      targetCtx.beginPath();
+      targetCtx.arc(0, 0, 4, -0.8, Math.PI * 1.15);
+      targetCtx.stroke();
+      targetCtx.beginPath();
+      targetCtx.moveTo(4, -1);
+      targetCtx.lineTo(6, -4);
+      targetCtx.lineTo(7, 0);
+      targetCtx.stroke();
 
       targetCtx.restore();
     }
@@ -1331,11 +1341,15 @@
           state.isResizingObject = false;
 
           const center = getObjectCenter(selectedState);
+          const startMouseAngle = getDistance(pos, center) < 2
+            ? 0
+            : getAngleFromCenter(pos, center);
+
           state.rotationStart = {
             objectState: { ...selectedState },
             center,
-            startMouseAngle: getAngleFromCenter(pos, center),
-            startRotation: selectedState.rotation || 0
+            startMouseAngle,
+            angleOffset: (selectedState.rotation || 0) - startMouseAngle
           };
 
           canvas.style.cursor = "grabbing";
@@ -1390,9 +1404,13 @@
 
       if (state.isRotatingObject && state.rotationStart) {
         const current = getObjectState(object);
+
+        if (getDistance(pos, state.rotationStart.center) < 0.5) {
+          return;
+        }
+
         const angle = getAngleFromCenter(pos, state.rotationStart.center);
-        const delta = getAngleDelta(state.rotationStart.startMouseAngle, angle);
-        let nextRotation = state.rotationStart.startRotation + delta;
+        let nextRotation = angle + state.rotationStart.angleOffset;
 
         if (event.shiftKey) {
           nextRotation = Math.round(nextRotation / 15) * 15;
@@ -1498,7 +1516,7 @@
 
         if (isInRotateHandle(pos, selectedState)) {
           canvas.style.cursor = "grab";
-          showSmartTooltip("Girar elemento: arrastra este cuadro amarillo para definir el ángulo. Mantén Shift para girar en saltos de 15°.", event);
+          showSmartTooltip("Girar sobre su propio eje: arrastra el botón amarillo central. Mantén Shift para girar en saltos de 15°.", event);
           return;
         }
 
@@ -1605,6 +1623,12 @@
       return Math.atan2(pos.y - center.y, pos.x - center.x) * 180 / Math.PI;
     }
 
+    function getDistance(a, b) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
     function getAngleDelta(startAngle, currentAngle) {
       let delta = currentAngle - startAngle;
       while (delta > 180) delta -= 360;
@@ -1617,7 +1641,7 @@
     }
 
     function getRotateHandlePoint(objectState) {
-      return rotatePoint(0, -objectState.height / 2 - 24, objectState);
+      return getObjectCenter(objectState);
     }
 
     function isNearHandle(pos, handle, size = 14) {
@@ -1634,7 +1658,7 @@
     }
 
     function isInRotateHandle(pos, objectState) {
-      return isNearHandle(pos, getRotateHandlePoint(objectState), 18);
+      return isNearHandle(pos, getRotateHandlePoint(objectState), 22);
     }
 
     function normalizeAngle(angle) {
@@ -1967,7 +1991,7 @@
 
       dropZone.dataset.tooltip = "Arrastra aquí imágenes PNG, JPG o WEBP desde tu PC para agregarlas a la biblioteca.";
       dropZone.title = dropZone.dataset.tooltip;
-      canvas.dataset.tooltip = "Canvas de edición: selecciona, mueve, agranda, achica y gira elementos.";
+      canvas.dataset.tooltip = "Canvas de edición: selecciona, mueve, agranda, achica y gira elementos. El giro se hace desde el botón amarillo central y rota sobre su propio eje.";
       canvas.title = canvas.dataset.tooltip;
 
       document.querySelectorAll("[data-tooltip]").forEach(element => {
