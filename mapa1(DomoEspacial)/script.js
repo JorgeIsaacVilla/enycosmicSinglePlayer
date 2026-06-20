@@ -11759,9 +11759,18 @@ function continuarTrasGameOver() {
 
   //Items escondidos en mapa
   let itemsEnMapaConfig = [
-    { instancia_id: "itm_mapa_01", item_id: "cuero", x: 1800, y: 950 },
-    { instancia_id: "itm_mapa_02", item_id: "diodo_lazer", x: 2000, y: 1100 },
-    { instancia_id: "itm_mapa_03", item_id: "pistola_lazer", x: 2200, y: 1000 }
+    {
+      "instancia_id": "itm_mapa_01",
+      "item_id": "corazon",
+      "x": 1059,
+      "y": 3932
+    },
+    {
+      "instancia_id": "itm_mapa_02",
+      "item_id": "pistola_lazer",
+      "x": 16,
+      "y": 4053
+    }
   ];
 
   function cargarItemsEnMapa(opciones = {}) {

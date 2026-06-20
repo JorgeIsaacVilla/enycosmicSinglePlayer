@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "savedAt": "2026-06-19T07:29:08.234Z",
+  "savedAt": "2026-06-20T04:26:03.326Z",
   "map": {
     "size": 5000,
     "dataUrl": null,
@@ -13,9 +13,9 @@
   "next": {
     "ambiente": 16234,
     "arcilla": 12368,
-    "item": 2,
-    "enemy": 1,
-    "light": 1,
+    "item": 3,
+    "enemy": 11,
+    "light": 37,
     "npc": 1,
     "missionNpc": 1
   },
@@ -575,9 +575,15 @@
       "item_id": "corazon",
       "x": 1059,
       "y": 3932
+    },
+    {
+      "instancia_id": "itm_mapa_02",
+      "item_id": "pistola_lazer",
+      "x": 16,
+      "y": 4053
     }
   ],
-  "itemsCode": "let itemsEnMapaConfig = [\n  {\n    \"instancia_id\": \"itm_mapa_01\",\n    \"item_id\": \"corazon\",\n    \"x\": 1059,\n    \"y\": 3932\n  }\n];",
+  "itemsCode": "let itemsEnMapaConfig = [\n  {\n    \"instancia_id\": \"itm_mapa_01\",\n    \"item_id\": \"corazon\",\n    \"x\": 1059,\n    \"y\": 3932\n  },\n  {\n    \"instancia_id\": \"itm_mapa_02\",\n    \"item_id\": \"pistola_lazer\",\n    \"x\": 16,\n    \"y\": 4053\n  }\n];",
   "data": {
     "ambiente": [
       {
@@ -11101,26 +11107,6 @@
         "h": 237
       },
       {
-        "zona_id": "bloque_ambiente_14807",
-        "tipo": "visual",
-        "color": null,
-        "funcion": null,
-        "imagen": "../assets/spriteAmbiente/arbustoGrande.svg",
-        "zIndexBase": 3300,
-        "subtipo": null,
-        "sprites_1x10": null,
-        "velocidad_movimiento": null,
-        "sonido_ambiente": null,
-        "previewName": null,
-        "previewNameSprite": null,
-        "pdr": null,
-        "pdr_max": null,
-        "x": 4021,
-        "y": 4746,
-        "w": 171,
-        "h": 237
-      },
-      {
         "zona_id": "bloque_ambiente_14808",
         "tipo": "visual",
         "color": null,
@@ -11337,26 +11323,6 @@
         "pdr_max": null,
         "x": 3940,
         "y": 4926,
-        "w": 56,
-        "h": 28
-      },
-      {
-        "zona_id": "bloque_ambiente_14819",
-        "tipo": "colisionables",
-        "color": null,
-        "funcion": null,
-        "imagen": null,
-        "zIndexBase": 3300,
-        "subtipo": null,
-        "sprites_1x10": null,
-        "velocidad_movimiento": null,
-        "sonido_ambiente": null,
-        "previewName": null,
-        "previewNameSprite": null,
-        "pdr": null,
-        "pdr_max": null,
-        "x": 4081,
-        "y": 4900,
         "w": 56,
         "h": 28
       },
@@ -12814,10 +12780,520 @@
         "h": 32,
         "size": 32,
         "zIndexBase": 3400
+      },
+      {
+        "id": "itm_mapa_02",
+        "instancia_id": "itm_mapa_02",
+        "item_id": "pistola_lazer",
+        "imagen": "https://enycosmicplayer.vercel.app/assets/items/pistolaLazer.svg",
+        "nombre_item": "Pistola Lazer",
+        "x": 16,
+        "y": 4053,
+        "w": 32,
+        "h": 32,
+        "size": 32,
+        "zIndexBase": 3400
       }
     ],
-    "enemy": [],
-    "light": [],
+    "enemy": [
+      {
+        "id": "enemy_mapa_basico_02",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 347,
+        "y": 4544
+      },
+      {
+        "id": "enemy_mapa_basico_03",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 382,
+        "y": 4622
+      },
+      {
+        "id": "enemy_mapa_basico_04",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 383,
+        "y": 4710
+      },
+      {
+        "id": "enemy_mapa_basico_05",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 370,
+        "y": 4806
+      },
+      {
+        "id": "enemy_mapa_basico_06",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 348,
+        "y": 4900
+      },
+      {
+        "id": "enemy_mapa_basico_07",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "previewName": "centinela-reptiliano-armado.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 82,
+        "y": 4172
+      },
+      {
+        "id": "enemy_mapa_basico_08",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 141,
+        "y": 4725
+      },
+      {
+        "id": "enemy_mapa_basico_09",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 174,
+        "y": 4835
+      },
+      {
+        "id": "enemy_mapa_basico_10",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 56,
+        "y": 4825
+      }
+    ],
+    "light": [
+      {
+        "nombre_id": "antorcha_mapa_01",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 751,
+        "y": 366
+      },
+      {
+        "nombre_id": "antorcha_mapa_02",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 226,
+        "y": 356
+      },
+      {
+        "nombre_id": "antorcha_mapa_03",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 490,
+        "y": 636
+      },
+      {
+        "nombre_id": "antorcha_mapa_04",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 4189,
+        "y": 369
+      },
+      {
+        "nombre_id": "antorcha_mapa_05",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 4731,
+        "y": 364
+      },
+      {
+        "nombre_id": "antorcha_mapa_06",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 4452,
+        "y": 647
+      },
+      {
+        "nombre_id": "antorcha_mapa_21",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 883,
+        "y": 2466
+      },
+      {
+        "nombre_id": "antorcha_mapa_23",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 2027,
+        "y": 2403
+      },
+      {
+        "nombre_id": "antorcha_mapa_24",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3738,
+        "y": 2489
+      },
+      {
+        "nombre_id": "antorcha_mapa_25",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3864,
+        "y": 2489
+      },
+      {
+        "nombre_id": "antorcha_mapa_26",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 1388,
+        "y": 1001
+      },
+      {
+        "nombre_id": "antorcha_mapa_27",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3564,
+        "y": 1085
+      },
+      {
+        "nombre_id": "antorcha_mapa_28",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3336,
+        "y": 3535
+      },
+      {
+        "nombre_id": "antorcha_mapa_29",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3612,
+        "y": 3538
+      },
+      {
+        "nombre_id": "antorcha_mapa_30",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 718,
+        "y": 3843
+      },
+      {
+        "nombre_id": "antorcha_mapa_31",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 1337,
+        "y": 3845
+      },
+      {
+        "nombre_id": "antorcha_mapa_32",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 921,
+        "y": 4093
+      },
+      {
+        "nombre_id": "antorcha_mapa_33",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 4488,
+        "y": 4496
+      },
+      {
+        "nombre_id": "antorcha_mapa_34",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 4497,
+        "y": 4629
+      },
+      {
+        "nombre_id": "antorcha_mapa_35",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 3633,
+        "y": 4174
+      },
+      {
+        "nombre_id": "antorcha_mapa_36",
+        "tipo": "antorcha",
+        "imagen": "../assets/spriteAmbiente/antorcha.svg",
+        "previewName": null,
+        "w": 60,
+        "h": 60,
+        "color": null,
+        "functionName": null,
+        "x": 210,
+        "y": 4535
+      }
+    ],
     "npc": [],
     "missionNpcs": [],
     "missionSteps": [],

@@ -127,7 +127,48 @@
         </section>
         <section id="tabEnemy" class="tab-panel">
           <div class="section"><p class="section-title">Herramienta enemy</p><div class="row"><button id="enemyToolPlace">Ubicar enemigo</button><button id="enemyToolLine">Línea enemigos</button></div></div>
-          <div class="section"><p class="section-title">Datos enemigo</p><label>ID base</label><input id="enemyPrefix" type="text" value="enemy_mapa_basico"><div class="row"><div><label>Nombre</label><input id="enemyName" type="text" value="Centinela Reptiliano"></div><div><label>Tipo</label><input id="enemyType" type="text" value="basico"></div></div><label>Sprite preview</label><input id="enemySpriteFile" type="file" accept="image/*"><div id="enemyImagePreview" class="asset-preview"><div class="asset-preview-empty">Sin sprite cargado.</div></div><label>Ruta imagen JSON</label><input id="enemyImagePath" type="text"><div class="row-3"><div><label>W</label><input id="enemyW" type="number" value="64"></div><div><label>H</label><input id="enemyH" type="number" value="64"></div><div><label>Frames X</label><input id="enemyFramesX" type="number" value="1" min="1"></div></div><div class="row-3"><div><label>Vida</label><input id="enemyLife" type="number" value="43"></div><div><label>Ataque</label><input id="enemyAttack" type="number" value="6"></div><div><label>Velocidad</label><input id="enemySpeed" type="number" value="1.8" step="0.1"></div></div><div class="row"><div><label>Radio visión</label><input id="enemyVision" type="number" value="400"></div><div><label>Animación ataque</label><input id="enemyAttackAnim" type="text" value="ataqueEnemigoBasico"></div></div><label>Script al morir</label><input id="enemyDeathScript" type="text" value="dropItemBasico"><label>Diálogos normales</label><textarea id="enemyDialogs">grr...!!
+          <div class="section"><p class="section-title">Datos enemigo</p><label>ID base</label><input id="enemyPrefix" type="text" value="enemy_mapa_basico"><div class="row"><div><label>Nombre</label><input id="enemyName" type="text" value="Centinela Reptiliano"></div><div><label>Tipo</label><input id="enemyType" type="text" value="basico"></div></div><label>Sprite preview</label>
+<input id="enemySpriteFile" type="file" accept="image/*">
+
+<div id="enemyImagePreview" class="asset-preview">
+  <div class="asset-preview-empty">Sin sprite cargado.</div>
+</div>
+
+<button id="sourceEnemiesReload" class="violet" style="width:100%;margin-top:8px">Recargar enemys</button>
+<input id="sourceEnemiesFolder" type="file" webkitdirectory multiple accept="image/*" style="display:none">
+
+<p id="sourceEnemiesCount" class="hint">Usa “Recargar enemys” para conectar la carpeta ./source/enemys.</p>
+
+<div id="sourceEnemiesGallery" class="catalog-grid" style="display:none;margin-top:8px">
+  <div class="hint">Los sprites de enemigos aparecerán aquí.</div>
+</div>
+
+<p class="hint">Preview interno: ./source/enemys/. Ruta final JSON: ../assets/avatares/enemy/.</p>
+
+<label>Ruta imagen JSON</label>
+<input id="enemyImagePath" type="text">
+
+<div class="row">
+  <div>
+    <label>W frame</label>
+    <input id="enemyW" type="number" value="64">
+  </div>
+  <div>
+    <label>H frame</label>
+    <input id="enemyH" type="number" value="64">
+  </div>
+</div>
+
+<div class="row">
+  <div>
+    <label>Frames X</label>
+    <input id="enemyFramesX" type="number" value="1" min="1">
+  </div>
+  <div>
+    <label>Frames Y</label>
+    <input id="enemyFramesY" type="number" value="1" min="1">
+  </div>
+</div><div class="row-3"><div><label>Vida</label><input id="enemyLife" type="number" value="43"></div><div><label>Ataque</label><input id="enemyAttack" type="number" value="6"></div><div><label>Velocidad</label><input id="enemySpeed" type="number" value="1.8" step="0.1"></div></div><div class="row"><div><label>Radio visión</label><input id="enemyVision" type="number" value="400"></div><div><label>Animación ataque</label><input id="enemyAttackAnim" type="text" value="ataqueEnemigoBasico"></div></div><label>Script al morir</label><input id="enemyDeathScript" type="text" value="dropItemBasico"><label>Diálogos normales</label><textarea id="enemyDialogs">grr...!!
 Gr...!!</textarea><label>Diálogos ataque</label><textarea id="enemyAttackDialogs">¡Intruso detectado!
 ¡No escaparás!</textarea><div class="row" style="margin-top:10px"><button id="enemyApply">Aplicar</button><button id="enemyDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="enemyDelete" class="danger">Eliminar</button><button id="enemyClear" class="warning">Limpiar enemigos</button></div></div>
           <div class="section"><p class="section-title">Enemigos</p><div class="list" id="enemyList"></div></div><div class="section"><p class="section-title">Importar / exportar enemy.json</p><label>Cargar enemy.json</label><input id="importEnemy" type="file" accept="application/json"><button id="downloadEnemy" class="primary" style="width:100%">Descargar JSON de enemy</button><label>Vista previa</label><textarea id="enemyPreview" class="json-preview" readonly></textarea></div>
@@ -184,8 +225,10 @@ const history={undo:[],redo:[],locked:false};
     const state={mapSize:5000,mapDataUrl:null,mapSourcePath:null,mapName:null,imageWidth:null,imageHeight:null,scale:1,minScale:.03,maxScale:4,offsetX:0,offsetY:0,activeTab:'tabProyecto',tool:'pan',gridVisible:false,draggingView:false,draggingNode:false,resizingNode:false,drawingRect:false,drawingLine:false,dragStart:null,nodeStart:null,lineStart:null,selected:{kind:null,id:null},measuring:false,measureStart:null,jsonEditor:{kind:null,id:null,lastImage:null,lastImageName:null,lastImageUrl:null},next:{ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1},previews:{ambiente:null,ambienteSprite:null,arcilla:null,item:null,enemy:null,light:null,npc:null,missionNpc:null},previewNames:{ambiente:null,ambienteSprite:null,arcilla:null,item:null,enemy:null,light:null,npc:null,missionNpc:null},itemCatalog:[],data:{ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[]}};
     const $=id=>document.getElementById(id),clamp=(v,min,max)=>Math.max(min,Math.min(max,v)),round=v=>Math.round(Number(v)||0),lines=v=>String(v||'').split('\n').map(x=>x.trim()).filter(Boolean),pad=n=>String(n).padStart(2,'0');
     const els={viewport:$('viewport'),mapStage:$('mapStage'),mapImage:$('mapImage'),mapPlaceholder:$('mapPlaceholder'),mapGrid:$('mapGrid'),dropzone:$('dropzone'),layers:{ambiente:$('ambLayer'),enemy:$('enemyLayer'),light:$('lightLayer'),npc:$('npcLayer'),missionNpc:$('missionLayer'),item:$('itemLayer')}};
-    const sourceItemsFiles=new Map();
-    const sourceSystemFiles=new Map();
+const sourceItemsFiles=new Map();
+const sourceSystemFiles=new Map();
+const sourceEnemyFiles=new Map();
+let sourceEnemyDirHandle=null;
     const sessionPreviewUrls=new Set();
     function safeId(t,f='item'){return String(t||f).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_]+/g,'_').replace(/^_+|_+$/g,'')||f}
     function setStatus(t){$('bottomStatus').textContent=t}function uid(kind,prefix){return `${safeId(prefix,kind)}_${pad(state.next[kind]++)}`}function activeKind(){return({tabAmbiente:'ambiente',tabItems:'item',tabEnemy:'enemy',tabIlum:'light',tabNPC:'npc',tabMisiones:'missionNpc'})[state.activeTab]||null}
@@ -202,7 +245,183 @@ const history={undo:[],redo:[],locked:false};
     function isDirectSourceFile(file){const path=file.webkitRelativePath||file.name||'';const parts=path.split('/').filter(Boolean);if(parts.length<=1)return true;return String(parts[parts.length-2]||'').toLowerCase()==='source'}
     function loadSourceSystemFolder(files){sourceSystemFiles.forEach(asset=>{if(asset&&asset.url&&isRuntimeOnlyUrl(asset.url))URL.revokeObjectURL(asset.url)});sourceSystemFiles.clear();[...(files||[])].forEach(file=>{if(!isSystemImageFile(file))return;if(!isDirectSourceFile(file))return;const url=URL.createObjectURL(file);sessionPreviewUrls.add(url);sourceSystemFiles.set(file.name,{file,name:file.name,url})});renderSourceSystemGallery();const total=sourceSystemFiles.size;setStatus(total?`Elementos de sistemas cargados: ${total}.`:'No encontré imágenes directamente dentro de source.')}
     function renderSourceSystemGallery(){const box=$('sourceSystemsGallery'),countBox=$('sourceSystemsCount');if(!box)return;box.style.display='grid';box.innerHTML='';const normalizeSearch=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');const query=normalizeSearch($('sourceSystemsSearch')?.value||'');let assets=[...sourceSystemFiles.values()].sort((a,b)=>a.name.localeCompare(b.name));if(query)assets=assets.filter(asset=>normalizeSearch(asset.name).includes(query));if(countBox)countBox.textContent=sourceSystemFiles.size?`Mostrando ${assets.length} de ${sourceSystemFiles.size} elementos.`:'No hay elementos cargados todavía.';if(!sourceSystemFiles.size){box.innerHTML='<div class="hint">No hay imágenes cargadas. Selecciona la carpeta source.</div>';return}if(!assets.length){box.innerHTML='<div class="hint">No encontré elementos con ese nombre.</div>';return}assets.forEach(asset=>{const card=document.createElement('div');card.className='catalog-card';card.dataset.systemAsset=encodeURIComponent(asset.name);const img=document.createElement('img');img.className='catalog-thumb';img.src=asset.url;img.alt=asset.name;const title=document.createElement('div');title.className='catalog-card-title';title.innerHTML=`${asset.name}<small>./source/${asset.name}</small>`;card.appendChild(img);card.appendChild(title);box.appendChild(card)})}
+    
     async function selectSourceSystemAsset(fileName){const asset=sourceSystemFiles.get(fileName);if(!asset)return;setAmbUseSpriteMode(false);if($('ambUseSprite'))$('ambUseSprite').checked=false;if($('ambSpritePath'))$('ambSpritePath').value='';if($('ambSpritePreview'))setAssetPreview('ambSpritePreview',null);if($('ambImagePath'))$('ambImagePath').value='../assets/spriteAmbiente/'+asset.name;state.previews.ambiente=asset.url;state.previewNames.ambiente=asset.name;setAssetPreview('ambImagePreview',asset.url,asset.name);await detectAmbRealSize(true);setStatus(`Elemento de sistema listo para usar: ${asset.name}.`)}
+
+    function isEnemyImageFile(file){
+  return !!file&&/\.(svg|png|jpe?g|webp|gif)$/i.test(file.name||'');
+}
+
+function clearSourceEnemyFiles(){
+  sourceEnemyFiles.forEach(asset=>{
+    if(asset&&asset.url&&isRuntimeOnlyUrl(asset.url)){
+      URL.revokeObjectURL(asset.url);
+    }
+  });
+  sourceEnemyFiles.clear();
+}
+
+function renderSourceEnemyGallery(){
+  const box=$('sourceEnemiesGallery');
+  const countBox=$('sourceEnemiesCount');
+  if(!box)return;
+
+  box.style.display='grid';
+  box.innerHTML='';
+
+  const assets=[...sourceEnemyFiles.values()].sort((a,b)=>a.name.localeCompare(b.name));
+
+  if(countBox){
+    countBox.textContent=assets.length
+      ?`Sprites cargados desde ./source/enemys/: ${assets.length}.`
+      :'No hay sprites cargados todavía.';
+  }
+
+  if(!assets.length){
+    box.innerHTML='<div class="hint">No hay sprites enemigos cargados. Presiona “Recargar enemys”.</div>';
+    return;
+  }
+
+  assets.forEach(asset=>{
+    const card=document.createElement('div');
+    card.className='catalog-card';
+    card.dataset.enemyAsset=encodeURIComponent(asset.name);
+
+    const img=document.createElement('img');
+    img.className='catalog-thumb';
+    img.src=asset.url;
+    img.alt=asset.name;
+
+    const title=document.createElement('div');
+    title.className='catalog-card-title';
+    title.innerHTML=`${asset.name}<small>./source/enemys/${asset.name}</small>`;
+
+    card.appendChild(img);
+    card.appendChild(title);
+    box.appendChild(card);
+  });
+}
+
+function loadSourceEnemiesFromFileList(files){
+  clearSourceEnemyFiles();
+
+  [...(files||[])].forEach(file=>{
+    if(!isEnemyImageFile(file))return;
+
+    const path=file.webkitRelativePath||file.name||'';
+    const parts=path.split('/').filter(Boolean);
+    const parent=String(parts[parts.length-2]||'').toLowerCase();
+
+    if(parts.length>1&&parent!=='enemys')return;
+
+    const url=URL.createObjectURL(file);
+    sessionPreviewUrls.add(url);
+    sourceEnemyFiles.set(file.name,{file,name:file.name,url});
+  });
+
+  renderSourceEnemyGallery();
+  setStatus(sourceEnemyFiles.size?`Sprites enemigos cargados: ${sourceEnemyFiles.size}.`:'No encontré imágenes dentro de source/enemys.');
+}
+
+async function loadSourceEnemiesFromHandle(handle){
+  clearSourceEnemyFiles();
+
+  for await(const entry of handle.values()){
+    if(entry.kind!=='file')continue;
+
+    const file=await entry.getFile();
+    if(!isEnemyImageFile(file))continue;
+
+    const url=URL.createObjectURL(file);
+    sessionPreviewUrls.add(url);
+    sourceEnemyFiles.set(file.name,{file,name:file.name,url});
+  }
+
+  renderSourceEnemyGallery();
+  setStatus(sourceEnemyFiles.size?`Sprites enemigos recargados: ${sourceEnemyFiles.size}.`:'No encontré imágenes dentro de source/enemys.');
+}
+
+async function reloadSourceEnemies(){
+  if('showDirectoryPicker' in window){
+    try{
+      if(!sourceEnemyDirHandle){
+        sourceEnemyDirHandle=await window.showDirectoryPicker({mode:'read'});
+      }
+
+      await loadSourceEnemiesFromHandle(sourceEnemyDirHandle);
+      return;
+    }catch(e){
+      setStatus('No se pudo acceder a la carpeta enemys. Usa el selector de carpeta.');
+    }
+  }
+
+  const input=$('sourceEnemiesFolder');
+  if(!input)return;
+
+  input.value='';
+  input.click();
+}
+
+async function selectSourceEnemyAsset(fileName){
+  const asset=sourceEnemyFiles.get(fileName);
+  if(!asset)return;
+
+  if($('enemyImagePath')){
+    $('enemyImagePath').value='../assets/avatares/enemy/'+asset.name;
+  }
+
+  state.previews.enemy=asset.url;
+  state.previewNames.enemy=asset.name;
+
+  setAssetPreview('enemyImagePreview',asset.url,asset.name);
+
+  await detectEnemyFrameSize(true,asset.url);
+
+  setStatus(`Sprite enemigo listo: ${asset.name}.`);
+}
+
+async function detectEnemyFrameSize(silent=false,srcOverride=null){
+  const path=$('enemyImagePath')?.value?.trim()||'';
+  const src=srcOverride||state.previews.enemy||sourcePreviewPath(path)||path;
+
+  if(!src){
+    if(!silent)setStatus('Primero carga o selecciona un sprite enemigo.');
+    return null;
+  }
+
+  try{
+    const size=await imageSizeFromUrl(src);
+
+    let framesX=Math.max(1,round($('enemyFramesX')?.value)||1);
+    let framesY=Math.max(1,round($('enemyFramesY')?.value)||1);
+
+    // Si todavía está en 1x1, asumimos spritesheet 4x4 como base inicial.
+    // Luego tú puedes cambiar Frames X/Y manualmente si un enemigo usa otro formato.
+    if(framesX===1&&framesY===1&&size.w>96&&size.h>96){
+      framesX=4;
+      framesY=4;
+
+      if($('enemyFramesX'))$('enemyFramesX').value=framesX;
+      if($('enemyFramesY'))$('enemyFramesY').value=framesY;
+    }
+
+    const frameW=Math.max(1,Math.round((size.w||64)/framesX));
+    const frameH=Math.max(1,Math.round((size.h||64)/framesY));
+
+    if($('enemyW'))$('enemyW').value=frameW;
+    if($('enemyH'))$('enemyH').value=frameH;
+
+    if(!silent){
+      setStatus(`Frame 0,0 detectado: ${frameW} x ${frameH}. Sprite completo: ${size.w} x ${size.h}.`);
+    }
+
+    return{w:frameW,h:frameH,totalW:size.w,totalH:size.h,framesX,framesY};
+  }catch(e){
+    if(!silent)setStatus('No pude detectar el tamaño del sprite enemigo.');
+    return null;
+  }
+}
+
     function previewMatchesPath(kind,path){const loaded=state.previewNames?.[kind];if(!loaded)return false;return getFileNameFromPath(path)===loaded}
     function safePreviewFor(kind,path){return previewMatchesPath(kind,path)?state.previews[kind]:null}
     function spritePreviewForPath(path){return previewMatchesPath('ambienteSprite',path)?state.previews.ambienteSprite:null}
@@ -215,7 +434,30 @@ const history={undo:[],redo:[],locked:false};
     async function detectAmbRealSize(silent=false){const spritePath=$('ambSpritePath')?.value?.trim()||'',imagePath=$('ambImagePath')?.value?.trim()||'',usingSprite=ambUseSpriteMode(),src=usingSprite?(state.previews.ambienteSprite||sourcePreviewPath(spritePath)||spritePath):(state.previews.ambiente||sourcePreviewPath(imagePath)||imagePath);if(!src){if(!silent)setStatus('Primero carga una imagen o escribe la ruta de imagen.');return null}try{const size=await imageSizeFromUrl(src);const frameSize=usingSprite?{w:Math.max(1,Math.round((size.w||120)/10)),h:Math.max(1,Math.round(size.h||120))}:size;setAmbRealSize(frameSize.w,frameSize.h);if(!silent)setStatus(usingSprite?`Tamaño del primer sprite detectado: ${round(frameSize.w)} x ${round(frameSize.h)}.`:`Tamaño real detectado: ${round(frameSize.w)} x ${round(frameSize.h)}.`);return frameSize}catch(e){if(!silent)setStatus('No pude detectar el tamaño. Revisa que la imagen exista en source o cárgala manualmente.');return null}}
     function ambRealSizeValues(){return{w:Math.max(1,round($('ambRealW')?.value)||80),h:Math.max(1,round($('ambRealH')?.value)||80)}}
     function getFileNameFromPath(path){return String(path||'').split(/[\\/]/).pop().split('?')[0].split('#')[0]}
-    function sourcePreviewPath(path,folder='source'){const file=getFileNameFromPath(path);if(!file)return null;if(folder&&folder!=='source')return `${folder}/${file}`;const raw=String(path||'').replace(/\\/g,'/').toLowerCase();if(raw.includes('/items/')||raw.includes('assets/items')||raw.includes('source/items'))return `source/items/${file}`;if(raw.includes('/mapas/')||raw.includes('source/mapas'))return `source/mapas/${file}`;return `source/${file}`}
+    function sourcePreviewPath(path,folder='source'){
+  const file=getFileNameFromPath(path);
+  if(!file)return null;
+
+  if(folder&&folder!=='source'){
+    return `${folder}/${file}`;
+  }
+
+  const raw=String(path||'').replace(/\\/g,'/').toLowerCase();
+
+  if(raw.includes('/items/')||raw.includes('assets/items')||raw.includes('source/items')){
+    return `source/items/${file}`;
+  }
+
+  if(raw.includes('/enemys/')||raw.includes('assets/avatares/enemy')||raw.includes('/avatares/enemy/')||raw.includes('source/enemys')){
+    return `source/enemys/${file}`;
+  }
+
+  if(raw.includes('/mapas/')||raw.includes('source/mapas')){
+    return `source/mapas/${file}`;
+  }
+
+  return `source/${file}`;
+}
     function isRuntimeOnlyUrl(url){return /^blob:/i.test(String(url||''))}
     function isStaleRuntimePreview(url){return isRuntimeOnlyUrl(url)&&!sessionPreviewUrls.has(url)}
     function safeRuntimePreview(url){url=String(url||'');return url&&!isStaleRuntimePreview(url)?url:null}
@@ -291,7 +533,35 @@ function makeArcillaLine(start,end){const t=cfgArcilla(),w=Math.max(1,round(t.w)
 
 
 function ambJson(){return state.data.ambiente.map(raw=>{const b=repairAmbienteImageRoute({...raw});const hasSprite=!!b.sprites_1x10;const o={zona_id:b.zona_id,color:b.color??null,tipo:b.tipo||'visual',funcion:b.funcion||null,x:round(b.x),y:round(b.y),w:round(b.w),h:round(b.h),imagen:hasSprite?null:(b.imagen||null),zIndexBase:round(b.zIndexBase||3300),sprites_1x10:b.sprites_1x10||null,velocidad_movimiento:hasSprite?(b.velocidad_movimiento??1.1):null,sonido_ambiente:null};if(b.subtipo)o.subtipo=b.subtipo;if(b.pdr!==undefined&&b.pdr!==null)o.pdr=round(b.pdr);if(b.pdr_max!==undefined&&b.pdr_max!==null)o.pdr_max=round(b.pdr_max);return o})}
-    function cfgEnemy(){return{id:uid('enemy',$('enemyPrefix').value),nombre:$('enemyName').value.trim()||'Enemigo',tipo:$('enemyType').value.trim()||'basico',imagen:$('enemyImagePath').value.trim()||null,preview:safePreviewFor('enemy',$('enemyImagePath').value.trim()),previewName:previewMatchesPath('enemy',$('enemyImagePath').value.trim())?state.previewNames.enemy:null,w:round($('enemyW').value)||64,h:round($('enemyH').value)||64,framesX:Math.max(1,round($('enemyFramesX').value)||1),vida:round($('enemyLife').value)||1,ataque:round($('enemyAttack').value)||1,speed:Number($('enemySpeed').value)||1,vision:round($('enemyVision').value)||400,attackAnim:$('enemyAttackAnim').value.trim()||null,deathScript:$('enemyDeathScript').value.trim()||null,dialogos:lines($('enemyDialogs').value),dialogosAtack:lines($('enemyAttackDialogs').value),x:0,y:0}}
+    
+function cfgEnemy(){
+  const imgPath=$('enemyImagePath').value.trim()||null;
+
+  return{
+    id:uid('enemy',$('enemyPrefix').value),
+    nombre:$('enemyName').value.trim()||'Enemigo',
+    tipo:$('enemyType').value.trim()||'basico',
+    imagen:imgPath,
+    preview:safePreviewFor('enemy',imgPath),
+    previewName:previewMatchesPath('enemy',imgPath)?state.previewNames.enemy:null,
+    w:round($('enemyW').value)||64,
+    h:round($('enemyH').value)||64,
+    framesX:Math.max(1,round($('enemyFramesX').value)||1),
+    framesY:Math.max(1,round($('enemyFramesY')?.value)||1),
+    vida:round($('enemyLife').value)||1,
+    ataque:round($('enemyAttack').value)||1,
+    speed:Number($('enemySpeed').value)||1,
+    vision:round($('enemyVision').value)||400,
+    attackAnim:$('enemyAttackAnim').value.trim()||null,
+    deathScript:$('enemyDeathScript').value.trim()||null,
+    dialogos:lines($('enemyDialogs').value),
+    dialogosAtack:lines($('enemyAttackDialogs').value),
+    x:0,
+    y:0
+  };
+}
+
+
     function enemyJson(){return{enemigos:state.data.enemy.map(e=>({id:e.id,nombre:e.nombre,tipo:e.tipo,imagen:e.imagen,puntos_de_vida:e.vida,puntos_de_ataque:e.ataque,atackAnimation:e.attackAnim,Speed_enemy:e.speed,radioVision:e.vision,dialogos:e.dialogos,dialogos_Atack:e.dialogosAtack,tamano:{w:e.w,h:e.h},posicion:{x:round(e.x),y:round(e.y)},ejecucion_script:{al_morir:e.deathScript||null}}))}}
     function cfgLight(){return{nombre_id:uid('light',$('lightPrefix').value),tipo:$('lightType').value.trim()||'antorcha',imagen:$('lightImagePath').value.trim()||null,preview:safePreviewFor('light',$('lightImagePath').value.trim()),previewName:previewMatchesPath('light',$('lightImagePath').value.trim())?state.previewNames.light:null,w:round($('lightW').value)||60,h:round($('lightH').value)||60,color:$('lightColor').value.trim()||null,functionName:$('lightFunction').value.trim()||null,x:0,y:0}}
     function lightJson(){return state.data.light.map(l=>{const o={nombre_id:l.nombre_id,tipo:l.tipo,imagen:l.imagen,w:round(l.w),h:round(l.h),x:round(l.x),y:round(l.y)};if(l.color)o.color=l.color;if(l.functionName)o.function=l.functionName;return o})}
@@ -299,7 +569,83 @@ function ambJson(){return state.data.ambiente.map(raw=>{const b=repairAmbienteIm
     function npcJson(){return state.data.npc.map(n=>({imagen:n.imagen,nombre:n.nombre,velocidad:n.velocidad,dialogos_automaticos:n.dialogos_automaticos,dialogos_miedo:n.dialogos_miedo,x:round(n.x),y:round(n.y)}))}
     function cfgMissionNpc(){return{id:$('missionNpcId').value.trim()||uid('missionNpc','npc_mision'),nombre:$('missionNpcName').value.trim()||'NPC Misión',rol:'inicio',imagen:$('missionNpcImagePath').value.trim()||null,preview:safePreviewFor('missionNpc',$('missionNpcImagePath').value.trim()),previewName:previewMatchesPath('missionNpc',$('missionNpcImagePath').value.trim())?state.previewNames.missionNpc:null,w:64,h:64,x:0,y:0,conversation_default:lines($('missionNpcDialog1').value)[0]||'',dialogos:{inicio:lines($('missionNpcDialog1').value),en_progreso:lines($('missionNpcDialog2').value),completado:lines($('missionNpcDialogFinal').value)},funcionCumplimiento:$('missionCompleteFunction').value.trim()||null}}
     
-    function makeNode(kind,item){const el=document.createElement('div');el.className='node '+({ambiente:'amb',enemy:'enemy',light:'light',npc:'npc',missionNpc:'missionNpc',item:'item'}[kind]||'');const id=item.id||item.instancia_id||item.zona_id||item.nombre_id||item.nombre;el.dataset.kind=kind;el.dataset.id=id;el.style.left=round(item.x)+'px';el.style.top=round(item.y)+'px';el.style.width=round(item.w||item.size||64)+'px';el.style.height=round(item.h||item.size||64)+'px';el.style.zIndex=item.zIndexBase||3000;el.dataset.label=(item.instancia_id||item.zona_id||item.id||item.nombre_id||item.item_id||item.nombre)+' · '+round(item.x)+','+round(item.y);if(state.selected.kind===kind&&state.selected.id===id)el.classList.add('selected');if(kind==='ambiente'){const isSprite=!!item.sprites_1x10,imgSrc=isSprite?(item.preview||sourcePreviewPath(item.sprites_1x10)||item.sprites_1x10):getPreviewSrc(item,kind);el.style.backgroundColor=item.color||'rgba(255,255,255,.04)';if(imgSrc){el.style.backgroundImage=`url("${imgSrc}")`;if(isSprite){el.classList.add('amb-sprite-1x10');el.style.animationDuration=(Number(item.velocidad_movimiento)||1.1)+'s'}}}else{const src=getPreviewSrc(item,kind);if(src){const div=document.createElement('div');div.className='sprite-crop';div.style.backgroundImage=`url("${src}")`;div.style.backgroundSize=kind==='enemy'?`${(item.framesX||1)*100}% auto`:'contain';div.style.backgroundPosition='0 0';div.style.backgroundRepeat='no-repeat';el.appendChild(div)}else el.style.backgroundColor=kind==='light'?'rgba(255,209,102,.32)':kind==='item'?'rgba(0,234,255,.24)':'rgba(183,140,255,.25)'}const tools=document.createElement('div');tools.className='node-tools';tools.innerHTML='<span class="node-tool" data-action="delete" title="Eliminar">×</span><span class="node-tool" data-action="duplicate" title="Duplicar">🖌</span><span class="node-tool" data-action="line" title="Editar JSON">✎</span>';el.appendChild(tools);if(kind==='ambiente'){const h=document.createElement('div');h.className='resize-handle';el.appendChild(h)}return el}
+function makeNode(kind,item){
+  const el=document.createElement('div');
+  el.className='node '+({ambiente:'amb',enemy:'enemy',light:'light',npc:'npc',missionNpc:'missionNpc',item:'item'}[kind]||'');
+
+  const id=item.id||item.instancia_id||item.zona_id||item.nombre_id||item.nombre;
+
+  el.dataset.kind=kind;
+  el.dataset.id=id;
+  el.style.left=round(item.x)+'px';
+  el.style.top=round(item.y)+'px';
+  el.style.width=round(item.w||item.size||64)+'px';
+  el.style.height=round(item.h||item.size||64)+'px';
+  el.style.zIndex=item.zIndexBase||3000;
+  el.dataset.label=(item.instancia_id||item.zona_id||item.id||item.nombre_id||item.item_id||item.nombre)+' · '+round(item.x)+','+round(item.y);
+
+  if(state.selected.kind===kind&&state.selected.id===id){
+    el.classList.add('selected');
+  }
+
+  if(kind==='ambiente'){
+    const isSprite=!!item.sprites_1x10;
+    const imgSrc=isSprite
+      ?(item.preview||sourcePreviewPath(item.sprites_1x10)||item.sprites_1x10)
+      :getPreviewSrc(item,kind);
+
+    el.style.backgroundColor=item.color||'rgba(255,255,255,.04)';
+
+    if(imgSrc){
+      el.style.backgroundImage=`url("${imgSrc}")`;
+
+      if(isSprite){
+        el.classList.add('amb-sprite-1x10');
+        el.style.animationDuration=(Number(item.velocidad_movimiento)||1.1)+'s';
+      }
+    }
+  }else{
+    const src=getPreviewSrc(item,kind);
+
+    if(src){
+      const div=document.createElement('div');
+      div.className='sprite-crop';
+      div.style.backgroundImage=`url("${src}")`;
+      div.style.backgroundPosition='0 0';
+      div.style.backgroundRepeat='no-repeat';
+
+      if(kind==='enemy'){
+        const framesX=Math.max(1,round(item.framesX||1));
+        const framesY=Math.max(1,round(item.framesY||1));
+
+        div.style.backgroundSize=`${framesX*100}% ${framesY*100}%`;
+      }else{
+        div.style.backgroundSize='contain';
+      }
+
+      el.appendChild(div);
+    }else{
+      el.style.backgroundColor=kind==='light'
+        ?'rgba(255,209,102,.32)'
+        :kind==='item'
+          ?'rgba(0,234,255,.24)'
+          :'rgba(183,140,255,.25)';
+    }
+  }
+
+  const tools=document.createElement('div');
+  tools.className='node-tools';
+  tools.innerHTML='<span class="node-tool" data-action="delete" title="Eliminar">×</span><span class="node-tool" data-action="duplicate" title="Duplicar">🖌</span><span class="node-tool" data-action="line" title="Editar JSON">✎</span>';
+  el.appendChild(tools);
+
+  if(kind==='ambiente'){
+    const h=document.createElement('div');
+    h.className='resize-handle';
+    el.appendChild(h);
+  }
+
+  return el;
+}
 
     
     function arrFor(kind){if(kind==='missionNpc')return state.data.missionNpcs||[];if(kind==='item')return state.data.items||[];return state.data[kind]||[]}
@@ -325,7 +671,7 @@ function ambJson(){return state.data.ambiente.map(raw=>{const b=repairAmbienteIm
       if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';
 if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;
 if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;
-      $('ambTipo1').value=(it.tipo||'visual').split(' ')[0]||'visual';$('ambTipo2').value=(it.tipo||'').split(' ')[1]||'';$('ambColor').value=it.color||'#ff0000';$('ambTransparent').checked=!it.color;$('ambZ').value=it.zIndexBase||3300;$('ambImagePath').value=it.imagen||'';$('ambFunction').value=it.funcion||'';$('ambSubtype').value=it.subtipo||'';if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;if($('ambRealW'))$('ambRealW').value=it.w||80;if($('ambRealH'))$('ambRealH').value=it.h||80;if(it.subtipo==='bloque_arcilla'){$('arcillaPrefix').value=(it.zona_id||'bloque_arcilla').replace(/_?\d+$/,'')||'bloque_arcilla';$('arcillaImagePath').value=it.imagen||'../assets/items/bloqueArcilla.svg';$('arcillaW').value=it.w||64;$('arcillaH').value=it.h||64;$('arcillaZ').value=it.zIndexBase||3300;$('arcillaPdr').value=it.pdr??12;$('arcillaPdrMax').value=it.pdr_max??12;$('arcillaFunction').value=it.funcion||''}}if(kind==='enemy'){$('enemyName').value=it.nombre;$('enemyType').value=it.tipo;$('enemyImagePath').value=it.imagen||'';$('enemyW').value=it.w;$('enemyH').value=it.h;$('enemyFramesX').value=it.framesX||1;$('enemyLife').value=it.vida;$('enemyAttack').value=it.ataque;$('enemySpeed').value=it.speed;$('enemyVision').value=it.vision;$('enemyAttackAnim').value=it.attackAnim||'';$('enemyDeathScript').value=it.deathScript||'';$('enemyDialogs').value=(it.dialogos||[]).join('\n');$('enemyAttackDialogs').value=(it.dialogosAtack||[]).join('\n')}if(kind==='light'){$('lightType').value=it.tipo;$('lightColor').value=it.color||'';$('lightImagePath').value=it.imagen||'';$('lightW').value=it.w;$('lightH').value=it.h;$('lightFunction').value=it.functionName||''}if(kind==='npc'){$('npcName').value=it.nombre;$('npcImagePath').value=it.imagen||'';$('npcW').value=it.w||64;$('npcH').value=it.h||64;$('npcSpeed').value=it.velocidad;$('npcDialogs').value=(it.dialogos_automaticos||[]).join('\n');$('npcFearDialogs').value=(it.dialogos_miedo||[]).join('\n')}if(kind==='item'){$('itemPrefix').value=(it.instancia_id||it.id||'itm_mapa').replace(/_?\d+$/,'')||'itm_mapa';$('itemId').value=it.item_id||'';if($('itemCatalogSelect')&&state.itemCatalog.some(x=>x.id===it.item_id))$('itemCatalogSelect').value=it.item_id;const def=getItemDefinition(it.item_id);$('itemImagePath').value=it.imagen||def?.imagen||'';$('itemSize').value=it.size||it.w||32;$('itemZ').value=it.zIndexBase||3400;const info=$('itemCatalogInfo');if(info){const img=it.imagen||def?.imagen||'';const file=getFileNameFromPath(img);info.textContent=`${def?.nombre_item||it.item_id||'Item'} · preview: ${file?`source/items/${file}`:'sin imagen'}`}}if(kind==='missionNpc'){$('missionNpcId').value=it.id;$('missionNpcName').value=it.nombre;$('missionNpcImagePath').value=it.imagen||'';$('missionNpcDialog1').value=(it.dialogos?.inicio||[]).join('\n');$('missionNpcDialog2').value=(it.dialogos?.en_progreso||[]).join('\n');$('missionNpcDialogFinal').value=(it.dialogos?.completado||[]).join('\n')}}
+      $('ambTipo1').value=(it.tipo||'visual').split(' ')[0]||'visual';$('ambTipo2').value=(it.tipo||'').split(' ')[1]||'';$('ambColor').value=it.color||'#ff0000';$('ambTransparent').checked=!it.color;$('ambZ').value=it.zIndexBase||3300;$('ambImagePath').value=it.imagen||'';$('ambFunction').value=it.funcion||'';$('ambSubtype').value=it.subtipo||'';if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;if($('ambRealW'))$('ambRealW').value=it.w||80;if($('ambRealH'))$('ambRealH').value=it.h||80;if(it.subtipo==='bloque_arcilla'){$('arcillaPrefix').value=(it.zona_id||'bloque_arcilla').replace(/_?\d+$/,'')||'bloque_arcilla';$('arcillaImagePath').value=it.imagen||'../assets/items/bloqueArcilla.svg';$('arcillaW').value=it.w||64;$('arcillaH').value=it.h||64;$('arcillaZ').value=it.zIndexBase||3300;$('arcillaPdr').value=it.pdr??12;$('arcillaPdrMax').value=it.pdr_max??12;$('arcillaFunction').value=it.funcion||''}}if(kind==='enemy'){$('enemyName').value=it.nombre;$('enemyType').value=it.tipo;$('enemyImagePath').value=it.imagen||'';$('enemyW').value=it.w;$('enemyH').value=it.h;$('enemyFramesX').value=it.framesX||1; if($('enemyFramesY'))$('enemyFramesY').value=it.framesY||1;$('enemyLife').value=it.vida;$('enemyAttack').value=it.ataque;$('enemySpeed').value=it.speed;$('enemyVision').value=it.vision;$('enemyAttackAnim').value=it.attackAnim||'';$('enemyDeathScript').value=it.deathScript||'';$('enemyDialogs').value=(it.dialogos||[]).join('\n');$('enemyAttackDialogs').value=(it.dialogosAtack||[]).join('\n')}if(kind==='light'){$('lightType').value=it.tipo;$('lightColor').value=it.color||'';$('lightImagePath').value=it.imagen||'';$('lightW').value=it.w;$('lightH').value=it.h;$('lightFunction').value=it.functionName||''}if(kind==='npc'){$('npcName').value=it.nombre;$('npcImagePath').value=it.imagen||'';$('npcW').value=it.w||64;$('npcH').value=it.h||64;$('npcSpeed').value=it.velocidad;$('npcDialogs').value=(it.dialogos_automaticos||[]).join('\n');$('npcFearDialogs').value=(it.dialogos_miedo||[]).join('\n')}if(kind==='item'){$('itemPrefix').value=(it.instancia_id||it.id||'itm_mapa').replace(/_?\d+$/,'')||'itm_mapa';$('itemId').value=it.item_id||'';if($('itemCatalogSelect')&&state.itemCatalog.some(x=>x.id===it.item_id))$('itemCatalogSelect').value=it.item_id;const def=getItemDefinition(it.item_id);$('itemImagePath').value=it.imagen||def?.imagen||'';$('itemSize').value=it.size||it.w||32;$('itemZ').value=it.zIndexBase||3400;const info=$('itemCatalogInfo');if(info){const img=it.imagen||def?.imagen||'';const file=getFileNameFromPath(img);info.textContent=`${def?.nombre_item||it.item_id||'Item'} · preview: ${file?`source/items/${file}`:'sin imagen'}`}}if(kind==='missionNpc'){$('missionNpcId').value=it.id;$('missionNpcName').value=it.nombre;$('missionNpcImagePath').value=it.imagen||'';$('missionNpcDialog1').value=(it.dialogos?.inicio||[]).join('\n');$('missionNpcDialog2').value=(it.dialogos?.en_progreso||[]).join('\n');$('missionNpcDialogFinal').value=(it.dialogos?.completado||[]).join('\n')}}
 
     function placeItem(kind,pos){let item;if(kind==='ambiente'){item=cfgAmb();item.x=round(pos.x);item.y=round(pos.y);state.data.ambiente.push(item)}if(kind==='enemy'){item=cfgEnemy();item.x=round(pos.x);item.y=round(pos.y);state.data.enemy.push(item)}if(kind==='light'){item=cfgLight();item.x=round(pos.x);item.y=round(pos.y);state.data.light.push(item)}if(kind==='npc'){item=cfgNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.npc.push(item)}if(kind==='missionNpc'){item=cfgMissionNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.missionNpcs=[item]}if(item){select(kind,item.id||item.zona_id||item.nombre_id||item.nombre);saveLocalSoon()}}
     function duplicate(kind,id,dx=20,dy=20){const arr=arrFor(kind),it=getItem(kind,id);if(!it)return;const copy=JSON.parse(JSON.stringify(it));if(kind==='ambiente')copy.zona_id=it.subtipo==='bloque_arcilla'?uid('arcilla',$('arcillaPrefix').value):uid('ambiente',$('ambPrefix').value);if(kind==='item'){const nid=uid('item',$('itemPrefix').value);copy.id=nid;copy.instancia_id=nid}if(kind==='enemy')copy.id=uid('enemy',$('enemyPrefix').value);if(kind==='light')copy.nombre_id=uid('light',$('lightPrefix').value);if(kind==='npc')copy.id=uid('npc','npc_ambiente');if(kind==='missionNpc')copy.id=uid('missionNpc','npc_mision');copy.x=round(clamp(it.x+dx,0,state.mapSize-(it.w||64)));copy.y=round(clamp(it.y+dy,0,state.mapSize-(it.h||64)));arr.push(copy);select(kind,copy.id||copy.zona_id||copy.nombre_id||copy.nombre);saveLocalSoon()}
@@ -596,6 +942,34 @@ function initEvents(){
 
   $('enemyToolPlace').addEventListener('click',()=>setTool('place'));
   $('enemyToolLine').addEventListener('click',()=>setTool('line'));
+  $('sourceEnemiesReload')?.addEventListener('click',reloadSourceEnemies);
+
+$('sourceEnemiesFolder')?.addEventListener('change',e=>{
+  loadSourceEnemiesFromFileList(e.target.files);
+});
+
+$('sourceEnemiesGallery')?.addEventListener('click',e=>{
+  const card=e.target.closest('[data-enemy-asset]');
+  if(!card)return;
+  selectSourceEnemyAsset(decodeURIComponent(card.dataset.enemyAsset));
+});
+
+$('enemyFramesX')?.addEventListener('input',()=>{
+  setTimeout(()=>detectEnemyFrameSize(true),120);
+});
+
+$('enemyFramesY')?.addEventListener('input',()=>{
+  setTimeout(()=>detectEnemyFrameSize(true),120);
+});
+
+$('enemyImagePath')?.addEventListener('input',()=>{
+  previewFromPathInput('enemyImagePath','enemyImagePreview');
+  setTimeout(()=>detectEnemyFrameSize(true),120);
+});
+
+$('enemySpriteFile')?.addEventListener('change',()=>{
+  setTimeout(()=>detectEnemyFrameSize(true),120);
+});
   $('lightToolPlace').addEventListener('click',()=>setTool('place'));
   $('lightToolLine').addEventListener('click',()=>setTool('line'));
   $('npcToolPlace').addEventListener('click',()=>setTool('place'));
