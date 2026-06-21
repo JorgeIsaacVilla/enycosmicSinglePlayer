@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "savedAt": "2026-06-20T04:26:03.326Z",
+  "savedAt": "2026-06-21T04:29:44.279Z",
   "map": {
     "size": 5000,
     "dataUrl": null,
@@ -14,9 +14,9 @@
     "ambiente": 16234,
     "arcilla": 12368,
     "item": 3,
-    "enemy": 11,
+    "enemy": 14,
     "light": 37,
-    "npc": 1,
+    "npc": 16,
     "missionNpc": 1
   },
   "itemCatalog": [
@@ -12874,8 +12874,8 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 383,
-        "y": 4710
+        "x": 423,
+        "y": 4708
       },
       {
         "id": "enemy_mapa_basico_05",
@@ -12901,8 +12901,8 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 370,
-        "y": 4806
+        "x": 429,
+        "y": 4803
       },
       {
         "id": "enemy_mapa_basico_06",
@@ -12928,8 +12928,8 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 348,
-        "y": 4900
+        "x": 421,
+        "y": 4886
       },
       {
         "id": "enemy_mapa_basico_07",
@@ -12982,7 +12982,7 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 141,
+        "x": 216,
         "y": 4725
       },
       {
@@ -13009,8 +13009,8 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 174,
-        "y": 4835
+        "x": 194,
+        "y": 4851
       },
       {
         "id": "enemy_mapa_basico_10",
@@ -13036,8 +13036,89 @@
           "¡Intruso detectado!",
           "¡No escaparás!"
         ],
-        "x": 56,
-        "y": 4825
+        "x": 53,
+        "y": 4854
+      },
+      {
+        "id": "enemy_mapa_basico_11",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 830,
+        "y": 3715
+      },
+      {
+        "id": "enemy_mapa_basico_12",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 1240,
+        "y": 3851
+      },
+      {
+        "id": "enemy_mapa_basico_13",
+        "nombre": "Centinela Reptiliano",
+        "tipo": "basico",
+        "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "previewName": "centinela-reptiliano.png",
+        "w": 64,
+        "h": 64,
+        "framesX": 4,
+        "framesY": 4,
+        "vida": 43,
+        "ataque": 6,
+        "speed": 1.8,
+        "vision": 400,
+        "attackAnim": "ataqueEnemigoBasico",
+        "deathScript": "dropItemBasico",
+        "dialogos": [
+          "grr...!!",
+          "Gr...!!"
+        ],
+        "dialogosAtack": [
+          "¡Intruso detectado!",
+          "¡No escaparás!"
+        ],
+        "x": 925,
+        "y": 4064
       }
     ],
     "light": [
@@ -13294,9 +13375,2486 @@
         "y": 4535
       }
     ],
-    "npc": [],
-    "missionNpcs": [],
+    "npc": [
+      {
+        "id": "npc_ambiente_01",
+        "imagen": "../assets/avatares/npc/mapa1/Neris.png",
+        "nombre": "Neris",
+        "velocidad": 1.2,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Las estrellas guardan secretos antiguos.",
+          "No todo lo que brilla es energía cósmica.",
+          "Sigue observando el cielo."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Nos atacan!",
+          "¡Corran, rápido!",
+          "¡Hay enemigos cerca!"
+        ],
+        "x": 811,
+        "y": 2099
+      },
+      {
+        "id": "npc_ambiente_02",
+        "imagen": "../assets/avatares/npc/mapa1/Thera.png",
+        "nombre": "Thera",
+        "velocidad": 1.1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "La energía del mapa cambia constantemente.",
+          "A veces las respuestas están más cerca de lo que crees.",
+          "Escucha el entorno."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Corran!",
+          "¡Nos descubrieron!",
+          "¡Hay peligro!"
+        ],
+        "x": 2038,
+        "y": 1549
+      },
+      {
+        "id": "npc_ambiente_03",
+        "imagen": "../assets/avatares/npc/mapa1/Karina.png",
+        "nombre": "Karina",
+        "velocidad": 1.3,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Las misiones revelan más que recompensas.",
+          "El conocimiento también es poder.",
+          "Sigue explorando."
+        ],
+        "dialogos_miedo": [
+          "¡Ayuda!",
+          "¡Tenemos que huir!",
+          "¡Un enemigo!",
+          "¡No se acerquen!"
+        ],
+        "x": 831,
+        "y": 1537
+      },
+      {
+        "id": "npc_ambiente_04",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Armin",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "He visto viajeros pasar por aquí.",
+          "Algunos regresan con respuestas.",
+          "Otros con más preguntas."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Defiéndanse!",
+          "¡Corran!",
+          "¡Un reptiliano!"
+        ],
+        "x": 2476,
+        "y": 668
+      },
+      {
+        "id": "npc_ambiente_05",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Darius",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Los portales no siempre aparecen donde esperas.",
+          "A veces el camino correcto parece incorrecto.",
+          "Observa bien el terreno."
+        ],
+        "dialogos_miedo": [
+          "¡Ayuda!",
+          "¡Nos están persiguiendo!",
+          "¡Huyan!",
+          "¡Peligro!"
+        ],
+        "x": 2322,
+        "y": 1271
+      },
+      {
+        "id": "npc_ambiente_06",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Lucan",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "El mapa guarda patrones.",
+          "Si miras suficiente tiempo los verás.",
+          "Nada es casualidad."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Nos atacan!",
+          "¡Corran ya!",
+          "¡Enemigo al frente!"
+        ],
+        "x": 2449,
+        "y": 1646
+      },
+      {
+        "id": "npc_ambiente_07",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Rael",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Los viajeros sabios escuchan antes de actuar.",
+          "La paciencia también es una herramienta.",
+          "No subestimes los detalles."
+        ],
+        "dialogos_miedo": [
+          "¡Ayuda!",
+          "¡Retrocedan!",
+          "¡Corran!",
+          "¡Vienen hacia acá!"
+        ],
+        "x": 2584,
+        "y": 1394
+      },
+      {
+        "id": "npc_ambiente_08",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Korin",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "La energía aquí fluctúa.",
+          "A veces abre rutas nuevas.",
+          "Mantente atento."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Nos invaden!",
+          "¡Corran, deprisa!",
+          "¡Hay un enemigo!"
+        ],
+        "x": 2487,
+        "y": 590
+      },
+      {
+        "id": "npc_ambiente_09",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Valen",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Los símbolos antiguos no son decoración.",
+          "Cada uno tiene un propósito.",
+          "Aprende a reconocerlos."
+        ],
+        "dialogos_miedo": [
+          "¡Ayuda!",
+          "¡No se detengan!",
+          "¡Huyan!",
+          "¡Nos alcanzarán!"
+        ],
+        "x": 3284,
+        "y": 2745
+      },
+      {
+        "id": "npc_ambiente_10",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Tarek",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Los exploradores curiosos llegan más lejos.",
+          "Pero también se pierden más.",
+          "Equilibra ambas cosas."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡A correr!",
+          "¡Nos siguen!",
+          "¡Un monstruo!"
+        ],
+        "x": 2437,
+        "y": 510
+      },
+      {
+        "id": "npc_ambiente_11",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Marek",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Hay zonas donde la gravedad se comporta extraño.",
+          "No todo sigue las reglas normales.",
+          "Experimenta."
+        ],
+        "dialogos_miedo": [
+          "¡Ayuda!",
+          "¡Nos atacan!",
+          "¡Corran!",
+          "¡No quiero morir!"
+        ],
+        "x": 1431,
+        "y": 4434
+      },
+      {
+        "id": "npc_ambiente_12",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "nombre": "Centinela-Orion",
+        "velocidad": 1,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "Las rutas más seguras no siempre son las mejores.",
+          "A veces debes arriesgarte.",
+          "El universo recompensa a los valientes."
+        ],
+        "dialogos_miedo": [
+          "¡Auxilio!",
+          "¡Peligro!",
+          "¡Corran ahora!",
+          "¡Enemigos cerca!"
+        ],
+        "x": 3628,
+        "y": 2749
+      },
+      {
+        "imagen": "../assets/avatares/npc/mapa1/pinkiry.png",
+        "nombre": "Pinkiry",
+        "velocidad": 0.8,
+        "w": 64,
+        "h": 64,
+        "dialogos_automaticos": [
+          "¡Gehrr! ¡Gehrrr! ¡GEEEH!",
+          "¡GRAAAK-GEHRRRAAAH! ¡GEEEH! ¡GEEEH!… me asustaste, colega.",
+          "¡GRAK! ¡GEHRR-GEEEH!… me asustaste, colega.",
+          "¡GRAAAK! ¡GRAAAK! ¡GEEEHRRRAAAH!",
+          "¡GARRK-GARRK! ¡GEEEH! ¡GEEEH!",
+          "¡GROOOK! ¡GEHRR! ¡GEHRR!",
+          "¡Gehrr! ¡Gehrr! Dale click a la fuente… ¡GEEEH! Veintiséis veces, colega.",
+          "¡GRAK! ¡Gehrr! Dale click… click… click… a la fuente veintiséis veces.",
+          "¡Gehrrr! ¡Gehrrr! Veintiséis veces… ¡a la fuente, colega!",
+          "¡GEEEH! Código secreto… ¡Gehrr! Código secreto…",
+          "¡Gehrr… gehrr… código secreto… en laboratorio secretoo…!",
+          "¡GRAK! ¡GRAK! Código secreto… laboratorio secretoo… ¡GEEEH!",
+          "¡Gehrrr! Directooor… Directooor…",
+          "¡GEEEH! Directooor… no entres ahiii… ¡muy peligrosoo!",
+          "¡Gehrr… cuidado… cuidado…!",
+          "¡Gehrrr! No… no… cuidado, colega…",
+          "¡GRAAAK! Mounstro… mounstro… ¡ahhhh!",
+          "¡Gehrr! ¡Gehrr! Mounstro… mounstro… ¡GEEEH!",
+          "¡Gehrr… gehrr… me asustaste, colega!"
+        ],
+        "dialogos_miedo": [
+          "¡Hoyyy noo! ¡Fuera, mounstro! ¡GRAK-GRAK! ¡GEEEH!",
+          "¡Ayuda, ayuda! ¡Gehrr! ¡Gehrrr! ¡GEEEH!",
+          "¡Abuelitaaa! ¡Me lleva el gatoo! ¡GRAAAK-GEHRRRAAAH!",
+          "¡Gehrr! ¡Gehrr! ¡Mounstro rarooo!",
+          "¡GRAK! ¡GRAK! ¡Eso camina feooo!",
+          "¡No me mireees! ¡No me mireees! ¡GEEEH!",
+          "¡Mounstrooo! ¡Mounstrooo! ¡Ahhhh! ¡Gehrrr!",
+          "¡Gehrr… gehrr… ese bicho no es de aquííí!",
+          "¡GRAAAK! ¡Tiene cara de comerse cotorroo!",
+          "¡No soy comidaaa! ¡Soy Pinkiry! ¡GEEEH!",
+          "¡Gehrrr! ¡Alitas, funcionen ahoraaa!",
+          "¡Mounstro con patas raras! ¡GRAK-GRAK!",
+          "¡Ay mis plumaaas! ¡Eso se está acercandooo!",
+          "¡GEEEH! ¡Ese mounstro huele a problemaaa!",
+          "¡Gehrr! ¡Gehrr! ¡Fuera de mi fuenteee!",
+          "¡Nooo! ¡Hoy no peleo con bichos feos!",
+          "¡GRAK! ¡GRAK! ¡Mounstro a la vistaaa!",
+          "¡Me hago el dormidooo! ¡Gehrr… gehrr…!",
+          "¡Directooor! ¡Directooor! ¡Hay mounstros rarooos!",
+          "¡Gehrrr! ¡Ese no es visitante, ese es sustooo!",
+          "¡Ay nooo! ¡Tiene ojitos de problemaaa! ¡GEEEH!",
+          "¡Mounstro, mounstro, mounstrooo! ¡GRAAAK!",
+          "¡Gehrr! ¡Gehrr! ¡Me asustaste, colega!"
+        ],
+        "x": 866,
+        "y": 3990,
+        "id": "npc_ambiente_13",
+        "sprites_1x10": null,
+        "previewName": "pinkiry.png"
+      }
+    ],
+    "missionNpcs": [
+      {
+        "id": "npc01",
+        "nombre": "Doctor Cyron",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+        "w": 64,
+        "h": 64,
+        "x": 4592,
+        "y": 3400,
+        "conversation_default": "Los valientes soportan el dolor de la recuperación.",
+        "dialogos": {
+          "inicio": [
+            "Hola, cosmonauta. Hoy te enseñaré algo esencial.",
+            "Aprenderás a hacerte un ungüento natural.",
+            "Genera ardor, pero ayuda a tu recuperación.",
+            "Consigue un vaso de agua, sal y un limón.",
+            "Darek te enseñará a preparar la mezcla."
+          ],
+          "en_progreso": [
+            "Aún no tienes todos los ingredientes necesarios."
+          ],
+          "completado": [
+            "Has adquirido un conocimiento esencial. Sigue así.",
+            "Toma un corazón y más ingredientes para practicar."
+          ]
+        }
+      },
+      {
+        "id": "npc02",
+        "nombre": "Darek",
+        "rol": "intercambio",
+        "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+        "w": 64,
+        "h": 64,
+        "x": 760,
+        "y": 4324,
+        "conversation_default": "La naturaleza tiene elementos extraordinarios.",
+        "dialogos": {
+          "inicio": [
+            "Trae un vaso de agua, sal y un limón.",
+            "Con eso prepararé la mezcla."
+          ],
+          "en_progreso": [
+            "No puedo preparar la mezcla sin los ingredientes exactos."
+          ],
+          "completado": [
+            "El limón es un desinfectante natural.",
+            "La sal ayuda a cicatrizar más rápido.",
+            "Pero usarlo directo puede irritar.",
+            "Por eso usamos agua, para diluir.",
+            "Mmm... veamos, se mezcla así...",
+            "¡Eureka! La combinación está lista.",
+            "Ahora hazlo tú mismo.",
+            "Arrastra los ítems o haz clic para combinar.",
+            "Si tienes dudas, revisa el inventario.",
+            "Ahora vuelve con Cyron."
+          ]
+        }
+      },
+      {
+        "id": "npc03",
+        "nombre": "Artesano Hector",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+        "w": 64,
+        "h": 64,
+        "x": 986,
+        "y": 4849,
+        "conversation_default": "La madera puede lograr maravillas, hijo. Todo depende de tu creatividad.",
+        "dialogos": {
+          "inicio": [
+            "El límite para crear cosas está en tu imaginación.",
+            "Si quieres, te enseñaré cosas que pueden serte útiles muchacho!.",
+            "Aprenderás a crear objetos de madera.",
+            "Empezaremos buscando madera.",
+            "Solo tienes que buscar entre los arboles dando clic sobre ellos.",
+            "¿Quieres intentarlo?"
+          ],
+          "en_progreso": [
+            "En los árboles, además de frutos, encontrarás madera. Solo dales clic"
+          ],
+          "completado": [
+            "Excelente muchacho jojojo...!!, haz progresado mucho.",
+            "Ahora combina los items arrastrandolo a la zona de creación de Items",
+            "Se observador, y creativo para crear!",
+            "Siempre fallarás en algunos intentos, Pero recuerda:",
+            "Tienes la naturaleza que te da recursos para seguir intentando",
+            "Continua creando artesanias."
+          ]
+        }
+      },
+      {
+        "id": "npc04",
+        "nombre": "Alfarera Vexa",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+        "w": 64,
+        "h": 64,
+        "x": 691,
+        "y": 4712,
+        "conversation_default": "Son hermosas las esculturas que se pueden hacer con la arcilla.",
+        "dialogos": {
+          "inicio": [
+            "El arte, además de ser hermoso, salva vidas.",
+            "Tuve que hacer bloques de arcilla para armar una barricada.",
+            "Y así evitar que el enemigo nos invada.",
+            "El arte no es un arma, pero me alegra que sea útil.",
+            "Si quieres, puedo enseñarte a crear bloques de arcilla.",
+            "Te puede ser de utilidad.",
+            "¿Quieres intentarlo?"
+          ],
+          "en_progreso": [
+            "Puedes buscar la mejor arcilla en este lodo.",
+            "Necesitas 1 vaso de agua y 5 arcillas para crear un bloque.",
+            "No te dé vergüenza buscar plásticos en la basura.",
+            "Con eso puedes crear vasos para almacenar agua."
+          ],
+          "completado": [
+            "Toma la arcilla de este lodo y luego combínala en tu inventario.",
+            "Recuerda que necesitas 1 vaso de agua y 5 arcillas para crear un bloque.",
+            "Cuando crees el bloque de arcilla, puedes usarlo como arma.",
+            "Solo arrástralo a la sección de equipamiento.",
+            "Y actívalo con 'Q' o 'E' en tu teclado.",
+            "O simplemente presiona el botón de acción en pantalla.",
+            "Te daré 3 picos para que destruyas fácilmente los bloques.",
+            "Aunque también puedes hacerlo con cualquier arma de impacto."
+          ]
+        }
+      },
+      {
+        "id": "npc-complement-04",
+        "nombre": "Alfarero Manuel",
+        "rol": "complemento",
+        "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+        "w": 64,
+        "h": 64,
+        "x": 1958,
+        "y": 3273,
+        "conversation_default": "Lo que me enseña mi maestra es importante. Tengo que apuntarlo en el metafon.",
+        "dialogos": {
+          "inicio": [
+            "Lo que mi maestra me enseñó es muy importante.",
+            "Tengo que apuntarlo en el metafon",
+            "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+            "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+            "La otra vez tome un plastico del canasto del laboratorio,",
+            "Y lo combertí en baso para poder tomar agua de esta fuente.",
+            "Mi arte vale ese nivel de recursividad."
+          ],
+          "en_progreso": [
+            "Lo que mi maestra me enseñó es muy importante.",
+            "Tengo que apuntarlo en el metafon",
+            "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+            "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+            "La otra vez tome un plastico del canasto del laboratorio,",
+            "Y lo combertí en baso para poder tomar agua de esta fuente.",
+            "Mi arte vale ese nivel de recursividad."
+          ],
+          "completado": [
+            "Lo que mi maestra me enseñó es muy importante.",
+            "Tengo que apuntarlo en el metafon",
+            "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+            "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+            "La otra vez tome un plastico del canasto del laboratorio,",
+            "Y lo combertí en baso para poder tomar agua de esta fuente.",
+            "Mi arte vale ese nivel de recursividad."
+          ]
+        }
+      },
+      {
+        "id": "npc05",
+        "nombre": "Arkon",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+        "w": 64,
+        "h": 64,
+        "x": 2593,
+        "y": 4250,
+        "conversation_default": "La energía lo cambia todo.",
+        "dialogos": {
+          "inicio": [
+            "La energía ha sido útil desde la antigüedad.",
+            "Pero hoy muchos olvidaron la raíz del conocimiento.",
+            "Si quieres, te enseñaré a generar energía y fuego.",
+            "Lo harás con recursos comunes de la naturaleza.",
+            "Tendrás que hablar con Syra; ella te enseñará lo que necesitas para comenzar.",
+            "¿Quieres intentarlo?"
+          ],
+          "en_progreso": [
+            "Muy bien muchacho...!",
+            "Si manejas la energía y sabes canalizarla, podrás hacer cosas increíbles.",
+            "Syra y Lyra te enseñarán a generar energía y canalizarla.",
+            "Avanza al siguiente nivel."
+          ],
+          "completado": [
+            "Muy bien. Ya entiendes la base del flujo energético."
+          ]
+        }
+      },
+      {
+        "id": "npc06",
+        "nombre": "Syra",
+        "rol": "guia",
+        "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+        "w": 64,
+        "h": 64,
+        "x": 900,
+        "y": 4300,
+        "conversation_default": "La naturaleza te da todo para generar energía.",
+        "dialogos": {
+          "inicio": [
+            "El medio de canalización de la energía eléctrica son los cables.",
+            "Pero aunque existen muchos tipos de cables, el más eficiente es el cobre."
+          ],
+          "en_progreso": [
+            "Hola camarada. Te enseñaré algo importante.",
+            "La energía no se crea ni se destruye.",
+            "Solo se transforma.",
+            "Pero para poder usarla necesita un medio de canalización.",
+            "En el caso de la energía eléctrica, son los cables.",
+            "Hay distintos tipos de cable.",
+            "Pero el más eficiente hasta el momento es el de cobre.",
+            "Así que crearemos cables de cobre.",
+            "Busca dos rocas de cobre y lo fundiremos en forma de cable.",
+            "Te enseñaré. Ve, no te tardes."
+          ],
+          "completado": [
+            "Ya eres todo un ingeniero de energías y sabes cómo canalizarla.",
+            "Recuerda: cualquier cosa de metal es conductora.",
+            "Así que ten cuidado.",
+            "Éxitos."
+          ]
+        }
+      },
+      {
+        "id": "npc07",
+        "nombre": "Lyra",
+        "rol": "guia",
+        "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+        "w": 64,
+        "h": 64,
+        "x": 4631,
+        "y": 4262,
+        "conversation_default": "La química también puede encender el mundo.",
+        "dialogos": {
+          "inicio": [
+            "Es posible almacenar la energía de muchas maneras.",
+            "De forma química también es posible, y más fácil."
+          ],
+          "en_progreso": [
+            "Muy bien. Hagámoslo rápido y no me hagas perder el tiempo.",
+            "Existen muchas formas de generar electricidad.",
+            "Hoy te mostraré la generación química.",
+            "Hierro como ánodo, cobre como cátodo.",
+            "Y un limón como solución ácida. Sí, un limón.",
+            "Combina los ítems y crea una batería.",
+            "No tenemos tiempo muchacho, no te tardes.",
+            "Y si por algún motivo fallas, sigue intentando.",
+            "Vuelve a buscar los ítems, así sea en la basura.",
+            "Tu supervivencia amerita ser recursivo.",
+            "Luego vuelve con Arkon."
+          ],
+          "completado": [
+            "Ya puedes generar energía química.",
+            "Recuerda: puedes usar un limón como medio de oxidación,",
+            "y cobre y hierro como ánodo y cátodo.",
+            "Cualquier cosa sirve: una moneda de cobre, un anillo de hierro,",
+            "rocas de cobre y hierro.",
+            "Si es necesario, busca en la basura.",
+            "Sé recursivo. Tu supervivencia lo amerita."
+          ]
+        }
+      },
+      {
+        "id": "npc08",
+        "nombre": "Alira",
+        "rol": "historia",
+        "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+        "w": 64,
+        "h": 64,
+        "x": 4312,
+        "y": 4177,
+        "conversation_default": "Mientras los reptilianos no encuentren la caldera, estaremos bien.",
+        "dialogos": {
+          "inicio": [
+            "La caldera de generación eléctrica no se puede apagar.",
+            "Es vital para mantener la energía del convoy.",
+            "Pero los alienígenas enemigos lo invadieron.",
+            "Un centinela fue a cubrir la llama de la caldera,",
+            "pero perdimos comunicación. ¿Qué habrá pasado?"
+          ],
+          "en_progreso": [
+            "Okay, okay, okay...!!!",
+            "Te lo diré una sola vez.",
+            "Estamos en un grave problema.",
+            "Los reptilianos invadieron la caldera de generación.",
+            "Siguen el fuego como zombis, sin pensar.",
+            "Si tienes antorcha de fuego y bloques de arcilla, úsalos.",
+            "Crea Todas las antorchas de fuego y bloques de arcilla que puedas.",
+            "Pon la arcilla en el campo y luego activa la antorcha.",
+            "Usa tu ingenio para tenderles trampas.",
+            "Abre paso y llega hasta la caldera.",
+            "Está en el ala superior izquierda del laberinto.",
+            "Bloquea el paso para que los enemigos no tengan acceso al fuego de la caldera.",
+            "¡Revisa el estado de generación en el computador a mi derecha!",
+            "¡DATE PRISA...!!!"
+          ],
+          "completado": [
+            "Has salvado el día camarada. La inteligencia es mejor que la fuerza,",
+            "y tú lo has demostrado."
+          ]
+        }
+      },
+      {
+        "id": "npc09",
+        "nombre": "Kael",
+        "rol": "final",
+        "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+        "w": 64,
+        "h": 64,
+        "x": 2811,
+        "y": 4592,
+        "conversation_default": "Si la caldera arde, el convoy se mantendrá con energía eléctrica.",
+        "dialogos": {
+          "inicio": [
+            "Sin la caldera encendida no puedo hacer nada."
+          ],
+          "en_progreso": [
+            "Gracias por encender la caldera.",
+            "Reiniciando protocolos de generación...",
+            "Prueba accionar el totalizador de la subestación.",
+            "Está justo detras de mi."
+          ],
+          "completado": [
+            "El domo vuelve a tener energía.",
+            "Muchas gracias por ayudarnos a reestablecer la energia"
+          ]
+        }
+      },
+      {
+        "id": "npc10",
+        "nombre": "Centinela Guardian",
+        "rol": "complemento",
+        "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+        "w": 64,
+        "h": 64,
+        "x": 71,
+        "y": 186,
+        "conversation_default": "Tengo miedo, pero debo cuidar la caldera de estos demonios reptilianos.",
+        "dialogos": {
+          "inicio": [
+            "Cómo quisiera que otro tomara mi lugar.",
+            "De todos los centinelas, me tocó a mí.",
+            "Espero llegar pronto a casa y ver a mi esposa y mi hija."
+          ],
+          "en_progreso": [
+            "Son demasiados reptilianos. Estoy herido, pero me quedaré.",
+            "Por el bien de mis amadas, alguien tiene que quedarse a cuidar el fuego de la caldera.",
+            "Por favor, antes de irte, bloquea la salida y déjame.",
+            "Dile a mis tesoros que las amo."
+          ],
+          "completado": [
+            "Por el bien de todos me quedaré a cuidar la caldera.",
+            "Dile a mis tesoros que las amo."
+          ]
+        }
+      },
+      {
+        "id": "npc-complement-08",
+        "nombre": "Profesor Orbek",
+        "rol": "historia",
+        "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+        "w": 64,
+        "h": 64,
+        "x": 2810,
+        "y": 4153,
+        "conversation_default": "Que el sentinela no se entere que perdí su arma en la basura.",
+        "dialogos": {
+          "inicio": [
+            "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+            "Si el sentinela mayor lo descubre me matará.",
+            "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+            "Nunca he usado un arma.",
+            "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+            "Pero nada del arma."
+          ],
+          "en_progreso": [
+            "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+            "Si el sentinela mayor lo descubre me matará.",
+            "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+            "Nunca he usado un arma.",
+            "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+            "Pero nada del arma."
+          ],
+          "completado": [
+            "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+            "Si el sentinela mayor lo descubre me matará.",
+            "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+            "Nunca he usado un arma.",
+            "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+            "Pero nada del arma."
+          ]
+        }
+      },
+      {
+        "id": "npc11",
+        "nombre": "Capitán Valen",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+        "w": 64,
+        "h": 64,
+        "x": 1889,
+        "y": 4718,
+        "conversation_default": "¿Qué secretos tendrá este algoritmo de conocimiento?",
+        "dialogos": {
+          "inicio": [
+            "Hola, camarada.",
+            "Si has llegado hasta aquí, es porque has sido esforzado y valiente.",
+            "No se me ocurre otra persona a quien delegar esta difícil tarea.",
+            "Más que tú, mi mejor cosmonauta.",
+            "Hace varias noches, un grupo de reptilianos se infiltró.",
+            "Encriptaron el algoritmo de Matlog en forma de Codex.",
+            "Un poderoso algoritmo alienígena...",
+            "Hasta ahora solo un humano lo ha podido comprender",
+            "Pero confío en tu ingenio para descifrarlo y salvarnos de este mal.",
+            "Uno de nuestros centinelas se infiltró en la base alienígena y halló el Codex.",
+            "Pero antes de perder la señal con él,",
+            "dijo que el Codex fue corrompido de extremo a extremo,",
+            "y que está siendo custodiado por el más poderoso reptiliano,",
+            "en el ala superior derecha del laberinto.",
+            "Ve y resuelve el criptograma.",
+            "Salva a la humanidad con el poder del algoritmo.",
+            "¡Por favor!"
+          ],
+          "en_progreso": [
+            "El Codex sigue protegido por el reptiliano en el ala superior derecha.",
+            "Descifra el criptograma y recupera el algoritmo."
+          ],
+          "completado": [
+            "Lo has logrado, cosmonauta.",
+            "Has descifrado el Codex y dominado el algoritmo de Matlog.",
+            "La humanidad está a salvo gracias a tu ingenio y valentía."
+          ]
+        }
+      },
+      {
+        "id": "npc12",
+        "nombre": "Ingeniero Solis",
+        "rol": "contacto",
+        "imagen": "../assets/avatares/npc/mapa1/Solis.png",
+        "w": 64,
+        "h": 64,
+        "x": 2256,
+        "y": 4232,
+        "conversation_default": "Es muy complejo. Nadie ha podido descifrar el algoritmo de Matlog.",
+        "dialogos": {
+          "inicio": [
+            "Hasta ahora nadie ha podido descifrar el algoritmo de Matlog,",
+            "y ahora será aún más difícil, ya que los reptilianos lo encriptaron en forma de Codex."
+          ],
+          "en_progreso": [
+            "El algoritmo de Matlog es el Codex con el que funciona la tecnología reptiliana.",
+            "¿Crees que funcione para desbloquear la subestación de generación eléctrica?",
+            "El doctor Axiom tiene una teoria.",
+            "El cree que El codigo de bloqueo funciona con los principios de Matlog."
+          ],
+          "completado": [
+            "Espero que puedas compartir con el mundo ese conocimiento",
+            "y que lo uses para el bien.",
+            "Ahora estás por encima en el conocimiento."
+          ]
+        }
+      },
+      {
+        "id": "npc13",
+        "nombre": "Doctor Axiom",
+        "rol": "cierre",
+        "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+        "w": 64,
+        "h": 64,
+        "x": 2189,
+        "y": 4320,
+        "conversation_default": "Es buena práctica apuntar las cosas. Lo puedes hacer en el Metafón.",
+        "dialogos": {
+          "inicio": [
+            "El algoritmo de Matlog solo lo comprenden los que tienen un profundo deseo de aprender.",
+            "Es bueno escribir el conocimiento, ya que las palabras se las lleva el viento."
+          ],
+          "en_progreso": [
+            "Mi teoría es que ese algoritmo fue originado por los indilianos,",
+            "pero los reptilianos lo usan para hackear nuestros sistemas de datos y energéticos.",
+            "Si alguien comprendiera el algoritmo de Matlog, yo iría al centro de control,",
+            "que está en el centro del laberinto, en la subestación.",
+            "Y si es verdad que alguien lo comprendió,",
+            "él nos libraría de este infierno."
+          ],
+          "completado": [
+            "Escuché por ahí que alguien comprendió el algoritmo de Matlog...",
+            "¡Wow, después de 100 años...!",
+            "¿Quién será? Quisiera que me enseñe qué significa.",
+            "Yo lo anotaría en las notas del Metafón para nunca olvidarlo."
+          ]
+        }
+      },
+      {
+        "id": "npc14",
+        "nombre": "Ingeniero Maese",
+        "rol": "inicio",
+        "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+        "w": 64,
+        "h": 64,
+        "x": 473,
+        "y": 3270,
+        "conversation_default": "La opsolecencia programada no es impedimento para mí.",
+        "dialogos": {
+          "inicio": [
+            "Acabo de construir un robot con inteligencia artificial.",
+            "funciona con microprocesadores PIC.",
+            "Es una tecnología muy vieja, pero acá escasean los recursos.",
+            "Tube que buscar hasta en la basura, jejejeje... hayy..!! Dios...!",
+            "No he podido energizarlo; pero si puedes, consigue 8 baterias.",
+            "Cada bateria tiene hasta 1.5V y 1A.",
+            "Necesitas poner 4 baterias en serie y 2 en paralelo",
+            "para que dé la potencia que necesitamos para que funcione el robot.",
+            "Pero ten cuidado de pasarte con el voltaje, porque puedes quemar el circuito."
+          ],
+          "en_progreso": [
+            "Necesitamos 8 baterias.",
+            "Luego usa la mesa para hacer la conexión.",
+            "Recuerda: en serie aumenta el voltaje, en paralelo aumenta la corriente."
+          ],
+          "completado": [
+            "En la electrónica, la conexión en serie es función del voltaje;",
+            "eso quiere decir que el voltaje aumenta.",
+            "La conexión en paralelo es en función de la corriente; ",
+            "eso quiere decir que la corriente aumenta.",
+            "Cuando combinamos ambas, generamos la potencia eléctrica necesaria.",
+            "Excelente trabajo. Ahora mi autómata puede funcionar.",
+            "Te lo presto para que tengas compañero de batalla,",
+            "Pero intenta no destruirlo. Es el unico que me queda.",
+            "Casi lo Olvido, por ahí escuche de un mercader.",
+            "Si lo encuentras, porfa compra cosas utiles para mí. Te dejo cosmonedas,",
+            "Y un poco de agua para que te refresques mientras lo buscas."
+          ]
+        }
+      }
+    ],
     "missionSteps": [],
-    "missions": []
+    "missions": [
+      {
+        "id": "m1",
+        "nombre": "Corazón valiente",
+        "tipo": "secundaria",
+        "clasificacion": "diaria",
+        "descripcion": "Aunque a veces la medicina duele, ser valiente es fundamental para la recuperación de un cosmonauta. Aprende a hacer medicina con elementos cotidianos.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 0,
+          "misionesRequeridas": [],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc01",
+            "nombre": "Doctor Cyron",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+            "posicion": {
+              "x": 4592,
+              "y": 3400
+            },
+            "conversation_default": "Los valientes soportan el dolor de la recuperación.",
+            "dialogos": {
+              "inicio": [
+                "Hola, cosmonauta. Hoy te enseñaré algo esencial.",
+                "Aprenderás a hacerte un ungüento natural.",
+                "Genera ardor, pero ayuda a tu recuperación.",
+                "Consigue un vaso de agua, sal y un limón.",
+                "Darek te enseñará a preparar la mezcla."
+              ],
+              "en_progreso": [
+                "Aún no tienes todos los ingredientes necesarios."
+              ],
+              "completado": [
+                "Has adquirido un conocimiento esencial. Sigue así.",
+                "Toma un corazón y más ingredientes para practicar."
+              ]
+            }
+          },
+          {
+            "id": "npc02",
+            "nombre": "Darek",
+            "rol": "intercambio",
+            "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+            "posicion": {
+              "x": 760,
+              "y": 4324
+            },
+            "conversation_default": "La naturaleza tiene elementos extraordinarios.",
+            "dialogos": {
+              "inicio": [
+                "Trae un vaso de agua, sal y un limón.",
+                "Con eso prepararé la mezcla."
+              ],
+              "en_progreso": [
+                "No puedo preparar la mezcla sin los ingredientes exactos."
+              ],
+              "completado": [
+                "El limón es un desinfectante natural.",
+                "La sal ayuda a cicatrizar más rápido.",
+                "Pero usarlo directo puede irritar.",
+                "Por eso usamos agua, para diluir.",
+                "Mmm... veamos, se mezcla así...",
+                "¡Eureka! La combinación está lista.",
+                "Ahora hazlo tú mismo.",
+                "Arrastra los ítems o haz clic para combinar.",
+                "Si tienes dudas, revisa el inventario.",
+                "Ahora vuelve con Cyron."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m1s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc01",
+            "titulo": "Habla con Cyron",
+            "descripcion": "Inicia el curso de medicina espacial.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc01",
+              "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+              "posicion": {
+                "x": 4592,
+                "y": 3400
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m1s2",
+            "tipo": "recolectar_items",
+            "titulo": "Recolecta los ingredientes",
+            "descripcion": "Reúne 1 vaso de agua, 1 sal y 1 limón. Puedes buscar un baso y llenarla con agua de la fuente.",
+            "objetivosItems": [
+              {
+                "id": "baso_de_agua",
+                "cantidad": 1
+              },
+              {
+                "id": "sal",
+                "cantidad": 1
+              },
+              {
+                "id": "limon",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "mezcla_medicinal_01",
+              "imagen": "../assets/items/basoAgua.svg",
+              "posicion": {
+                "x": 760,
+                "y": 4324
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m1s3",
+            "tipo": "hablar_npc_entrega",
+            "npcId": "npc02",
+            "titulo": "Entrega los ítems a Darek",
+            "descripcion": "Darek te enseñará a mezclar ítems y crear medicina natural.",
+            "entregaItems": [
+              {
+                "id": "baso_de_agua",
+                "cantidad": 1
+              },
+              {
+                "id": "sal",
+                "cantidad": 1
+              },
+              {
+                "id": "limon",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc02",
+              "imagen": "../assets/avatares/npc/mapa1/Darek.png",
+              "posicion": {
+                "x": 760,
+                "y": 4324
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m1s4",
+            "tipo": "hablar_npc",
+            "npcId": "npc01",
+            "titulo": "Regresa con Cyron",
+            "descripcion": "Confirma que aprendiste a combinar ítems.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc01",
+              "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
+              "posicion": {
+                "x": 4592,
+                "y": 3400
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 3,
+          "cosmonedas": 10,
+          "items": [
+            {
+              "id": "corazon",
+              "cantidad": 1
+            },
+            {
+              "id": "baso_de_agua",
+              "cantidad": 3
+            },
+            {
+              "id": "sal",
+              "cantidad": 3
+            },
+            {
+              "id": "limon",
+              "cantidad": 3
+            }
+          ],
+          "codigoSecreto": null
+        }
+      },
+      {
+        "id": "m2",
+        "nombre": "Maestro artesano",
+        "tipo": "secundaria",
+        "clasificacion": "diaria",
+        "descripcion": "Aprenderás a crear ítems de madera para ofensiva, defensa y supervivencia.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 0,
+          "misionesRequeridas": [],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc03",
+            "nombre": "Artesano Hector",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+            "posicion": {
+              "x": 986,
+              "y": 4849
+            },
+            "conversation_default": "La madera puede lograr maravillas, hijo. Todo depende de tu creatividad.",
+            "dialogos": {
+              "inicio": [
+                "El límite para crear cosas está en tu imaginación.",
+                "Si quieres, te enseñaré cosas que pueden serte útiles muchacho!.",
+                "Aprenderás a crear objetos de madera.",
+                "Empezaremos buscando madera.",
+                "Solo tienes que buscar entre los arboles dando clic sobre ellos.",
+                "¿Quieres intentarlo?"
+              ],
+              "en_progreso": [
+                "En los árboles, además de frutos, encontrarás madera. Solo dales clic"
+              ],
+              "completado": [
+                "Excelente muchacho jojojo...!!, haz progresado mucho.",
+                "Ahora combina los items arrastrandolo a la zona de creación de Items",
+                "Se observador, y creativo para crear!",
+                "Siempre fallarás en algunos intentos, Pero recuerda:",
+                "Tienes la naturaleza que te da recursos para seguir intentando",
+                "Continua creando artesanias."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m2s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc03",
+            "titulo": "Habla con Hector",
+            "descripcion": "Inicia el camino del maestro artesano.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc03",
+              "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+              "posicion": {
+                "x": 986,
+                "y": 4849
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m2s2",
+            "tipo": "recolectar_items",
+            "titulo": "Recolecta la madera",
+            "descripcion": "Reúne 3 maderas. Puedes tomarlo dando clic a los arboles del campo.",
+            "objetivosItems": [
+              {
+                "id": "madera",
+                "cantidad": 3
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "recolectar_madera_01",
+              "imagen": "../assets/items/madera.svg",
+              "posicion": {
+                "x": 620,
+                "y": 3585
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m2s3",
+            "tipo": "hablar_npc_entrega",
+            "npcId": "npc03",
+            "titulo": "Muestra a Hector tus avances",
+            "descripcion": "Muestra a Hector la madera recolectada.",
+            "entregaItems": [
+              {
+                "id": "madera",
+                "cantidad": 3
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc03",
+              "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+              "posicion": {
+                "x": 986,
+                "y": 4849
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m2s4",
+            "tipo": "recolectar_items",
+            "titulo": "Crea tu primera arma",
+            "descripcion": "Crea 1 'espada de madera' combinando materiales.",
+            "objetivosItems": [
+              {
+                "id": "espada_de_madera",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "crear_arma_01",
+              "imagen": "../assets/items/espadaMadera.svg",
+              "posicion": {
+                "x": 620,
+                "y": 3585
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 5,
+            "id": "m2s5",
+            "tipo": "hablar_npc",
+            "npcId": "npc03",
+            "titulo": "Vuelve con Hector",
+            "descripcion": "Muéstrale a Hector tu primera espada de madera.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc03",
+              "imagen": "../assets/avatares/npc/mapa1/Hector.png",
+              "posicion": {
+                "x": 986,
+                "y": 4849
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 5,
+          "cosmonedas": 15,
+          "items": [
+            {
+              "id": "espada_de_madera",
+              "cantidad": 3
+            },
+            {
+              "id": "bumerang",
+              "cantidad": 3
+            },
+            {
+              "id": "antorcha_de_fuego",
+              "cantidad": 15
+            }
+          ],
+          "codigoSecreto": null
+        }
+      },
+      {
+        "id": "m3",
+        "nombre": "En las manos del alfarero",
+        "tipo": "secundaria",
+        "clasificacion": "diaria",
+        "descripcion": "Un buen alfddarero conoce la mejor tierra para crear maravillas.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 0,
+          "misionesRequeridas": [],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc04",
+            "nombre": "Alfarera Vexa",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+            "posicion": {
+              "x": 691,
+              "y": 4712
+            },
+            "conversation_default": "Son hermosas las esculturas que se pueden hacer con la arcilla.",
+            "dialogos": {
+              "inicio": [
+                "El arte, además de ser hermoso, salva vidas.",
+                "Tuve que hacer bloques de arcilla para armar una barricada.",
+                "Y así evitar que el enemigo nos invada.",
+                "El arte no es un arma, pero me alegra que sea útil.",
+                "Si quieres, puedo enseñarte a crear bloques de arcilla.",
+                "Te puede ser de utilidad.",
+                "¿Quieres intentarlo?"
+              ],
+              "en_progreso": [
+                "Puedes buscar la mejor arcilla en este lodo.",
+                "Necesitas 1 vaso de agua y 5 arcillas para crear un bloque.",
+                "No te dé vergüenza buscar plásticos en la basura.",
+                "Con eso puedes crear vasos para almacenar agua."
+              ],
+              "completado": [
+                "Toma la arcilla de este lodo y luego combínala en tu inventario.",
+                "Recuerda que necesitas 1 vaso de agua y 5 arcillas para crear un bloque.",
+                "Cuando crees el bloque de arcilla, puedes usarlo como arma.",
+                "Solo arrástralo a la sección de equipamiento.",
+                "Y actívalo con 'Q' o 'E' en tu teclado.",
+                "O simplemente presiona el botón de acción en pantalla.",
+                "Te daré 3 picos para que destruyas fácilmente los bloques.",
+                "Aunque también puedes hacerlo con cualquier arma de impacto."
+              ]
+            }
+          },
+          {
+            "id": "npc-complement-04",
+            "nombre": "Alfarero Manuel",
+            "rol": "complemento",
+            "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
+            "posicion": {
+              "x": 1958,
+              "y": 3273
+            },
+            "conversation_default": "Lo que me enseña mi maestra es importante. Tengo que apuntarlo en el metafon.",
+            "dialogos": {
+              "inicio": [
+                "Lo que mi maestra me enseñó es muy importante.",
+                "Tengo que apuntarlo en el metafon",
+                "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+                "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+                "La otra vez tome un plastico del canasto del laboratorio,",
+                "Y lo combertí en baso para poder tomar agua de esta fuente.",
+                "Mi arte vale ese nivel de recursividad."
+              ],
+              "en_progreso": [
+                "Lo que mi maestra me enseñó es muy importante.",
+                "Tengo que apuntarlo en el metafon",
+                "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+                "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+                "La otra vez tome un plastico del canasto del laboratorio,",
+                "Y lo combertí en baso para poder tomar agua de esta fuente.",
+                "Mi arte vale ese nivel de recursividad."
+              ],
+              "completado": [
+                "Lo que mi maestra me enseñó es muy importante.",
+                "Tengo que apuntarlo en el metafon",
+                "En la opción de cuaderno al abrir mi metafon, Así lo tendré siempre a mano.",
+                "No me da Verguenza buscar recursos de la basura para crear mis esculturas.",
+                "La otra vez tome un plastico del canasto del laboratorio,",
+                "Y lo combertí en baso para poder tomar agua de esta fuente.",
+                "Mi arte vale ese nivel de recursividad."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m3s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc04",
+            "titulo": "Habla con la alfarera Vexa",
+            "descripcion": "Iníciate como alfarero para crear tus propios bloques de arcilla.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc04",
+              "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+              "posicion": {
+                "x": 691,
+                "y": 4712
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m3s2",
+            "tipo": "recolectar_items",
+            "titulo": "Reúne materiales para crear bloques",
+            "descripcion": "Reúne 5 arcillas en el lodo y consigue 1 vaso de agua.",
+            "objetivosItems": [
+              {
+                "id": "arcilla",
+                "cantidad": 5
+              },
+              {
+                "id": "baso_de_agua",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "recolectar_materiales_arcilla_01",
+              "imagen": null,
+              "posicion": {
+                "x": 2798,
+                "y": 4166
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m3s3",
+            "tipo": "hablar_npc_entrega",
+            "npcId": "npc04",
+            "titulo": "Muestra a Vexa tu progreso",
+            "descripcion": "Pídele a Vexa que te enseñe a combinar los materiales.",
+            "entregaItems": [
+              {
+                "id": "arcilla",
+                "cantidad": 5
+              },
+              {
+                "id": "baso_de_agua",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc04",
+              "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+              "posicion": {
+                "x": 691,
+                "y": 4712
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m3s4",
+            "tipo": "recolectar_items",
+            "titulo": "Crea tu primera escultura",
+            "descripcion": "Crea 1 bloque de arcilla combinando materiales.",
+            "objetivosItems": [
+              {
+                "id": "bloque_de_arcilla",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "crear_bloque_de_arcilla_01",
+              "imagen": "../assets/items/espadaMadera.svg",
+              "posicion": {
+                "x": 620,
+                "y": 3585
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 5,
+            "id": "m3s5",
+            "tipo": "hablar_npc",
+            "npcId": "npc04",
+            "titulo": "Vuelve con Vexa",
+            "descripcion": "Muéstrale a Vexa tu escultura de arcilla.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc04",
+              "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
+              "posicion": {
+                "x": 691,
+                "y": 4712
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 5,
+          "cosmonedas": 15,
+          "items": [
+            {
+              "id": "bloque_de_arcilla",
+              "cantidad": 25
+            },
+            {
+              "id": "pico_escabador",
+              "cantidad": 5
+            }
+          ],
+          "codigoSecreto": null
+        }
+      },
+      {
+        "id": "m4",
+        "nombre": "La luz del mundo",
+        "tipo": "principal",
+        "clasificacion": "historia",
+        "descripcion": "Aprende a generar energía y luz a partir de recursos comunes.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 0,
+          "misionesRequeridas": [],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc05",
+            "nombre": "Arkon",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "posicion": {
+              "x": 2593,
+              "y": 4250
+            },
+            "conversation_default": "La energía lo cambia todo.",
+            "dialogos": {
+              "inicio": [
+                "La energía ha sido útil desde la antigüedad.",
+                "Pero hoy muchos olvidaron la raíz del conocimiento.",
+                "Si quieres, te enseñaré a generar energía y fuego.",
+                "Lo harás con recursos comunes de la naturaleza.",
+                "Tendrás que hablar con Syra; ella te enseñará lo que necesitas para comenzar.",
+                "¿Quieres intentarlo?"
+              ],
+              "en_progreso": [
+                "Muy bien muchacho...!",
+                "Si manejas la energía y sabes canalizarla, podrás hacer cosas increíbles.",
+                "Syra y Lyra te enseñarán a generar energía y canalizarla.",
+                "Avanza al siguiente nivel."
+              ],
+              "completado": [
+                "Muy bien. Ya entiendes la base del flujo energético."
+              ]
+            }
+          },
+          {
+            "id": "npc06",
+            "nombre": "Syra",
+            "rol": "guia",
+            "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+            "posicion": {
+              "x": 900,
+              "y": 4300
+            },
+            "conversation_default": "La naturaleza te da todo para generar energía.",
+            "dialogos": {
+              "inicio": [
+                "El medio de canalización de la energía eléctrica son los cables.",
+                "Pero aunque existen muchos tipos de cables, el más eficiente es el cobre."
+              ],
+              "en_progreso": [
+                "Hola camarada. Te enseñaré algo importante.",
+                "La energía no se crea ni se destruye.",
+                "Solo se transforma.",
+                "Pero para poder usarla necesita un medio de canalización.",
+                "En el caso de la energía eléctrica, son los cables.",
+                "Hay distintos tipos de cable.",
+                "Pero el más eficiente hasta el momento es el de cobre.",
+                "Así que crearemos cables de cobre.",
+                "Busca dos rocas de cobre y lo fundiremos en forma de cable.",
+                "Te enseñaré. Ve, no te tardes."
+              ],
+              "completado": [
+                "Ya eres todo un ingeniero de energías y sabes cómo canalizarla.",
+                "Recuerda: cualquier cosa de metal es conductora.",
+                "Así que ten cuidado.",
+                "Éxitos."
+              ]
+            }
+          },
+          {
+            "id": "npc07",
+            "nombre": "Lyra",
+            "rol": "guia",
+            "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+            "posicion": {
+              "x": 4631,
+              "y": 4262
+            },
+            "conversation_default": "La química también puede encender el mundo.",
+            "dialogos": {
+              "inicio": [
+                "Es posible almacenar la energía de muchas maneras.",
+                "De forma química también es posible, y más fácil."
+              ],
+              "en_progreso": [
+                "Muy bien. Hagámoslo rápido y no me hagas perder el tiempo.",
+                "Existen muchas formas de generar electricidad.",
+                "Hoy te mostraré la generación química.",
+                "Hierro como ánodo, cobre como cátodo.",
+                "Y un limón como solución ácida. Sí, un limón.",
+                "Combina los ítems y crea una batería.",
+                "No tenemos tiempo muchacho, no te tardes.",
+                "Y si por algún motivo fallas, sigue intentando.",
+                "Vuelve a buscar los ítems, así sea en la basura.",
+                "Tu supervivencia amerita ser recursivo.",
+                "Luego vuelve con Arkon."
+              ],
+              "completado": [
+                "Ya puedes generar energía química.",
+                "Recuerda: puedes usar un limón como medio de oxidación,",
+                "y cobre y hierro como ánodo y cátodo.",
+                "Cualquier cosa sirve: una moneda de cobre, un anillo de hierro,",
+                "rocas de cobre y hierro.",
+                "Si es necesario, busca en la basura.",
+                "Sé recursivo. Tu supervivencia lo amerita."
+              ]
+            }
+          },
+          {
+            "id": "npc08",
+            "nombre": "Alira",
+            "rol": "historia",
+            "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+            "posicion": {
+              "x": 4312,
+              "y": 4177
+            },
+            "conversation_default": "Mientras los reptilianos no encuentren la caldera, estaremos bien.",
+            "dialogos": {
+              "inicio": [
+                "La caldera de generación eléctrica no se puede apagar.",
+                "Es vital para mantener la energía del convoy.",
+                "Pero los alienígenas enemigos lo invadieron.",
+                "Un centinela fue a cubrir la llama de la caldera,",
+                "pero perdimos comunicación. ¿Qué habrá pasado?"
+              ],
+              "en_progreso": [
+                "Okay, okay, okay...!!!",
+                "Te lo diré una sola vez.",
+                "Estamos en un grave problema.",
+                "Los reptilianos invadieron la caldera de generación.",
+                "Siguen el fuego como zombis, sin pensar.",
+                "Si tienes antorcha de fuego y bloques de arcilla, úsalos.",
+                "Crea Todas las antorchas de fuego y bloques de arcilla que puedas.",
+                "Pon la arcilla en el campo y luego activa la antorcha.",
+                "Usa tu ingenio para tenderles trampas.",
+                "Abre paso y llega hasta la caldera.",
+                "Está en el ala superior izquierda del laberinto.",
+                "Bloquea el paso para que los enemigos no tengan acceso al fuego de la caldera.",
+                "¡Revisa el estado de generación en el computador a mi derecha!",
+                "¡DATE PRISA...!!!"
+              ],
+              "completado": [
+                "Has salvado el día camarada. La inteligencia es mejor que la fuerza,",
+                "y tú lo has demostrado."
+              ]
+            }
+          },
+          {
+            "id": "npc09",
+            "nombre": "Kael",
+            "rol": "final",
+            "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+            "posicion": {
+              "x": 2811,
+              "y": 4592
+            },
+            "conversation_default": "Si la caldera arde, el convoy se mantendrá con energía eléctrica.",
+            "dialogos": {
+              "inicio": [
+                "Sin la caldera encendida no puedo hacer nada."
+              ],
+              "en_progreso": [
+                "Gracias por encender la caldera.",
+                "Reiniciando protocolos de generación...",
+                "Prueba accionar el totalizador de la subestación.",
+                "Está justo detras de mi."
+              ],
+              "completado": [
+                "El domo vuelve a tener energía.",
+                "Muchas gracias por ayudarnos a reestablecer la energia"
+              ]
+            }
+          },
+          {
+            "id": "npc10",
+            "nombre": "Centinela Guardian",
+            "rol": "complemento",
+            "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
+            "posicion": {
+              "x": 71,
+              "y": 186
+            },
+            "conversation_default": "Tengo miedo, pero debo cuidar la caldera de estos demonios reptilianos.",
+            "dialogos": {
+              "inicio": [
+                "Cómo quisiera que otro tomara mi lugar.",
+                "De todos los centinelas, me tocó a mí.",
+                "Espero llegar pronto a casa y ver a mi esposa y mi hija."
+              ],
+              "en_progreso": [
+                "Son demasiados reptilianos. Estoy herido, pero me quedaré.",
+                "Por el bien de mis amadas, alguien tiene que quedarse a cuidar el fuego de la caldera.",
+                "Por favor, antes de irte, bloquea la salida y déjame.",
+                "Dile a mis tesoros que las amo."
+              ],
+              "completado": [
+                "Por el bien de todos me quedaré a cuidar la caldera.",
+                "Dile a mis tesoros que las amo."
+              ]
+            }
+          },
+          {
+            "id": "npc-complement-08",
+            "nombre": "Profesor Orbek",
+            "rol": "historia",
+            "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
+            "posicion": {
+              "x": 2810,
+              "y": 4153
+            },
+            "conversation_default": "Que el sentinela no se entere que perdí su arma en la basura.",
+            "dialogos": {
+              "inicio": [
+                "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+                "Si el sentinela mayor lo descubre me matará.",
+                "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+                "Nunca he usado un arma.",
+                "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+                "Pero nada del arma."
+              ],
+              "en_progreso": [
+                "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+                "Si el sentinela mayor lo descubre me matará.",
+                "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+                "Nunca he usado un arma.",
+                "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+                "Pero nada del arma."
+              ],
+              "completado": [
+                "No puede ser; en que estána pensando cuando arrojé esa arma en la basura.",
+                "Si el sentinela mayor lo descubre me matará.",
+                "Me la dió para defenderme de los reptilianos, pero pensé que no funcionaba.",
+                "Nunca he usado un arma.",
+                "He encontrado de todo en la basura, Escudos, espadas, Cobre,",
+                "Pero nada del arma."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m4s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc05",
+            "titulo": "Habla con Arkon",
+            "descripcion": "Recibe la lección inicial sobre energía.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc05",
+              "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+              "posicion": {
+                "x": 2593,
+                "y": 4250
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m4s2",
+            "tipo": "hablar_npc",
+            "npcId": "npc06",
+            "titulo": "Habla con Syra",
+            "descripcion": "Syra te dirá cómo crear el cable.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc06",
+              "imagen": "../assets/avatares/npc/mapa1/Syra.png",
+              "posicion": {
+                "x": 900,
+                "y": 4300
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m4s3",
+            "tipo": "recolectar_items",
+            "titulo": "Crea el cable",
+            "descripcion": "Combina materiales hasta crear 2 cables. Busca 2 cobre y combinalos en tu inventario.",
+            "objetivosItems": [
+              {
+                "id": "cable",
+                "cantidad": 2
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "crear_cable_01",
+              "imagen": "../assets/items/cable.svg",
+              "posicion": {
+                "x": 1788,
+                "y": 4105
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m4s4",
+            "tipo": "hablar_npc",
+            "npcId": "npc05",
+            "titulo": "Vuelve con Arkon",
+            "descripcion": "Muéstrale a Arkon los cables terminados.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc05",
+              "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+              "posicion": {
+                "x": 2593,
+                "y": 4250
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 5,
+            "id": "m4s5",
+            "tipo": "hablar_npc",
+            "npcId": "npc07",
+            "titulo": "Habla con Lyra",
+            "descripcion": "Aprende a generar electricidad química.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc07",
+              "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
+              "posicion": {
+                "x": 4631,
+                "y": 4262
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 6,
+            "id": "m4s6",
+            "tipo": "recolectar_items",
+            "titulo": "Crea la batería",
+            "descripcion": "Combina 1 limón, 1 cobre y 1 hierro para crear 1 batería.",
+            "objetivosItems": [
+              {
+                "id": "bateria",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "crear_bateria_01",
+              "imagen": "../assets/items/bateria.svg",
+              "posicion": {
+                "x": 825,
+                "y": 3699
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 7,
+            "id": "m4s7",
+            "tipo": "hablar_npc",
+            "npcId": "npc05",
+            "titulo": "Regresa otra vez con Arkon",
+            "descripcion": "Llévale la batería a Arkon.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc05",
+              "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+              "posicion": {
+                "x": 2593,
+                "y": 4250
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 8,
+            "id": "m4s8",
+            "tipo": "recolectar_items",
+            "titulo": "Crea la antorcha",
+            "descripcion": "Crea 1 'antorcha de fuego' con los materiales reunidos. combina 1 'palo de madera' 2 cables 1 bateria.",
+            "objetivosItems": [
+              {
+                "id": "antorcha_de_fuego",
+                "cantidad": 1
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "crear_antorcha_01",
+              "imagen": "../assets/items/antorchaFuego.svg",
+              "posicion": {
+                "x": 3241,
+                "y": 4359
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 9,
+            "id": "m4s9",
+            "tipo": "hablar_npc",
+            "npcId": "npc08",
+            "titulo": "Habla con la capitana Alira",
+            "descripcion": "Recibe la misión urgente sobre la caldera.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc08",
+              "imagen": "../assets/avatares/npc/mapa1/Alira.png",
+              "posicion": {
+                "x": 4312,
+                "y": 4177
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 10,
+            "id": "m4s10",
+            "tipo": "interactuar_objeto",
+            "titulo": "Revisar estado de generación",
+            "descripcion": "Revisa el computador a la derecha de la capitana Alira el estado de generación de la caldera",
+            "retoId": "reptilianoApagaLuz",
+            "llamar_funcion_reto": "reptilianoApagaLuz()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "laboratiorio_03_oficina_01",
+              "imagen": "../assets/spriteAmbiente/oficina1.svg",
+              "posicion": {
+                "x": 4376,
+                "y": 4035
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 11,
+            "id": "m4s11",
+            "tipo": "completar_reto",
+            "titulo": "Enciende la caldera de generación",
+            "descripcion": "Vuelve a encender la caldera para recuperar el fuego de generación. usa la antorcha y acercate a la avertura de la caldera para encenderla. Ten cuidado con quemarte.",
+            "retoId": "reestablecerFuegoEnCaldera",
+            "llamar_funcion_reto": "reestablecerFuegoEnCaldera()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "chimenea_mapa_01",
+              "imagen": "../assets/spriteAmbiente/caldera.svg",
+              "posicion": {
+                "x": 171,
+                "y": 72
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 12,
+            "id": "m4s12",
+            "tipo": "hablar_npc",
+            "npcId": "npc09",
+            "titulo": "Informa a Kael",
+            "descripcion": "Ve con Kael para reiniciar la energía del domo.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc09",
+              "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+              "posicion": {
+                "x": 2811,
+                "y": 4592
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 13,
+            "id": "m4s13",
+            "tipo": "reestablecer_energia",
+            "titulo": "Restablece la energía",
+            "descripcion": "Ve al totalizador de la subestación y restablece la energía del convoy.",
+            "retoId": "reestablecerEnergia",
+            "llamar_funcion_reto": "reestablecerEnergia()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "reestablecer_energia",
+              "imagen": "../assets/items/antorchaFuego.svg",
+              "posicion": {
+                "x": 2747,
+                "y": 4498
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 14,
+            "id": "m4s14",
+            "tipo": "hablar_npc",
+            "npcId": "npc09",
+            "titulo": "Confirma con Kael",
+            "descripcion": "Regresa con Kael para confirmar que el sistema energético está estable.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc09",
+              "imagen": "../assets/avatares/npc/mapa1/Kael.png",
+              "posicion": {
+                "x": 2811,
+                "y": 4592
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 15,
+          "cosmonedas": 120,
+          "items": [
+            {
+              "id": "pistola_lazer",
+              "cantidad": 1
+            },
+            {
+              "id": "corazon",
+              "cantidad": 3
+            }
+          ],
+          "codigoSecreto": null
+        }
+      },
+      {
+        "id": "m5",
+        "nombre": "El algoritmo de Matlog",
+        "tipo": "principal",
+        "clasificacion": "historia",
+        "descripcion": "Descifra el criptograma para tener acceso al algoritmo de Matlog y adquirir todo su conocimiento.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 15,
+          "misionesRequeridas": [
+            "m1",
+            "m2",
+            "m3",
+            "m4"
+          ],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc11",
+            "nombre": "Capitán Valen",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+            "posicion": {
+              "x": 1889,
+              "y": 4718
+            },
+            "conversation_default": "¿Qué secretos tendrá este algoritmo de conocimiento?",
+            "dialogos": {
+              "inicio": [
+                "Hola, camarada.",
+                "Si has llegado hasta aquí, es porque has sido esforzado y valiente.",
+                "No se me ocurre otra persona a quien delegar esta difícil tarea.",
+                "Más que tú, mi mejor cosmonauta.",
+                "Hace varias noches, un grupo de reptilianos se infiltró.",
+                "Encriptaron el algoritmo de Matlog en forma de Codex.",
+                "Un poderoso algoritmo alienígena...",
+                "Hasta ahora solo un humano lo ha podido comprender",
+                "Pero confío en tu ingenio para descifrarlo y salvarnos de este mal.",
+                "Uno de nuestros centinelas se infiltró en la base alienígena y halló el Codex.",
+                "Pero antes de perder la señal con él,",
+                "dijo que el Codex fue corrompido de extremo a extremo,",
+                "y que está siendo custodiado por el más poderoso reptiliano,",
+                "en el ala superior derecha del laberinto.",
+                "Ve y resuelve el criptograma.",
+                "Salva a la humanidad con el poder del algoritmo.",
+                "¡Por favor!"
+              ],
+              "en_progreso": [
+                "El Codex sigue protegido por el reptiliano en el ala superior derecha.",
+                "Descifra el criptograma y recupera el algoritmo."
+              ],
+              "completado": [
+                "Lo has logrado, cosmonauta.",
+                "Has descifrado el Codex y dominado el algoritmo de Matlog.",
+                "La humanidad está a salvo gracias a tu ingenio y valentía."
+              ]
+            }
+          },
+          {
+            "id": "npc12",
+            "nombre": "Ingeniero Solis",
+            "rol": "contacto",
+            "imagen": "../assets/avatares/npc/mapa1/Solis.png",
+            "posicion": {
+              "x": 2256,
+              "y": 4232
+            },
+            "conversation_default": "Es muy complejo. Nadie ha podido descifrar el algoritmo de Matlog.",
+            "dialogos": {
+              "inicio": [
+                "Hasta ahora nadie ha podido descifrar el algoritmo de Matlog,",
+                "y ahora será aún más difícil, ya que los reptilianos lo encriptaron en forma de Codex."
+              ],
+              "en_progreso": [
+                "El algoritmo de Matlog es el Codex con el que funciona la tecnología reptiliana.",
+                "¿Crees que funcione para desbloquear la subestación de generación eléctrica?",
+                "El doctor Axiom tiene una teoria.",
+                "El cree que El codigo de bloqueo funciona con los principios de Matlog."
+              ],
+              "completado": [
+                "Espero que puedas compartir con el mundo ese conocimiento",
+                "y que lo uses para el bien.",
+                "Ahora estás por encima en el conocimiento."
+              ]
+            }
+          },
+          {
+            "id": "npc13",
+            "nombre": "Doctor Axiom",
+            "rol": "cierre",
+            "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+            "posicion": {
+              "x": 2189,
+              "y": 4320
+            },
+            "conversation_default": "Es buena práctica apuntar las cosas. Lo puedes hacer en el Metafón.",
+            "dialogos": {
+              "inicio": [
+                "El algoritmo de Matlog solo lo comprenden los que tienen un profundo deseo de aprender.",
+                "Es bueno escribir el conocimiento, ya que las palabras se las lleva el viento."
+              ],
+              "en_progreso": [
+                "Mi teoría es que ese algoritmo fue originado por los indilianos,",
+                "pero los reptilianos lo usan para hackear nuestros sistemas de datos y energéticos.",
+                "Si alguien comprendiera el algoritmo de Matlog, yo iría al centro de control,",
+                "que está en el centro del laberinto, en la subestación.",
+                "Y si es verdad que alguien lo comprendió,",
+                "él nos libraría de este infierno."
+              ],
+              "completado": [
+                "Escuché por ahí que alguien comprendió el algoritmo de Matlog...",
+                "¡Wow, después de 100 años...!",
+                "¿Quién será? Quisiera que me enseñe qué significa.",
+                "Yo lo anotaría en las notas del Metafón para nunca olvidarlo."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m5s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc11",
+            "titulo": "Habla con el capitán Valen",
+            "descripcion": "El capitán te pondrá en contexto con respecto al estado actual del enemigo.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc11",
+              "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+              "posicion": {
+                "x": 1889,
+                "y": 4718
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m5s2",
+            "tipo": "completar_reto",
+            "titulo": "Encuentra el criptograma de Matlog",
+            "descripcion": "Busca el criptograma de Matlog en el ala superior derecha del laberinto.",
+            "retoId": "resolverCriptogramaDeMatlog",
+            "llamar_funcion_reto": "resolverCriptogramaDeMatlog()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "criptograma_de_matlog",
+              "imagen": "../assets/spriteAmbiente/PC-alien1.png",
+              "posicion": {
+                "x": 4741,
+                "y": 80
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m5s3",
+            "tipo": "completar_reto",
+            "titulo": "Pon el Codex en el pedestal de Matlog",
+            "descripcion": "Pon el criptograma en el pedestal y comprende el algoritmo de Matlog.",
+            "retoId": "insertarCodexEnPedestal",
+            "llamar_funcion_reto": "insertarCodexEnPedestal()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "Algoritmo_de_matlog",
+              "imagen": "../assets/spriteAmbiente/pedestalAlgoritmo.png",
+              "posicion": {
+                "x": 1530,
+                "y": 4530
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m5s4",
+            "tipo": "hablar_npc",
+            "npcId": "npc12",
+            "titulo": "Habla con el ingeniero Solis",
+            "descripcion": "El ingeniero Solis tiene una idea de cómo ponerle fin a esto.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc12",
+              "imagen": "../assets/avatares/npc/mapa1/Solis.png",
+              "posicion": {
+                "x": 2256,
+                "y": 4232
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 5,
+            "id": "m5s5",
+            "tipo": "hablar_npc",
+            "npcId": "npc13",
+            "titulo": "Habla con el doctor Axiom",
+            "descripcion": "Confirma la teoría del hackeo en la subestación de generación con el doctor Axiom.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc13",
+              "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+              "posicion": {
+                "x": 2189,
+                "y": 4320
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 6,
+            "id": "m5s6",
+            "tipo": "completar_reto",
+            "titulo": "Resuelve el ciberataque en la subestación",
+            "descripcion": "Resuelve y rompe la encriptación en la subestación, en el centro del laberinto.",
+            "retoId": "DesencriptarCentral",
+            "llamar_funcion_reto": "DesencriptarCentral()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "Incriptación_Central",
+              "imagen": "../assets/spriteAmbiente/pedestalAlgoritmo.png",
+              "posicion": {
+                "x": 2500,
+                "y": 180
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 7,
+            "id": "m5s7",
+            "tipo": "hablar_npc",
+            "npcId": "npc11",
+            "titulo": "Habla con el capitán Valen",
+            "descripcion": "Habla con el capitán y dile que ya somos libres de la invasión alienígena.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc11",
+              "imagen": "../assets/avatares/npc/mapa1/Valen.png",
+              "posicion": {
+                "x": 1889,
+                "y": 4718
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 50,
+          "cosmonedas": 200,
+          "items": [
+            {
+              "id": "espada_de_hierro",
+              "cantidad": 1
+            },
+            {
+              "id": "escudo_de_hierro",
+              "cantidad": 1
+            }
+          ],
+          "codigoSecreto": null
+        }
+      },
+      {
+        "id": "m6",
+        "nombre": "Mi amigo autómata",
+        "tipo": "secundaria",
+        "clasificacion": "diaria",
+        "descripcion": "Ayuda al ingeniero Maese a energizar su acompañante robótico construyendo una conexión correcta con baterias.",
+        "estadoFinalizacion": {
+          "tipo": "automatica",
+          "condicion": "todos_los_pasos",
+          "requiereNPCFinal": false
+        },
+        "condiciones": {
+          "nivelIQMinimo": 0,
+          "misionesRequeridas": [],
+          "itemsRequeridos": []
+        },
+        "npcs": [
+          {
+            "id": "npc14",
+            "nombre": "Ingeniero Maese",
+            "rol": "inicio",
+            "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+            "posicion": {
+              "x": 473,
+              "y": 3270
+            },
+            "conversation_default": "La opsolecencia programada no es impedimento para mí.",
+            "dialogos": {
+              "inicio": [
+                "Acabo de construir un robot con inteligencia artificial.",
+                "funciona con microprocesadores PIC.",
+                "Es una tecnología muy vieja, pero acá escasean los recursos.",
+                "Tube que buscar hasta en la basura, jejejeje... hayy..!! Dios...!",
+                "No he podido energizarlo; pero si puedes, consigue 8 baterias.",
+                "Cada bateria tiene hasta 1.5V y 1A.",
+                "Necesitas poner 4 baterias en serie y 2 en paralelo",
+                "para que dé la potencia que necesitamos para que funcione el robot.",
+                "Pero ten cuidado de pasarte con el voltaje, porque puedes quemar el circuito."
+              ],
+              "en_progreso": [
+                "Necesitamos 8 baterias.",
+                "Luego usa la mesa para hacer la conexión.",
+                "Recuerda: en serie aumenta el voltaje, en paralelo aumenta la corriente."
+              ],
+              "completado": [
+                "En la electrónica, la conexión en serie es función del voltaje;",
+                "eso quiere decir que el voltaje aumenta.",
+                "La conexión en paralelo es en función de la corriente; ",
+                "eso quiere decir que la corriente aumenta.",
+                "Cuando combinamos ambas, generamos la potencia eléctrica necesaria.",
+                "Excelente trabajo. Ahora mi autómata puede funcionar.",
+                "Te lo presto para que tengas compañero de batalla,",
+                "Pero intenta no destruirlo. Es el unico que me queda.",
+                "Casi lo Olvido, por ahí escuche de un mercader.",
+                "Si lo encuentras, porfa compra cosas utiles para mí. Te dejo cosmonedas,",
+                "Y un poco de agua para que te refresques mientras lo buscas."
+              ]
+            }
+          }
+        ],
+        "pasos": [
+          {
+            "step": 1,
+            "id": "m6s1",
+            "tipo": "hablar_npc",
+            "npcId": "npc14",
+            "titulo": "Habla con Maese",
+            "descripcion": "Escucha la explicación del ingeniero Maese.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc14",
+              "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+              "posicion": {
+                "x": 473,
+                "y": 3270
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 2,
+            "id": "m6s2",
+            "tipo": "recolectar_items",
+            "titulo": "Recolecta las baterias",
+            "descripcion": "Reúne 8 baterias.",
+            "objetivosItems": [
+              {
+                "id": "bateria",
+                "cantidad": 8
+              }
+            ],
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "recolectar_bateria_01",
+              "imagen": "../assets/items/bateria.svg",
+              "posicion": {
+                "x": 600,
+                "y": 3195
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 3,
+            "id": "m6s3",
+            "tipo": "completar_reto",
+            "titulo": "Arma la conexión",
+            "descripcion": "Usa la mesa de robótica para crear una conexión de 6V y 2A.",
+            "retoId": "conexionAutomataMaese",
+            "llamar_funcion_reto": "conexionAutomataMaese()",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "objeto",
+              "objetivoId": "mesa_lab_Robotica",
+              "imagen": "../assets/spriteAmbiente/labElectronica.svg",
+              "posicion": {
+                "x": 600,
+                "y": 3195
+              }
+            },
+            "otorgaItems": []
+          },
+          {
+            "step": 4,
+            "id": "m6s4",
+            "tipo": "hablar_npc",
+            "npcId": "npc14",
+            "titulo": "Regresa con Maese",
+            "descripcion": "Recibe la explicación final.",
+            "estadoInicial": false,
+            "verificador": {
+              "tipoObjetivo": "npc",
+              "objetivoId": "npc14",
+              "imagen": "../assets/avatares/npc/mapa1/Maese.png",
+              "posicion": {
+                "x": 473,
+                "y": 3270
+              }
+            },
+            "otorgaItems": []
+          }
+        ],
+        "recompensas": {
+          "iq": 15,
+          "cosmonedas": 250,
+          "items": [
+            {
+              "id": "cable",
+              "cantidad": 16
+            },
+            {
+              "id": "bateria",
+              "cantidad": 8
+            },
+            {
+              "id": "baso_de_agua",
+              "cantidad": 8
+            }
+          ],
+          "codigoSecreto": null
+        }
+      }
+    ]
   }
 }
