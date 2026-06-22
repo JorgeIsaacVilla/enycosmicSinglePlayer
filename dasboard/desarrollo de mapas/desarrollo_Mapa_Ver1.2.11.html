@@ -300,6 +300,22 @@
 .project-preview-viewport.dragging-preview *{
   user-select:none;
 }
+
+.mission-actions{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+#bottomCoords{
+  color:var(--ok);
+  font-weight:700;
+  white-space:nowrap;
+  padding:4px 8px;
+  border:1px solid rgba(115,255,203,.35);
+  border-radius:999px;
+  background:rgba(115,255,203,.08);
+}
   </style>
 </head>
 <body>
@@ -499,7 +515,7 @@ Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo<
         </section>
         <section id="tabMisiones" class="tab-panel">
           <div class="notice">Llena los datos, ubica el NPC de misión, agrega pasos y presiona “Cargar misión”. Al final descarga missions.json.</div>
-          <div class="section"><p class="section-title">Misión actual</p><div class="row"><div><label>ID misión</label><input id="missionId" type="text" value="m1"></div><div><label>Nombre</label><input id="missionName" type="text" value="Nueva misión"></div></div><div class="row"><div><label>Tipo</label><select id="missionType"><option value="principal">principal</option><option value="secundaria" selected>secundaria</option><option value="diaria">diaria</option></select></div><div><label>Clasificación</label><input id="missionClass" type="text" value="diaria"></div></div><label>Descripción</label><textarea id="missionDesc">Describe aquí la misión.</textarea><div class="row-3"><div><label>IQ</label><input id="missionIq" type="number" value="3"></div><div><label>Cosmonedas</label><input id="missionCoins" type="number" value="10"></div><div><label>Código</label><input id="missionSecret" type="text"></div></div><label>Items recompensa: id,cantidad por línea</label><textarea id="missionRewardItems">corazon,1</textarea></div>
+          <div class="section"><p class="section-title">Misión actual</p><div class="row"><div><label>ID misión automático</label><input id="missionId" type="text" value="m1" readonly></div><div><label>Nombre</label><input id="missionName" type="text" value="Nueva misión"></div></div><div class="row"><div><label>Tipo</label><select id="missionType"><option value="principal">principal</option><option value="secundaria" selected>secundaria</option><option value="diaria">diaria</option></select></div><div><label>Clasificación</label><input id="missionClass" type="text" value="diaria"></div></div><label>Descripción</label><textarea id="missionDesc">Describe aquí la misión.</textarea><div class="row-3"><div><label>IQ</label><input id="missionIq" type="number" value="3"></div><div><label>Cosmonedas</label><input id="missionCoins" type="number" value="10"></div><div><label>Código</label><input id="missionSecret" type="text"></div></div><label>Items recompensa: id,cantidad por línea</label><textarea id="missionRewardItems">corazon,1</textarea></div>
           <div class="section"><p class="section-title">NPC de misión</p><button id="missionNpcTool" style="width:100%">Ubicar NPC de misión</button><div class="row"><div><label>ID NPC</label><input id="missionNpcId" type="text" value="npc01"></div><div><label>Nombre NPC</label><input id="missionNpcName" type="text" value="Doctor Cyron"></div></div><label>Sprite preview</label>
 <input id="missionNpcFile" type="file" accept="image/*">
 
@@ -534,7 +550,11 @@ Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo<
   <button id="previewProjectBtn" class="primary">Visualizar proyecto</button>
 </div><div class="topbar-right"><button id="measureTool">Regla</button><span class="pill warn" id="measureReadout">Medida: -</span><button id="zoomOut">- Zoom</button><button id="zoomIn">+ Zoom</button><button id="zoom100">100%</button><button id="fitView">Encajar</button></div></header>
       <div class="viewport" id="viewport"><div class="dropzone" id="dropzone"></div><div class="map-stage" id="mapStage"><img id="mapImage" class="map-image" alt="Mapa cargado"><div id="mapPlaceholder" class="map-placeholder"><div><div style="font-size:28px;color:var(--accent);margin-bottom:10px">Carga tu mapa</div><div>Luego usa cada pestaña para ubicar bloques, enemigos, luces, NPCs y misiones.</div></div></div><div class="entities-layer" id="ambLayer"></div><div class="entities-layer layer-hidden" id="enemyLayer"></div><div class="entities-layer layer-hidden" id="lightLayer"></div><div class="entities-layer layer-hidden" id="npcLayer"></div><div class="entities-layer layer-hidden" id="missionLayer"></div><div class="entities-layer" id="itemLayer"></div><div class="map-grid" id="mapGrid"></div><div class="map-border-label" id="mapBorderLabel">5000 x 5000</div></div></div>
-      <footer class="bottombar"><span>Rueda: zoom · Bolita: mover mapa · Regla: medir px · Lápiz del nodo: editar JSON</span><span id="bottomStatus">Listo</span></footer>
+      <footer class="bottombar">
+  <span>Rueda: zoom · Bolita: mover mapa · Regla: medir px · Lápiz del nodo: editar JSON</span>
+  <span id="bottomCoords">Cursor: x: -, y: -</span>
+  <span id="bottomStatus">Listo</span>
+</footer>
     </section>
   </main>
 
@@ -554,6 +574,24 @@ Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo<
       </div>
     </div>
   </div>
+
+<div class="json-modal-backdrop" id="missionJsonModal" hidden>
+  <div class="json-modal">
+    <div class="json-modal-head">
+      <div class="json-modal-title" id="missionJsonModalTitle">Editar misión</div>
+      <button id="missionJsonModalClose" type="button" class="mini-btn">Cerrar</button>
+    </div>
+
+    <textarea id="missionJsonEditorText" spellcheck="false"></textarea>
+
+    <div>
+      <div class="json-drop-hint">Edita aquí todo el contexto de la misión. El ID se reorganiza automáticamente al guardar para evitar errores.</div>
+      <div class="json-modal-actions">
+        <button id="missionJsonModalSave" type="button" class="primary">Guardar misión</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="project-preview-backdrop" id="projectPreviewModal" hidden>
   <div class="project-preview-modal">
@@ -1558,6 +1596,60 @@ function cfgEnemy(){
     function npcJson(){return state.data.npc.map(n=>({imagen:n.imagen,nombre:n.nombre,velocidad:n.velocidad,dialogos_automaticos:n.dialogos_automaticos,dialogos_miedo:n.dialogos_miedo,x:round(n.x),y:round(n.y)}))}
     function cfgMissionNpc(){return{id:$('missionNpcId').value.trim()||uid('missionNpc','npc_mision'),nombre:$('missionNpcName').value.trim()||'NPC Misión',rol:'inicio',imagen:$('missionNpcImagePath').value.trim()||null,preview:safePreviewFor('missionNpc',$('missionNpcImagePath').value.trim()),previewName:previewMatchesPath('missionNpc',$('missionNpcImagePath').value.trim())?state.previewNames.missionNpc:null,w:64,h:64,x:0,y:0,conversation_default:lines($('missionNpcDialog1').value)[0]||'',dialogos:{inicio:lines($('missionNpcDialog1').value),en_progreso:lines($('missionNpcDialog2').value),completado:lines($('missionNpcDialogFinal').value)},funcionCumplimiento:$('missionCompleteFunction').value.trim()||null}}
     
+function updateCursorReadout(p){
+  const inside=p&&p.x>=0&&p.y>=0&&p.x<=state.mapSize&&p.y<=state.mapSize;
+  const text=inside?`x: ${round(p.x)}, y: ${round(p.y)}`:'x: -, y: -';
+
+  if($('statCursor'))$('statCursor').textContent=text;
+  if($('bottomCoords'))$('bottomCoords').textContent='Cursor: '+text;
+}
+
+function missionSuffixForNpc(item){
+  if(!item)return '';
+
+  const missions=state.data.missions||[];
+
+  const itemId=String(item.id||'').trim();
+  const itemName=String(item.nombre||'').trim();
+  const itemImg=getFileNameFromPath(item.imagen||'');
+  const itemX=round(item.x||0);
+  const itemY=round(item.y||0);
+
+  for(let i=0;i<missions.length;i++){
+    const mission=missions[i];
+    const missionId=mission.id||('m'+(i+1));
+
+    const found=(mission.npcs||[]).some(npc=>{
+      const npcId=String(npc.id||'').trim();
+      const npcName=String(npc.nombre||'').trim();
+      const npcImg=getFileNameFromPath(npc.imagen||'');
+      const npcX=round(npc.x??npc.posicion?.x??0);
+      const npcY=round(npc.y??npc.posicion?.y??0);
+
+      return(
+        (itemId&&npcId&&itemId===npcId)||
+        (itemName&&npcName&&itemName===npcName&&itemImg&&npcImg&&itemImg===npcImg)||
+        (itemImg&&npcImg&&itemImg===npcImg&&itemX===npcX&&itemY===npcY)
+      );
+    });
+
+    if(found)return '-'+missionId;
+  }
+
+  return '';
+}
+
+function displayNpcName(item,kind){
+  const base=item?.nombre||item?.id||'NPC';
+
+  if(kind==='missionNpc'){
+    const suffix=missionSuffixForNpc(item);
+    return suffix?`${base} ${suffix}`:base;
+  }
+
+  return base;
+}
+
 function makeNode(kind,item){
   const el=document.createElement('div');
   el.className='node '+({ambiente:'amb',enemy:'enemy',light:'light',npc:'npc',missionNpc:'missionNpc',item:'item'}[kind]||'');
@@ -1637,7 +1729,7 @@ else{
   if(kind==='npc'||kind==='missionNpc'){
   const npcName=document.createElement('div');
   npcName.className='npc-map-name';
-  npcName.textContent=item.nombre||item.id||'NPC';
+  npcName.textContent=displayNpcName(item,kind);
   el.appendChild(npcName);
 }
 
@@ -1693,10 +1785,229 @@ if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;
     function applySelected(){const {kind,id}=state.selected;if(!id)return setStatus('No hay elemento seleccionado.');const it=getItem(kind,id);if(!it)return;if(kind==='ambiente'&&it.subtipo==='bloque_arcilla'){applyArcillaSelected();return}if(kind==='ambiente')Object.assign(it,cfgAmb(),{zona_id:it.zona_id,x:it.x,y:it.y,w:it.w,h:it.h});if(kind==='enemy')Object.assign(it,cfgEnemy(),{id:it.id,x:it.x,y:it.y});if(kind==='light')Object.assign(it,cfgLight(),{nombre_id:it.nombre_id,x:it.x,y:it.y});if(kind==='npc')Object.assign(it,cfgNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='missionNpc')Object.assign(it,cfgMissionNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='item'){applyItemSelected();return}renderAll();saveLocalSoon();setStatus(kind==='ambiente'?'Componente ambiente actualizado.':'Cambios aplicados.')}
     function ambPrimaryAction(){state.selected={kind:null,id:null};setTool('amb-place');detectAmbRealSize(true);renderAll();setStatus('Modo ubicar componente ambiente activo. Haz clic sobre el mapa para colocarlo. Para modificar un bloque existente usa “Actualizar seleccionado”.')}
     function parseItems(text){return lines(text).map(l=>{const [id,c='1']=l.split(',').map(x=>x.trim());return id?{id,cantidad:Number(c)||1}:null}).filter(Boolean)}
+    let editingMissionIndex=null;
+
+function nextMissionId(){
+  return 'm'+((state.data.missions||[]).length+1);
+}
+
+function syncMissionIdField(){
+  const input=$('missionId');
+  if(input){
+    input.value=nextMissionId();
+    input.readOnly=true;
+  }
+}
+
+function renumberMissions(){
+  const missions=state.data.missions||[];
+  const idMap={};
+
+  missions.forEach((m,i)=>{
+    const oldId=m.id||('m'+(i+1));
+    const newId='m'+(i+1);
+    idMap[oldId]=newId;
+    m.id=newId;
+  });
+
+  missions.forEach(m=>{
+    if(Array.isArray(m.pasos)){
+      m.pasos.forEach((step,i)=>{
+        step.step=i+1;
+        step.id=m.id+'s'+(i+1);
+      });
+    }
+
+    if(m.condiciones&&Array.isArray(m.condiciones.misionesRequeridas)){
+      m.condiciones.misionesRequeridas=m.condiciones.misionesRequeridas.map(id=>idMap[id]||id);
+    }
+  });
+
+  syncMissionIdField();
+}
+
+function openMissionEditor(index){
+  const mission=(state.data.missions||[])[index];
+  if(!mission)return;
+
+  editingMissionIndex=index;
+
+  $('missionJsonModalTitle').textContent='Editar misión · '+(mission.id||('m'+(index+1)));
+  $('missionJsonEditorText').value=JSON.stringify(mission,null,2);
+  $('missionJsonModal').hidden=false;
+
+  setTimeout(()=>$('missionJsonEditorText')?.focus(),30);
+}
+
+function closeMissionEditor(){
+  editingMissionIndex=null;
+  $('missionJsonModal').hidden=true;
+}
+
+function saveMissionEditor(){
+  if(editingMissionIndex===null){
+    setStatus('No hay misión activa para editar.');
+    return;
+  }
+
+  let obj;
+
+  try{
+    obj=JSON.parse($('missionJsonEditorText').value);
+  }catch(e){
+    setStatus('El JSON de la misión tiene un error de sintaxis.');
+    return;
+  }
+
+  if(!obj||typeof obj!=='object'){
+    setStatus('La misión debe ser un objeto JSON válido.');
+    return;
+  }
+
+  state.data.missions[editingMissionIndex]=obj;
+
+  renumberMissions();
+  renderAll();
+  saveLocalSoon();
+  closeMissionEditor();
+
+  setStatus('Misión editada y IDs reorganizados.');
+}
     function renderSteps(){const box=$('stepList');box.innerHTML='';if(!state.data.missionSteps.length){box.innerHTML='<div class="list-item"><div>No hay pasos agregados.</div></div>';return}state.data.missionSteps.forEach((s,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${i+1}. ${s.titulo}<small>${s.tipo} · ${s.descripcion}</small></div><button class="mini-btn" data-stepdel="${i}">x</button>`;box.appendChild(div)})}
-    function addStep(){const mId=$('missionId').value.trim()||'m1',n=state.data.missionSteps.length+1,npcId=$('stepNpcId').value.trim()||$('missionNpcId').value.trim()||'npc01',tipo=$('stepType').value,npc=state.data.missionNpcs[0],pos=npc?{x:round(npc.x),y:round(npc.y)}:{x:0,y:0},img=npc?.imagen||$('missionNpcImagePath').value.trim()||null;const s={step:n,id:`${mId}s${n}`,tipo,npcId,titulo:$('stepTitle').value.trim()||`Paso ${n}`,descripcion:$('stepDesc').value.trim()||'',estadoInicial:false,verificador:{tipoObjetivo:tipo.includes('npc')?'npc':'objeto',objetivoId:npcId,imagen:img,posicion:pos},otorgaItems:parseItems($('stepOtorgaItems').value)};const objItems=parseItems($('stepItems').value),entrega=parseItems($('stepEntregaItems').value);if(objItems.length)s.objetivosItems=objItems;if(entrega.length)s.entregaItems=entrega;if($('stepFunction').value.trim())s.funcion_siguiente_paso=$('stepFunction').value.trim();state.data.missionSteps.push(s);renderSteps();saveLocalSoon()}
-    function loadMission(){const npc=state.data.missionNpcs[0]||cfgMissionNpc(),completeFunc=$('missionCompleteFunction').value.trim();const mission={id:$('missionId').value.trim()||`m${state.data.missions.length+1}`,nombre:$('missionName').value.trim()||'Misión',tipo:$('missionType').value,clasificacion:$('missionClass').value.trim()||'diaria',descripcion:$('missionDesc').value.trim()||'',estadoFinalizacion:{tipo:completeFunc?'funcion':'automatica',condicion:completeFunc||'todos_los_pasos',requiereNPCFinal:false},condiciones:{nivelIQMinimo:0,misionesRequeridas:[],itemsRequeridos:[]},npcs:[{id:npc.id,nombre:npc.nombre,rol:npc.rol||'inicio',imagen:npc.imagen,posicion:{x:round(npc.x||0),y:round(npc.y||0)},conversation_default:npc.conversation_default||'',dialogos:npc.dialogos}],pasos:[...state.data.missionSteps],recompensas:{iq:round($('missionIq').value)||0,cosmonedas:round($('missionCoins').value)||0,items:parseItems($('missionRewardItems').value),codigoSecreto:$('missionSecret').value.trim()||null}};if(completeFunc)mission.funcionCumplimiento=completeFunc;const idx=state.data.missions.findIndex(m=>m.id===mission.id);if(idx>-1)state.data.missions[idx]=mission;else state.data.missions.push(mission);state.data.missionSteps=[];renderAll();saveLocalSoon();setStatus('Misión cargada al JSON.')}
-    function renderMissionList(){const box=$('missionList');box.innerHTML='';if(!state.data.missions.length){box.innerHTML='<div class="list-item"><div>No hay misiones cargadas.</div></div>';return}state.data.missions.forEach((m,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${m.id} · ${m.nombre}<small>${m.pasos.length} pasos</small></div><button class="mini-btn" data-missiondel="${i}">x</button>`;box.appendChild(div)})}
+    
+    
+function addStep(){
+  syncMissionIdField();
+
+  const mId=$('missionId').value.trim()||nextMissionId();
+  const n=state.data.missionSteps.length+1;
+  const npcId=$('stepNpcId').value.trim()||$('missionNpcId').value.trim()||'npc01';
+  const tipo=$('stepType').value;
+  const npc=state.data.missionNpcs[0];
+  const pos=npc?{x:round(npc.x),y:round(npc.y)}:{x:0,y:0};
+  const img=npc?.imagen||$('missionNpcImagePath').value.trim()||null;
+
+  const s={
+    step:n,
+    id:`${mId}s${n}`,
+    tipo,
+    npcId,
+    titulo:$('stepTitle').value.trim()||`Paso ${n}`,
+    descripcion:$('stepDesc').value.trim()||'',
+    estadoInicial:false,
+    verificador:{
+      tipoObjetivo:tipo.includes('npc')?'npc':'objeto',
+      objetivoId:npcId,
+      imagen:img,
+      posicion:pos
+    },
+    otorgaItems:parseItems($('stepOtorgaItems').value)
+  };
+
+  const objItems=parseItems($('stepItems').value);
+  const entrega=parseItems($('stepEntregaItems').value);
+
+  if(objItems.length)s.objetivosItems=objItems;
+  if(entrega.length)s.entregaItems=entrega;
+  if($('stepFunction').value.trim())s.funcion_siguiente_paso=$('stepFunction').value.trim();
+
+  state.data.missionSteps.push(s);
+  renderSteps();
+  saveLocalSoon();
+}
+
+
+function loadMission(){
+  renumberMissions();
+
+  const missionId=nextMissionId();
+  if($('missionId'))$('missionId').value=missionId;
+
+  const npc=state.data.missionNpcs[0]||cfgMissionNpc();
+  const completeFunc=$('missionCompleteFunction').value.trim();
+
+  const mission={
+    id:missionId,
+    nombre:$('missionName').value.trim()||'Misión',
+    tipo:$('missionType').value,
+    clasificacion:$('missionClass').value.trim()||'diaria',
+    descripcion:$('missionDesc').value.trim()||'',
+    estadoFinalizacion:{
+      tipo:completeFunc?'funcion':'automatica',
+      condicion:completeFunc||'todos_los_pasos',
+      requiereNPCFinal:false
+    },
+    condiciones:{
+      nivelIQMinimo:0,
+      misionesRequeridas:[],
+      itemsRequeridos:[]
+    },
+    npcs:[{
+      id:npc.id,
+      nombre:npc.nombre,
+      rol:npc.rol||'inicio',
+      imagen:npc.imagen,
+      posicion:{
+        x:round(npc.x||0),
+        y:round(npc.y||0)
+      },
+      conversation_default:npc.conversation_default||'',
+      dialogos:npc.dialogos
+    }],
+    pasos:[...state.data.missionSteps],
+    recompensas:{
+      iq:round($('missionIq').value)||0,
+      cosmonedas:round($('missionCoins').value)||0,
+      items:parseItems($('missionRewardItems').value),
+      codigoSecreto:$('missionSecret').value.trim()||null
+    }
+  };
+
+  if(completeFunc)mission.funcionCumplimiento=completeFunc;
+
+  state.data.missions.push(mission);
+
+  renumberMissions();
+
+  state.data.missionSteps=[];
+  renderAll();
+  saveLocalSoon();
+
+  setStatus('Misión cargada al JSON como '+mission.id+'. Próximo ID: '+nextMissionId()+'.');
+}
+
+
+function renderMissionList(){
+  const box=$('missionList');
+  box.innerHTML='';
+
+  if(!state.data.missions.length){
+    box.innerHTML='<div class="list-item"><div>No hay misiones cargadas.</div></div>';
+    syncMissionIdField();
+    return;
+  }
+
+  state.data.missions.forEach((m,i)=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+
+    const pasos=Array.isArray(m.pasos)?m.pasos.length:0;
+
+    div.innerHTML=`
+      <div>${m.id} · ${m.nombre}<small>${pasos} pasos</small></div>
+      <div class="mission-actions">
+        <button class="mini-btn" data-missionedit="${i}" title="Editar misión">✎</button>
+        <button class="mini-btn" data-missiondel="${i}" title="Eliminar misión">x</button>
+      </div>
+    `;
+
+    box.appendChild(div);
+  });
+
+  syncMissionIdField();
+}
+
+
     function findAmbienteImageWarnings(){return state.data.ambiente.filter(b=>(b.previewName&&b.imagen&&getFileNameFromPath(b.imagen)!==b.previewName)||(b.previewNameSprite&&b.sprites_1x10&&getFileNameFromPath(b.sprites_1x10)!==b.previewNameSprite)).map(b=>`${b.zona_id}: ruta visual desincronizada`)}
     function download(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);setStatus(`${name} descargado.`)}
     function downloadText(name,text){const blob=new Blob([String(text||'')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);setStatus(`${name} descargado.`)}
@@ -2067,7 +2378,7 @@ function applyProjectAssetsManifest(manifest){
 
   return true;
 }
-    function importProjectData(p){if(!p)return;state.mapSize=p.map?.size||5000;state.mapDataUrl=p.map?.dataUrl||null;state.mapSourcePath=p.map?.sourcePath||null;state.mapName=p.map?.name||null;state.imageWidth=p.map?.width||null;state.imageHeight=p.map?.height||null;if($('fitMode')&&p.map?.fitMode)$('fitMode').value=p.map.fitMode;if($('mapSourcePath'))$('mapSourcePath').value=state.mapSourcePath||`source/${state.mapName||'mapa1-5000x5000.svg'}`;state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(p.next||{})};state.itemCatalog=((p.itemCatalog&&p.itemCatalog.length)?p.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);applyProjectAssetsManifest(p.assetsManifest);state.data=sanitizeLoadedData({ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[],...(p.data||{})});if((!state.data.items||!state.data.items.length)&&Array.isArray(p.itemsEnMapaConfig)){state.data.items=p.itemsEnMapaConfig.map((it,i)=>{const def=getItemDefinition(it.item_id);return{id:it.instancia_id||`itm_mapa_${pad(i+1)}`,instancia_id:it.instancia_id||`itm_mapa_${pad(i+1)}`,item_id:it.item_id,imagen:def?.imagen||null,sourcePreview:itemPreviewFromImagePath(def?.imagen),preview:null,nombre_item:def?.nombre_item||it.item_id,x:round(it.x),y:round(it.y),w:32,h:32,size:32,zIndexBase:3400}})}state.data.items=state.data.items||[];if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;$('statFile').textContent=state.mapName||'Mapa cargado';$('statRealSize').textContent=state.imageWidth?`${state.imageWidth} x ${state.imageHeight}`:'-';renderItemCatalogSelect();syncNextCounters();fitToView();renderAll()}
+    function importProjectData(p){if(!p)return;state.mapSize=p.map?.size||5000;state.mapDataUrl=p.map?.dataUrl||null;state.mapSourcePath=p.map?.sourcePath||null;state.mapName=p.map?.name||null;state.imageWidth=p.map?.width||null;state.imageHeight=p.map?.height||null;if($('fitMode')&&p.map?.fitMode)$('fitMode').value=p.map.fitMode;if($('mapSourcePath'))$('mapSourcePath').value=state.mapSourcePath||`source/${state.mapName||'mapa1-5000x5000.svg'}`;state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(p.next||{})};state.itemCatalog=((p.itemCatalog&&p.itemCatalog.length)?p.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);applyProjectAssetsManifest(p.assetsManifest);state.data=sanitizeLoadedData({ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[],...(p.data||{})});if((!state.data.items||!state.data.items.length)&&Array.isArray(p.itemsEnMapaConfig)){state.data.items=p.itemsEnMapaConfig.map((it,i)=>{const def=getItemDefinition(it.item_id);return{id:it.instancia_id||`itm_mapa_${pad(i+1)}`,instancia_id:it.instancia_id||`itm_mapa_${pad(i+1)}`,item_id:it.item_id,imagen:def?.imagen||null,sourcePreview:itemPreviewFromImagePath(def?.imagen),preview:null,nombre_item:def?.nombre_item||it.item_id,x:round(it.x),y:round(it.y),w:32,h:32,size:32,zIndexBase:3400}})}state.data.items=state.data.items||[];if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;$('statFile').textContent=state.mapName||'Mapa cargado';$('statRealSize').textContent=state.imageWidth?`${state.imageWidth} x ${state.imageHeight}`:'-';renumberMissions();renderItemCatalogSelect();renumberMissions();syncNextCounters();fitToView();renderAll()}
     function historySnapshot(){
   return JSON.stringify(cleanProjectForStorage({
     mapSize:state.mapSize,
@@ -2152,9 +2463,60 @@ function redoAction(){
     function axisLockedEnd(a,b){const dx=b.x-a.x,dy=b.y-a.y;return Math.abs(dx)>=Math.abs(dy)?{x:b.x,y:a.y,axis:'horizontal'}:{x:a.x,y:b.y,axis:'vertical'}}
     function drawMeasurePreview(a,b){document.querySelectorAll('#tempMeasure').forEach(x=>x.remove());const end=axisLockedEnd(a,b),dist=round(end.axis==='horizontal'?Math.abs(end.x-a.x):Math.abs(end.y-a.y)),wrap=document.createElement('div'),line=document.createElement('div'),label=document.createElement('div');wrap.id='tempMeasure';wrap.className='measure-preview';line.className='measure-line';label.className='measure-label';label.textContent=dist+' px · '+(end.axis==='horizontal'?'horizontal':'vertical');if(end.axis==='horizontal'){wrap.style.left=Math.min(a.x,end.x)+'px';wrap.style.top=a.y+'px';wrap.style.width=Math.abs(end.x-a.x)+'px';wrap.style.height='0px';line.style.left='0';line.style.top='0';line.style.width='100%';line.style.height='0';line.style.borderTop='3px solid var(--accent)';label.style.left='50%';label.style.top='0'}else{wrap.style.left=a.x+'px';wrap.style.top=Math.min(a.y,end.y)+'px';wrap.style.width='0px';wrap.style.height=Math.abs(end.y-a.y)+'px';line.style.left='0';line.style.top='0';line.style.width='0';line.style.height='100%';line.style.borderLeft='3px solid var(--accent)';label.style.left='0';label.style.top='50%'}wrap.appendChild(line);wrap.appendChild(label);els.mapStage.appendChild(wrap);$('measureReadout').textContent='Medida: '+dist+' px';return{end,dist}}
     function pointerDown(e){if(e.button===1){e.preventDefault();state.draggingView=true;state.dragStart={x:e.clientX,y:e.clientY};state.nodeStart={x:state.offsetX,y:state.offsetY};els.viewport.classList.add('dragging');els.viewport.setPointerCapture(e.pointerId);return}if(e.button!==0)return;const tool=e.target.closest('.node-tool');if(tool){const node=e.target.closest('.node'),{kind,id}=node.dataset;if(tool.dataset.action==='delete')removeItem(kind,id);if(tool.dataset.action==='duplicate')duplicate(kind,id);if(tool.dataset.action==='line'){select(kind,id);openJsonEditor(kind,id)}return}const node=e.target.closest('.node');if(node){const {kind,id}=node.dataset;select(kind,id);const it=getItem(kind,id),p=screenToWorld(e.clientX,e.clientY);state.dragStart=p;state.nodeStart=JSON.parse(JSON.stringify(it));state.resizingNode=!!e.target.closest('.resize-handle');state.draggingNode=!state.resizingNode;els.viewport.setPointerCapture(e.pointerId);return}const p=screenToWorld(e.clientX,e.clientY);if(p.x<0||p.y<0||p.x>state.mapSize||p.y>state.mapSize)return;if(state.tool==='measure'){state.measuring=true;state.measureStart=p;drawMeasurePreview(p,p);els.viewport.setPointerCapture(e.pointerId);return}if(state.tool==='amb-draw'){state.drawingRect=true;state.dragStart=p;drawTempRect(p,p);els.viewport.setPointerCapture(e.pointerId);return}if(state.tool==='amb-place'){placeAmbConfigured(p);return}if(state.tool==='amb-real-place'){placeAmbReal(p);return}if(state.tool==='arcilla-place'){placeArcilla(p);return}if(state.tool==='item-place'){placeItemMap(p);return}if(state.tool==='place'){placeItem(activeKind(),p);return}if((state.tool==='line'&&state.selected.id)||state.tool==='arcilla-line'){state.drawingLine=true;state.lineStart=p;drawLinePreview(p,p,state.tool==='arcilla-line');els.viewport.setPointerCapture(e.pointerId);return}}
-    function pointerMove(e){const p=screenToWorld(e.clientX,e.clientY);$('statCursor').textContent=(p.x>=0&&p.y>=0&&p.x<=state.mapSize&&p.y<=state.mapSize)?`x: ${round(p.x)}, y: ${round(p.y)}`:'x: -, y: -';if(state.measuring){drawMeasurePreview(state.measureStart,p);return}if(state.drawingRect){drawTempRect(state.dragStart,p);return}if(state.drawingLine){drawLinePreview(state.lineStart,p,state.tool==='arcilla-line');return}if(state.draggingNode||state.resizingNode){const {kind,id}=state.selected,it=getItem(kind,id);if(!it)return;const dx=p.x-state.dragStart.x,dy=p.y-state.dragStart.y;if(state.draggingNode){it.x=round(clamp(state.nodeStart.x+dx,0,state.mapSize-(it.w||64)));it.y=round(clamp(state.nodeStart.y+dy,0,state.mapSize-(it.h||64)))}else if(state.resizingNode&&kind==='ambiente'){it.w=round(clamp(state.nodeStart.w+dx,3,state.mapSize-it.x));it.h=round(clamp(state.nodeStart.h+dy,3,state.mapSize-it.y))}renderLayer(kind);renderLists();return}if(state.draggingView){state.offsetX=state.nodeStart.x+(e.clientX-state.dragStart.x);state.offsetY=state.nodeStart.y+(e.clientY-state.dragStart.y);renderStage()}}
+    
+    
+function pointerMove(e){
+  const p=screenToWorld(e.clientX,e.clientY);
+
+  updateCursorReadout(p);
+
+  if(state.measuring){
+    drawMeasurePreview(state.measureStart,p);
+    return;
+  }
+
+  if(state.drawingRect){
+    drawTempRect(state.dragStart,p);
+    return;
+  }
+
+  if(state.drawingLine){
+    drawLinePreview(state.lineStart,p,state.tool==='arcilla-line');
+    return;
+  }
+
+  if(state.draggingNode||state.resizingNode){
+    const {kind,id}=state.selected;
+    const it=getItem(kind,id);
+    if(!it)return;
+
+    const dx=p.x-state.dragStart.x;
+    const dy=p.y-state.dragStart.y;
+
+    if(state.draggingNode){
+      it.x=round(clamp(state.nodeStart.x+dx,0,state.mapSize-(it.w||64)));
+      it.y=round(clamp(state.nodeStart.y+dy,0,state.mapSize-(it.h||64)));
+    }else if(state.resizingNode&&kind==='ambiente'){
+      it.w=round(clamp(state.nodeStart.w+dx,3,state.mapSize-it.x));
+      it.h=round(clamp(state.nodeStart.h+dy,3,state.mapSize-it.y));
+    }
+
+    renderLayer(kind);
+    renderLists();
+    return;
+  }
+
+  if(state.draggingView){
+    state.offsetX=state.nodeStart.x+(e.clientX-state.dragStart.x);
+    state.offsetY=state.nodeStart.y+(e.clientY-state.dragStart.y);
+    renderStage();
+  }
+}
+
+
     function pointerUp(e){if(state.measuring){const p=screenToWorld(e.clientX,e.clientY),m=drawMeasurePreview(state.measureStart,p);state.measuring=false;setStatus('Medida: '+m.dist+' px en línea '+(m.end.axis==='horizontal'?'horizontal':'vertical')+'.');try{els.viewport.releasePointerCapture(e.pointerId)}catch(_){}return}if(state.drawingRect){const p=screenToWorld(e.clientX,e.clientY),r=normRect(state.dragStart,p);removeTemp();state.drawingRect=false;if(r.w>3&&r.h>3){const b=cfgAmb();Object.assign(b,r);state.data.ambiente.push(b);select('ambiente',b.zona_id)}}if(state.drawingLine){const p=screenToWorld(e.clientX,e.clientY);removeTemp();state.drawingLine=false;if(state.tool==='arcilla-line'){makeArcillaLine(state.lineStart,p)}else{const it=getItem(state.selected.kind,state.selected.id);if(it)makeLine(state.selected.kind,state.lineStart,p,it)}}state.draggingView=false;state.draggingNode=false;state.resizingNode=false;els.viewport.classList.remove('dragging');try{els.viewport.releasePointerCapture(e.pointerId)}catch(_){}saveLocalSoon()}
-    function pointerCancel(){removeTemp();state.draggingView=state.draggingNode=state.resizingNode=state.drawingRect=state.drawingLine=state.measuring=false;els.viewport.classList.remove('dragging')}
+    
+    function pointerCancel(){removeTemp();state.draggingView=state.draggingNode=state.resizingNode=state.drawingRect=state.drawingLine=state.measuring=false;els.viewport.classList.remove('dragging');updateCursorReadout(null);}
     
 let projectPreviewRAF=null;
 let projectPreviewActors=[];
@@ -2369,7 +2731,7 @@ if(kind==='ambiente'){
   if(kind==='npc'||kind==='missionNpc'){
     const label=document.createElement('div');
     label.className='project-preview-name';
-    label.textContent=item.nombre||item.id||'NPC';
+    label.textContent=displayNpcName(item,kind);
     el.appendChild(label);
   }
 
@@ -2936,14 +3298,43 @@ $('sourceMissionNpcGallery')?.addEventListener('click',e=>{
     }
   });
 
-  $('missionList').addEventListener('click',e=>{
-    const b=e.target.closest('[data-missiondel]');
-    if(b){
-      state.data.missions.splice(Number(b.dataset.missiondel),1);
-      renderAll();
-      saveLocalSoon();
-    }
-  });
+$('missionList').addEventListener('click',e=>{
+  const edit=e.target.closest('[data-missionedit]');
+  if(edit){
+    openMissionEditor(Number(edit.dataset.missionedit));
+    return;
+  }
+
+  const b=e.target.closest('[data-missiondel]');
+  if(b){
+    if(!confirm('¿Eliminar esta misión y reorganizar los IDs?'))return;
+
+    state.data.missions.splice(Number(b.dataset.missiondel),1);
+    renumberMissions();
+    renderAll();
+    saveLocalSoon();
+
+    setStatus('Misión eliminada. IDs reorganizados automáticamente.');
+  }
+});
+
+$('missionJsonModalClose')?.addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  closeMissionEditor();
+});
+
+$('missionJsonModalSave')?.addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  saveMissionEditor();
+});
+
+$('missionJsonModal')?.addEventListener('click',e=>{
+  if(e.target.id==='missionJsonModal'){
+    closeMissionEditor();
+  }
+});
 
   document.querySelectorAll('.list').forEach(list=>list.addEventListener('click',e=>{
     const del=e.target.closest('[data-del]');

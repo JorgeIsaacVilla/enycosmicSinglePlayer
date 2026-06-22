@@ -1,6 +1,6 @@
 {
   "version": 4,
-  "savedAt": "2026-06-21T05:19:23.888Z",
+  "savedAt": "2026-06-22T03:48:18.671Z",
   "runtime": {
     "createdFrom": "desktop",
     "origin": "file",
@@ -8,7 +8,7 @@
     "assetMode": "project-embedded-manifest"
   },
   "assetsManifest": {
-    "generatedAt": "2026-06-21T05:19:23.888Z",
+    "generatedAt": "2026-06-22T03:48:18.672Z",
     "generatedFrom": "desktop",
     "origin": "file",
     "note": "Manifiesto interno del proyecto. Las imágenes no van embebidas; deben existir en el deploy web o en la carpeta source local.",
@@ -136,6 +136,12 @@
         "previewPath": "source/estructuraDiamante.svg",
         "finalPath": "../assets/spriteAmbiente/estructuraDiamante.svg",
         "source": "ambienteData"
+      },
+      {
+        "name": "fuente2.png",
+        "previewPath": "source/fuente2.png",
+        "finalPath": "../assets/spriteAmbiente/fuente2.png",
+        "source": "sourceSystemFiles"
       },
       {
         "name": "gameSimbol.svg",
@@ -360,6 +366,12 @@
         "source": "ambienteData"
       },
       {
+        "name": "pesera1.png",
+        "previewPath": "source/pesera1.png",
+        "finalPath": "../assets/spriteAmbiente/pesera1.png",
+        "source": "sourceSystemFiles"
+      },
+      {
         "name": "plantaAcuatica1.png",
         "previewPath": "source/plantaAcuatica1.png",
         "finalPath": "../assets/spriteAmbiente/plantaAcuatica1.png",
@@ -400,6 +412,18 @@
         "previewPath": "source/simboloMusica.svg",
         "finalPath": "../assets/spriteAmbiente/simboloMusica.svg",
         "source": "ambienteData"
+      },
+      {
+        "name": "spriteNucleo.png",
+        "previewPath": "source/spriteNucleo.png",
+        "finalPath": "../assets/spriteAmbiente/spriteNucleo.png",
+        "source": "sourceSystemFiles"
+      },
+      {
+        "name": "spritesAmbiente.png",
+        "previewPath": "source/spritesAmbiente.png",
+        "finalPath": "../assets/spriteAmbiente/spritesAmbiente.png",
+        "source": "sourceSystemFiles"
       },
       {
         "name": "tableroHolografico.svg",
@@ -14459,8 +14483,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Cyron.png",
         "w": 64,
         "h": 64,
-        "x": 4592,
-        "y": 3400,
+        "x": 3870,
+        "y": 3250,
         "conversation_default": "Los valientes soportan el dolor de la recuperación.",
         "dialogos": {
           "inicio": [
@@ -14486,8 +14510,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Darek.png",
         "w": 64,
         "h": 64,
-        "x": 760,
-        "y": 4324,
+        "x": 3758,
+        "y": 3245,
         "conversation_default": "La naturaleza tiene elementos extraordinarios.",
         "dialogos": {
           "inicio": [
@@ -14518,8 +14542,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Hector.png",
         "w": 64,
         "h": 64,
-        "x": 986,
-        "y": 4849,
+        "x": 3884,
+        "y": 3369,
         "conversation_default": "La madera puede lograr maravillas, hijo. Todo depende de tu creatividad.",
         "dialogos": {
           "inicio": [
@@ -14550,8 +14574,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Vexa.png",
         "w": 64,
         "h": 64,
-        "x": 691,
-        "y": 4712,
+        "x": 3761,
+        "y": 3491,
         "conversation_default": "Son hermosas las esculturas que se pueden hacer con la arcilla.",
         "dialogos": {
           "inicio": [
@@ -14588,8 +14612,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Manuel.png",
         "w": 64,
         "h": 64,
-        "x": 1958,
-        "y": 3273,
+        "x": 3890,
+        "y": 3478,
         "conversation_default": "Lo que me enseña mi maestra es importante. Tengo que apuntarlo en el metafon.",
         "dialogos": {
           "inicio": [
@@ -14628,8 +14652,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
         "w": 64,
         "h": 64,
-        "x": 2593,
-        "y": 4250,
+        "x": 3787,
+        "y": 3599,
         "conversation_default": "La energía lo cambia todo.",
         "dialogos": {
           "inicio": [
@@ -14658,8 +14682,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Syra.png",
         "w": 64,
         "h": 64,
-        "x": 900,
-        "y": 4300,
+        "x": 3476,
+        "y": 3597,
         "conversation_default": "La naturaleza te da todo para generar energía.",
         "dialogos": {
           "inicio": [
@@ -14693,8 +14717,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Lyra.png",
         "w": 64,
         "h": 64,
-        "x": 4631,
-        "y": 4262,
+        "x": 3706,
+        "y": 3600,
         "conversation_default": "La química también puede encender el mundo.",
         "dialogos": {
           "inicio": [
@@ -14732,8 +14756,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Alira.png",
         "w": 64,
         "h": 64,
-        "x": 4312,
-        "y": 4177,
+        "x": 3629,
+        "y": 3601,
         "conversation_default": "Mientras los reptilianos no encuentren la caldera, estaremos bien.",
         "dialogos": {
           "inicio": [
@@ -14772,8 +14796,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Kael.png",
         "w": 64,
         "h": 64,
-        "x": 2811,
-        "y": 4592,
+        "x": 3550,
+        "y": 3600,
         "conversation_default": "Si la caldera arde, el convoy se mantendrá con energía eléctrica.",
         "dialogos": {
           "inicio": [
@@ -14798,8 +14822,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
         "w": 64,
         "h": 64,
-        "x": 71,
-        "y": 186,
+        "x": 3370,
+        "y": 3609,
         "conversation_default": "Tengo miedo, pero debo cuidar la caldera de estos demonios reptilianos.",
         "dialogos": {
           "inicio": [
@@ -14826,8 +14850,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Orbek.png",
         "w": 64,
         "h": 64,
-        "x": 2810,
-        "y": 4153,
+        "x": 3894,
+        "y": 3594,
         "conversation_default": "Que el sentinela no se entere que perdí su arma en la basura.",
         "dialogos": {
           "inicio": [
@@ -14863,8 +14887,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Valen.png",
         "w": 64,
         "h": 64,
-        "x": 1889,
-        "y": 4718,
+        "x": 3890,
+        "y": 3724,
         "conversation_default": "¿Qué secretos tendrá este algoritmo de conocimiento?",
         "dialogos": {
           "inicio": [
@@ -14904,8 +14928,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Solis.png",
         "w": 64,
         "h": 64,
-        "x": 2256,
-        "y": 4232,
+        "x": 3648,
+        "y": 3737,
         "conversation_default": "Es muy complejo. Nadie ha podido descifrar el algoritmo de Matlog.",
         "dialogos": {
           "inicio": [
@@ -14932,8 +14956,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
         "w": 64,
         "h": 64,
-        "x": 2189,
-        "y": 4320,
+        "x": 3768,
+        "y": 3727,
         "conversation_default": "Es buena práctica apuntar las cosas. Lo puedes hacer en el Metafón.",
         "dialogos": {
           "inicio": [
@@ -14963,8 +14987,8 @@
         "imagen": "../assets/avatares/npc/mapa1/Maese.png",
         "w": 64,
         "h": 64,
-        "x": 473,
-        "y": 3270,
+        "x": 3897,
+        "y": 3864,
         "conversation_default": "La opsolecencia programada no es impedimento para mí.",
         "dialogos": {
           "inicio": [
