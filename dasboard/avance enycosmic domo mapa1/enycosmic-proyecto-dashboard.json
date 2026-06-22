@@ -1,6 +1,770 @@
 {
-  "version": 3,
-  "savedAt": "2026-06-21T04:29:44.279Z",
+  "version": 4,
+  "savedAt": "2026-06-21T05:19:23.888Z",
+  "runtime": {
+    "createdFrom": "desktop",
+    "origin": "file",
+    "href": "file",
+    "assetMode": "project-embedded-manifest"
+  },
+  "assetsManifest": {
+    "generatedAt": "2026-06-21T05:19:23.888Z",
+    "generatedFrom": "desktop",
+    "origin": "file",
+    "note": "Manifiesto interno del proyecto. Las imágenes no van embebidas; deben existir en el deploy web o en la carpeta source local.",
+    "paths": {
+      "mapas": "source/",
+      "sistemas": "source/",
+      "spritesAmbiente1x10": "source/",
+      "enemys": "source/enemys/",
+      "npcAmbiente": "source/NPCambiente/",
+      "items": "source/items/"
+    },
+    "mapas": [
+      {
+        "name": "mapa1-5000x5000.svg",
+        "previewPath": "source/mapa1-5000x5000.svg",
+        "finalPath": null,
+        "source": "currentMap"
+      }
+    ],
+    "sistemas": [
+      {
+        "name": "algoritmoHacker.svg",
+        "previewPath": "source/algoritmoHacker.svg",
+        "finalPath": "../assets/spriteAmbiente/algoritmoHacker.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "algoritmoLogico.svg",
+        "previewPath": "source/algoritmoLogico.svg",
+        "finalPath": "../assets/spriteAmbiente/algoritmoLogico.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "algoritmoMatlog.svg",
+        "previewPath": "source/algoritmoMatlog.svg",
+        "finalPath": "../assets/spriteAmbiente/algoritmoMatlog.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "algoritmoMecanica.svg",
+        "previewPath": "source/algoritmoMecanica.svg",
+        "finalPath": "../assets/spriteAmbiente/algoritmoMecanica.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "algoritmoTesla.svg",
+        "previewPath": "source/algoritmoTesla.svg",
+        "finalPath": "../assets/spriteAmbiente/algoritmoTesla.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "alien.svg",
+        "previewPath": "source/alien.svg",
+        "finalPath": "../assets/spriteAmbiente/alien.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "Arbol.svg",
+        "previewPath": "source/Arbol.svg",
+        "finalPath": "../assets/spriteAmbiente/Arbol.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "arbusto.svg",
+        "previewPath": "source/arbusto.svg",
+        "finalPath": "../assets/spriteAmbiente/arbusto.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "arbustoGrande.svg",
+        "previewPath": "source/arbustoGrande.svg",
+        "finalPath": "../assets/spriteAmbiente/arbustoGrande.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "banca.svg",
+        "previewPath": "source/banca.svg",
+        "finalPath": "../assets/spriteAmbiente/banca.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "cerramientoLab.svg",
+        "previewPath": "source/cerramientoLab.svg",
+        "finalPath": "../assets/spriteAmbiente/cerramientoLab.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "cofreSecreto.svg",
+        "previewPath": "source/cofreSecreto.svg",
+        "finalPath": "../assets/spriteAmbiente/cofreSecreto.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "consolaRetro.svg",
+        "previewPath": "source/consolaRetro.svg",
+        "finalPath": "../assets/spriteAmbiente/consolaRetro.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "dinosaurio.svg",
+        "previewPath": "source/dinosaurio.svg",
+        "finalPath": "../assets/spriteAmbiente/dinosaurio.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "doyo.svg",
+        "previewPath": "source/doyo.svg",
+        "finalPath": "../assets/spriteAmbiente/doyo.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "entrada.png",
+        "previewPath": "source/entrada.png",
+        "finalPath": "../assets/spriteAmbiente/entrada.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "esenario.svg",
+        "previewPath": "source/esenario.svg",
+        "finalPath": "../assets/spriteAmbiente/esenario.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "estructuraDiamante.svg",
+        "previewPath": "source/estructuraDiamante.svg",
+        "finalPath": "../assets/spriteAmbiente/estructuraDiamante.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "gameSimbol.svg",
+        "previewPath": "source/gameSimbol.svg",
+        "finalPath": "../assets/spriteAmbiente/gameSimbol.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "grupoArboles2.svg",
+        "previewPath": "source/grupoArboles2.svg",
+        "finalPath": "../assets/spriteAmbiente/grupoArboles2.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "grupoArboles4.svg",
+        "previewPath": "source/grupoArboles4.svg",
+        "finalPath": "../assets/spriteAmbiente/grupoArboles4.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "grupoArboles5.svg",
+        "previewPath": "source/grupoArboles5.svg",
+        "finalPath": "../assets/spriteAmbiente/grupoArboles5.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "gruposArboles1.svg",
+        "previewPath": "source/gruposArboles1.svg",
+        "finalPath": "../assets/spriteAmbiente/gruposArboles1.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaAlegre.svg",
+        "previewPath": "source/hologramaAlegre.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaAlegre.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaArmpa.svg",
+        "previewPath": "source/hologramaArmpa.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaArmpa.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaBateria.svg",
+        "previewPath": "source/hologramaBateria.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaBateria.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaCarro.svg",
+        "previewPath": "source/hologramaCarro.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaCarro.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaDinosaurio.svg",
+        "previewPath": "source/hologramaDinosaurio.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaDinosaurio.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaGuitarra.svg",
+        "previewPath": "source/hologramaGuitarra.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaGuitarra.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaHuella.svg",
+        "previewPath": "source/hologramaHuella.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaHuella.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaHumano.svg",
+        "previewPath": "source/hologramaHumano.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaHumano.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaNave.svg",
+        "previewPath": "source/hologramaNave.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaNave.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaNaveExtraterrestre.svg",
+        "previewPath": "source/hologramaNaveExtraterrestre.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaNaveExtraterrestre.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaNeptuno.svg",
+        "previewPath": "source/hologramaNeptuno.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaNeptuno.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaPlaneta1.svg",
+        "previewPath": "source/hologramaPlaneta1.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaPlaneta1.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaPlaneta2.svg",
+        "previewPath": "source/hologramaPlaneta2.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaPlaneta2.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaPlaneta3.svg",
+        "previewPath": "source/hologramaPlaneta3.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaPlaneta3.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaPlaneta4.svg",
+        "previewPath": "source/hologramaPlaneta4.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaPlaneta4.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaPlaneta5.svg",
+        "previewPath": "source/hologramaPlaneta5.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaPlaneta5.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaSaturno.svg",
+        "previewPath": "source/hologramaSaturno.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaSaturno.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaShelo.svg",
+        "previewPath": "source/hologramaShelo.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaShelo.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaSistemaSolar.svg",
+        "previewPath": "source/hologramaSistemaSolar.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaSistemaSolar.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "hologramaUkelele.svg",
+        "previewPath": "source/hologramaUkelele.svg",
+        "finalPath": "../assets/spriteAmbiente/hologramaUkelele.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "honguito.svg",
+        "previewPath": "source/honguito.svg",
+        "finalPath": "../assets/spriteAmbiente/honguito.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "LabArte.svg",
+        "previewPath": "source/LabArte.svg",
+        "finalPath": "../assets/spriteAmbiente/LabArte.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "labArtesano.svg",
+        "previewPath": "source/labArtesano.svg",
+        "finalPath": "../assets/spriteAmbiente/labArtesano.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "labQuimica.svg",
+        "previewPath": "source/labQuimica.svg",
+        "finalPath": "../assets/spriteAmbiente/labQuimica.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "manuscritoVoynich.svg",
+        "previewPath": "source/manuscritoVoynich.svg",
+        "finalPath": "../assets/spriteAmbiente/manuscritoVoynich.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "MundoAcuario.png",
+        "previewPath": "source/MundoAcuario.png",
+        "finalPath": "../assets/spriteAmbiente/MundoAcuario.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "oficina1.svg",
+        "previewPath": "source/oficina1.svg",
+        "finalPath": "../assets/spriteAmbiente/oficina1.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "oficina4.svg",
+        "previewPath": "source/oficina4.svg",
+        "finalPath": "../assets/spriteAmbiente/oficina4.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "paredConcreto.svg",
+        "previewPath": "source/paredConcreto.svg",
+        "finalPath": "../assets/spriteAmbiente/paredConcreto.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "paredGris.svg",
+        "previewPath": "source/paredGris.svg",
+        "finalPath": "../assets/spriteAmbiente/paredGris.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "pescera1.png",
+        "previewPath": "source/pescera1.png",
+        "finalPath": "../assets/spriteAmbiente/pescera1.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "pescera2.png",
+        "previewPath": "source/pescera2.png",
+        "finalPath": "../assets/spriteAmbiente/pescera2.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "plantaAcuatica1.png",
+        "previewPath": "source/plantaAcuatica1.png",
+        "finalPath": "../assets/spriteAmbiente/plantaAcuatica1.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "plantaAcuatica2.png",
+        "previewPath": "source/plantaAcuatica2.png",
+        "finalPath": "../assets/spriteAmbiente/plantaAcuatica2.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "plantaAcuatica3.png",
+        "previewPath": "source/plantaAcuatica3.png",
+        "finalPath": "../assets/spriteAmbiente/plantaAcuatica3.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "plantaAcuatica4.png",
+        "previewPath": "source/plantaAcuatica4.png",
+        "finalPath": "../assets/spriteAmbiente/plantaAcuatica4.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "rocola.svg",
+        "previewPath": "source/rocola.svg",
+        "finalPath": "../assets/spriteAmbiente/rocola.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "sapo.svg",
+        "previewPath": "source/sapo.svg",
+        "finalPath": "../assets/spriteAmbiente/sapo.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "simboloMusica.svg",
+        "previewPath": "source/simboloMusica.svg",
+        "finalPath": "../assets/spriteAmbiente/simboloMusica.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "tableroHolografico.svg",
+        "previewPath": "source/tableroHolografico.svg",
+        "finalPath": "../assets/spriteAmbiente/tableroHolografico.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "telescopio.svg",
+        "previewPath": "source/telescopio.svg",
+        "finalPath": "../assets/spriteAmbiente/telescopio.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "telescopio2.svg",
+        "previewPath": "source/telescopio2.svg",
+        "finalPath": "../assets/spriteAmbiente/telescopio2.svg",
+        "source": "ambienteData"
+      },
+      {
+        "name": "vendedor.png",
+        "previewPath": "source/vendedor.png",
+        "finalPath": "../assets/spriteAmbiente/vendedor.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "vigaAgua.png",
+        "previewPath": "source/vigaAgua.png",
+        "finalPath": "../assets/spriteAmbiente/vigaAgua.png",
+        "source": "ambienteData"
+      }
+    ],
+    "spritesAmbiente1x10": [
+      {
+        "name": "fuente2.png",
+        "previewPath": "source/fuente2.png",
+        "finalPath": "../assets/spriteAmbiente/fuente2.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "pesera1.png",
+        "previewPath": "source/pesera1.png",
+        "finalPath": "../assets/spriteAmbiente/pesera1.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "spriteNucleo.png",
+        "previewPath": "source/spriteNucleo.png",
+        "finalPath": "../assets/spriteAmbiente/spriteNucleo.png",
+        "source": "ambienteData"
+      },
+      {
+        "name": "spritesAmbiente.png",
+        "previewPath": "source/spritesAmbiente.png",
+        "finalPath": "../assets/spriteAmbiente/spritesAmbiente.png",
+        "source": "ambienteData"
+      }
+    ],
+    "enemys": [
+      {
+        "name": "centinela-reptiliano-armado.png",
+        "previewPath": "source/enemys/centinela-reptiliano-armado.png",
+        "finalPath": "../assets/avatares/enemy/centinela-reptiliano-armado.png",
+        "source": "enemyData"
+      },
+      {
+        "name": "centinela-reptiliano.png",
+        "previewPath": "source/enemys/centinela-reptiliano.png",
+        "finalPath": "../assets/avatares/enemy/centinela-reptiliano.png",
+        "source": "enemyData"
+      }
+    ],
+    "npcAmbiente": [
+      {
+        "name": "Alira.png",
+        "previewPath": "source/NPCambiente/Alira.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Alira.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Arkon.png",
+        "previewPath": "source/NPCambiente/Arkon.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Arkon.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Centinela.png",
+        "previewPath": "source/NPCambiente/Centinela.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Centinela.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Cyron.png",
+        "previewPath": "source/NPCambiente/Cyron.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Cyron.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Darek.png",
+        "previewPath": "source/NPCambiente/Darek.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Darek.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Dr_Axiom.png",
+        "previewPath": "source/NPCambiente/Dr_Axiom.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Dr_Axiom.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Hector.png",
+        "previewPath": "source/NPCambiente/Hector.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Hector.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Kael.png",
+        "previewPath": "source/NPCambiente/Kael.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Kael.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Karina.png",
+        "previewPath": "source/NPCambiente/Karina.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Karina.png",
+        "source": "npcData"
+      },
+      {
+        "name": "Lyra.png",
+        "previewPath": "source/NPCambiente/Lyra.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Lyra.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Maese.png",
+        "previewPath": "source/NPCambiente/Maese.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Maese.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Manuel.png",
+        "previewPath": "source/NPCambiente/Manuel.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Manuel.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Neris.png",
+        "previewPath": "source/NPCambiente/Neris.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Neris.png",
+        "source": "npcData"
+      },
+      {
+        "name": "Orbek.png",
+        "previewPath": "source/NPCambiente/Orbek.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Orbek.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "pinkiry.png",
+        "previewPath": "source/NPCambiente/pinkiry.png",
+        "finalPath": "../assets/avatares/npc/mapa1/pinkiry.png",
+        "source": "npcData"
+      },
+      {
+        "name": "Solis.png",
+        "previewPath": "source/NPCambiente/Solis.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Solis.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Syra.png",
+        "previewPath": "source/NPCambiente/Syra.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Syra.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Thera.png",
+        "previewPath": "source/NPCambiente/Thera.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Thera.png",
+        "source": "npcData"
+      },
+      {
+        "name": "Valen.png",
+        "previewPath": "source/NPCambiente/Valen.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Valen.png",
+        "source": "missionsData"
+      },
+      {
+        "name": "Vexa.png",
+        "previewPath": "source/NPCambiente/Vexa.png",
+        "finalPath": "../assets/avatares/npc/mapa1/Vexa.png",
+        "source": "missionsData"
+      }
+    ],
+    "items": [
+      {
+        "name": "agua.svg",
+        "previewPath": "source/items/agua.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/agua.svgagua.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "antorcha.svg",
+        "previewPath": "source/items/antorcha.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/antorcha.svgantorcha.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "arcilla.svg",
+        "previewPath": "source/items/arcilla.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/arcilla.svgarcilla.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "balinera.svg",
+        "previewPath": "source/items/balinera.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/balinera.svgbalinera.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "baso.svg",
+        "previewPath": "source/items/baso.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/baso.svgbaso.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "basoAgua.svg",
+        "previewPath": "source/items/basoAgua.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/basoAgua.svgbasoAgua.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "bateria.svg",
+        "previewPath": "source/items/bateria.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/bateria.svgbateria.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "bloqueArcilla.svg",
+        "previewPath": "source/items/bloqueArcilla.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/bloqueArcilla.svgbloqueArcilla.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "bumerang.svg",
+        "previewPath": "source/items/bumerang.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/bumerang.svgbumerang.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "cable.svg",
+        "previewPath": "source/items/cable.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/cable.svgcable.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "cobre.svg",
+        "previewPath": "source/items/cobre.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/cobre.svgcobre.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "corazon.svg",
+        "previewPath": "source/items/corazon.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/corazon.svgcorazon.svg",
+        "source": "itemsData"
+      },
+      {
+        "name": "cuero.svg",
+        "previewPath": "source/items/cuero.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/cuero.svgcuero.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "diodoLazer.svg",
+        "previewPath": "source/items/diodoLazer.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/diodoLazer.svgdiodoLazer.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "EscudoHierro.svg",
+        "previewPath": "source/items/EscudoHierro.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/EscudoHierro.svgEscudoHierro.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "escudoMadera.svg",
+        "previewPath": "source/items/escudoMadera.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/escudoMadera.svgescudoMadera.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "espadaHierro.svg",
+        "previewPath": "source/items/espadaHierro.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/espadaHierro.svgespadaHierro.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "espadaMadera.svg",
+        "previewPath": "source/items/espadaMadera.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/espadaMadera.svgespadaMadera.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "hierro.svg",
+        "previewPath": "source/items/hierro.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/hierro.svghierro.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "limon.svg",
+        "previewPath": "source/items/limon.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/limon.svglimon.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "madera.svg",
+        "previewPath": "source/items/madera.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/madera.svgmadera.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "paloMadera.svg",
+        "previewPath": "source/items/paloMadera.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/paloMadera.svgpaloMadera.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "patines.svg",
+        "previewPath": "source/items/patines.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/patines.svgpatines.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "picoEscabador.svg",
+        "previewPath": "source/items/picoEscabador.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/picoEscabador.svgpicoEscabador.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "pistolaLazer.svg",
+        "previewPath": "source/items/pistolaLazer.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/pistolaLazer.svgpistolaLazer.svg",
+        "source": "itemsData"
+      },
+      {
+        "name": "plastico.svg",
+        "previewPath": "source/items/plastico.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/plastico.svgplastico.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "rueda.svg",
+        "previewPath": "source/items/rueda.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/rueda.svgrueda.svg",
+        "source": "itemCatalog"
+      },
+      {
+        "name": "sal.svg",
+        "previewPath": "source/items/sal.svg",
+        "finalPath": "https://enycosmicplayer.vercel.app/assets/items/sal.svgsal.svg",
+        "source": "itemCatalog"
+      }
+    ]
+  },
   "map": {
     "size": 5000,
     "dataUrl": null,
@@ -16,7 +780,7 @@
     "item": 3,
     "enemy": 14,
     "light": 37,
-    "npc": 16,
+    "npc": 14,
     "missionNpc": 1
   },
   "itemCatalog": [

@@ -1259,7 +1259,8 @@ function renderSourceMapGallery(){
 
     const title=document.createElement('div');
     title.className='catalog-card-title';
-    title.innerHTML=`${asset.name}<small>./source/mapas/${asset.name}</small>`;
+    const label=asset.previewPath||asset.url||('source/'+asset.name);
+title.innerHTML=`${asset.name}<small>${label}</small>`;
 
     card.appendChild(img);
     card.appendChild(title);
@@ -1277,7 +1278,7 @@ function loadSourceMapsFromFileList(files){
     const parts=path.split('/').filter(Boolean);
     const parent=String(parts[parts.length-2]||'').toLowerCase();
 
-    if(parts.length>1&&parent!=='mapas')return;
+    if(parts.length>1&&parent!=='source'&&parent!=='mapas')return;
 
     const url=URL.createObjectURL(file);
     sessionPreviewUrls.add(url);
@@ -1331,7 +1332,7 @@ function selectSourceMapAsset(fileName){
   const asset=sourceMapFiles.get(fileName);
   if(!asset)return;
 
-  const sourcePath='source/mapas/'+asset.name;
+  const sourcePath=asset.previewPath||asset.url||('source/'+asset.name);
 
   state.mapSourcePath=sourcePath;
   state.mapDataUrl=null;
@@ -1347,16 +1348,16 @@ function selectSourceMapAsset(fileName){
     state.imageWidth=img.naturalWidth;
     state.imageHeight=img.naturalHeight;
 
-    setMapVisual(asset.url,asset.name,img.naturalWidth,img.naturalHeight);
+    setMapVisual(sourcePath,asset.name,img.naturalWidth,img.naturalHeight);
     saveLocalSoon();
-    setStatus(`Mapa cargado desde Mapas del sistema: ${asset.name}.`);
+    setStatus(`Mapa cargado: ${asset.name}.`);
   };
 
   img.onerror=()=>{
-    setStatus('No se pudo cargar el mapa seleccionado.');
+    setStatus('No se pudo cargar el mapa seleccionado. Revisa que exista en source dentro del deploy o carpeta local.');
   };
 
-  img.src=asset.url;
+  img.src=sourcePath;
 }
 
     function previewMatchesPath(kind,path){const loaded=state.previewNames?.[kind];if(!loaded)return false;return getFileNameFromPath(path)===loaded}
@@ -1916,7 +1917,157 @@ function exportProject(){
     }
   });
 }
-    function importProjectData(p){if(!p)return;state.mapSize=p.map?.size||5000;state.mapDataUrl=p.map?.dataUrl||null;state.mapSourcePath=p.map?.sourcePath||null;state.mapName=p.map?.name||null;state.imageWidth=p.map?.width||null;state.imageHeight=p.map?.height||null;if($('fitMode')&&p.map?.fitMode)$('fitMode').value=p.map.fitMode;if($('mapSourcePath'))$('mapSourcePath').value=state.mapSourcePath||`source/${state.mapName||'mapa1-5000x5000.svg'}`;state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(p.next||{})};state.itemCatalog=((p.itemCatalog&&p.itemCatalog.length)?p.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);state.data=sanitizeLoadedData({ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[],...(p.data||{})});if((!state.data.items||!state.data.items.length)&&Array.isArray(p.itemsEnMapaConfig)){state.data.items=p.itemsEnMapaConfig.map((it,i)=>{const def=getItemDefinition(it.item_id);return{id:it.instancia_id||`itm_mapa_${pad(i+1)}`,instancia_id:it.instancia_id||`itm_mapa_${pad(i+1)}`,item_id:it.item_id,imagen:def?.imagen||null,sourcePreview:itemPreviewFromImagePath(def?.imagen),preview:null,nombre_item:def?.nombre_item||it.item_id,x:round(it.x),y:round(it.y),w:32,h:32,size:32,zIndexBase:3400}})}state.data.items=state.data.items||[];if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;$('statFile').textContent=state.mapName||'Mapa cargado';$('statRealSize').textContent=state.imageWidth?`${state.imageWidth} x ${state.imageHeight}`:'-';renderItemCatalogSelect();syncNextCounters();fitToView();renderAll()}
+
+function isDashboardOnline(){
+  return location.protocol!=='file:';
+}
+
+function manifestHasAssets(manifest){
+  if(!manifest)return false;
+
+  return[
+    'mapas',
+    'sistemas',
+    'spritesAmbiente1x10',
+    'enemys',
+    'npcAmbiente',
+    'items'
+  ].some(key=>Array.isArray(manifest[key])&&manifest[key].length);
+}
+
+function normalizeManifestAsset(asset,fallbackFolder='',fallbackFinalFolder=null){
+  if(!asset)return null;
+
+  const name=getFileNameFromPath(asset.name||asset.previewPath||asset.finalPath);
+  if(!name)return null;
+
+  const previewPath=asset.previewPath||(fallbackFolder||'')+name;
+  const finalPath=asset.finalPath||(fallbackFinalFolder?fallbackFinalFolder+name:null);
+
+  return{
+    name,
+    url:previewPath,
+    previewPath,
+    finalPath,
+    source:asset.source||'assetsManifest',
+    fromManifest:true,
+    runtime:isDashboardOnline()?'web':'local'
+  };
+}
+
+function clearSourceSystemFiles(){
+  sourceSystemFiles.forEach(asset=>{
+    const url=typeof asset==='string'?asset:asset?.url;
+    if(url&&isRuntimeOnlyUrl(url)){
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  sourceSystemFiles.clear();
+}
+
+function clearSourceItemsPreviewFiles(){
+  sourceItemsFiles.forEach(asset=>{
+    const url=typeof asset==='string'?asset:asset?.url;
+    if(url&&isRuntimeOnlyUrl(url)){
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  sourceItemsFiles.clear();
+}
+
+function addManifestAssetToObjectMap(targetMap,asset,fallbackFolder='',fallbackFinalFolder=null){
+  const normalized=normalizeManifestAsset(asset,fallbackFolder,fallbackFinalFolder);
+  if(!normalized)return;
+
+  targetMap.set(normalized.name,normalized);
+}
+
+function addManifestItemPreview(asset){
+  const normalized=normalizeManifestAsset(asset,'source/items/','../assets/items/');
+  if(!normalized)return;
+
+  sourceItemsFiles.set(normalized.name,normalized.previewPath);
+}
+
+function createFallbackItemCatalogFromManifest(items){
+  if((state.itemCatalog||[]).length)return;
+  if(!Array.isArray(items)||!items.length)return;
+
+  state.itemCatalog=items.map(asset=>{
+    const normalized=normalizeManifestAsset(asset,'source/items/','../assets/items/');
+    if(!normalized)return null;
+
+    const cleanId=normalized.name
+      .replace(/\.[^.]+$/,'')
+      .replace(/[^a-zA-Z0-9_]+/g,'_')
+      .replace(/^_+|_+$/g,'')
+      .toLowerCase();
+
+    return normalizeItemDefinition({
+      id:cleanId||normalized.name,
+      nombre_item:cleanId||normalized.name,
+      imagen:normalized.finalPath||('../assets/items/'+normalized.name)
+    });
+  }).filter(Boolean);
+}
+
+function renderManifestGalleries(){
+  renderSourceMapGallery?.();
+  renderSourceSystemGallery?.();
+  renderSourceEnemyGallery?.();
+  renderSourceNpcGallery?.();
+  renderSourceMissionNpcGallery?.();
+  renderItemCatalogSelect?.();
+  renderItemCatalogGrid?.();
+}
+
+function applyProjectAssetsManifest(manifest){
+  if(!manifestHasAssets(manifest))return false;
+
+  clearSourceMapFiles();
+  clearSourceSystemFiles();
+  clearSourceEnemyFiles();
+  clearSourceNpcFiles();
+  clearSourceItemsPreviewFiles();
+
+  (manifest.mapas||[]).forEach(asset=>{
+    addManifestAssetToObjectMap(sourceMapFiles,asset,'source/',null);
+  });
+
+  [
+    ...(manifest.sistemas||[]),
+    ...(manifest.spritesAmbiente1x10||[])
+  ].forEach(asset=>{
+    addManifestAssetToObjectMap(sourceSystemFiles,asset,'source/','../assets/spriteAmbiente/');
+  });
+
+  (manifest.enemys||[]).forEach(asset=>{
+    addManifestAssetToObjectMap(sourceEnemyFiles,asset,'source/enemys/','../assets/avatares/enemy/');
+  });
+
+  (manifest.npcAmbiente||[]).forEach(asset=>{
+    addManifestAssetToObjectMap(sourceNpcFiles,asset,'source/NPCambiente/','../assets/avatares/npc/mapa1/');
+  });
+
+  (manifest.items||[]).forEach(asset=>{
+    addManifestItemPreview(asset);
+  });
+
+  createFallbackItemCatalogFromManifest(manifest.items||[]);
+
+  renderManifestGalleries();
+
+  setStatus(
+    isDashboardOnline()
+      ?'Proyecto importado en línea: recursos cargados desde el manifiesto interno.'
+      :'Proyecto importado en local: recursos cargados desde el manifiesto interno.'
+  );
+
+  return true;
+}
+    function importProjectData(p){if(!p)return;state.mapSize=p.map?.size||5000;state.mapDataUrl=p.map?.dataUrl||null;state.mapSourcePath=p.map?.sourcePath||null;state.mapName=p.map?.name||null;state.imageWidth=p.map?.width||null;state.imageHeight=p.map?.height||null;if($('fitMode')&&p.map?.fitMode)$('fitMode').value=p.map.fitMode;if($('mapSourcePath'))$('mapSourcePath').value=state.mapSourcePath||`source/${state.mapName||'mapa1-5000x5000.svg'}`;state.next={ambiente:1,arcilla:1,item:1,enemy:1,light:1,npc:1,missionNpc:1,...state.next,...(p.next||{})};state.itemCatalog=((p.itemCatalog&&p.itemCatalog.length)?p.itemCatalog:(state.itemCatalog||[])).map(normalizeItemDefinition).filter(x=>x.id);applyProjectAssetsManifest(p.assetsManifest);state.data=sanitizeLoadedData({ambiente:[],items:[],enemy:[],light:[],npc:[],missionNpcs:[],missionSteps:[],missions:[],...(p.data||{})});if((!state.data.items||!state.data.items.length)&&Array.isArray(p.itemsEnMapaConfig)){state.data.items=p.itemsEnMapaConfig.map((it,i)=>{const def=getItemDefinition(it.item_id);return{id:it.instancia_id||`itm_mapa_${pad(i+1)}`,instancia_id:it.instancia_id||`itm_mapa_${pad(i+1)}`,item_id:it.item_id,imagen:def?.imagen||null,sourcePreview:itemPreviewFromImagePath(def?.imagen),preview:null,nombre_item:def?.nombre_item||it.item_id,x:round(it.x),y:round(it.y),w:32,h:32,size:32,zIndexBase:3400}})}state.data.items=state.data.items||[];if(state.mapDataUrl)setMapVisual(state.mapDataUrl,state.mapName,state.imageWidth,state.imageHeight);else if(state.mapSourcePath)loadMapFromSourcePath(state.mapSourcePath,{silent:true,noSave:true});$('mapSize').value=state.mapSize;$('mapSizeRange').value=state.mapSize;$('statFile').textContent=state.mapName||'Mapa cargado';$('statRealSize').textContent=state.imageWidth?`${state.imageWidth} x ${state.imageHeight}`:'-';renderItemCatalogSelect();syncNextCounters();fitToView();renderAll()}
     function historySnapshot(){
   return JSON.stringify(cleanProjectForStorage({
     mapSize:state.mapSize,
