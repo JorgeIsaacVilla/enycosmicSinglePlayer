@@ -11,12 +11,17 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Grrreee... qué fácil fue entrar al Domo sin que nadie mirara.",
+        "Calcinemos esta escuela con todos dentro; así no nos estorbarán.",
+        "Si no fuera por esos humanos, este planeta ya sería nuestro.",
+        "Hay que exterminarlos a todos antes de que se organicen."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "La Tierra será nuestra.",
+        "Grrreee... elimínenlo.",
+        "Aplástenlo de una vez.",
+        "Quiero a ese humano de rodillas.",
+        "No lo maten rápido; que sufra."
       ],
       "tamano": {
         "w": 64,
@@ -41,12 +46,18 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Los humanos heredaron un mundo que no saben defender.",
+        "Los humanos son una plaga peor que nosotros; destruyen su propio hábitat.",
+        "Malditos humanos, arruinan todo lo que tocan.",
+        "Los humanos no merecen este planeta."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Si corre, persíganlo.",
+        "Si se esconde, arránquenlo de su agujero.",
+        "Ese humano no merece piedad.",
+        "Háganlo caer.",
+        "Quiebren su resistencia.",
+        "Grrreee... muévanse, torpes."
       ],
       "tamano": {
         "w": 64,
@@ -71,20 +82,26 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Grrr... este lugar caerá sin que sepan de dónde vino el ataque.",
+        "El ala sureste seguirá cerrada hasta que terminemos.",
+        "Nadie entra al laboratorio sin autorización.",
+        "Nadie se acerca al cuerpo indiliano mientras vigilamos.",
+        "Los humanos y los indilianos son obstáculos para nuestra especie.",
+        "Grrreee... primero caerá el Domo, después caerá la Tierra."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "No subestimen al intruso.",
+        "El siguiente golpe es mío.",
+        "Que pruebe el poder reptiliano.",
+        "Mátenlo antes de que avise a otros."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 383,
-        "y": 4710
+        "x": 423,
+        "y": 4708
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"
@@ -101,20 +118,25 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "El Domo caerá desde adentro, no desde el espacio.",
+        "Si alguien escucha demasiado, lo silenciamos.",
+        "Si alguien ve demasiado, desaparece en el laberinto."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Ese humano vino a morir.",
+        "No le permitan tocar nada.",
+        "Defiendan la operación.",
+        "Nadie interfiere con nuestra misión.",
+        "El laboratorio debe permanecer oculto.",
+        "Protejan el ala sureste."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 370,
-        "y": 4806
+        "x": 429,
+        "y": 4803
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"
@@ -131,20 +153,25 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Que los pasillos sigan cerrados; el miedo hará el resto.",
+        "Grrr... odio tener que escondernos entre humanos.",
+        "Pronto dejaremos de escondernos bajo esta escuela."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Grrr... este lugar ya nos pertenece.",
+        "El intruso estorba; elimínenlo.",
+        "No dejen rastros, solo huesos.",
+        "Cierren filas y avancen.",
+        "Atáquenlo por ambos lados.",
+        "Que no llegue a la salida."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 348,
-        "y": 4900
+        "x": 421,
+        "y": 4886
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"
@@ -161,8 +188,11 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Grrr... nadie debe salir vivo del ala sureste.",
+        "Encuentren al centinela y tráiganlo antes de que hable.",
+        "El centinela dejó su arma tirada como un cobarde.",
+        "Si el centinela vuelve por su arma, lo estaremos esperando.",
+        "Los estudiantes del Domo son débiles."
       ],
       "dialogos_Atack": [
         "¡Intruso detectado!",
@@ -191,19 +221,27 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Malditos indilianos, lo estropean todo.",
+        "No se encuentran pistas del algoritmo de Matlog; hay que buscar en otro lugar.",
+        "Debemos encontrar Matlog antes que ellos.",
+        "Este cadáver indiliano aún guarda información.",
+        "No dañen demasiado el cuerpo; todavía puede servirnos.",
+        "Grrr... este cuerpo todavía puede revelar algo útil.",
+        "El cuerpo indiliano conserva señales débiles, pero no está vacío."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Acorrálenlo contra el muro.",
+        "Ataquen juntos, inútiles.",
+        "No permitan que escape del laberinto.",
+        "Ese intruso nos pertenece.",
+        "El Domo será nuestro."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 141,
+        "x": 216,
         "y": 4725
       },
       "ejecucion_script": {
@@ -221,20 +259,28 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "os indilianos escondieron demasiado bien sus secretos.",
+        "Grrreee... malditos indilianos, hasta muertos siguen estorbando.",
+        "No hemos encontrado el rastro de Matlog; sigan buscando.",
+        "El algoritmo de Matlog debe estar oculto en otra señal.",
+        "Este cuerpo no responde como debería.",
+        "Las lecturas del cadáver cambian cada vez que tocamos el núcleo.",
+        "La energía indiliana no se comporta como la energía humana."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Que nadie lo pierda de vista.",
+        "Disparen primero, gruñan después.",
+        "Ese humano ha visto demasiado.",
+        "No lo dejen acercarse más.",
+        "Grrr... quiero su cabeza."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 174,
-        "y": 4835
+        "x": 194,
+        "y": 4851
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"
@@ -251,20 +297,175 @@
       "Speed_enemy": 1.8,
       "radioVision": 400,
       "dialogos": [
-        "grr...!!",
-        "Gr...!!"
+        "Grrr... los humanos guardan secretos que ni siquiera comprenden.",
+        "Los humanos no saben lo que trajeron desde la luna.",
+        "Este laboratorio humano es limitado, pero servirá por ahora.",
+        "La extracción debe continuar hasta que aparezca una pista.",
+        "El ala sureste seguirá cerrada hasta completar la extracción.",
+        "Que nadie interrumpa el análisis del cuerpo indiliano.",
+        "Si el director descubrió esto, ya es un problema.",
+        "Si el centinela vio el laboratorio, debe ser capturado.",
+        "El cadáver no es suficiente; necesitamos otro punto de búsqueda.",
+        "Matlog no aparece en la superficie del cuerpo.",
+        "Hay información bloqueada dentro de la memoria indiliana."
       ],
       "dialogos_Atack": [
-        "¡Intruso detectado!",
-        "¡No escaparás!"
+        "Grrr... el mundo es nuestro.",
+        "Ataquen al intruso.",
+        "Atrápenlo vivo o muerto.",
+        "No dejen escapar al humano.",
+        "Grrreee... derríbenlo ahora.",
+        "Rodéenlo y cierren el paso.",
+        "Ese intruso no saldrá con vida.",
+        "Acaben con él antes de que huya.",
+        "No le den tiempo para pensar.",
+        "Córtenle la retirada."
       ],
       "tamano": {
         "w": 64,
         "h": 64
       },
       "posicion": {
-        "x": 56,
-        "y": 4825
+        "x": 53,
+        "y": 4854
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_mapa_basico_11",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 43,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "Esa ave parece pequeña, pero nos está dejando en ridículo.",
+        "No dejen que el pajarraco encuentre al centinela.",
+        "Ese bicho emplumado vio cuando bajamos al director.",
+        "Grrr... si el ave escapa, nos van a degradar a limpiar escamas.",
+        "No me importa si canta bonito, atrápenla.",
+        "Ese pajarraco esquiva mejor que algunos soldados.",
+        "Grrreee... alguien cierre algo, una puerta, una ruta, lo que sea.",
+        "No vuelvan a decir que era solo un pajarito.",
+        "Ese animal alado tiene más reflejos que nuestro escuadrón.",
+        "Grrr... lo quiero vivo para saber qué vio.",
+        "Ese pájaro no debe llegar a los maestros.",
+        "Si lo pierden otra vez, diré que ustedes eran el experimento.",
+        "Atrapen a esa pluma con patas antes de que nos delate."
+      ],
+      "dialogos_Atack": [
+        "Quiero al humano inmóvil.",
+        "Disparen a matar.",
+        "Atrapen a ese entrometido.",
+        "Ese avatar no saldrá del Domo.",
+        "Grrreee... la presa está cerca.",
+        "No fallen esta vez.",
+        "Todos contra el intruso."
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 830,
+        "y": 3715
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_mapa_basico_12",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 43,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "Grrr... juro que esa ave me sacó la lengua.",
+        "No disparen al techo, inútiles; el techo no tiene plumas.",
+        "Atrapen al pájaro, no a la sombra del pájaro.",
+        "Esa cosa emplumada acaba de esquivar tres soldados armados.",
+        "Grrreee... somos invasores galácticos, no espantapájaros.",
+        "Si esa ave se ríe otra vez, la llevo al laboratorio.",
+        "No entiendo cómo un pájaro pequeño está arruinando la operación.",
+        "Ese pajarraco sabe demasiado y vuela demasiado.",
+        "Grrr... dejen de correr en círculos y atrapen al ave.",
+        "El que vuelva a tropezar con una banca limpiará las cápsulas.",
+        "Ese pájaro estuvo con el director y el científico.",
+        "Atrapen a esa ave antes de que avise a media escuela.",
+        "Grrreee... quiero esa criatura viva, molesta, pero viva."
+      ],
+      "dialogos_Atack": [
+        "El Domo caerá desde adentro.",
+        "La invasión ya comenzó.",
+        "Los humanos perderán este planeta.",
+        "Nadie salvará al intruso.",
+        "Conviertan su huida en cacería.",
+        "Ese humano corre como presa.",
+        "No dejen que encuentre ayuda.",
+        "Aplasten al avatar antes de que aprenda algo.",
+        "El intruso eligió el lugar equivocado."
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 1240,
+        "y": 3851
+      },
+      "ejecucion_script": {
+        "al_morir": "dropItemBasico"
+      }
+    },
+    {
+      "id": "enemy_mapa_basico_13",
+      "nombre": "Centinela Reptiliano",
+      "tipo": "basico",
+      "imagen": "../assets/avatares/enemy/centinela-reptiliano.png",
+      "puntos_de_vida": 43,
+      "puntos_de_ataque": 6,
+      "atackAnimation": "ataqueEnemigoBasico",
+      "Speed_enemy": 1.8,
+      "radioVision": 400,
+      "dialogos": [
+        "El ave va hacia allá, no, hacia acá, no, ¡maldita sea!",
+        "No disparen entre ustedes; el pájaro es el pequeño.",
+        "Ese pajarraco nos está usando de decoración.",
+        "Grrr... el científico escapó, el director bajó, y ahora nos gana un ave.",
+        "Quiero al pájaro capturado antes de que aprenda a reírse mejor.",
+        "Esa criatura alada debe saber a dónde huyó el científico.",
+        "Si esa ave habla, la operación queda expuesta.",
+        "Grrreee... dejen de mirar bonito la fuente y atrapen al pájaro.",
+        "Ese pajarraco no es tonto; el tonto es quien lo subestimó.",
+        "Cuando atrape a esa ave, voy a pedir vacaciones."
+      ],
+      "dialogos_Atack": [
+        "Es solo un humano; derríbenlo.",
+        "Ese insecto se movió por última vez.",
+        "Háganlo retroceder.",
+        "Rómpanle el paso.",
+        "Que no respire tranquilo.",
+        "No quiero excusas, quiero resultados.",
+        "Persíganlo hasta el final.",
+        "Si cae, remátenlo."
+      ],
+      "tamano": {
+        "w": 64,
+        "h": 64
+      },
+      "posicion": {
+        "x": 925,
+        "y": 4064
       },
       "ejecucion_script": {
         "al_morir": "dropItemBasico"

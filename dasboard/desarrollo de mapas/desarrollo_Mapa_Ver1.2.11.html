@@ -316,6 +316,73 @@
   border-radius:999px;
   background:rgba(115,255,203,.08);
 }
+html{
+  scrollbar-color: rgba(0,234,255,.72) rgba(2,8,24,.72);
+  scrollbar-width: thin;
+}
+
+*{
+  scrollbar-color: rgba(0,234,255,.72) rgba(2,8,24,.72);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar{
+  width:12px;
+  height:12px;
+}
+
+*::-webkit-scrollbar-track{
+  background:linear-gradient(180deg,rgba(2,8,24,.88),rgba(8,20,52,.88));
+  border-radius:999px;
+  border:1px solid rgba(64,220,255,.12);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.45);
+}
+
+*::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,rgba(0,234,255,.92),rgba(115,255,203,.72));
+  border-radius:999px;
+  border:3px solid rgba(2,8,24,.92);
+  box-shadow:0 0 12px rgba(0,234,255,.45);
+}
+
+*::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,rgba(115,255,203,1),rgba(0,234,255,.95));
+  box-shadow:0 0 16px rgba(115,255,203,.55);
+}
+
+*::-webkit-scrollbar-thumb:active{
+  background:linear-gradient(180deg,rgba(255,209,102,.95),rgba(0,234,255,.95));
+}
+
+*::-webkit-scrollbar-corner{
+  background:rgba(2,8,24,.95);
+}
+
+.controls,
+.list,
+.catalog-grid,
+textarea,
+.project-preview-viewport{
+  scrollbar-gutter:stable;
+}
+.entities-layer.ambiente-guide-mode .node{
+  opacity:.24;
+  filter:saturate(.45) brightness(.9);
+}
+
+.entities-layer.ambiente-guide-mode .node.selected{
+  opacity:.42;
+}
+
+.entities-layer.ambiente-guide-mode .node::before,
+.entities-layer.ambiente-guide-mode .node-tools,
+.entities-layer.ambiente-guide-mode .resize-handle{
+  display:none!important;
+}
+
+.entities-layer.ambiente-guide-mode .node{
+  pointer-events:none!important;
+}
   </style>
 </head>
 <body>
@@ -431,7 +498,16 @@
           <div class="section"><p class="section-title">Herramienta items</p><button id="itemToolPlace" style="width:100%">Ubicar item</button><p class="hint">Elige un item del catálogo y haz clic sobre el mapa. El sistema guardará instancia_id, item_id, x, y.</p></div>
           <div class="section"><p class="section-title">Datos del item</p><label>Item del catálogo</label><select id="itemCatalogSelect"><option value="">Carga source/items/items.json</option></select><label>Prefijo instancia_id</label><input id="itemPrefix" type="text" value="itm_mapa"><label>item_id</label><input id="itemId" type="text" value="sal"><label>Imagen detectada desde JSON</label><input id="itemImagePath" type="text" value="../assets/items/sal.svg" readonly><p id="itemCatalogInfo" class="hint">Sin catálogo cargado todavía.</p><div id="itemSelectedPreview" class="item-selected-preview"><img id="itemSelectedImg" alt="Preview item"><span id="itemSelectedText">Sin item seleccionado.</span></div><div class="row"><div><label>Tamaño preview</label><input id="itemSize" type="number" value="32"></div><div><label>zIndex preview</label><input id="itemZ" type="number" value="3400"></div></div><div class="row" style="margin-top:10px"><button id="itemApply">Aplicar</button><button id="itemDuplicate">Duplicar</button></div><div class="row" style="margin-top:8px"><button id="itemDelete" class="danger">Eliminar</button><button id="itemClear" class="warning">Limpiar items</button></div></div>
           <div class="section"><p class="section-title">Items ubicados</p><div class="list" id="itemList"></div></div>
-          <div class="section"><p class="section-title">Mini consola de código</p><textarea id="itemCodePreview" class="json-preview" readonly></textarea><div class="row" style="margin-top:8px"><button id="copyItemsCode" class="primary">Copiar código</button><button id="refreshItemsCode">Actualizar consola</button></div><button id="downloadItemsCode" class="violet" style="width:100%;margin-top:8px">Descargar código items</button><p class="hint">Copia este bloque y reemplaza el array itemsEnMapaConfig en el script del mapa.</p></div>
+          <div class="section"><p class="section-title">Mini consola de código</p><textarea id="itemCodePreview" class="json-preview" spellcheck="false"></textarea>
+
+<div class="row" style="margin-top:8px">
+  <button id="copyItemsCode" class="primary">Copiar código</button>
+  <button id="refreshItemsCode">Actualizar consola</button>
+</div>
+
+<button id="applyItemsCode" class="primary" style="width:100%;margin-top:8px">Aplicar código pegado al mapa</button>
+
+<button id="downloadItemsCode" class="violet" style="width:100%;margin-top:8px">Descargar código items</button><p class="hint">Copia este bloque y reemplaza el array itemsEnMapaConfig en el script del mapa.</p></div>
         </section>
         <section id="tabEnemy" class="tab-panel">
           <div class="section"><p class="section-title">Herramienta enemy</p><div class="row"><button id="enemyToolPlace">Ubicar enemigo</button><button id="enemyToolLine">Línea enemigos</button></div></div>
@@ -633,7 +709,43 @@ let sourceMapDirHandle=null;
     const sessionPreviewUrls=new Set();
     function safeId(t,f='item'){return String(t||f).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_]+/g,'_').replace(/^_+|_+$/g,'')||f}
     function setStatus(t){$('bottomStatus').textContent=t}function uid(kind,prefix){return `${safeId(prefix,kind)}_${pad(state.next[kind]++)}`}function activeKind(){return({tabAmbiente:'ambiente',tabItems:'item',tabEnemy:'enemy',tabIlum:'light',tabNPC:'npc',tabMisiones:'missionNpc'})[state.activeTab]||null}
-    function setTab(id){state.activeTab=id;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===id));Object.values(els.layers).forEach(l=>l.classList.add('layer-hidden'));const k=activeKind();if(k&&els.layers[k])els.layers[k].classList.remove('layer-hidden');$('activeLayer').textContent='Capa: '+(k||'proyecto');setTool('pan');renderAll()}
+    function setTab(id){
+  state.activeTab=id;
+
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.tab===id);
+  });
+
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    p.classList.toggle('active',p.id===id);
+  });
+
+  Object.values(els.layers).forEach(l=>{
+    l.classList.add('layer-hidden');
+    l.style.pointerEvents='auto';
+  });
+
+  const k=activeKind();
+
+  // Ambiente queda visible como capa guía en todo el desarrollo.
+  // Cuando no estamos editando ambiente, no intercepta clics.
+if(els.layers.ambiente){
+  els.layers.ambiente.classList.remove('layer-hidden');
+  els.layers.ambiente.style.pointerEvents=k==='ambiente'?'auto':'none';
+  els.layers.ambiente.classList.toggle('ambiente-guide-mode',k!=='ambiente');
+}
+
+  // Capa activa normal.
+  if(k&&k!=='ambiente'&&els.layers[k]){
+    els.layers[k].classList.remove('layer-hidden');
+    els.layers[k].style.pointerEvents='auto';
+  }
+
+  $('activeLayer').textContent='Capa: '+(k||'proyecto');
+
+  setTool('pan');
+  renderAll();
+}
     function setTool(tool){state.tool=tool;els.viewport.classList.toggle('draw-mode',['amb-draw','line','place','amb-place','amb-real-place','arcilla-place','arcilla-line','item-place','measure'].includes(tool));$('topTool').textContent='Modo: '+tool;['measureTool','ambToolPan','ambToolDraw','ambApply','ambToolReal','arcillaToolPlace','arcillaToolLine','itemToolPlace','enemyToolPlace','enemyToolLine','lightToolPlace','lightToolLine','npcToolPlace','missionNpcTool'].forEach(id=>$(id)?.classList.remove('active'));if(tool==='measure')$('measureTool')?.classList.add('active');if(tool==='amb-draw')$('ambToolDraw')?.classList.add('active');if(tool==='amb-place')$('ambApply')?.classList.add('active');if(tool==='amb-real-place')$('ambToolReal')?.classList.add('active');if(tool==='arcilla-place')$('arcillaToolPlace')?.classList.add('active');if(tool==='arcilla-line')$('arcillaToolLine')?.classList.add('active');if(tool==='item-place')$('itemToolPlace')?.classList.add('active');if(tool==='place'){const k=activeKind();if(k==='enemy')$('enemyToolPlace')?.classList.add('active');if(k==='light')$('lightToolPlace')?.classList.add('active');if(k==='npc')$('npcToolPlace')?.classList.add('active');if(k==='missionNpc')$('missionNpcTool')?.classList.add('active')}if(tool==='line'){const k=activeKind();if(k==='enemy')$('enemyToolLine')?.classList.add('active');if(k==='light')$('lightToolLine')?.classList.add('active')}if(tool==='pan')$('ambToolPan')?.classList.add('active');setStatus(tool==='measure'?'Regla activa: arrastra en horizontal o vertical para medir pixeles.':tool==='pan'?'Modo mover/editar activo.':(tool==='line'||tool==='arcilla-line')?'Arrastra para crear una línea.':'Haz clic o arrastra sobre el mapa.')}
     function screenToWorld(x,y){const r=els.viewport.getBoundingClientRect();return{x:(x-r.left-state.offsetX)/state.scale,y:(y-r.top-state.offsetY)/state.scale}}
     function fitToView(){const pad=36,sc=Math.min((els.viewport.clientWidth-pad)/state.mapSize,(els.viewport.clientHeight-pad)/state.mapSize);state.scale=clamp(sc,state.minScale,state.maxScale);state.offsetX=Math.round((els.viewport.clientWidth-state.mapSize*state.scale)/2);state.offsetY=Math.round((els.viewport.clientHeight-state.mapSize*state.scale)/2);renderStage()}
@@ -1554,6 +1666,103 @@ function makeArcillaLine(start,end){const t=cfgArcilla(),w=Math.max(1,round(t.w)
     function cfgItem(){const size=round($('itemSize').value)||32,itemId=($('itemId').value||$('itemCatalogSelect')?.value||'item').trim()||'item',def=getItemDefinition(itemId),inst=uid('item',$('itemPrefix').value),img=def?.imagen||$('itemImagePath').value.trim()||null;return{id:inst,instancia_id:inst,item_id:itemId,imagen:img,sourcePreview:itemPreviewFromImagePath(img),preview:null,nombre_item:def?.nombre_item||itemId,x:0,y:0,w:size,h:size,size:size,zIndexBase:round($('itemZ').value)||3400}}
     function itemsArray(){return(state.data.items||[]).map(it=>({instancia_id:it.instancia_id||it.id,item_id:it.item_id,x:round(it.x),y:round(it.y)}))}
     function itemCode(){return 'let itemsEnMapaConfig = '+JSON.stringify(itemsArray(),null,2)+';'}
+    function parseItemsConfigFromText(text){
+  const raw=String(text||'').trim();
+
+  if(!raw){
+    throw new Error('La consola de items está vacía.');
+  }
+
+  let candidate=raw;
+
+  const first=raw.indexOf('[');
+  const last=raw.lastIndexOf(']');
+
+  if(first>-1&&last>first){
+    candidate=raw.slice(first,last+1);
+  }
+
+  try{
+    return JSON.parse(candidate);
+  }catch(e){}
+
+  try{
+    return Function('"use strict";return ('+candidate+');')();
+  }catch(e){
+    throw new Error('No pude leer el código de items. Revisa que sea un array válido.');
+  }
+}
+
+function itemFromCodeConfig(it,index){
+  const itemId=String(
+    it.item_id||
+    it.itemId||
+    it.id_item||
+    it.tipo_item||
+    ''
+  ).trim();
+
+  if(!itemId)return null;
+
+  const def=getItemDefinition(itemId);
+
+  const inst=String(
+    it.instancia_id||
+    it.instanciaId||
+    it.id||
+    `itm_mapa_${pad(index+1)}`
+  ).trim();
+
+  const img=it.imagen||def?.imagen||null;
+  const size=round(it.size||it.w||it.h||$('itemSize')?.value||32)||32;
+
+  return{
+    id:inst,
+    instancia_id:inst,
+    item_id:itemId,
+    imagen:img,
+    sourcePreview:itemPreviewFromImagePath(img),
+    preview:null,
+    nombre_item:def?.nombre_item||it.nombre_item||itemId,
+    x:round(it.x??it.posicion?.x??0),
+    y:round(it.y??it.posicion?.y??0),
+    w:round(it.w||size),
+    h:round(it.h||size),
+    size,
+    zIndexBase:round(it.zIndexBase||$('itemZ')?.value||3400)
+  };
+}
+
+function applyItemsCodeFromTextarea(){
+  let arr;
+
+  try{
+    arr=parseItemsConfigFromText($('itemCodePreview').value);
+  }catch(e){
+    setStatus(e.message||'No pude leer el código de items.');
+    return;
+  }
+
+  if(!Array.isArray(arr)){
+    setStatus('El código pegado debe contener un array de items.');
+    return;
+  }
+
+  const parsed=arr.map(itemFromCodeConfig).filter(Boolean);
+
+  if(!parsed.length){
+    setStatus('No encontré items válidos dentro del código pegado.');
+    return;
+  }
+
+  state.data.items=parsed;
+
+  syncNextCounters();
+  renderAll();
+  saveLocalSoon();
+
+  setStatus(`Código de items aplicado al mapa: ${parsed.length} items cargados.`);
+}
     function refreshItemsCode(){const box=$('itemCodePreview');if(box)box.value=itemCode()}
     function placeItemMap(pos){applyCatalogSelection(false);const it=cfgItem();it.x=round(pos.x);it.y=round(pos.y);state.data.items.push(it);select('item',it.id);refreshItemsCode();saveLocalSoon()}
     function applyItemSelected(){const {kind,id}=state.selected;if(kind!=='item'||!id)return setStatus('Selecciona primero un item.');const it=getItem('item',id);if(!it)return;applyCatalogSelection(false);const cfg=cfgItem();Object.assign(it,cfg,{id:it.id,instancia_id:it.instancia_id,x:it.x,y:it.y});renderAll();saveLocalSoon();setStatus('Item actualizado.')}
@@ -1654,7 +1863,7 @@ function makeNode(kind,item){
   const el=document.createElement('div');
   el.className='node '+({ambiente:'amb',enemy:'enemy',light:'light',npc:'npc',missionNpc:'missionNpc',item:'item'}[kind]||'');
 
-  const id=item.id||item.instancia_id||item.zona_id||item.nombre_id||item.nombre;
+  const id=item.dashboardId||item.id||item.instancia_id||item.zona_id||item.nombre_id||item.nombre;
 
   el.dataset.kind=kind;
   el.dataset.id=id;
@@ -1750,8 +1959,8 @@ else{
     
     function arrFor(kind){if(kind==='missionNpc')return state.data.missionNpcs||[];if(kind==='item')return state.data.items||[];return state.data[kind]||[]}
     function renderLayer(kind){const layer=els.layers[kind];if(!layer)return;layer.innerHTML='';arrFor(kind).forEach(item=>layer.appendChild(makeNode(kind,item)))}
-    function getItem(kind,id){return arrFor(kind).find(x=>(x.id||x.instancia_id||x.zona_id||x.nombre_id||x.nombre)===id)}
-    function itemIdentity(item){return item?.id||item?.instancia_id||item?.zona_id||item?.nombre_id||item?.nombre}
+    function getItem(kind,id){return arrFor(kind).find(x=>(x.dashboardId||x.id||x.instancia_id||x.zona_id||x.nombre_id||x.nombre)===id)}
+    function itemIdentity(item){return item?.dashboardId||item?.id||item?.instancia_id||item?.zona_id||item?.nombre_id||item?.nombre}
     function editorImageFolder(kind,obj){if(kind==='item'||obj?.subtipo==='bloque_arcilla')return '../assets/items/';if(kind==='enemy')return '../assets/avatares/enemy/';if(kind==='npc'||kind==='missionNpc')return '../assets/avatares/npc/mapa1/';return '../assets/spriteAmbiente/'}
     function cleanEditorObject(kind,it){const raw=cleanRuntimeFields(JSON.parse(JSON.stringify(it||{})));delete raw.preview;delete raw.sourcePreview;delete raw.previewName;delete raw.previewNameSprite;raw.imagen=sanitizeGameAssetPath(raw.imagen,null);raw.sprites_1x10=sanitizeGameAssetPath(raw.sprites_1x10,null);if(kind==='ambiente'){const hasSprite=!!raw.sprites_1x10;const o={zona_id:raw.zona_id||raw.id||'bloque_ambiente',color:raw.color??null,tipo:raw.tipo||'visual',funcion:raw.funcion||null,x:round(raw.x||0),y:round(raw.y||0),w:round(raw.w||80),h:round(raw.h||80),imagen:hasSprite?null:(raw.imagen||null),zIndexBase:round(raw.zIndexBase||3300),sprites_1x10:raw.sprites_1x10||null,velocidad_movimiento:hasSprite?(raw.velocidad_movimiento??1.1):null,sonido_ambiente:null};if(raw.subtipo)o.subtipo=raw.subtipo;if(raw.pdr!==undefined&&raw.pdr!==null)o.pdr=round(raw.pdr);if(raw.pdr_max!==undefined&&raw.pdr_max!==null)o.pdr_max=round(raw.pdr_max);return o}return raw}
     function applyEditorPreviewMemory(kind,current,obj){const pending=state.jsonEditor?.pendingImage,merged={...cleanRuntimeFields(current),...obj};delete merged.preview;delete merged.sourcePreview;delete merged.previewName;delete merged.previewNameSprite;if(pending&&pending.kind===kind&&safeRuntimePreview(pending.url)){merged.preview=pending.url;if(pending.field==='sprites_1x10'){merged.previewNameSprite=pending.name;merged.previewName=null}else{merged.previewName=pending.name;merged.previewNameSprite=null}return merged}const route=merged.sprites_1x10||merged.imagen||'';const expected=getFileNameFromPath(route);const safeCurrentPreview=safeRuntimePreview(current?.preview);if(safeCurrentPreview&&expected&&((merged.sprites_1x10&&current.previewNameSprite===expected)||(!merged.sprites_1x10&&current.previewName===expected))){merged.preview=safeCurrentPreview;if(merged.sprites_1x10)merged.previewNameSprite=current.previewNameSprite;else merged.previewName=current.previewName}return merged}
@@ -1762,7 +1971,7 @@ else{
     function applyJsonEditorImage(file,url){const modal=$('jsonModal'),kind=modal.dataset.kind;if(!kind||!file||!url)return;let obj;try{obj=JSON.parse($('jsonEditorText').value)}catch(e){setStatus('El JSON tiene un error. Corrígelo antes de aplicar imagen.');return}const folder=editorImageFolder(kind,obj),path=folder+file.name;let field='imagen';if(kind==='ambiente'&&obj.sprites_1x10&&!obj.imagen){obj.sprites_1x10=path;obj.imagen=null;field='sprites_1x10'}else{obj.imagen=path;if(kind==='ambiente'){obj.sprites_1x10=null;obj.velocidad_movimiento=null;obj.sonido_ambiente=null}}$('jsonEditorText').value=JSON.stringify(cleanEditorObject(kind,obj),null,2);state.jsonEditor.lastImage=file;state.jsonEditor.lastImageName=file.name;state.jsonEditor.lastImageUrl=url;state.jsonEditor.pendingImage={kind,name:file.name,url,field};setStatus('Imagen aplicada al editor. Guarda el JSON del componente para confirmar.')}
     function handleJsonEditorFile(file){if(!file||!(/^image\//.test(file.type)||/\.(svg|png|jpg|jpeg|webp|gif)$/i.test(file.name))){setStatus('Arrastra una imagen válida.');return}readFileAsDataURL(file,(url)=>applyJsonEditorImage(file,url))}
     function renderGenericList(listId,kind){const box=$(listId),arr=arrFor(kind);box.innerHTML='';if(!arr.length){box.innerHTML='<div class="list-item"><div>No hay elementos todavía.</div></div>';return}arr.forEach(it=>{const id=it.id||it.instancia_id||it.zona_id||it.nombre_id||it.nombre,title=it.instancia_id||it.zona_id||it.id||it.nombre_id||it.nombre||it.item_id;const extra=kind==='item'&&it.item_id?`item_id:${it.item_id} `:'';const div=document.createElement('div');div.className='list-item'+(state.selected.kind===kind&&state.selected.id===id?' active':'');div.dataset.kind=kind;div.dataset.id=id;div.innerHTML=`<div>${title}<small>${extra}x:${round(it.x)} y:${round(it.y)} ${it.w?'w:'+round(it.w)+' h:'+round(it.h):''}</small></div><button class="mini-btn" data-del="${id}">x</button>`;box.appendChild(div)})}
-    function renderLists(){renderGenericList('ambList','ambiente');renderGenericList('itemList','item');renderGenericList('enemyList','enemy');renderGenericList('lightList','light');renderGenericList('npcList','npc');renderSteps();renderMissionList();$('ambPreview').value=JSON.stringify(ambJson(),null,2);$('enemyPreview').value=JSON.stringify(enemyJson(),null,2);$('lightPreview').value=JSON.stringify(lightJson(),null,2);$('npcPreview').value=JSON.stringify(npcJson(),null,2);$('missionPreview').value=JSON.stringify({missions:state.data.missions},null,2);refreshItemsCode();$('countAmbiente').textContent=state.data.ambiente.length;if($('countItems'))$('countItems').textContent=(state.data.items||[]).length;$('countEnemy').textContent=state.data.enemy.length;$('countIlum').textContent=state.data.light.length;$('countNPC').textContent=state.data.npc.length;$('countMisiones').textContent=state.data.missions.length}
+    function renderLists(){renderGenericList('ambList','ambiente');renderGenericList('itemList','item');renderGenericList('enemyList','enemy');renderGenericList('lightList','light');renderGenericList('npcList','npc');renderSteps();renderMissionList();$('ambPreview').value=JSON.stringify(ambJson(),null,2);$('enemyPreview').value=JSON.stringify(enemyJson(),null,2);$('lightPreview').value=JSON.stringify(lightJson(),null,2);$('npcPreview').value=JSON.stringify(npcJson(),null,2);$('missionPreview').value=JSON.stringify(missionsJson(),null,2);refreshItemsCode();$('countAmbiente').textContent=state.data.ambiente.length;if($('countItems'))$('countItems').textContent=(state.data.items||[]).length;$('countEnemy').textContent=state.data.enemy.length;$('countIlum').textContent=state.data.light.length;$('countNPC').textContent=state.data.npc.length;$('countMisiones').textContent=state.data.missions.length}
     function renderAll(){
   renderStage();
   ['ambiente','item','enemy','light','npc','missionNpc'].forEach(renderLayer);
@@ -1823,6 +2032,12 @@ function renumberMissions(){
     }
   });
 
+  (state.data.missionNpcs||[]).forEach(npc=>{
+    if(npc._missionId&&idMap[npc._missionId]){
+      npc._missionId=idMap[npc._missionId];
+    }
+  });
+
   syncMissionIdField();
 }
 
@@ -1867,12 +2082,121 @@ function saveMissionEditor(){
   state.data.missions[editingMissionIndex]=obj;
 
   renumberMissions();
+  syncMissionNpcCoordinatesToMissions();
   renderAll();
   saveLocalSoon();
   closeMissionEditor();
 
   setStatus('Misión editada y IDs reorganizados.');
 }
+
+function missionNpcDashboardId(missionIndex,npcIndex){
+  return `missionNpc_${pad(missionIndex+1)}_${pad(npcIndex+1)}`;
+}
+
+function findMissionNpcTarget(visualNpc,visualIndex){
+  const missions=state.data.missions||[];
+
+  if(Number.isInteger(visualNpc?._missionIndex)&&Number.isInteger(visualNpc?._npcIndex)){
+    const mission=missions[visualNpc._missionIndex];
+    const npc=mission?.npcs?.[visualNpc._npcIndex];
+
+    if(mission&&npc){
+      return{mission,npc,missionIndex:visualNpc._missionIndex,npcIndex:visualNpc._npcIndex};
+    }
+  }
+
+  if(visualNpc?._missionId){
+    const missionIndex=missions.findIndex(m=>m.id===visualNpc._missionId);
+
+    if(missionIndex>-1){
+      const mission=missions[missionIndex];
+      const npcIndex=(mission.npcs||[]).findIndex(n=>{
+        return(
+          String(n.id||'')===String(visualNpc.id||'')&&
+          getFileNameFromPath(n.imagen||'')===getFileNameFromPath(visualNpc.imagen||'')
+        );
+      });
+
+      if(npcIndex>-1){
+        return{mission,npc:mission.npcs[npcIndex],missionIndex,npcIndex};
+      }
+    }
+  }
+
+  const flat=[];
+
+  missions.forEach((mission,missionIndex)=>{
+    (mission.npcs||[]).forEach((npc,npcIndex)=>{
+      flat.push({mission,npc,missionIndex,npcIndex});
+    });
+  });
+
+  return flat[visualIndex]||null;
+}
+
+function syncMissionStepPositions(mission,npc,x,y){
+  if(!mission||!Array.isArray(mission.pasos))return;
+
+  const npcId=String(npc?.id||'').trim();
+  const npcImg=getFileNameFromPath(npc?.imagen||'');
+
+  mission.pasos.forEach(step=>{
+    const stepNpcId=String(step.npcId||step.verificador?.objetivoId||'').trim();
+    const stepImg=getFileNameFromPath(step.verificador?.imagen||'');
+
+    const matchesById=npcId&&stepNpcId&&npcId===stepNpcId;
+    const matchesByImage=npcImg&&stepImg&&npcImg===stepImg;
+
+    if(matchesById||matchesByImage){
+      if(!step.verificador||typeof step.verificador!=='object'){
+        step.verificador={};
+      }
+
+      step.verificador.posicion={x,y};
+
+      if(!step.verificador.imagen&&npc?.imagen){
+        step.verificador.imagen=npc.imagen;
+      }
+
+      if(!step.verificador.objetivoId&&npc?.id){
+        step.verificador.objetivoId=npc.id;
+      }
+    }
+  });
+}
+
+function syncMissionNpcCoordinatesToMissions(){
+  const visualNpcs=state.data.missionNpcs||[];
+
+  visualNpcs.forEach((visualNpc,visualIndex)=>{
+    const target=findMissionNpcTarget(visualNpc,visualIndex);
+    if(!target)return;
+
+    const x=round(visualNpc.x||0);
+    const y=round(visualNpc.y||0);
+
+    if(!target.npc.posicion||typeof target.npc.posicion!=='object'){
+      target.npc.posicion={};
+    }
+
+    target.npc.posicion.x=x;
+    target.npc.posicion.y=y;
+
+    if('x' in target.npc)target.npc.x=x;
+    if('y' in target.npc)target.npc.y=y;
+
+    syncMissionStepPositions(target.mission,target.npc,x,y);
+  });
+
+  return state.data.missions||[];
+}
+
+function missionsJson(){
+  syncMissionNpcCoordinatesToMissions();
+  return{missions:state.data.missions||[]};
+}
+
     function renderSteps(){const box=$('stepList');box.innerHTML='';if(!state.data.missionSteps.length){box.innerHTML='<div class="list-item"><div>No hay pasos agregados.</div></div>';return}state.data.missionSteps.forEach((s,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${i+1}. ${s.titulo}<small>${s.tipo} · ${s.descripcion}</small></div><button class="mini-btn" data-stepdel="${i}">x</button>`;box.appendChild(div)})}
     
     
@@ -2015,10 +2339,90 @@ function renderMissionList(){
 function nextFrom(arr){let max=0;arr.forEach(x=>{const id=String(x.id||x.zona_id||x.nombre_id||'');const m=id.match(/_(\d+)$/);if(m)max=Math.max(max,Number(m[1]))});return max+1}
 function syncNextCounters(){state.data.items=state.data.items||[];state.next.ambiente=Math.max(1,nextFrom(state.data.ambiente||[]));state.next.arcilla=Math.max(1,nextFrom((state.data.ambiente||[]).filter(x=>x.subtipo==='bloque_arcilla')));state.next.item=Math.max(1,nextFrom(state.data.items));state.next.enemy=Math.max(1,nextFrom(state.data.enemy||[]));state.next.light=Math.max(1,nextFrom(state.data.light||[]));state.next.npc=Math.max(1,nextFrom(state.data.npc||[]));state.next.missionNpc=Math.max(1,nextFrom(state.data.missionNpcs||[]))}
 function loadAmbienteImport(json){const arr=Array.isArray(json)?json:(json.ambiente||[]);state.data.ambiente=arr.map((b,i)=>({zona_id:b.zona_id||b.id||`bloque_importado_${pad(i+1)}`,tipo:b.tipo||'visual',color:b.color??null,funcion:b.funcion||b.function||null,imagen:b.imagen||null,preview:null,zIndexBase:round(b.zIndexBase||3300),subtipo:b.subtipo||null,sprites_1x10:b.sprites_1x10||null,velocidad_movimiento:b.velocidad_movimiento??null,sonido_ambiente:b.sonido_ambiente||null,previewName:b.previewName||null,previewNameSprite:b.previewNameSprite||null,pdr:b.pdr??null,pdr_max:b.pdr_max??null,x:round(b.x??b.posicion?.x??0),y:round(b.y??b.posicion?.y??0),w:round(b.w??b.width??b.tamano?.w??80),h:round(b.h??b.height??b.tamano?.h??80)}));syncNextCounters()}
-function loadEnemyImport(json){const arr=Array.isArray(json)?json:(json.enemigos||json.enemy||[]);state.data.enemy=arr.map((e,i)=>({id:e.id||`enemy_importado_${pad(i+1)}`,nombre:e.nombre||e.name||'Enemigo',tipo:e.tipo||'basico',imagen:e.imagen||null,preview:null,w:round(e.w??e.tamano?.w??64),h:round(e.h??e.tamano?.h??64),framesX:round(e.framesX||1),vida:round(e.vida??e.puntos_de_vida??1),ataque:round(e.ataque??e.puntos_de_ataque??1),speed:Number(e.speed??e.Speed_enemy??1),vision:round(e.vision??e.radioVision??400),attackAnim:e.attackAnim||e.atackAnimation||null,deathScript:e.deathScript||e.ejecucion_script?.al_morir||null,dialogos:e.dialogos||[],dialogosAtack:e.dialogosAtack||e.dialogos_Atack||[],x:round(e.x??e.posicion?.x??0),y:round(e.y??e.posicion?.y??0)}));syncNextCounters()}
+function loadEnemyImport(json){
+  const arr=Array.isArray(json)?json:(json.enemigos||json.enemy||[]);
+
+  state.data.enemy=arr.map((e,i)=>{
+    const hasSprite=!!(e.imagen||e.sprite);
+
+    const framesX=Math.max(1,round(
+      e.framesX??
+      e.frames?.x??
+      e.tamano?.framesX??
+      (hasSprite?4:1)
+    )||1);
+
+    const framesY=Math.max(1,round(
+      e.framesY??
+      e.frames?.y??
+      e.tamano?.framesY??
+      (hasSprite?4:1)
+    )||1);
+
+    return{
+      id:e.id||`enemy_importado_${pad(i+1)}`,
+      nombre:e.nombre||e.name||'Enemigo',
+      tipo:e.tipo||'basico',
+      imagen:e.imagen||e.sprite||null,
+      preview:null,
+      w:round(e.w??e.tamano?.w??64),
+      h:round(e.h??e.tamano?.h??64),
+      framesX,
+      framesY,
+      vida:round(e.vida??e.puntos_de_vida??1),
+      ataque:round(e.ataque??e.puntos_de_ataque??1),
+      speed:Number(e.speed??e.Speed_enemy??1),
+      vision:round(e.vision??e.radioVision??400),
+      attackAnim:e.attackAnim||e.atackAnimation||null,
+      deathScript:e.deathScript||e.ejecucion_script?.al_morir||null,
+      dialogos:e.dialogos||[],
+      dialogosAtack:e.dialogosAtack||e.dialogos_Atack||[],
+      x:round(e.x??e.posicion?.x??0),
+      y:round(e.y??e.posicion?.y??0)
+    };
+  });
+
+  syncNextCounters();
+}
 function loadLightImport(json){const arr=Array.isArray(json)?json:(json.luces||json.iluminacion||[]);state.data.light=arr.map((l,i)=>({nombre_id:l.nombre_id||l.id||`luz_importada_${pad(i+1)}`,tipo:l.tipo||'antorcha',imagen:l.imagen||null,preview:null,w:round(l.w??l.width??60),h:round(l.h??l.height??60),color:l.color||null,functionName:l.functionName||l.funcion||l['function']||null,x:round(l.x??l.posicion?.x??0),y:round(l.y??l.posicion?.y??0)}));syncNextCounters()}
 function loadNpcImport(json){const arr=Array.isArray(json)?json:(json.npcs||json.NPCambiente||[]);state.data.npc=arr.map((n,i)=>({id:n.id||`npc_ambiente_${pad(i+1)}`,imagen:n.imagen||null,preview:null,nombre:n.nombre||n.name||`NPC ${i+1}`,velocidad:Number(n.velocidad??n.speed??1.2),w:round(n.w??n.tamano?.w??64),h:round(n.h??n.tamano?.h??64),dialogos_automaticos:n.dialogos_automaticos||n.dialogosAutomaticos||[],dialogos_miedo:n.dialogos_miedo||n.dialogosMiedo||[],x:round(n.x??n.posicion?.x??0),y:round(n.y??n.posicion?.y??0)}));syncNextCounters()}
-function loadMissionsImport(json){const arr=Array.isArray(json)?json:(json.missions||json.misiones||[]);state.data.missions=arr;state.data.missionNpcs=[];arr.forEach(m=>(m.npcs||[]).forEach((n,i)=>state.data.missionNpcs.push({id:n.id||`npc_mision_${pad(i+1)}`,nombre:n.nombre||`NPC misión ${i+1}`,rol:n.rol||'inicio',imagen:n.imagen||null,preview:null,w:64,h:64,x:round(n.x??n.posicion?.x??0),y:round(n.y??n.posicion?.y??0),conversation_default:n.conversation_default||'',dialogos:n.dialogos||{inicio:[],en_progreso:[],completado:[]}})));syncNextCounters()}
+function loadMissionsImport(json){
+  const arr=Array.isArray(json)?json:(json.missions||json.misiones||[]);
+
+  state.data.missions=arr;
+  state.data.missionNpcs=[];
+
+  arr.forEach((m,missionIndex)=>{
+    const missionId=m.id||('m'+(missionIndex+1));
+
+    (m.npcs||[]).forEach((n,npcIndex)=>{
+      const pos=n.posicion||{};
+
+      state.data.missionNpcs.push({
+        dashboardId:missionNpcDashboardId(missionIndex,npcIndex),
+        _missionId:missionId,
+        _missionIndex:missionIndex,
+        _npcIndex:npcIndex,
+
+        id:n.id||`npc_mision_${pad(missionIndex+1)}_${pad(npcIndex+1)}`,
+        nombre:n.nombre||`NPC misión ${npcIndex+1}`,
+        rol:n.rol||'inicio',
+        imagen:n.imagen||null,
+        preview:null,
+        w:64,
+        h:64,
+        x:round(n.x??pos.x??0),
+        y:round(n.y??pos.y??0),
+        conversation_default:n.conversation_default||'',
+        dialogos:n.dialogos||{inicio:[],en_progreso:[],completado:[]}
+      });
+    });
+  });
+
+  renumberMissions();
+  syncMissionNpcCoordinatesToMissions();
+  syncNextCounters();
+}
 
 function uniqueManifestAssets(list){
   const map=new Map();
@@ -3218,6 +3622,7 @@ $('sourceMissionNpcGallery')?.addEventListener('click',e=>{
   });
 
   $('refreshItemsCode').addEventListener('click',refreshItemsCode);
+  $('applyItemsCode')?.addEventListener('click',applyItemsCodeFromTextarea);
   $('downloadItemsCode').addEventListener('click',()=>downloadText('itemsEnMapaConfig.js',itemCode()));
 
   $('enemyDuplicate').addEventListener('click',()=>state.selected.id&&duplicate(state.selected.kind,state.selected.id));
@@ -3276,7 +3681,7 @@ $('sourceMissionNpcGallery')?.addEventListener('click',e=>{
   $('downloadEnemy').addEventListener('click',()=>download('enemy.json',enemyJson()));
   $('downloadLight').addEventListener('click',()=>download('ilumSistemMapa.json',lightJson()));
   $('downloadNpc').addEventListener('click',()=>download('NPCambiente.json',npcJson()));
-  $('downloadMissions').addEventListener('click',()=>download('missions.json',{missions:state.data.missions}));
+  $('downloadMissions').addEventListener('click',()=>download('missions.json',missionsJson()));
 
   $('addStep').addEventListener('click',addStep);
 

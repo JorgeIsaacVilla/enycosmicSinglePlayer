@@ -4,189 +4,324 @@
     "nombre": "Neris",
     "velocidad": 1.2,
     "dialogos_automaticos": [
-      "Las estrellas guardan secretos antiguos.",
-      "No todo lo que brilla es energía cósmica.",
-      "Sigue observando el cielo."
+      "¿Otra vez todos en las zonas holográficas y nadie en mi clase?",
+      "Los estudiantes creen que el planetario virtual hace la tarea por ellos.",
+      "Muy bonito el concurso musical, pero las ecuaciones no se resuelven bailando.",
+      "Si encuentro otro alumno escondido en los juegos, lo pongo a resolver diez problemas.",
+      "La zona de música está llena, pero mi aula parece planeta abandonado.",
+      "Después preguntan por qué el examen parece una invasión alienígena.",
+      "El Domo tiene tecnología increíble, pero nadie encuentra la puerta del salón.",
+      "Voy a confiscar esos hologramas si siguen faltando a clase.",
+      "El planetario enseña mucho, sí, pero no reemplaza mis explicaciones.",
+      "Un estudiante me dijo que estaba “aprendiendo con ritmo”; yo le dejé tarea con ritmo también.",
+      "Las zonas de juegos no van a salvarlos cuando llegue la evaluación.",
+      "Si veo otro estudiante diciendo “solo cinco minutos más”, activo modo maestra final."
     ],
     "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡Nos atacan!",
-      "¡Corran, rápido!",
-      "¡Hay enemigos cerca!"
+      "¡Corran, ya!",
+      "¡Monstruos, monstruos!",
+      "¡No puedo quedarme aquí!",
+      "¡Huyan!",
+      "¡Qué cosa tan horrible!"
     ],
-    "x": 1200,
-    "y": 850
+    "x": 811,
+    "y": 2099
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Thera.png",
     "nombre": "Thera",
     "velocidad": 1.1,
     "dialogos_automaticos": [
-      "La energía del mapa cambia constantemente.",
-      "A veces las respuestas están más cerca de lo que crees.",
-      "Escucha el entorno."
+      "Esa música holográfica suena como si viniera de otra galaxia.",
+      "Dicen que aquí las personas pueden competir en concursos musicales.",
+      "Me emociona que personas de afuera puedan votar por sus canciones favoritas.",
+      "Quiero entrar a un concurso musical, pero mis nervios desafinan primero.",
+      "Vi a un estudiante tocar una batería hecha de luz.",
+      "Imagínate ganar un premio solo porque tu ritmo conquistó a otras personas.",
+      "No sé si eso fue una melodía o una estrategia para ganar votos.",
+      "Cada persona toca distinto, como si el mapa escuchara su historia.",
+      "Dicen que los mejores músicos del Domo podrían volverse famosos afuera.",
+      "La próxima vez me inscribo… bueno, tal vez la próxima después de esa."
     ],
     "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡Corran!",
-      "¡Nos descubrieron!",
-      "¡Hay peligro!"
+      "¡Esas criaturas están sueltas!",
+      "¡No dejen que me atrapen!",
+      "¡Todo se salió de control!",
+      "¡No, otra vez no!",
+      "¡Corran antes de que sea tarde!"
     ],
-    "x": 1500,
-    "y": 900
+    "x": 2038,
+    "y": 1549
   },
   {
-    "imagen": "../assets/avatares/npc/mapa1/Karina.png",
-    "nombre": "Karina",
+    "imagen": "../assets/avatares/npc/mapa1/Sena.png",
+    "nombre": "Sena",
     "velocidad": 1.3,
     "dialogos_automaticos": [
-      "Las misiones revelan más que recompensas.",
-      "El conocimiento también es poder.",
-      "Sigue explorando."
+      "El planetario virtual es mi lugar favorito del Domo.",
+      "Aquí puedo estudiar galaxias sin moverme de la escuela.",
+      "Me encanta comparar fotos de telescopio con imágenes de la NASA.",
+      "A veces miro una luna lejana y siento que estoy viajando de verdad.",
+      "Las astrofotografías del telescopio tienen detalles increíbles.",
+      "Los drones planetarios muestran paisajes que parecen de otro sueño.",
+      "Podría pasar horas viendo cráteres, anillos y tormentas gigantes.",
+      "Este lugar hace que estudiar astronomía se sienta como una aventura.",
+      "Me divierte buscar formas raras en las galaxias y nebulosas.",
+      "Cada imagen del espacio me recuerda que todavía sabemos muy poco."
     ],
     "dialogos_miedo": [
       "¡Ayuda!",
-      "¡Tenemos que huir!",
-      "¡Un enemigo!",
+      "¡Sálvense como puedan!",
+      "¡Que alguien me ayude!",
+      "¡Esas criaturas están sueltas!",
+      "¡No dejen que me atrapen!",
       "¡No se acerquen!"
     ],
-    "x": 1000,
-    "y": 1100
+    "x": 831,
+    "y": 1537
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Armin",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "He visto viajeros pasar por aquí.",
-      "Algunos regresan con respuestas.",
-      "Otros con más preguntas."
+      "Este acuario tiene un estilo hermoso, pero demasiado misterioso para mi gusto.",
+      "Parece una mezcla entre laboratorio submarino y ruinas perdidas de la Antártida.",
+      "Las simulaciones de RA aquí son impresionantes; casi se puede sentir el océano encima.",
+      "He escuchado a estudiantes hablar de especies imposibles que aparecen en estas salas.",
+      "No entiendo por qué encriptaron los algoritmos del conocimiento de esta zona.",
+      "Si antes estaban visibles y ahora los cerraron, debe haber una razón importante."
     ],
     "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡Defiéndanse!",
-      "¡Corran!",
-      "¡Un reptiliano!"
+      "¡Formen una línea de contención!",
+      "¡No dejen que esas criaturas avancen!",
+      "¡Cubran las rutas de escape!",
+      "¡Lleven a todos a una zona segura!",
+      "¡Base, tenemos una emergencia en curso!",
+      "¡Atentos todos, esto no es un simulacro!",
+      "¡Refuercen las entradas del Domo!",
+      "¡Revisen que no quede nadie atrás!",
+      "¡Mantengan los comunicadores abiertos!",
+      "¡Equipo de seguridad, respondan!",
+      "¡Que los centinelas más cercanos apoyen la evacuación!",
+      "¡No rompan formación!",
+      "¡Estudiantes fuera de los pasillos!",
+      "¡Superiores a la base, necesitamos apoyo!",
+      "¡Contengan la amenaza hasta que llegue refuerzo!"
     ],
-    "x": 1800,
-    "y": 700
+    "x": 3534,
+    "y": 612
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Darius",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los portales no siempre aparecen donde esperas.",
-      "A veces el camino correcto parece incorrecto.",
-      "Observa bien el terreno."
+      "No sé si estoy vigilando una escuela o una fábrica de cerebros.",
+      "Aquí uno parpadea y ya alguien resolvió tres ecuaciones.",
+      "El nivel IQ de estos estudiantes debería venir con casco de seguridad.",
+      "Yo vine a vigilar puertas y terminé aprendiendo trucos mentales.",
+      "Escuché una clase por accidente y casi salgo con diploma.",
+      "Estos chicos no hacen tareas, hacen hechicería con números.",
+      "Si sigo haciendo guardia aquí, voy a empezar a hablar en fórmulas.",
+      "A veces entiendo la mitad de lo que dicen y aun así me siento más inteligente.",
+      "Voy a probar ese truco en casa, o a romper algo intentando.",
+      "Aquí hasta las paredes parecen saber más que uno."
     ],
     "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡Nos están persiguiendo!",
-      "¡Huyan!",
-      "¡Peligro!"
+      "¡Esos monstruos volvieron!",
+      "¡No quiero morir aquí!",
+      "¡Sáquenme de aquí!",
+      "¡Corran, rápido!",
+      "¡Ahí vienen esas cosas!",
+      "¡Qué miedo!"
     ],
-    "x": 2100,
-    "y": 950
+    "x": 3388,
+    "y": 3458
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Lucan",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "El mapa guarda patrones.",
-      "Si miras suficiente tiempo los verás.",
-      "Nada es casualidad."
+      "Marek ya debería haber vuelto de ese laberinto.",
+      "No me gusta que hayan mandado a Marek solo a buscar al director.",
+      "Ese laberinto tiene algo raro, siempre lo he dicho.",
+      "Marek conoce bien los protocolos, pero allá adentro cualquiera se pierde.",
+      "Ha pasado demasiado tiempo desde que Marek entró por el director.",
+      "Si Marek está jugando una broma, esta vez no me voy a reír.",
+      "Ojalá Marek no se haya metido hasta la zona más profunda.",
+      "Dicen que en ese laberinto aparecen cosas que no salen en los mapas.",
+      "No creo en fantasmas, pero ese lugar sí da mala espina.",
+      "Si Marek vuelve entero, le voy a reclamar por preocuparme así.",
+      "El director entró primero, Marek fue después, y ninguno ha regresado.",
+      "Algo no cuadra con ese laberinto."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
-      "¡Nos atacan!",
-      "¡Corran ya!",
-      "¡Enemigo al frente!"
+      "¡Corran, rápido!",
+      "¡Ahí vienen esas cosas!",
+      "¡Qué miedo!",
+      "¡Escóndanse!",
+      "¡No miren atrás, corran!",
+      "¡Son demasiados!"
     ],
-    "x": 2400,
-    "y": 1200
+    "x": 2487,
+    "y": 3547
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Rael",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los viajeros sabios escuchan antes de actuar.",
-      "La paciencia también es una herramienta.",
-      "No subestimes los detalles."
+      "Escuché que un vendedor ilegal está rondando por esta zona.",
+      "Algunos estudiantes hablan de un comerciante escondido entre los arbustos.",
+      "Ese vendedor aparece, vende sus rarezas y desaparece antes del cambio de guardia.",
+      "Dicen que nadie le ve la cara, solo el puesto y los objetos extraños.",
+      "Si los rumores son ciertos, el comerciante no debe estar muy lejos.",
+      "Voy a revisar con calma; ese vendedor ya se me escapó demasiadas veces.",
+      "Un estudiante dijo que lo vio cerca de unos árboles en el ala sureste.",
+      "Los rumores siempre terminan apuntando hacia los arbustos del ala sureste."
     ],
     "dialogos_miedo": [
-      "¡Ayuda!",
-      "¡Retrocedan!",
-      "¡Corran!",
-      "¡Vienen hacia acá!"
+      "¡No me dejen solo!",
+      "¡Esas cosas están aquí!",
+      "¡Corran por sus vidas!",
+      "¡Aléjense de aquí!",
+      "¡Qué horror!",
+      "¡Esos monstruos volvieron!",
+      "¡No quiero morir aquí!!",
+      "¡No quiero morir aquí!"
     ],
-    "x": 2700,
-    "y": 1000
+    "x": 3695,
+    "y": 4430
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Korin",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "La energía aquí fluctúa.",
-      "A veces abre rutas nuevas.",
-      "Mantente atento."
+      "Me gusta este lugar, pero también me pone nervioso.",
+      "Entre el hielo, el agua y esos hologramas, uno siente que está en otro mundo.",
+      "Las zonas de RA del acuario muestran criaturas oceánicas bastante extrañas.",
+      "A veces no sé si estoy viendo un pez raro o una especie que todavía no ha sido clasificada.",
+      "No tengo idea de qué contienen esos algoritmos del conocimiento.",
+      "Lo raro es que antes esta zona era más abierta y ahora parece un archivo sellado."
     ],
     "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡Nos invaden!",
-      "¡Corran, deprisa!",
+      "¡Evacúen la zona con calma!",
+      "¡Que alguien avise a los maestros!",
+      "¡No entren en pánico, sigan el protocolo!",
+      "¡Bloqueen los pasillos cercanos!",
+      "¡Necesito reporte de cada sector!",
+      "¡Prioridad: sacar a los civiles!",
+      "¡Comuniquen esto al centro de mand",
       "¡Hay un enemigo!"
     ],
-    "x": 3000,
-    "y": 800
+    "x": 1697,
+    "y": 542
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Valen",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los símbolos antiguos no son decoración.",
-      "Cada uno tiene un propósito.",
-      "Aprende a reconocerlos."
+      "Ese es el portal de adopción, ¿no? Siempre veo gente rarísima salir de ahí.",
+      "No entiendo cómo funciona ese portal, pero actúo como si fuera normal.",
+      "Esta escuela tiene árboles, portales y estudiantes genios; ya nada me sorprende.",
+      "Ayer salió alguien de ese portal preguntando qué año era.",
+      "Ese portal parece una lavadora de galaxias, pero todos dicen que es seguro.",
+      "Yo solo vigilo la zona; entender el portal ya es trabajo de cerebros grandes.",
+      "Cada vez que el portal brilla, me preparo para saludar a alguien extraño.",
+      "Dicen que por ahí llegan nuevos compañeros, pero algunos llegan más confundidos que yo.",
+      "Ese portal hace ruidos raros y aun así todos caminan tranquilos.",
+      "Si un día salgo yo de ese portal, espero venir con más nivel IQ."
     ],
     "dialogos_miedo": [
       "¡Ayuda!",
-      "¡No se detengan!",
-      "¡Huyan!",
-      "¡Nos alcanzarán!"
+      "¡Qué miedo!",
+      "¡Escóndanse!",
+      "¡No miren atrás, corran!",
+      "¡Son demasiados!",
+      "¡No se acerquen!",
+      "¡Esas bestias están cerca!",
+      "¡Ayuda, por favor!",
+      "¡Algo horrible viene!"
     ],
-    "x": 3300,
-    "y": 900
+    "x": 3284,
+    "y": 2745
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Tarek",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Los exploradores curiosos llegan más lejos.",
-      "Pero también se pierden más.",
-      "Equilibra ambas cosas."
+      "Este acuario virtual parece sacado de una ciudad perdida bajo el hielo.",
+      "Siempre que entro aquí siento que la Antártida esconde más secretos de los que cuenta.",
+      "Las zonas de RA de este acuario son tan reales que a veces olvido que sigo dentro del Domo.",
+      "He visto especies marinas aquí que no se parecen a nada que conozca.",
+      "No entiendo qué son esos algoritmos del conocimiento, pero antes no estaban cerrados así.",
+      "Algo cambió en este lugar; ahora todo está más restringido y más encriptado."
     ],
     "dialogos_miedo": [
-      "¡Auxilio!",
-      "¡A correr!",
-      "¡Nos siguen!",
-      "¡Un monstruo!"
+      "¡Informen a la base, ahora!",
+      "¡Todos a sus posiciones!",
+      "¡Activen el protocolo de emergencia!",
+      "¡Cierren los accesos principales!",
+      "¡Protejan a los estudiantes!",
+      "¡Nadie se quede solo!",
+      "¡Soliciten refuerzos de inmediato!",
+      "¡Mantengan la formación!",
+      "¡Evacúen la zona con calma!"
     ],
-    "x": 3505,
-    "y": 1025
+    "x": 1526,
+    "y": 564
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Marek",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Hay zonas donde la gravedad se comporta extraño.",
-      "No todo sigue las reglas normales.",
-      "Experimenta."
+      "No debí entrar tan profundo en este laberinto.",
+      "El profesor solo me pidió buscar al director, no perderme aquí dentro.",
+      "Vi al director entrar al laberinto con uno de los científicos.",
+      "Perdí el rastro del director entre estos pasillos oscuros.",
+      "Estos pasillos no terminan, debí marcar el camino.",
+      "No reconozco esta zona del ala suroeste.",
+      "Algo se mueve entre los muros del laberinto.",
+      "No era estudiante ni maestro; esa criatura tenía escamas.",
+      "No era un animal común; caminaba como soldado y tenía escamas.",
+      "Esa criatura escamosa llevaba un arma que nunca había visto.",
+      "Su arma no parecía tecnología del Domo.",
+      "Me atacó tan rápido que apenas pude escapar.",
+      "Solté mi arma cuando corrí por el pasillo estrecho del ala suroeste.",
+      "Mi arma debe estar cerca de una curva cerrada del laberinto.",
+      "Creo que perdí mi arma cerca de un muro con luces verdosas.",
+      "Mi arma cayó antes de llegar a la zona más profunda.",
+      "Escuché el golpe de mi arma contra el suelo, pero no pude volver.",
+      "No puedo defenderme si esa criatura vuelve a encontrarme.",
+      "Hay un laboratorio oculto en la parte profunda del ala suroeste.",
+      "Vi máquinas extrañas dentro de un laboratorio que no aparece en los mapas.",
+      "Había cápsulas, luces frías y criaturas escamosas vigilando el laboratorio.",
+      "En ese laboratorio había más criaturas como la que me atacó.",
+      "No entiendo cómo construyeron un laboratorio secreto dentro del Domo.",
+      "El laboratorio estaba lleno de armas y tecnología desconocida.",
+      "Vi criaturas armadas moviéndose como si protegieran algo.",
+      "Algo muy grave está escondido en el ala suroeste.",
+      "Nadie nos advirtió que había criaturas dentro del laberinto.",
+      "Este no es un simple sector restringido.",
+      "El laberinto protege algo mucho más grande que una central de energía.",
+      "Si el director entró allí, puede estar en peligro.",
+      "No sé si el científico ayudaba al director o lo guiaba hacia una trampa.",
+      "Necesito encontrar mi arma antes de intentar salir.",
+      "Si hago ruido, esas criaturas podrían volver.",
+      "Debo respirar despacio o van a escucharme.",
+      "Cada sonido en este laberinto parece acercarse.",
+      "No puedo volver con el profesor sin saber qué pasó con el director.",
+      "El ala suroeste no está abandonada; algo vive ahí dentro.",
+      "Vi demasiadas criaturas para que esto sea un accidente.",
+      "Alguien escondió ese laboratorio debajo de la escuela.",
+      "Necesito salir de aquí y avisar lo que vi."
     ],
     "dialogos_miedo": [
       "¡Ayuda!",
@@ -194,17 +329,26 @@
       "¡Corran!",
       "¡No quiero morir!"
     ],
-    "x": 3900,
-    "y": 950
+    "x": 1431,
+    "y": 4434
   },
   {
     "imagen": "../assets/avatares/npc/mapa1/Centinela.png",
     "nombre": "Centinela-Orion",
     "velocidad": 1,
     "dialogos_automaticos": [
-      "Las rutas más seguras no siempre son las mejores.",
-      "A veces debes arriesgarte.",
-      "El universo recompensa a los valientes."
+      "Veo estudiantes entrar y salir de esos portales, y yo ya me estoy mareando.",
+      "Entran, salen, vuelven a entrar… esos portales no respetan mi equilibrio.",
+      "Me pregunto qué habrá después de esos portales de realidad aumentada.",
+      "Escuché que esas zonas de RA mezclan hologramas con entrenamiento físico real.",
+      "Dicen que en las zonas de RA uno ataca cosas virtuales, pero el cansancio es real.",
+      "No sé si eso es tecnología, biología o una excusa elegante para hacer ejercicio.",
+      "Un estudiante salió de ahí sudando y dijo que solo peleó contra una simulación.",
+      "Si una simulación te deja sin aire, yo prefiero seguir vigilando desde afuera.",
+      "Aquí llaman “realidad aumentada” a lugares donde te aumentan los golpes.",
+      "La tecnobiología suena bonita hasta que una planta holográfica intenta morderte.",
+      "Dicen que esos portales entrenan el cuerpo y la mente al mismo tiempo.",
+      "Yo entraría a probar una zona de RA, pero mi turno de guardia me salvó la vida."
     ],
     "dialogos_miedo": [
       "¡Auxilio!",
@@ -212,7 +356,90 @@
       "¡Corran ahora!",
       "¡Enemigos cerca!"
     ],
-    "x": 4200,
-    "y": 850
+    "x": 4457,
+    "y": 2173
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/pinkiry.png",
+    "nombre": "Pinkiry",
+    "velocidad": 0.8,
+    "dialogos_automaticos": [
+      "¡Gehrr! ¡Gehrrr! ¡GEEEH!",
+      "¡GRAAAK-GEHRRRAAAH! ¡GEEEH! ¡GEEEH!… me asustaste, colega.",
+      "¡GRAK! ¡GEHRR-GEEEH!… me asustaste, colega.",
+      "¡GRAAAK! ¡GRAAAK! ¡GEEEHRRRAAAH!",
+      "¡GARRK-GARRK! ¡GEEEH! ¡GEEEH!",
+      "¡GROOOK! ¡GEHRR! ¡GEHRR!",
+      "¡Gehrr! ¡Gehrr! Dale click a la fuente… ¡GEEEH! Siete veces, colega.",
+      "¡GRAK! ¡Gehrr! Dale click… click… click… a la fuente siete veces.",
+      "¡Gehrrr! ¡Gehrrr! Siete veces… ¡a la fuente, colega!",
+      "¡GEEEH! Código secreto… ¡Gehrr! Código secreto…",
+      "¡Gehrr… gehrr… código secreto… en laboratorio secretoo…!",
+      "¡GRAK! ¡GRAK! Código secreto… laboratorio secretoo… ¡GEEEH!",
+      "¡Gehrrr! Directooor… Directooor…",
+      "¡GEEEH! Directooor… no entres ahiii… ¡muy peligrosoo!",
+      "¡Gehrr… cuidado… cuidado…!",
+      "¡Gehrrr! No… no… cuidado, colega…",
+      "¡GRAAAK! Mounstro… mounstro… ¡ahhhh!",
+      "¡Gehrr! ¡Gehrr! Mounstro… mounstro… ¡GEEEH!",
+      "¡Gehrr… gehrr… me asustaste, colega!"
+    ],
+    "dialogos_miedo": [
+      "¡Hoyyy noo! ¡Fuera, mounstro! ¡GRAK-GRAK! ¡GEEEH!",
+      "¡Ayuda, ayuda! ¡Gehrr! ¡Gehrrr! ¡GEEEH!",
+      "¡Abuelitaaa! ¡Me lleva el gatoo! ¡GRAAAK-GEHRRRAAAH!",
+      "¡Gehrr! ¡Gehrr! ¡Mounstro rarooo!",
+      "¡GRAK! ¡GRAK! ¡Eso camina feooo!",
+      "¡No me mireees! ¡No me mireees! ¡GEEEH!",
+      "¡Mounstrooo! ¡Mounstrooo! ¡Ahhhh! ¡Gehrrr!",
+      "¡Gehrr… gehrr… ese bicho no es de aquííí!",
+      "¡GRAAAK! ¡Tiene cara de comerse cotorroo!",
+      "¡No soy comidaaa! ¡Soy Pinkiry! ¡GEEEH!",
+      "¡Gehrrr! ¡Alitas, funcionen ahoraaa!",
+      "¡Mounstro con patas raras! ¡GRAK-GRAK!",
+      "¡Ay mis plumaaas! ¡Eso se está acercandooo!",
+      "¡GEEEH! ¡Ese mounstro huele a problemaaa!",
+      "¡Gehrr! ¡Gehrr! ¡Fuera de mi fuenteee!",
+      "¡Nooo! ¡Hoy no peleo con bichos feos!",
+      "¡GRAK! ¡GRAK! ¡Mounstro a la vistaaa!",
+      "¡Me hago el dormidooo! ¡Gehrr… gehrr…!",
+      "¡Directooor! ¡Directooor! ¡Hay mounstros rarooos!",
+      "¡Gehrrr! ¡Ese no es visitante, ese es sustooo!",
+      "¡Ay nooo! ¡Tiene ojitos de problemaaa! ¡GEEEH!",
+      "¡Mounstro, mounstro, mounstrooo! ¡GRAAAK!",
+      "¡Gehrr! ¡Gehrr! ¡Me asustaste, colega!"
+    ],
+    "x": 866,
+    "y": 3990
+  },
+  {
+    "imagen": "../assets/avatares/npc/mapa1/Eira.png",
+    "nombre": "Eira",
+    "velocidad": 1.3,
+    "dialogos_automaticos": [
+      "Los juegos de esta zona no son solo diversión; también suben el nivel IQ.",
+      "Cada partida ganada deja algo útil para el inventario.",
+      "Me encanta cuando un juego me da Cosmonedas y de paso aprendo algo nuevo.",
+      "Si ganas más juegos, consigues mejores ITEMS para futuras misiones.",
+      "Yo vine a probar un juego rápido y terminé entrenando mi cerebro.",
+      "Las zonas de juego son peligrosas para mi horario de clases.",
+      "Entre más retos superas, más recompensas aparecen.",
+      "No sé si estoy jugando o estudiando biología planetaria con premios.",
+      "Ganar Cosmonedas se siente bien, pero subir el IQ se siente mejor.",
+      "Voy a jugar una ronda más… solo una… bueno, tal vez dos."
+    ],
+    "dialogos_miedo": [
+      "¡Ayuda!",
+      "¡Tenemos que huir!",
+      "Son demasiados!",
+      "¡No se acerquen!",
+      "¡Esas bestias están cerca!",
+      "¡Ayuda, por favor!",
+      "¡Algo horrible viene!",
+      "¡Corran, ya!",
+      "¡No se acerquen!"
+    ],
+    "x": 1081,
+    "y": 2644
   }
 ]

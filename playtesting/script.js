@@ -14516,6 +14516,16 @@ function continuarTrasGameOver() {
   function aplicarDanioABloqueArcilla(obj, danio, impactoX, impactoY) {
     if (!esBloqueArcilla(obj)) return false;
 
+    // Si el bloque pertenece a una misión específica,
+    // solo se puede romper cuando esa misión esté activa.
+    if (obj.missionId) {
+      const activeMissionId = window.missionSystem?.activeMissionId;
+
+      if (activeMissionId !== obj.missionId) {
+        return false;
+      }
+    }
+
     obj.pdr = Math.max(0, (Number(obj.pdr || BLOQUE_ARCILLA_PDR)) - (Number(danio) || 0));
 
     crearParticulasArcilla(impactoX, impactoY);
@@ -14523,6 +14533,10 @@ function continuarTrasGameOver() {
     if (obj.pdr <= 0) {
       playArcillaBreakSound();
       crearParticulasArcilla(obj.x + obj.w / 2, obj.y + obj.h / 2);
+
+      if (obj.funcion && typeof window[obj.funcion] === "function") {
+        window[obj.funcion](obj);
+      }
 
       ambienteObjetos = ambienteObjetos.filter(el =>
         el !== obj && el.bloque_padre_id !== obj.zona_id

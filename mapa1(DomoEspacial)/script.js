@@ -4,8 +4,8 @@
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-let userPostX = 2600;
-let userPostY = 2797;
+let userPostX = 2513;
+let userPostY = 2716;
 
 function getSettingSfxVolume() {
   const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
@@ -6933,6 +6933,70 @@ function continuarTrasGameOver() {
     openRetoPopup("reto_codificacion_01", completarRetoMission);
   };
 
+  // Misión 4: Romper arcillas en dojo (Inicio)
+  let arcillasRompidas = 0;
+  let arcillasRompidasIds = new Set();
+  let retoRomperArcillasCompletado = false;
+
+  window.romperBloquesArcilla = function () {
+    arcillasRompidas = 0;
+    arcillasRompidasIds = new Set();
+    retoRomperArcillasCompletado = false;
+
+    showPopupFeedback({
+      title: "Reto iniciado",
+      message: "Rompe los bloques de arcilla para completar el entrenamiento.",
+      type: "info",
+      duration: 4000
+    });
+
+    console.log("Reto romperBloquesArcilla iniciado.");
+  };
+
+  window.romperArcilla = function (obj = null) {
+    if (retoRomperArcillasCompletado) return;
+
+    const mission = getActiveMission();
+    if (!mission || mission.id !== "m4") return;
+
+    const stepIndex = window.missionSystem.activeStepIndexByMission[mission.id] ?? 0;
+    const step = mission.pasos?.[stepIndex];
+
+    if (!step || step.tipo !== "completar_reto") return;
+    if (step.retoId !== "romperBloquesArcilla") return;
+
+    const bloqueId = obj?.zona_id || `bloque_${arcillasRompidas + 1}`;
+
+    if (arcillasRompidasIds.has(bloqueId)) return;
+    arcillasRompidasIds.add(bloqueId);
+
+    arcillasRompidas++;
+
+    const cantidadObjetivo = Number(step.cantidadObjetivo || 6);
+
+    console.log(`Arcillas rompidas: ${arcillasRompidas}/${cantidadObjetivo}`);
+
+    if (arcillasRompidas >= cantidadObjetivo) {
+      retoRomperArcillasCompletado = true;
+
+      if (Array.isArray(step.otorgaItems) && step.otorgaItems.length) {
+        giveMissionItems(step.otorgaItems);
+      }
+
+      completarRetoMission("romperBloquesArcilla");
+
+      showPopupFeedback({
+        title: "Entrenamiento completado",
+        message: "Rompiste los bloques y recibiste un escudo de madera.",
+        type: "success",
+        duration: 4500
+      });
+
+      console.log("Reto romperBloquesArcilla completado.");
+    }
+  };
+  // Misión 4: Romper arcillas en dojo (Fin)
+
   /*Espacio para llamar funciones al compeltar retos (fin) */
 
   //------------------------------Espacio para llamamiento de funciones de retos desde los NPCs (inicio)--------------------
@@ -11770,6 +11834,132 @@ function continuarTrasGameOver() {
       "item_id": "pistola_lazer",
       "x": 16,
       "y": 4053
+    },
+    {
+      "instancia_id": "itm_mapa_03",
+      "item_id": "sal",
+      "x": 1082,
+      "y": 1109
+    },
+    {
+      "instancia_id": "itm_mapa_04",
+      "item_id": "limon",
+      "x": 1116,
+      "y": 1109
+    },
+    {
+      "instancia_id": "itm_mapa_05",
+      "item_id": "baso",
+      "x": 1149,
+      "y": 1109
+    },
+    {
+      "instancia_id": "itm_mapa_06",
+      "item_id": "plastico",
+      "x": 3724,
+      "y": 2280
+    },
+    {
+      "instancia_id": "itm_mapa_07",
+      "item_id": "plastico",
+      "x": 3518,
+      "y": 2223
+    },
+    {
+      "instancia_id": "itm_mapa_09",
+      "item_id": "plastico",
+      "x": 3329,
+      "y": 2234
+    },
+    {
+      "instancia_id": "itm_mapa_10",
+      "item_id": "plastico",
+      "x": 2962,
+      "y": 1905
+    },
+    {
+      "instancia_id": "itm_mapa_12",
+      "item_id": "plastico",
+      "x": 4552,
+      "y": 1431
+    },
+    {
+      "instancia_id": "itm_mapa_13",
+      "item_id": "plastico",
+      "x": 4410,
+      "y": 2398
+    },
+    {
+      "instancia_id": "itm_mapa_14",
+      "item_id": "plastico",
+      "x": 4847,
+      "y": 2687
+    },
+    {
+      "instancia_id": "itm_mapa_15",
+      "item_id": "plastico",
+      "x": 1852,
+      "y": 1926
+    },
+    {
+      "instancia_id": "itm_mapa_16",
+      "item_id": "plastico",
+      "x": 1514,
+      "y": 2097
+    },
+    {
+      "instancia_id": "itm_mapa_18",
+      "item_id": "plastico",
+      "x": 3662,
+      "y": 605
+    },
+    {
+      "instancia_id": "itm_mapa_19",
+      "item_id": "plastico",
+      "x": 4488,
+      "y": 436
+    },
+    {
+      "instancia_id": "itm_mapa_20",
+      "item_id": "plastico",
+      "x": 1624,
+      "y": 478
+    },
+    {
+      "instancia_id": "itm_mapa_21",
+      "item_id": "plastico",
+      "x": 2208,
+      "y": 559
+    },
+    {
+      "instancia_id": "itm_mapa_22",
+      "item_id": "plastico",
+      "x": 1102,
+      "y": 338
+    },
+    {
+      "instancia_id": "itm_mapa_23",
+      "item_id": "plastico",
+      "x": 2828,
+      "y": 1365
+    },
+    {
+      "instancia_id": "itm_mapa_24",
+      "item_id": "plastico",
+      "x": 2889,
+      "y": 981
+    },
+    {
+      "instancia_id": "itm_mapa_27",
+      "item_id": "plastico",
+      "x": 3655,
+      "y": 3820
+    },
+    {
+      "instancia_id": "itm_mapa_28",
+      "item_id": "plastico",
+      "x": 77,
+      "y": 685
     }
   ];
 
@@ -13522,6 +13712,16 @@ function continuarTrasGameOver() {
   function aplicarDanioABloqueArcilla(obj, danio, impactoX, impactoY) {
     if (!esBloqueArcilla(obj)) return false;
 
+    // Si el bloque pertenece a una misión específica,
+    // solo se puede romper cuando esa misión esté activa.
+    if (obj.missionId) {
+      const activeMissionId = window.missionSystem?.activeMissionId;
+
+      if (activeMissionId !== obj.missionId) {
+        return false;
+      }
+    }
+
     obj.pdr = Math.max(0, (Number(obj.pdr || BLOQUE_ARCILLA_PDR)) - (Number(danio) || 0));
 
     crearParticulasArcilla(impactoX, impactoY);
@@ -13529,6 +13729,10 @@ function continuarTrasGameOver() {
     if (obj.pdr <= 0) {
       playArcillaBreakSound();
       crearParticulasArcilla(obj.x + obj.w / 2, obj.y + obj.h / 2);
+
+      if (obj.funcion && typeof window[obj.funcion] === "function") {
+        window[obj.funcion](obj);
+      }
 
       ambienteObjetos = ambienteObjetos.filter(el =>
         el !== obj && el.bloque_padre_id !== obj.zona_id
@@ -15293,6 +15497,194 @@ function continuarTrasGameOver() {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas. 
 
+function tomarItemDeArcilla() {
+
+  const itemArcilla = {
+    id: "arcilla",
+    nombre_item: "Arcilla",
+    tipo_item: "material",
+    imagen: "../assets/items/arcilla.svg",
+    agotable: false,
+    cantidad_de_usos: null,
+    cuanto_quita_de_vida_al_enemigo: 0,
+    desaparece_al_agotarse: true,
+    creable: false,
+    materiales_requeridos_para_crear: [],
+    combinable: true,
+    precio_compra: 1
+  };
+
+  const agregado = agregarItemAlInventario({
+    ...itemArcilla,
+    cantidad: 1,
+    usos: null,
+    usos_maximos: null
+  });
+
+  if (!agregado) {
+    playerrorSound();
+    return;
+  }
+
+  showPopupFeedback({
+    title: "Recolección",
+    message: "Has tomado arcilla.",
+    type: "success",
+    duration: 5000
+  });
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+  const activeMissionId = window.missionSystem.activeMissionId;
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+}
+
+function tomarItemDeBasura() {
+
+  if (!Array.isArray(itemsData) || itemsData.length === 0) return;
+
+  // ❌ Items prohibidos
+  const itemsProhibidos = ["escudo_de_hierro", "espada_de_hierro", "patines", "pico_escabador", "bumerang", "antorcha", "espada_de_madera", "escudo_de_madera", "pistola_laser"];
+
+  // ✔ Filtrar items válidos
+  const itemsValidos = itemsData.filter(item => !itemsProhibidos.includes(item.id));
+
+  if (itemsValidos.length === 0) return;
+
+  // 🎲 Elegir uno aleatorio
+  const itemRandom = itemsValidos[Math.floor(Math.random() * itemsValidos.length)];
+
+  const agregado = agregarItemAlInventario({
+    ...itemRandom,
+    cantidad: 1,
+    usos: itemRandom.cantidad_de_usos ?? null,
+    usos_maximos: itemRandom.cantidad_de_usos ?? null,
+    cuanto_quita_de_vida_al_enemigo: itemRandom.cuanto_quita_de_vida_al_enemigo ?? 0,
+    desaparece_al_agotarse: itemRandom.desaparece_al_agotarse === true
+  });
+
+  if (!agregado) {
+    playerrorSound();
+    return;
+  }
+
+  showPopupFeedback({
+    title: "Basura revisada",
+    message: `Encontraste: ${itemRandom.nombre_item}`,
+    type: "success",
+    duration: 5000
+  });
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+  const activeMissionId = window.missionSystem.activeMissionId;
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+}
+
+function tomarAguaDeFuente() {
+  const agregado = agregarItemAlInventario({
+    id: "agua",
+    nombre_item: "Agua",
+    tipo_item: "consumible",
+    imagen: "../assets/items/agua.svg",
+    agotable: false,
+    cantidad: 1,
+    usos: null,
+    usos_maximos: null,
+    cuanto_quita_de_vida_al_enemigo: 0,
+    desaparece_al_agotarse: true
+  });
+
+  if (!agregado) {
+    playerrorSound();
+    return;
+  }
+
+  showPopupFeedback({
+    title: "Recolección",
+    message: "Has tomado agua.",
+    type: "success",
+    duration: 5000
+  });
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  const activeMissionId = window.missionSystem.activeMissionId;
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+}
+function tomarTimonDeArbol() {
+
+  // 🎲 50% limón / 50% madera
+  const esLimon = Math.random() < 0.5;
+
+  const itemSeleccionado = esLimon
+    ? {
+      id: "limon",
+      nombre_item: "Limón",
+      tipo_item: "consumible",
+      imagen: "../assets/items/limon.svg",
+      agotable: false,
+      cantidad_de_usos: null,
+      cuanto_quita_de_vida_al_enemigo: 0,
+      desaparece_al_agotarse: true,
+      creable: false,
+      materiales_requeridos_para_crear: [],
+      combinable: true,
+      precio_compra: 1
+    }
+    : {
+      id: "madera",
+      nombre_item: "Madera",
+      tipo_item: "material",
+      imagen: "../assets/items/madera.svg",
+      agotable: false,
+      cantidad_de_usos: null,
+      cuanto_quita_de_vida_al_enemigo: 0,
+      desaparece_al_agotarse: true,
+      creable: false,
+      materiales_requeridos_para_crear: [],
+      combinable: true,
+      precio_compra: 1
+    };
+
+  const agregado = agregarItemAlInventario({
+    ...itemSeleccionado,
+    cantidad: 1,
+    usos: null,
+    usos_maximos: null
+  });
+
+  if (!agregado) {
+    playerrorSound();
+    return;
+  }
+
+  showPopupFeedback({
+    title: "Recolección",
+    message: `Encontraste: ${itemSeleccionado.nombre_item}`,
+    type: "success",
+    duration: 5000
+  });
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  const activeMissionId = window.missionSystem.activeMissionId;
+  if (activeMissionId) {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+}
 
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (FIN) */
 
