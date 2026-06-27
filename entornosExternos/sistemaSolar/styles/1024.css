@@ -1,0 +1,55 @@
+/*Responsive 1024px*/
+/*Header*/
+@media (max-width: 1024px) {
+    .logo{
+      width: 128px;
+    }
+    #gameFilter{
+      width: 30%;
+    }
+    .items-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: var(--background-5);
+        border: 1px solid var(--background-2);
+        padding: 24px;
+    }
+    .items-menu.active {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    #gameFilter {
+      width: 40px; /* Se hace un círculo */
+      height: 40px;
+      padding: 0;
+      text-align: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out; /* Transición suave */
+      overflow: hidden;
+    }
+    
+    #gameFilter::placeholder {
+      color: transparent; /* Oculta el placeholder en estado normal */
+      transition: color 0.2s ease-in-out; /* Transición del color */
+    }
+    
+    #gameFilter:focus {
+      width: 120px; /* Se expande al hacer clic */
+      background-image: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      text-align: left;
+      transition: all 0.3s ease-in-out; /* Mantiene la transición */
+    }
+    
+    #gameFilter:focus::placeholder {
+      color: rgba(255, 255, 255, 0.5); /* Muestra el placeholder suavemente */
+    }
+    
+  }

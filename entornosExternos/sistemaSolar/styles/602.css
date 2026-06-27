@@ -1,0 +1,51 @@
+/*Responsive 1024px*/
+/*Header*/
+@media (max-width: 602px) {
+  header{
+    position: relative;
+  }
+  .logo{
+    width: 100px;
+  }
+  #gameFilter{
+    display: none;
+  }
+  .box-left{
+    position: fixed;
+    top: 92px;
+    left: 0;
+    z-index: 2;
+    height: calc(95vh - 115px);
+  }
+  .box-coin img{
+    height: 30px;
+    margin-left: -15px;
+  }
+  .list-games{
+    height: 50vh;
+    overflow-y: scroll;
+    gap: 20px;
+    padding-bottom: 50px;
+  }
+  .games{
+    max-width: 230px;
+    max-height: 230px;
+  }
+  .container-steam p{
+    display: none;
+  }
+  .box-categoria p{
+    display: none !important;
+  }
+  .container-conten {
+    display: flex;
+    height: calc(100vh - 110px);
+}
+.box-center{
+  padding-left: 72px;
+  gap: 0;
+}
+.box-buttons-navegate {
+  margin-bottom: -21px;
+}
+}

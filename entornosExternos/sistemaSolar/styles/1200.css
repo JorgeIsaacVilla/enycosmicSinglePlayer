@@ -1,0 +1,15 @@
+@media (max-width: 1200px) {
+  .container-conten{
+    gap: 15px;
+  }
+  #closetFilter{
+    display: block;
+  }
+  .list-games{
+    width: auto;
+    height: auto;
+  }
+  .games{
+    height: 40%;
+  }
+}

@@ -12516,6 +12516,8 @@ function continuarTrasGameOver() {
   function intentarCrearItemFinal() {
     if (!combinacionResultado) return;
 
+    const scrollInventario = getInventarioScrollState();
+
     const probabilidad =
       IQuser >= 700
         ? 1
@@ -15495,7 +15497,2963 @@ function continuarTrasGameOver() {
 })();
 
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
-//En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas. 
+//En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
+
+//Cuestionario de preguntas de planetario (inicio)
+// ======================================================
+// CUESTIONARIO PLANETARIO - MAPA 1 DOMO ESPACIAL
+// Computadores del planetario
+// Cada 5 respuestas correctas: +1 IQ +2 cosmonedas
+// Total al completar 50: +10 IQ +20 cosmonedas
+// ======================================================
+
+//const PLANETARIO_QUIZ_STORAGE_KEY = "enycosmic_mapa1_planetario_quiz_v1";
+
+const PLANETARIO_QUIZ_QUESTIONS = [
+  {
+    id: "pq001",
+    pregunta: "¿Qué tipo de astro es el Sol?",
+    opciones: ["Un planeta", "Una estrella", "Un satélite", "Un cometa"],
+    correcta: 1
+  },
+  {
+    id: "pq002",
+    pregunta: "¿Qué proceso produce energía en el núcleo solar?",
+    opciones: ["Fusión nuclear", "Evaporación", "Oxidación", "Sedimentación"],
+    correcta: 0
+  },
+  {
+    id: "pq003",
+    pregunta: "¿Cuál es el planeta más cercano al Sol?",
+    opciones: ["Venus", "Mercurio", "Marte", "Tierra"],
+    correcta: 1
+  },
+  {
+    id: "pq004",
+    pregunta: "¿Qué planeta tiene temperaturas muy extremas?",
+    opciones: ["Mercurio", "Neptuno", "Júpiter", "Saturno"],
+    correcta: 0
+  },
+  {
+    id: "pq005",
+    pregunta: "¿Qué planeta tiene un fuerte efecto invernadero?",
+    opciones: ["Venus", "Urano", "Marte", "Plutón"],
+    correcta: 0
+  },
+  {
+    id: "pq006",
+    pregunta: "¿Qué gas abunda en la atmósfera de Venus?",
+    opciones: ["Oxígeno", "Dióxido de carbono", "Helio", "Neón"],
+    correcta: 1
+  },
+  {
+    id: "pq007",
+    pregunta: "¿Qué planeta es conocido por tener vida?",
+    opciones: ["Marte", "Tierra", "Venus", "Júpiter"],
+    correcta: 1
+  },
+  {
+    id: "pq008",
+    pregunta: "¿Qué cubre gran parte de la Tierra?",
+    opciones: ["Lava", "Arena", "Agua", "Metano líquido"],
+    correcta: 2
+  },
+  {
+    id: "pq009",
+    pregunta: "¿Qué protege a la Tierra del viento solar?",
+    opciones: ["Magnetosfera", "Corteza", "Nubes", "Océanos"],
+    correcta: 0
+  },
+  {
+    id: "pq010",
+    pregunta: "¿Qué causa muchas auroras en la Tierra?",
+    opciones: ["Polvo lunar", "Interacción solar", "Lluvia ácida", "Eclipses"],
+    correcta: 1
+  },
+  {
+    id: "pq011",
+    pregunta: "¿Qué planeta es llamado el planeta rojo?",
+    opciones: ["Venus", "Marte", "Saturno", "Mercurio"],
+    correcta: 1
+  },
+  {
+    id: "pq012",
+    pregunta: "¿Qué gas domina la atmósfera de Marte?",
+    opciones: ["Dióxido de carbono", "Oxígeno", "Hidrógeno", "Ozono"],
+    correcta: 0
+  },
+  {
+    id: "pq013",
+    pregunta: "¿Cuál es el planeta más grande del sistema solar?",
+    opciones: ["Saturno", "Júpiter", "Neptuno", "Tierra"],
+    correcta: 1
+  },
+  {
+    id: "pq014",
+    pregunta: "¿Qué es la Gran Mancha Roja de Júpiter?",
+    opciones: ["Un océano", "Una tormenta", "Una luna", "Una montaña"],
+    correcta: 1
+  },
+  {
+    id: "pq015",
+    pregunta: "¿Qué gases abundan en Júpiter?",
+    opciones: ["Hidrógeno y helio", "Oxígeno y ozono", "Nitrógeno y argón", "Metano y agua"],
+    correcta: 0
+  },
+  {
+    id: "pq016",
+    pregunta: "¿Qué planeta destaca por sus anillos?",
+    opciones: ["Saturno", "Marte", "Mercurio", "Venus"],
+    correcta: 0
+  },
+  {
+    id: "pq017",
+    pregunta: "¿De qué están hechos muchos anillos de Saturno?",
+    opciones: ["Hielo y rocas", "Fuego y gas", "Plantas", "Agua líquida"],
+    correcta: 0
+  },
+  {
+    id: "pq018",
+    pregunta: "¿Qué luna de Saturno tiene lagos de metano?",
+    opciones: ["Titán", "Europa", "Caronte", "Fobos"],
+    correcta: 0
+  },
+  {
+    id: "pq019",
+    pregunta: "¿Qué luna de Saturno expulsa géiseres?",
+    opciones: ["Encélado", "Titán", "Luna", "Caronte"],
+    correcta: 0
+  },
+  {
+    id: "pq020",
+    pregunta: "¿Qué planeta gira casi de lado?",
+    opciones: ["Urano", "Venus", "Marte", "Tierra"],
+    correcta: 0
+  },
+  {
+    id: "pq021",
+    pregunta: "¿Qué gas da tono azul a Urano?",
+    opciones: ["Metano", "Oxígeno", "Helio puro", "Dióxido de carbono"],
+    correcta: 0
+  },
+  {
+    id: "pq022",
+    pregunta: "¿Cuál es el planeta más lejano del Sol?",
+    opciones: ["Neptuno", "Saturno", "Júpiter", "Marte"],
+    correcta: 0
+  },
+  {
+    id: "pq023",
+    pregunta: "¿Qué planeta tiene vientos muy veloces?",
+    opciones: ["Neptuno", "Mercurio", "Venus", "Tierra"],
+    correcta: 0
+  },
+  {
+    id: "pq024",
+    pregunta: "¿Qué objeto fue reclasificado como planeta enano?",
+    opciones: ["Plutón", "Saturno", "Urano", "Venus"],
+    correcta: 0
+  },
+  {
+    id: "pq025",
+    pregunta: "¿Cómo se llama la luna grande de Plutón?",
+    opciones: ["Caronte", "Titán", "Io", "Europa"],
+    correcta: 0
+  },
+  {
+    id: "pq026",
+    pregunta: "¿Qué astro orbita la Tierra?",
+    opciones: ["La Luna", "El Sol", "Júpiter", "Andrómeda"],
+    correcta: 0
+  },
+  {
+    id: "pq027",
+    pregunta: "¿Por qué vemos siempre la misma cara lunar?",
+    opciones: ["Rotación sincronizada", "No rota", "Es plana", "No tiene órbita"],
+    correcta: 0
+  },
+  {
+    id: "pq028",
+    pregunta: "¿Qué estudia una astrofotografía?",
+    opciones: ["Imágenes del cielo", "Solo volcanes", "Solo plantas", "Solo sonidos"],
+    correcta: 0
+  },
+  {
+    id: "pq029",
+    pregunta: "¿Qué es Tycho?",
+    opciones: ["Un cráter lunar", "Una galaxia", "Un cometa", "Una luna de Marte"],
+    correcta: 0
+  },
+  {
+    id: "pq030",
+    pregunta: "¿Qué planeta fue observado por Galileo con lunas?",
+    opciones: ["Júpiter", "Mercurio", "Venus", "Urano"],
+    correcta: 0
+  },
+  {
+    id: "pq031",
+    pregunta: "¿Qué son las lunas galileanas?",
+    opciones: ["Lunas de Júpiter", "Rocas de Saturno", "Anillos solares", "Cráteres"],
+    correcta: 0
+  },
+  {
+    id: "pq032",
+    pregunta: "¿Qué galaxia se acerca a la Vía Láctea?",
+    opciones: ["Andrómeda", "Orión", "Carina", "Escorpio"],
+    correcta: 0
+  },
+  {
+    id: "pq033",
+    pregunta: "¿Qué es Betelgeuse?",
+    opciones: ["Supergigante roja", "Planeta enano", "Luna", "Nebulosa fría"],
+    correcta: 0
+  },
+  {
+    id: "pq034",
+    pregunta: "¿En qué constelación está Betelgeuse?",
+    opciones: ["Orión", "Escorpio", "Perseo", "Carina"],
+    correcta: 0
+  },
+  {
+    id: "pq035",
+    pregunta: "¿Qué es Antares?",
+    opciones: ["Supergigante roja", "Asteroide", "Planeta", "Satélite"],
+    correcta: 0
+  },
+  {
+    id: "pq036",
+    pregunta: "¿Qué estrella se conoce como estrella del demonio?",
+    opciones: ["Algol", "Sol", "S2", "Antares"],
+    correcta: 0
+  },
+  {
+    id: "pq037",
+    pregunta: "¿Qué es S2?",
+    opciones: ["Estrella cerca del centro galáctico", "Planeta", "Cometa", "Nebulosa"],
+    correcta: 0
+  },
+  {
+    id: "pq038",
+    pregunta: "¿Qué objeto puede tener gravedad extrema?",
+    opciones: ["Agujero negro", "Cometa pequeño", "Nube baja", "Satélite artificial"],
+    correcta: 0
+  },
+  {
+    id: "pq039",
+    pregunta: "¿Qué puede atrapar incluso la luz?",
+    opciones: ["Agujero negro", "Luna", "Atmósfera", "Océano"],
+    correcta: 0
+  },
+  {
+    id: "pq040",
+    pregunta: "¿Qué representa una escala planetaria?",
+    opciones: ["Tamaños y distancias", "Solo colores", "Solo sonidos", "Solo climas"],
+    correcta: 0
+  },
+  {
+    id: "pq041",
+    pregunta: "¿Qué planeta tiene el Monte Olimpo?",
+    opciones: ["Marte", "Venus", "Saturno", "Neptuno"],
+    correcta: 0
+  },
+  {
+    id: "pq042",
+    pregunta: "¿Qué planeta tiene nubes de ácido sulfúrico?",
+    opciones: ["Venus", "Tierra", "Marte", "Urano"],
+    correcta: 0
+  },
+  {
+    id: "pq043",
+    pregunta: "¿Qué elemento forma parte del Sol en gran cantidad?",
+    opciones: ["Hidrógeno", "Hierro sólido", "Oro", "Plomo"],
+    correcta: 0
+  },
+  {
+    id: "pq044",
+    pregunta: "¿Qué mantiene a los planetas orbitando al Sol?",
+    opciones: ["Gravedad", "Magnetismo humano", "Sonido", "Electricidad estática"],
+    correcta: 0
+  },
+  {
+    id: "pq045",
+    pregunta: "¿Qué planeta tiene un año de 248 años terrestres?",
+    opciones: ["Plutón", "Mercurio", "Venus", "Marte"],
+    correcta: 0
+  },
+  {
+    id: "pq046",
+    pregunta: "¿Qué tipo de cuerpo es una luna?",
+    opciones: ["Satélite natural", "Estrella", "Galaxia", "Cometa"],
+    correcta: 0
+  },
+  {
+    id: "pq047",
+    pregunta: "¿Qué planeta tiene anillos tenues y oscuros?",
+    opciones: ["Neptuno", "Mercurio", "Venus", "Marte"],
+    correcta: 0
+  },
+  {
+    id: "pq048",
+    pregunta: "¿Qué protege satélites y vida del viento solar?",
+    opciones: ["Campo magnético", "Cráteres", "Nubes de polvo", "Lagos"],
+    correcta: 0
+  },
+  {
+    id: "pq049",
+    pregunta: "¿Qué permite observar modelos 3D en el planetario?",
+    opciones: ["Hologramas", "Agua", "Arcilla", "Sal"],
+    correcta: 0
+  },
+  {
+    id: "pq050",
+    pregunta: "¿Qué puedes explorar en el planetario virtual?",
+    opciones: ["Planetas y astrofotografías", "Solo tiendas", "Solo enemigos", "Solo inventario"],
+    correcta: 0
+  }
+];
+
+function crearEstadoInicialCuestionarioPlanetario() {
+  return {
+    pendientes: PLANETARIO_QUIZ_QUESTIONS.map(q => q.id),
+    correctas: 0,
+    gruposPagados: 0,
+    ultimaPreguntaId: null,
+    completado: false
+  };
+}
+
+//Guarda los avances de la pregunta en local Storage para que no se pierdan al recargar la página. Esto permite que el jugador pueda continuar desde donde dejó el cuestionario sin perder su progreso. (inicio)
+/*
+function cargarEstadoCuestionarioPlanetario() {
+  try {
+    const saved = localStorage.getItem(PLANETARIO_QUIZ_STORAGE_KEY);
+
+    if (!saved) {
+      return crearEstadoInicialCuestionarioPlanetario();
+    }
+
+    const estado = JSON.parse(saved);
+
+    if (!estado || !Array.isArray(estado.pendientes)) {
+      return crearEstadoInicialCuestionarioPlanetario();
+    }
+
+    return {
+      pendientes: estado.pendientes,
+      correctas: Number(estado.correctas || 0),
+      gruposPagados: Number(estado.gruposPagados || 0),
+      ultimaPreguntaId: estado.ultimaPreguntaId || null,
+      completado: Boolean(estado.completado)
+    };
+  } catch (error) {
+    console.warn("No se pudo cargar el estado del cuestionario:", error);
+    return crearEstadoInicialCuestionarioPlanetario();
+  }
+}
+
+function guardarEstadoCuestionarioPlanetario(estado) {
+  localStorage.setItem(PLANETARIO_QUIZ_STORAGE_KEY, JSON.stringify(estado));
+}
+*/
+//Guarda los avances de la pregunta en local Storage para que no se pierdan al recargar la página. Esto permite que el jugador pueda continuar desde donde dejó el cuestionario sin perder su progreso. (fin)
+
+function cargarEstadoCuestionarioPlanetario() {
+  return crearEstadoInicialCuestionarioPlanetario();
+}
+
+function guardarEstadoCuestionarioPlanetario(estado) {
+  // No se guarda en localStorage.
+  // El cuestionario se reinicia cada vez que se reinicia el juego.
+}
+
+let planetarioQuizState = cargarEstadoCuestionarioPlanetario();
+//localStorage.removeItem("enycosmic_mapa1_planetario_quiz_v1");
+
+function ensureCuestionarioPlanetarioStyles() {
+  if (document.getElementById("cuestionario-planetario-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "cuestionario-planetario-style";
+
+  style.textContent = `
+    #cuestionario-planetario-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(24,245,225,.14), rgba(0,0,0,.78) 58%),
+        rgba(0,0,0,.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #cuestionario-planetario-box {
+      width: min(94vw, 470px);
+      max-width: 470px;
+      background: #000;
+      color: #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 0 28px rgba(24,245,225,.38),
+        0 18px 40px rgba(0,0,0,.75);
+      image-rendering: pixelated;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #cuestionario-planetario-header {
+      height: 42px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      background: #111;
+      border-bottom: 2px solid #00ffcc;
+      box-sizing: border-box;
+    }
+
+    #cuestionario-planetario-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00ffcc;
+      text-shadow: 0 0 8px rgba(0,255,204,.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #cuestionario-planetario-close {
+      width: 30px;
+      height: 30px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    #cuestionario-planetario-body {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.055) 0px,
+          rgba(0,255,204,.055) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        radial-gradient(circle at center, rgba(0,255,204,.1), transparent 62%),
+        linear-gradient(180deg, #020b0f, #000);
+      box-sizing: border-box;
+    }
+
+    .quiz-monitor {
+      position: relative;
+      min-height: 150px;
+      border: 2px solid rgba(0,255,204,.48);
+      background:
+        radial-gradient(circle at center, rgba(24,245,225,.13), transparent 45%),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.16), transparent 2px),
+        radial-gradient(circle at 70% 34%, rgba(255,255,255,.12), transparent 2px),
+        radial-gradient(circle at 18% 72%, rgba(255,255,255,.16), transparent 2px),
+        radial-gradient(circle at 84% 78%, rgba(255,255,255,.14), transparent 2px),
+        #010708;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 24px rgba(0,255,204,.12),
+        0 0 18px rgba(0,255,204,.18);
+      padding: 12px;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+    }
+
+    .quiz-monitor-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(#00ffcc 2px, transparent 2px),
+        linear-gradient(90deg, #00ffcc 2px, transparent 2px);
+      background-size: 42px 42px;
+      opacity: .045;
+      animation: quizGridMove 5s linear infinite;
+      pointer-events: none;
+    }
+
+    .quiz-monitor-scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 18px;
+      top: -18px;
+      background: linear-gradient(180deg, transparent, rgba(0,255,204,.18), transparent);
+      animation: quizScan 2.4s linear infinite;
+      pointer-events: none;
+    }
+
+    .quiz-monitor-title {
+      position: relative;
+      z-index: 2;
+      color: #fff799;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.5;
+      text-shadow: 0 0 8px rgba(255,224,102,.7);
+    }
+
+    .quiz-progress-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .quiz-stat {
+      border: 2px solid rgba(0,255,204,.42);
+      background: rgba(0,255,204,.06);
+      padding: 8px;
+      text-align: center;
+      display: grid;
+      gap: 5px;
+    }
+
+    .quiz-stat-label {
+      color: #fff799;
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .quiz-stat-value {
+      color: #fff;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+.quiz-question {
+  border: 2px solid rgba(110,247,255,.42);
+  background: rgba(110,247,255,.06);
+  color: #ffffff;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quiz-option-btn {
+      width: 100%;
+min-height: 42px;
+padding: 10px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid rgba(0,255,204,.72);
+      font-family: arcade, monospace;
+      font-size: 10px;
+      line-height: 1.35;
+      text-align: center;
+      cursor: pointer;
+      box-shadow:
+        0 0 10px rgba(0,255,204,.18),
+        inset 0 0 8px rgba(0,255,204,.05);
+    }
+
+    .quiz-option-btn:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow:
+        0 0 12px #00ffcc,
+        0 0 28px rgba(0,255,204,.7);
+    }
+
+    .quiz-option-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .quiz-feedback {
+      border: 2px solid rgba(0,255,204,.35);
+      background: rgba(0,0,0,.35);
+      color: #00ffcc;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+      font-size: 10px;
+      line-height: 1.35;
+      box-sizing: border-box;
+    }
+
+    .quiz-feedback.good {
+      color: #00ffcc;
+      border-color: rgba(0,255,204,.75);
+      box-shadow: 0 0 12px rgba(0,255,204,.22);
+    }
+
+    .quiz-feedback.bad {
+      color: #ffe066;
+      border-color: rgba(255,224,102,.75);
+      box-shadow: 0 0 12px rgba(255,224,102,.18);
+    }
+
+    .quiz-complete {
+      border: 2px solid rgba(0,255,204,.85);
+      background:
+        radial-gradient(circle at left, rgba(0,255,204,.18), rgba(0,0,0,.35)),
+        rgba(0,255,204,.08);
+      color: #ffffff;
+      padding: 12px;
+      font-size: 11px;
+      line-height: 1.55;
+      text-align: center;
+      box-shadow:
+        0 0 12px rgba(0,255,204,.28),
+        inset 0 0 10px rgba(0,255,204,.08);
+    }
+
+    @keyframes quizGridMove {
+      from { background-position: 0 0; }
+      to { background-position: 42px 42px; }
+    }
+
+    @keyframes quizScan {
+      from { top: -18px; }
+      to { top: 100%; }
+    }
+
+    @media (max-width: 440px) {
+      #cuestionario-planetario-box {
+        width: 94vw;
+      }
+
+      .quiz-progress-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quiz-option-btn {
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function getPreguntaActualPlanetario() {
+  if (planetarioQuizState.pendientes.length <= 0) return null;
+
+  const id = planetarioQuizState.pendientes[0];
+  return PLANETARIO_QUIZ_QUESTIONS.find(q => q.id === id) || null;
+}
+
+function cerrarCuestionarioPlanetario() {
+  const overlay = document.getElementById("cuestionario-planetario-overlay");
+  if (overlay) overlay.remove();
+}
+
+function ensurePremioRetoPlanetarioStyles() {
+  if (document.getElementById("premio-reto-planetario-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "premio-reto-planetario-style";
+
+  style.textContent = `
+    #premio-reto-planetario-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000001;
+      background:
+        radial-gradient(circle at center, rgba(255,224,102,.18), rgba(0,0,0,.74) 58%),
+        rgba(0,0,0,.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #premio-reto-planetario-box {
+      width: min(92vw, 390px);
+      background: #000;
+      color: #00ffcc;
+      box-shadow:
+        0 0 0 2px #3f3300,
+        0 0 0 4px #ffe066,
+        0 0 28px rgba(255,224,102,.42),
+        0 18px 40px rgba(0,0,0,.78);
+      image-rendering: pixelated;
+      overflow: hidden;
+      box-sizing: border-box;
+      animation: premioRetoIn .26s ease forwards;
+    }
+
+    #premio-reto-planetario-header {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background:
+        linear-gradient(90deg, rgba(255,224,102,.18), rgba(0,255,204,.12), rgba(255,224,102,.18)),
+        #111;
+      border-bottom: 2px solid #ffe066;
+      box-sizing: border-box;
+    }
+
+    #premio-reto-planetario-title {
+      color: #ffe066;
+      font-size: 12px;
+      line-height: 1.35;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 8px rgba(255,224,102,.85),
+        0 0 16px rgba(0,255,204,.42);
+    }
+
+    #premio-reto-planetario-body {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,224,102,.055) 0px,
+          rgba(255,224,102,.055) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        radial-gradient(circle at center, rgba(255,224,102,.12), transparent 62%),
+        linear-gradient(180deg, #100d00, #000);
+      box-sizing: border-box;
+    }
+
+    .premio-reto-medalla {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto;
+      border: 4px solid #ffe066;
+      background:
+        radial-gradient(circle, #fff799 0%, #ffe066 38%, #ff9f1c 72%, #7a3b00 100%);
+      display: grid;
+      place-items: center;
+      color: #000;
+      font-size: 34px;
+      box-shadow:
+        0 0 14px rgba(255,224,102,.85),
+        0 0 28px rgba(255,159,28,.55);
+      animation: premioRetoPulse .85s ease-in-out infinite;
+    }
+
+    .premio-reto-texto {
+      border: 2px solid rgba(255,224,102,.72);
+      background:
+        radial-gradient(circle at left, rgba(255,224,102,.16), rgba(0,0,0,.36)),
+        rgba(255,224,102,.06);
+      color: #ffffff;
+      padding: 10px;
+      font-size: 11px;
+      line-height: 1.55;
+      text-align: center;
+      box-shadow:
+        inset 0 0 10px rgba(255,224,102,.08),
+        0 0 12px rgba(255,224,102,.18);
+    }
+
+    .premio-reto-recompensa {
+      color: #00ffcc;
+      text-shadow: 0 0 8px rgba(0,255,204,.72);
+    }
+
+    .premio-reto-final {
+      color: #ffe066;
+      text-shadow: 0 0 8px rgba(255,224,102,.72);
+    }
+
+    #premio-reto-planetario-continuar {
+      min-height: 40px;
+      background: #000;
+      color: #ffe066;
+      border: 2px solid #ffe066;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        0 0 12px rgba(255,224,102,.35),
+        inset 0 0 10px rgba(255,224,102,.08);
+    }
+
+    #premio-reto-planetario-continuar:hover {
+      background: #ffe066;
+      color: #000;
+      box-shadow:
+        0 0 12px #ffe066,
+        0 0 28px rgba(255,224,102,.75);
+    }
+
+    @keyframes premioRetoIn {
+      from {
+        opacity: 0;
+        transform: scale(.92) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes premioRetoPulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+      }
+      50% {
+        transform: scale(1.08);
+        filter: brightness(1.22);
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function cerrarPremioRetoPlanetario() {
+  const overlay = document.getElementById("premio-reto-planetario-overlay");
+  if (overlay) overlay.remove();
+}
+
+function mostrarPremioRetoPlanetario(iqGanado, cosmonedasGanadas, esFinal = false) {
+  ensurePremioRetoPlanetarioStyles();
+
+  const existente = document.getElementById("premio-reto-planetario-overlay");
+  if (existente) existente.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "premio-reto-planetario-overlay";
+
+  overlay.innerHTML = `
+    <div id="premio-reto-planetario-box">
+      <div id="premio-reto-planetario-header">
+        <div id="premio-reto-planetario-title">
+          ${esFinal ? "Reto completado" : "Misión educativa superada"}
+        </div>
+      </div>
+
+      <div id="premio-reto-planetario-body">
+        <div class="premio-reto-medalla">✓</div>
+
+        <div class="premio-reto-texto">
+          Felicidades, has ganado
+          <span class="premio-reto-recompensa">${iqGanado} IQ</span>
+          y
+          <span class="premio-reto-recompensa">${cosmonedasGanadas} cosmonedas</span>.
+          <br><br>
+          ${esFinal
+      ? `<span class="premio-reto-final">Llegaste al final del reto del planetario.</span>`
+      : `<span class="premio-reto-final">Llega al final del reto y tendrás un premio especial.</span>`}
+        </div>
+
+        <button id="premio-reto-planetario-continuar" type="button">
+          Continuar
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("premio-reto-planetario-continuar").onclick = cerrarPremioRetoPlanetario;
+
+  overlay.addEventListener("pointerdown", function (e) {
+    if (e.target === overlay) {
+      e.preventDefault();
+      cerrarPremioRetoPlanetario();
+    }
+  }, { passive: false });
+}
+
+function recompensarCuestionarioPlanetario() {
+  const gruposCorrectos = Math.floor(planetarioQuizState.correctas / 5);
+
+  if (gruposCorrectos <= planetarioQuizState.gruposPagados) {
+    return false;
+  }
+
+  const gruposNuevos = gruposCorrectos - planetarioQuizState.gruposPagados;
+  const iqGanado = gruposNuevos;
+  const cosmonedasGanadas = gruposNuevos * 2;
+  const esFinal = planetarioQuizState.correctas >= PLANETARIO_QUIZ_QUESTIONS.length;
+
+  if (typeof IQuser !== "undefined") {
+    IQuser += iqGanado;
+  }
+
+  if (typeof cosmonedas !== "undefined") {
+    cosmonedas += cosmonedasGanadas;
+  }
+
+  planetarioQuizState.gruposPagados = gruposCorrectos;
+  guardarEstadoCuestionarioPlanetario(planetarioQuizState);
+
+  /*--//Sincronizar wordpress(Inicio)--*/
+  // Aquí debes guardar en WordPress los cambios del jugador.
+  // Datos recomendados:
+  // IQuser
+  // cosmonedas
+  // planetarioQuizState
+  // window.missionSystem, si quieres enlazar este quiz con misiones.
+  // Ejemplo futuro:
+  // if (typeof guardarProgresoJugadorEnWordPress === "function") {
+  //   guardarProgresoJugadorEnWordPress();
+  // }
+  /*--//Sincronizar wordpress(fin)--*/
+
+  if (typeof showPopupFeedback === "function") {
+    showPopupFeedback({
+      title: esFinal ? "Reto completado" : "Recompensa educativa",
+      message: `+${iqGanado} IQ y +${cosmonedasGanadas} cosmonedas.`,
+      type: "success",
+      duration: 4200
+    });
+  }
+
+  mostrarPremioRetoPlanetario(iqGanado, cosmonedasGanadas, esFinal);
+
+  return true;
+}
+
+function renderCuestionarioPlanetario(feedback = "", feedbackType = "") {
+  ensureCuestionarioPlanetarioStyles();
+
+  const overlay = document.getElementById("cuestionario-planetario-overlay");
+  if (!overlay) return;
+
+  const pregunta = getPreguntaActualPlanetario();
+  const restantes = planetarioQuizState.pendientes.length;
+  const respondidas = PLANETARIO_QUIZ_QUESTIONS.length - restantes;
+  const progreso = `${planetarioQuizState.correctas}/50`;
+  const recompensaActual = `${planetarioQuizState.gruposPagados}/10`;
+
+  let contenidoPregunta = "";
+
+  if (planetarioQuizState.completado || !pregunta) {
+    contenidoPregunta = `
+      <div class="quiz-complete">
+        ✓ Has completado el cuestionario del planetario.
+        <br>
+        Ganancia total: 10 IQ y 20 cosmonedas.
+        <br>
+        Tu conocimiento astronómico quedó registrado.
+      </div>
+    `;
+  } else {
+    contenidoPregunta = `
+      <div class="quiz-question">
+        ${pregunta.pregunta}
+      </div>
+
+      <div class="quiz-options">
+        ${pregunta.opciones.map((opcion, index) => `
+          <button class="quiz-option-btn" type="button" data-option-index="${index}">
+            ${opcion}
+          </button>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  overlay.innerHTML = `
+    <div id="cuestionario-planetario-box">
+      <div id="cuestionario-planetario-header">
+        <div id="cuestionario-planetario-title">Terminal del planetario</div>
+        <button id="cuestionario-planetario-close" type="button">×</button>
+      </div>
+
+      <div id="cuestionario-planetario-body">
+        <div class="quiz-monitor">
+          <div class="quiz-monitor-grid"></div>
+          <div class="quiz-monitor-scan"></div>
+          <div class="quiz-monitor-title">
+            Evaluación astronómica de la Escuela Espacial.
+            <br>
+            Responde para ganar IQ y cosmonedas.
+          </div>
+        </div>
+
+        <div class="quiz-progress-grid">
+          <div class="quiz-stat">
+            <span class="quiz-stat-label">Correctas</span>
+            <span class="quiz-stat-value">${progreso}</span>
+          </div>
+
+          <div class="quiz-stat">
+            <span class="quiz-stat-label">Pendientes</span>
+            <span class="quiz-stat-value">${restantes}</span>
+          </div>
+
+          <div class="quiz-stat">
+            <span class="quiz-stat-label">Pagos</span>
+            <span class="quiz-stat-value">${recompensaActual}</span>
+          </div>
+        </div>
+
+        ${contenidoPregunta}
+
+        <div class="quiz-feedback ${feedbackType}">
+          ${feedback || "Cada 5 respuestas correctas ganas 1 IQ y 2 cosmonedas."}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("cuestionario-planetario-close").onclick = cerrarCuestionarioPlanetario;
+
+  overlay.querySelectorAll(".quiz-option-btn").forEach(btn => {
+    btn.onclick = function () {
+      const optionIndex = Number(this.dataset.optionIndex);
+      responderPreguntaPlanetario(optionIndex);
+    };
+  });
+
+  overlay.addEventListener("pointerdown", function (e) {
+    if (e.target === overlay) {
+      e.preventDefault();
+      cerrarCuestionarioPlanetario();
+    }
+  }, { passive: false });
+}
+
+function responderPreguntaPlanetario(optionIndex) {
+  const pregunta = getPreguntaActualPlanetario();
+  if (!pregunta || planetarioQuizState.completado) return;
+
+  const esCorrecta = optionIndex === pregunta.correcta;
+
+  planetarioQuizState.pendientes.shift();
+  planetarioQuizState.ultimaPreguntaId = pregunta.id;
+
+  if (esCorrecta) {
+    planetarioQuizState.correctas += 1;
+
+    if (typeof playgoodSound === "function") {
+      playgoodSound();
+    }
+
+    if (planetarioQuizState.correctas >= PLANETARIO_QUIZ_QUESTIONS.length) {
+      planetarioQuizState.completado = true;
+    }
+
+    guardarEstadoCuestionarioPlanetario(planetarioQuizState);
+    recompensarCuestionarioPlanetario();
+
+    if (planetarioQuizState.completado) {
+      renderCuestionarioPlanetario("✓ Cuestionario completado. Ganaste 10 IQ y 20 cosmonedas en total.", "good");
+      return;
+    }
+
+    renderCuestionarioPlanetario("✓ Correcto. La terminal registró tu avance.", "good");
+    return;
+  }
+
+  planetarioQuizState.pendientes.push(pregunta.id);
+
+  if (typeof playerrorSound === "function") {
+    playerrorSound();
+  }
+
+  guardarEstadoCuestionarioPlanetario(planetarioQuizState);
+
+  renderCuestionarioPlanetario(
+    "Respuesta incorrecta. Esta pregunta volverá más tarde.",
+    "bad"
+  );
+}
+
+window.openCuestionarioPlanetario = function () {
+  ensureCuestionarioPlanetarioStyles();
+
+  //planetarioQuizState = cargarEstadoCuestionarioPlanetario();
+  if (!planetarioQuizState || planetarioQuizState.completado) {
+    planetarioQuizState = crearEstadoInicialCuestionarioPlanetario();
+  }
+
+  const existente = document.getElementById("cuestionario-planetario-overlay");
+  if (existente) existente.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "cuestionario-planetario-overlay";
+  document.body.appendChild(overlay);
+
+  renderCuestionarioPlanetario();
+};
+//Cuestionario de preguntas de planetario (fin)
+
+// ======================================================
+// POPUP PLANETARIO VIRTUAL - MAPA 1 DOMO ESPACIAL
+// Bloque: bloque_ambiente_11297
+// Abre acceso al planetario de la Escuela Espacial
+// ======================================================
+
+function ensurePlanetarioVirtualStyles() {
+  if (document.getElementById("planetario-virtual-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "planetario-virtual-style";
+
+  style.textContent = `
+    #planetario-virtual-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(24,245,225,.14), rgba(0,0,0,.78) 58%),
+        rgba(0,0,0,.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #planetario-virtual-box {
+      width: min(94vw, 430px);
+      max-width: 430px;
+      background: #000;
+      color: #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 0 28px rgba(24,245,225,.38),
+        0 18px 40px rgba(0,0,0,.75);
+      image-rendering: pixelated;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #planetario-virtual-header {
+      height: 42px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      background: #111;
+      border-bottom: 2px solid #00ffcc;
+      box-sizing: border-box;
+    }
+
+    #planetario-virtual-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00ffcc;
+      text-shadow: 0 0 8px rgba(0,255,204,.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #planetario-virtual-close {
+      width: 30px;
+      height: 30px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    #planetario-virtual-body {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.055) 0px,
+          rgba(0,255,204,.055) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        radial-gradient(circle at center, rgba(0,255,204,.1), transparent 62%),
+        linear-gradient(180deg, #020b0f, #000);
+      box-sizing: border-box;
+    }
+
+    .planetario-stage {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      border: 2px solid rgba(0,255,204,.48);
+      background:
+        radial-gradient(circle at center, rgba(24,245,225,.13), transparent 45%),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.16), transparent 2px),
+        radial-gradient(circle at 70% 34%, rgba(255,255,255,.12), transparent 2px),
+        radial-gradient(circle at 18% 72%, rgba(255,255,255,.16), transparent 2px),
+        radial-gradient(circle at 84% 78%, rgba(255,255,255,.14), transparent 2px),
+        #010708;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 24px rgba(0,255,204,.12),
+        0 0 18px rgba(0,255,204,.18);
+    }
+
+    .planetario-stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(#00ffcc 2px, transparent 2px),
+        linear-gradient(90deg, #00ffcc 2px, transparent 2px);
+      background-size: 72px 72px;
+      opacity: .045;
+      animation: planetarioGridMove 6s linear infinite;
+      pointer-events: none;
+    }
+
+    .planetario-scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 18px;
+      top: -18px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(0,255,204,.18),
+        transparent
+      );
+      animation: planetarioScan 2.8s linear infinite;
+      pointer-events: none;
+    }
+
+    .planetario-sun {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 46px;
+      height: 46px;
+      transform: translate(-50%, -50%);
+      background:
+        radial-gradient(circle, #fff799 0%, #ffe066 32%, #ff8c00 62%, #ff3c3c 100%);
+      border: 3px solid #ffe066;
+      box-shadow:
+        0 0 12px rgba(255,224,102,.95),
+        0 0 26px rgba(255,140,0,.75),
+        0 0 44px rgba(255,60,60,.45);
+      animation: planetarioSunPulse .9s ease-in-out infinite;
+      z-index: 4;
+    }
+
+    .planetario-orbit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border: 2px dashed rgba(0,255,204,.28);
+      transform: translate(-50%, -50%);
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+
+    .planetario-orbit.o1 {
+      width: 92px;
+      height: 92px;
+      animation: planetarioRotate 5s linear infinite;
+    }
+
+    .planetario-orbit.o2 {
+      width: 148px;
+      height: 148px;
+      animation: planetarioRotate 8s linear infinite reverse;
+    }
+
+    .planetario-orbit.o3 {
+      width: 206px;
+      height: 206px;
+      animation: planetarioRotate 12s linear infinite;
+    }
+
+    .planetario-planet {
+      position: absolute;
+      box-shadow:
+        0 0 8px rgba(255,255,255,.25),
+        0 0 14px rgba(0,255,204,.2);
+    }
+
+    .planetario-planet.p1 {
+      width: 16px;
+      height: 16px;
+      left: 50%;
+      top: -8px;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(135deg, #6ef7ff 0%, #0a8cff 55%, #001b55 100%);
+      border: 2px solid #6ef7ff;
+    }
+
+    .planetario-planet.p2 {
+      width: 22px;
+      height: 22px;
+      left: 50%;
+      top: -11px;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(135deg, #fff799 0%, #ff9f1c 52%, #7a2c00 100%);
+      border: 2px solid #ffe066;
+    }
+
+    .planetario-planet.p3 {
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      top: -14px;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(135deg, #b7ff9b 0%, #00aaff 42%, #0036a3 100%);
+      border: 2px solid #6ef7ff;
+    }
+
+    .planetario-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 42px;
+      height: 10px;
+      transform: translate(-50%, -50%) rotate(-18deg);
+      border: 2px solid rgba(255,224,102,.82);
+      box-shadow: 0 0 10px rgba(255,224,102,.38);
+      z-index: -1;
+    }
+
+    .planetario-core-text {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      width: 88%;
+      color: #ffffff;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.45;
+      text-shadow: 0 0 8px rgba(0,255,204,.8);
+      z-index: 7;
+    }
+
+    .planetario-enter-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, 42px);
+      z-index: 8;
+    }
+
+    #planetario-virtual-enter {
+      min-width: 230px;
+      min-height: 38px;
+      padding: 0 10px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      box-shadow:
+        0 0 12px rgba(0,255,204,.38),
+        inset 0 0 10px rgba(0,255,204,.08);
+      cursor: pointer;
+      animation: planetarioBtnPulse 1.2s ease-in-out infinite;
+    }
+
+    #planetario-virtual-enter:hover,
+    #planetario-virtual-close:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow:
+        0 0 12px #00ffcc,
+        0 0 28px rgba(0,255,204,.7);
+    }
+
+    .planetario-info {
+      border: 2px solid rgba(0,255,204,.42);
+      background: rgba(0,255,204,.06);
+      padding: 8px;
+      color: #00ffcc;
+      font-size: 10px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .planetario-info span {
+      color: #fff799;
+    }
+
+    @keyframes planetarioRotate {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    @keyframes planetarioSunPulse {
+      0%, 100% {
+        filter: brightness(1);
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        filter: brightness(1.25);
+        transform: translate(-50%, -50%) scale(1.08);
+      }
+    }
+
+    @keyframes planetarioGridMove {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 72px 72px;
+      }
+    }
+
+    @keyframes planetarioScan {
+      from {
+        top: -18px;
+      }
+      to {
+        top: 100%;
+      }
+    }
+
+    @keyframes planetarioBtnPulse {
+      0%, 100% {
+        transform: translateY(0);
+        filter: brightness(1);
+      }
+      50% {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+      }
+    }
+
+    @media (max-width: 440px) {
+      #planetario-virtual-box {
+        width: 94vw;
+      }
+
+      .planetario-stage {
+        height: 240px;
+      }
+
+      #planetario-virtual-enter {
+        min-width: 200px;
+        font-size: 9px;
+      }
+
+      .planetario-core-text {
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function cerrarPlanetarioVirtualPopup() {
+  const overlay = document.getElementById("planetario-virtual-overlay");
+  if (overlay) overlay.remove();
+}
+
+window.openPlanetarioVirtualPopup = function () {
+  ensurePlanetarioVirtualStyles();
+
+  const existente = document.getElementById("planetario-virtual-overlay");
+  if (existente) existente.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "planetario-virtual-overlay";
+
+  overlay.innerHTML = `
+    <div id="planetario-virtual-box">
+      <div id="planetario-virtual-header">
+        <div id="planetario-virtual-title">Planetario virtual</div>
+        <button id="planetario-virtual-close" type="button">×</button>
+      </div>
+
+      <div id="planetario-virtual-body">
+        <div class="planetario-stage">
+          <div class="planetario-stars"></div>
+          <div class="planetario-scan"></div>
+
+          <div class="planetario-orbit o1">
+            <div class="planetario-planet p1"></div>
+          </div>
+
+          <div class="planetario-orbit o2">
+            <div class="planetario-planet p2"></div>
+          </div>
+
+          <div class="planetario-orbit o3">
+            <div class="planetario-planet p3">
+              <div class="planetario-ring"></div>
+            </div>
+          </div>
+
+          <div class="planetario-sun"></div>
+
+          <div class="planetario-enter-wrap">
+            <button id="planetario-virtual-enter" type="button">
+              Ingresar al planetario
+            </button>
+          </div>
+
+          <div class="planetario-core-text">
+            Accede al planetario de la Escuela Espacial de Enycosmic.
+          </div>
+        </div>
+
+        <div class="planetario-info">
+          Explora planetas, astrofotografías y modelos 3D desde el Domo espacial.
+          <br>
+          <span>Entrada holográfica lista.</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("planetario-virtual-close").onclick = cerrarPlanetarioVirtualPopup;
+
+  document.getElementById("planetario-virtual-enter").onclick = function () {
+    window.location.href = "../entornosExternos/sistemaSolar/planetario.html";
+  };
+
+  overlay.addEventListener("pointerdown", function (e) {
+    if (e.target === overlay) {
+      e.preventDefault();
+      cerrarPlanetarioVirtualPopup();
+    }
+  }, { passive: false });
+};
+
+// ======================================================
+// DESTILADOR MINERAL - MAPA 1 DOMO ESPACIAL
+// Bloque: bloque_ambiente_14017
+// Consume: 5 agua
+// Otorga: 1 sal + 1 hierro
+// ======================================================
+
+const DESTILADOR_MINERAL_CONFIG = {
+  aguaIds: ["agua"],
+  costoAgua: 5,
+  recompensas: [
+    { id: "sal", cantidad: 1 },
+    { id: "hierro", cantidad: 1 }
+  ]
+};
+
+const destiladorMineralState = {
+  aguaCargada: 0,
+  procesando: false,
+  etapa: "idle",
+  resultadoMensaje: ""
+};
+
+function ensureDestiladorMineralStyles() {
+  if (document.getElementById("destilador-mineral-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "destilador-mineral-style";
+
+  style.textContent = `
+    #destilador-mineral-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90000;
+      background:
+        radial-gradient(circle at center, rgba(24,245,225,.16), rgba(0,0,0,.48) 58%),
+        rgba(0,0,0,.42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #destilador-mineral-box {
+      width: min(94vw, 430px);
+      max-width: 430px;
+      background: rgba(0,0,0,.92);
+      color: #00ffcc;
+      box-shadow:
+        0 0 0 2px #0b3d35,
+        0 0 0 4px #00ffcc,
+        0 0 28px rgba(24,245,225,.35),
+        0 18px 40px rgba(0,0,0,.75);
+      image-rendering: pixelated;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #destilador-mineral-header {
+      height: 42px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      background: #111;
+      border-bottom: 2px solid #00ffcc;
+      box-sizing: border-box;
+    }
+
+    #destilador-mineral-title {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00ffcc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #destilador-mineral-close {
+      width: 30px;
+      height: 30px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #destilador-mineral-close:active,
+    #destilador-mineral-run:active,
+    #destilador-mineral-load-water:active {
+      transform: translateY(1px);
+    }
+
+    #destilador-mineral-body {
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.055) 0px,
+          rgba(0,255,204,.055) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        linear-gradient(180deg, #020b0f, #000);
+      box-sizing: border-box;
+    }
+
+    .destilador-screen {
+      border: 2px solid rgba(0,255,204,.45);
+      background:
+        radial-gradient(circle at 24% 50%, rgba(0,255,204,.16), transparent 36%),
+        rgba(0,255,204,.05);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 10px;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    .destilador-machine {
+      position: relative;
+      width: 102px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .destilador-orb {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      width: 82px;
+      height: 82px;
+      border: 3px solid #6ef7ff;
+      background: #02070c;
+      box-shadow:
+        inset 0 0 18px rgba(110,247,255,.35),
+        0 0 16px rgba(110,247,255,.32);
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .destilador-orb.empty .destilador-liquid {
+      height: 0;
+      opacity: .35;
+    }
+
+    .destilador-liquid {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      height: 42px;
+      background:
+        linear-gradient(180deg, rgba(110,247,255,.95), rgba(0,80,255,.78));
+      box-shadow: 0 0 14px rgba(110,247,255,.7);
+      animation: destiladorLiquid 1.8s ease-in-out infinite;
+      transition: height 260ms ease, opacity 260ms ease;
+    }
+
+    .destilador-bubble {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border: 2px solid #fff;
+      background: rgba(110,247,255,.35);
+      box-shadow: 0 0 8px rgba(110,247,255,.8);
+      animation: destiladorBubble 1.5s linear infinite;
+      opacity: 0;
+    }
+
+    .destilador-bubble.b1 {
+      left: 22px;
+      bottom: 22px;
+      animation-delay: 0s;
+    }
+
+    .destilador-bubble.b2 {
+      left: 42px;
+      bottom: 18px;
+      animation-delay: .45s;
+    }
+
+    .destilador-bubble.b3 {
+      left: 57px;
+      bottom: 28px;
+      animation-delay: .8s;
+    }
+
+    .destilador-pipe {
+      position: absolute;
+      top: 28px;
+      right: 0;
+      width: 26px;
+      height: 10px;
+      border-top: 3px solid #6ef7ff;
+      border-right: 3px solid #6ef7ff;
+      box-shadow: 0 0 10px rgba(110,247,255,.4);
+      z-index: 1;
+    }
+
+    .destilador-fire {
+      position: absolute;
+      left: 18px;
+      bottom: 2px;
+      width: 64px;
+      height: 52px;
+      opacity: 0;
+      z-index: 1;
+      filter: drop-shadow(0 0 12px rgba(255,120,0,.95));
+    }
+
+    .fire-core {
+      position: absolute;
+      left: 18px;
+      bottom: 0;
+      width: 28px;
+      height: 18px;
+      background: radial-gradient(circle, #fff799 0%, #ffe066 45%, #ff8c00 75%, rgba(255,60,60,.85) 100%);
+      border-radius: 50% 50% 40% 40%;
+      box-shadow:
+        0 0 12px rgba(255,224,102,.95),
+        0 0 24px rgba(255,140,0,.75),
+        0 0 36px rgba(255,60,60,.45);
+      animation: fireCorePulse .18s infinite alternate;
+    }
+
+    .fire-flame {
+      position: absolute;
+      bottom: 8px;
+      background: linear-gradient(180deg, #fff799 0%, #ffe066 30%, #ff8c00 68%, #ff3c3c 100%);
+      border-radius: 50% 50% 45% 45%;
+      transform-origin: bottom center;
+      box-shadow:
+        0 0 10px rgba(255,224,102,.85),
+        0 0 18px rgba(255,140,0,.7),
+        0 0 24px rgba(255,60,60,.45);
+    }
+
+    .fire-flame.flame-1 {
+      left: 6px;
+      width: 18px;
+      height: 26px;
+      animation: fireFlameLeft .2s infinite alternate;
+    }
+
+    .fire-flame.flame-2 {
+      left: 22px;
+      width: 22px;
+      height: 36px;
+      animation: fireFlameCenter .16s infinite alternate;
+    }
+
+    .fire-flame.flame-3 {
+      left: 40px;
+      width: 18px;
+      height: 26px;
+      animation: fireFlameRight .22s infinite alternate;
+    }
+
+    .destilador-steam {
+      position: absolute;
+      left: 14px;
+      top: 0;
+      width: 76px;
+      height: 60px;
+      opacity: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .destilador-steam span {
+      position: absolute;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      border: 2px solid rgba(255,255,255,.8);
+      background: rgba(110,247,255,.18);
+      box-shadow: 0 0 10px rgba(255,255,255,.55);
+      animation: destiladorSteam 1.2s linear infinite;
+    }
+
+    .destilador-steam span:nth-child(1) {
+      left: 14px;
+      animation-delay: 0s;
+    }
+
+    .destilador-steam span:nth-child(2) {
+      left: 34px;
+      animation-delay: .25s;
+    }
+
+    .destilador-steam span:nth-child(3) {
+      left: 52px;
+      animation-delay: .5s;
+    }
+
+    .destilador-output {
+      position: absolute;
+      right: -14px;
+      bottom: 8px;
+      width: 94px;
+      min-height: 44px;
+      border: 2px solid rgba(255,224,102,.78);
+      background: rgba(255,224,102,.08);
+      box-shadow:
+        0 0 12px rgba(255,224,102,.35),
+        inset 0 0 10px rgba(255,224,102,.12);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 4px 6px;
+      box-sizing: border-box;
+      z-index: 5;
+    }
+
+    .destilador-output-item {
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .destilador-output-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .destilador-output-qty {
+      font-size: 10px;
+      line-height: 1;
+      color: #fff;
+      text-shadow:
+        0 0 6px rgba(255,224,102,.85),
+        1px 1px 0 #000;
+      animation: outputQtyPulse .45s infinite alternate;
+    }
+
+    .destilador-machine.is-loading .destilador-orb {
+      animation: destiladorPulse .55s ease 2;
+    }
+
+    .destilador-machine.is-heating .destilador-fire,
+    .destilador-machine.is-evaporating .destilador-fire {
+      opacity: 1;
+    }
+
+    .destilador-machine.is-heating .destilador-orb {
+      box-shadow:
+        inset 0 0 18px rgba(110,247,255,.45),
+        0 0 20px rgba(255,60,60,.55);
+    }
+
+    .destilador-machine.is-evaporating .destilador-steam,
+    .destilador-machine.is-evaporating .destilador-bubble {
+      opacity: 1;
+    }
+
+    .destilador-machine.is-complete .destilador-output {
+      opacity: 1;
+      animation: destiladorOutput .7s ease infinite alternate;
+    }
+
+    .destilador-machine.is-complete .destilador-liquid {
+      height: 12px;
+      opacity: .65;
+    }
+
+    .destilador-data {
+      display: grid;
+      gap: 5px;
+    }
+
+    .destilador-label {
+      margin: 0;
+      color: #fff799;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .destilador-title {
+      margin: 0;
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .destilador-copy {
+      margin: 0;
+      color: #00ffcc;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .destilador-inventory-row {
+      border: 2px solid rgba(0,255,204,.42);
+      background: rgba(0,255,204,.06);
+      padding: 8px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .destilador-inventory-title {
+      margin: 0;
+      color: #fff799;
+      font-size: 10px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .destilador-water-slot {
+      min-height: 52px;
+      border: 2px solid rgba(110,247,255,.65);
+      background:
+        radial-gradient(circle at center, rgba(110,247,255,.2), rgba(0,0,0,.1)),
+        rgba(0,0,0,.3);
+      color: #ffffff;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 6px;
+      box-sizing: border-box;
+      font-family: arcade, monospace;
+    }
+
+    .destilador-water-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(110,247,255,.45);
+      background: rgba(110,247,255,.09);
+      font-size: 20px;
+      box-shadow: 0 0 10px rgba(110,247,255,.22);
+    }
+
+    .destilador-water-info {
+      display: grid;
+      gap: 3px;
+    }
+
+    .destilador-water-name {
+      font-size: 10px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .destilador-water-count {
+      font-size: 10px;
+      color: #00ffcc;
+    }
+
+    #destilador-mineral-load-water {
+      min-height: 34px;
+      padding: 0 8px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      box-sizing: border-box;
+    }
+
+    #destilador-mineral-load-water:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .destilador-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .destilador-card {
+      border: 2px solid rgba(0,255,204,.42);
+      background: rgba(0,255,204,.06);
+      padding: 8px;
+      display: grid;
+      gap: 5px;
+      text-align: center;
+    }
+
+    .destilador-card-title {
+      color: #fff799;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .destilador-card-main {
+      color: #ffffff;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .destilador-reaction {
+      border: 2px solid rgba(110,247,255,.42);
+      background: rgba(110,247,255,.06);
+      color: #ffffff;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 10px;
+      text-align: center;
+      flex-wrap: wrap;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+
+    .destilador-arrow {
+      color: #fff799;
+      text-shadow: 0 0 8px rgba(255,224,102,.7);
+    }
+
+    .destilador-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .destilador-step {
+      border: 1px solid rgba(0,255,204,.35);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.55);
+      font-size: 8px;
+      line-height: 1.25;
+      text-align: center;
+      padding: 6px 3px;
+      box-sizing: border-box;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .destilador-step.active {
+      color: #fff799;
+      border-color: rgba(255,224,102,.8);
+      background: rgba(255,224,102,.08);
+      box-shadow: 0 0 10px rgba(255,224,102,.18);
+    }
+
+    .destilador-step.done {
+      color: #00ffcc;
+      border-color: rgba(0,255,204,.7);
+    }
+
+    .destilador-status {
+      margin: 0;
+      font-size: 10px;
+      line-height: 1.45;
+      text-align: center;
+      padding: 8px;
+      border: 2px solid rgba(0,255,204,.3);
+      background: rgba(0,0,0,.35);
+    }
+
+    .destilador-status.ok {
+      color: #00ffcc;
+    }
+
+    .destilador-status.fail {
+      color: #ffe066;
+      border-color: rgba(255,224,102,.45);
+    }
+
+    .destilador-result-message {
+      border: 2px solid rgba(0,255,204,.85);
+      background:
+        radial-gradient(circle at left, rgba(0,255,204,.18), rgba(0,0,0,.35)),
+        rgba(0,255,204,.08);
+      color: #ffffff;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.35;
+      padding: 8px;
+      box-sizing: border-box;
+      box-shadow:
+        0 0 12px rgba(0,255,204,.28),
+        inset 0 0 10px rgba(0,255,204,.08);
+      animation: destiladorResultIn .28s ease forwards;
+    }
+
+    .destilador-result-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00ffcc;
+      color: #00ffcc;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      box-shadow: 0 0 10px rgba(0,255,204,.35);
+      flex: 0 0 auto;
+    }
+
+    .destilador-actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    #destilador-mineral-run {
+      min-width: 210px;
+      min-height: 38px;
+      padding: 0 8px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      box-sizing: border-box;
+    }
+
+    #destilador-mineral-run:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    @keyframes destiladorLiquid {
+      0%, 100% { transform: translateY(0); filter: brightness(1); }
+      50% { transform: translateY(-4px); filter: brightness(1.25); }
+    }
+
+    @keyframes destiladorBubble {
+      0% { transform: translateY(0) scale(.75); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-44px) scale(1.15); opacity: 0; }
+    }
+
+    @keyframes destiladorSteam {
+      0% { transform: translateY(0) scale(.65); opacity: 0; }
+      25% { opacity: 1; }
+      100% { transform: translateY(-48px) scale(1.35); opacity: 0; }
+    }
+
+    @keyframes destiladorPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes destiladorOutput {
+      from { transform: translateY(0); filter: brightness(1); }
+      to { transform: translateY(-3px); filter: brightness(1.25); }
+    }
+
+    @keyframes fireCorePulse {
+      from { transform: scale(1); filter: brightness(1); }
+      to { transform: scale(1.12); filter: brightness(1.18); }
+    }
+
+    @keyframes fireFlameLeft {
+      from { transform: scaleY(1) skewX(-8deg); height: 24px; }
+      to { transform: scaleY(1.18) skewX(-14deg); height: 30px; }
+    }
+
+    @keyframes fireFlameCenter {
+      from { transform: scaleY(1); height: 32px; }
+      to { transform: scaleY(1.22); height: 40px; }
+    }
+
+    @keyframes fireFlameRight {
+      from { transform: scaleY(1) skewX(8deg); height: 24px; }
+      to { transform: scaleY(1.18) skewX(14deg); height: 30px; }
+    }
+
+    @keyframes outputQtyPulse {
+      from { transform: translateY(0) scale(1); opacity: .88; }
+      to { transform: translateY(-2px) scale(1.08); opacity: 1; }
+    }
+
+    @keyframes destiladorResultIn {
+      from { opacity: 0; transform: translateY(-6px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 420px) {
+      .destilador-screen {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .destilador-machine {
+        margin-top: 4px;
+      }
+
+      .destilador-steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .destilador-water-slot {
+        grid-template-columns: 40px 1fr;
+      }
+
+      #destilador-mineral-load-water {
+        grid-column: 1 / -1;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function contarItemDestilador(itemIds = []) {
+  let total = 0;
+
+  for (const item of (window.inventarioUser || [])) {
+    if (!item) continue;
+
+    const id = item.id ?? item.item_id;
+    if (!itemIds.includes(id)) continue;
+
+    total += Number(item.cantidad || 1);
+  }
+
+  return total;
+}
+
+function buscarItemBaseDestilador(itemId) {
+  const base = (window.itemsData || []).find(item => item.id === itemId);
+
+  if (base) {
+    return {
+      ...base,
+      cantidad: 1,
+      usos: base.usos ?? null,
+      usos_maximos: base.usos_maximos ?? null
+    };
+  }
+
+  const fallback = {
+    sal: {
+      id: "sal",
+      nombre_item: "Sal mineral",
+      tipo_item: "material",
+      imagen: "./assets/items/sal.svg",
+      agotable: false,
+      desaparece_al_agotarse: true,
+      combinable: true,
+      precio_compra: 1
+    },
+    hierro: {
+      id: "hierro",
+      nombre_item: "Hierro",
+      tipo_item: "material",
+      imagen: "./assets/items/hierro.svg",
+      agotable: false,
+      desaparece_al_agotarse: true,
+      combinable: true,
+      precio_compra: 1
+    }
+  };
+
+  return fallback[itemId] || null;
+}
+
+function quitarItemsDestilador(itemIds = [], cantidadNecesaria = 0) {
+  let pendiente = Number(cantidadNecesaria || 0);
+
+  for (let i = window.inventarioUser.length - 1; i >= 0; i--) {
+    if (pendiente <= 0) break;
+
+    const item = window.inventarioUser[i];
+    if (!item) continue;
+
+    const id = item.id ?? item.item_id;
+    if (!itemIds.includes(id)) continue;
+
+    const cantidadActual = Number(item.cantidad || 1);
+    const quitar = Math.min(cantidadActual, pendiente);
+
+    item.cantidad = cantidadActual - quitar;
+    pendiente -= quitar;
+
+    if (item.cantidad <= 0) {
+      window.inventarioUser.splice(i, 1);
+    }
+  }
+
+  return pendiente <= 0;
+}
+
+function validarMisionesDespuesDestilador() {
+  const activeMissionId = window.missionSystem?.activeMissionId;
+
+  if (activeMissionId && typeof validarPasoRecolectarItems === "function") {
+    validarPasoRecolectarItems(activeMissionId);
+  }
+
+  if (typeof refreshMissionPanelIfOpen === "function") {
+    refreshMissionPanelIfOpen();
+  }
+}
+
+function cerrarDestiladorMineral() {
+  const overlay = document.getElementById("destilador-mineral-overlay");
+  if (overlay) overlay.remove();
+
+  destiladorMineralState.aguaCargada = 0;
+  destiladorMineralState.procesando = false;
+  destiladorMineralState.etapa = "idle";
+  destiladorMineralState.resultadoMensaje = "";
+}
+
+function getDestiladorEtapaClass(etapa) {
+  if (etapa === "carga") return "is-loading";
+  if (etapa === "calor") return "is-heating";
+  if (etapa === "evaporacion") return "is-evaporating";
+  if (etapa === "extraccion") return "is-complete";
+  return "";
+}
+
+function getDestiladorStepClass(step) {
+  const orden = ["carga", "calor", "evaporacion", "extraccion"];
+  const actualIndex = orden.indexOf(destiladorMineralState.etapa);
+  const stepIndex = orden.indexOf(step);
+
+  if (actualIndex === -1) return "";
+  if (actualIndex === stepIndex) return "active";
+  if (actualIndex > stepIndex) return "done";
+
+  return "";
+}
+
+function renderDestiladorMineral() {
+  ensureDestiladorMineralStyles();
+
+  const overlay = document.getElementById("destilador-mineral-overlay");
+  if (!overlay) return;
+
+  const totalAguaInventario = contarItemDestilador(DESTILADOR_MINERAL_CONFIG.aguaIds);
+  const aguaCargada = destiladorMineralState.aguaCargada;
+  const puedeCargar = !destiladorMineralState.procesando && totalAguaInventario > 0 && aguaCargada < DESTILADOR_MINERAL_CONFIG.costoAgua;
+  const puedeDestilar = !destiladorMineralState.procesando && aguaCargada >= DESTILADOR_MINERAL_CONFIG.costoAgua;
+  const etapaClass = getDestiladorEtapaClass(destiladorMineralState.etapa);
+  const orbEmptyClass = aguaCargada <= 0 ? "empty" : "";
+
+  overlay.innerHTML = `
+    <div id="destilador-mineral-box">
+      <div id="destilador-mineral-header">
+        <div id="destilador-mineral-title">Destilador mineral</div>
+        <button id="destilador-mineral-close" type="button">×</button>
+      </div>
+
+      <div id="destilador-mineral-body">
+        <div class="destilador-screen">
+          <div class="destilador-machine ${etapaClass}">
+            <div class="destilador-pipe"></div>
+
+            <div class="destilador-steam">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="destilador-orb ${orbEmptyClass}">
+              <div class="destilador-liquid" style="height:${Math.min(42, aguaCargada * 8.4)}px"></div>
+              <div class="destilador-bubble b1"></div>
+              <div class="destilador-bubble b2"></div>
+              <div class="destilador-bubble b3"></div>
+            </div>
+
+            <div class="destilador-fire">
+              <span class="fire-core"></span>
+              <span class="fire-flame flame-1"></span>
+              <span class="fire-flame flame-2"></span>
+              <span class="fire-flame flame-3"></span>
+            </div>
+
+            <div class="destilador-output">
+              <div class="destilador-output-item">
+                <span class="destilador-output-icon">🧂</span>
+                <span class="destilador-output-qty">+1</span>
+              </div>
+
+              <div class="destilador-output-item">
+                <span class="destilador-output-icon">⛓</span>
+                <span class="destilador-output-qty">+1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="destilador-data">
+            <p class="destilador-label">Química aplicada</p>
+            <p class="destilador-title">Separación por evaporación</p>
+            <p class="destilador-copy">
+              El agua del Domo es mineralizada. Al calentarla, el H₂O pasa a vapor
+              y los sólidos disueltos permanecen como residuo: sales minerales y trazas de hierro.
+            </p>
+          </div>
+        </div>
+
+        <div class="destilador-inventory-row">
+          <p class="destilador-inventory-title">Inventario detectado</p>
+
+          <button id="destilador-mineral-load-water" class="destilador-water-slot" type="button" ${puedeCargar ? "" : "disabled"}>
+            <span class="destilador-water-icon">💧</span>
+
+            <span class="destilador-water-info">
+              <span class="destilador-water-name">id: agua</span>
+              <span class="destilador-water-count">Inventario: ${totalAguaInventario} | Cargada: ${aguaCargada}/5</span>
+            </span>
+
+            <span>Cargar</span>
+          </button>
+        </div>
+
+        <div class="destilador-grid">
+          <div class="destilador-card">
+            <span class="destilador-card-title">Entrada</span>
+            <span class="destilador-card-main">5 agua mineralizada</span>
+          </div>
+
+          <div class="destilador-card">
+            <span class="destilador-card-title">Salida</span>
+            <span class="destilador-card-main">1 sal + 1 hierro</span>
+          </div>
+        </div>
+
+        <div class="destilador-reaction">
+          <span>H₂O + NaCl(aq) + Fe²⁺/Fe³⁺</span>
+          <span class="destilador-arrow">➜</span>
+          <span>H₂O(g) + NaCl(s) + Fe</span>
+        </div>
+
+        <div class="destilador-steps">
+          <div class="destilador-step ${getDestiladorStepClass("carga")}">1. Carga de agua</div>
+          <div class="destilador-step ${getDestiladorStepClass("calor")}">2. Calor térmico</div>
+          <div class="destilador-step ${getDestiladorStepClass("evaporacion")}">3. Evaporación</div>
+          <div class="destilador-step ${getDestiladorStepClass("extraccion")}">4. Extracción</div>
+        </div>
+
+        <p class="destilador-status ${puedeDestilar ? "ok" : "fail"}">
+          ${destiladorMineralState.procesando
+      ? "Ciclo activo: separando compuestos por diferencia de punto de ebullición y residuo sólido."
+      : puedeDestilar
+        ? "Carga completa. Puedes iniciar el ciclo de destilación mineral."
+        : "Carga 5 unidades de agua para iniciar la extracción de sal y hierro."}
+        </p>
+
+        ${destiladorMineralState.resultadoMensaje ? `
+          <div class="destilador-result-message">
+            <span class="destilador-result-check">✓</span>
+            <span>${destiladorMineralState.resultadoMensaje}</span>
+          </div>
+        ` : ""}
+
+        <div class="destilador-actions">
+          <button id="destilador-mineral-run" type="button" ${puedeDestilar ? "" : "disabled"}>
+            Iniciar destilación
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("destilador-mineral-close").onclick = cerrarDestiladorMineral;
+
+  document.getElementById("destilador-mineral-load-water").onclick = function () {
+    cargarAguaEnDestiladorMineral();
+  };
+
+  document.getElementById("destilador-mineral-run").onclick = function () {
+    procesarDestiladorMineral();
+  };
+
+  overlay.addEventListener("pointerdown", function (e) {
+    if (e.target === overlay && !destiladorMineralState.procesando) {
+      e.preventDefault();
+      cerrarDestiladorMineral();
+    }
+  }, { passive: false });
+}
+
+function cargarAguaEnDestiladorMineral() {
+  if (destiladorMineralState.procesando) return false;
+
+  destiladorMineralState.resultadoMensaje = "";
+
+  const totalAgua = contarItemDestilador(DESTILADOR_MINERAL_CONFIG.aguaIds);
+
+  if (totalAgua <= 0) {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Sin agua",
+        message: "No tienes unidades con id: agua en el inventario.",
+        type: "warning",
+        duration: 3500
+      });
+    }
+
+    return false;
+  }
+
+  if (destiladorMineralState.aguaCargada >= DESTILADOR_MINERAL_CONFIG.costoAgua) {
+    return false;
+  }
+
+  const consumoCorrecto = quitarItemsDestilador(DESTILADOR_MINERAL_CONFIG.aguaIds, 1);
+
+  if (!consumoCorrecto) {
+    if (typeof playerrorSound === "function") playerrorSound();
+    return false;
+  }
+
+  destiladorMineralState.aguaCargada += 1;
+  destiladorMineralState.etapa = "carga";
+
+  if (typeof playtockSound === "function") playtockSound();
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  renderDestiladorMineral();
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+
+    if (destiladorMineralState.etapa === "carga" && !destiladorMineralState.procesando) {
+      destiladorMineralState.etapa = "idle";
+      renderDestiladorMineral();
+    }
+  }, 650);
+
+  return true;
+}
+
+function otorgarRecompensasDestiladorMineral() {
+  for (const recompensa of DESTILADOR_MINERAL_CONFIG.recompensas) {
+    const baseItem = buscarItemBaseDestilador(recompensa.id);
+
+    if (!baseItem) {
+      console.warn("No existe el item en items.json:", recompensa.id);
+      continue;
+    }
+
+    const agregado = agregarItemAlInventario({
+      ...baseItem,
+      cantidad: recompensa.cantidad,
+      usos: baseItem.usos ?? null,
+      usos_maximos: baseItem.usos_maximos ?? null
+    });
+
+    if (!agregado && typeof playerrorSound === "function") {
+      playerrorSound();
+    }
+  }
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  validarMisionesDespuesDestilador();
+
+  /*--//Sincronizar wordpress(Inicio)--*/
+  // Aquí debes guardar en WordPress el inventario actualizado.
+  // Recomendado: sincronizar window.inventarioUser completo dentro del progreso del jugador.
+  // Ejemplo futuro:
+  // if (typeof guardarProgresoJugadorEnWordPress === "function") {
+  //   guardarProgresoJugadorEnWordPress();
+  // }
+  /*--//Sincronizar wordpress(fin)--*/
+}
+
+function procesarDestiladorMineral() {
+  if (destiladorMineralState.procesando) return false;
+
+  destiladorMineralState.resultadoMensaje = "";
+
+  if (destiladorMineralState.aguaCargada < DESTILADOR_MINERAL_CONFIG.costoAgua) {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Carga incompleta",
+        message: `Necesitas cargar 5 unidades de agua. Cargadas: ${destiladorMineralState.aguaCargada}.`,
+        type: "warning",
+        duration: 4000
+      });
+    }
+
+    renderDestiladorMineral();
+    return false;
+  }
+
+  destiladorMineralState.procesando = true;
+  destiladorMineralState.etapa = "calor";
+
+  renderDestiladorMineral();
+
+  if (typeof playFuegoSound === "function") {
+    playFuegoSound();
+  }
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+
+    destiladorMineralState.etapa = "evaporacion";
+
+    if (typeof playtockSound === "function") {
+      playtockSound();
+    }
+
+    renderDestiladorMineral();
+  }, 1300);
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+
+    destiladorMineralState.etapa = "extraccion";
+
+    if (typeof playgoodSound === "function") {
+      playgoodSound();
+    }
+
+    renderDestiladorMineral();
+  }, 2900);
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+
+    otorgarRecompensasDestiladorMineral();
+
+    destiladorMineralState.aguaCargada = 0;
+    destiladorMineralState.procesando = false;
+    destiladorMineralState.etapa = "extraccion";
+    destiladorMineralState.resultadoMensaje = "Has obtenido 1 sal y 1 hierro. Los materiales ya están en tu inventario.";
+
+    renderDestiladorMineral();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Extracción completada",
+        message: "✓ Has obtenido 1 sal y 1 hierro.",
+        type: "success",
+        duration: 5200
+      });
+    }
+
+    setTimeout(() => {
+      if (!document.getElementById("destilador-mineral-overlay")) return;
+
+      destiladorMineralState.etapa = "idle";
+      renderDestiladorMineral();
+    }, 1400);
+  }, 3900);
+
+  return true;
+}
+
+window.openDestiladorMineral = function () {
+  ensureDestiladorMineralStyles();
+
+  const existente = document.getElementById("destilador-mineral-overlay");
+  if (existente) existente.remove();
+
+  destiladorMineralState.aguaCargada = 0;
+  destiladorMineralState.procesando = false;
+  destiladorMineralState.etapa = "idle";
+  destiladorMineralState.resultadoMensaje = "";
+
+  const overlay = document.createElement("div");
+  overlay.id = "destilador-mineral-overlay";
+  document.body.appendChild(overlay);
+
+  renderDestiladorMineral();
+};
+
+function cargarAguaEnDestiladorMineral() {
+  if (destiladorMineralState.procesando) return false;
+
+  const totalAgua = contarItemDestilador(DESTILADOR_MINERAL_CONFIG.aguaIds);
+
+  if (totalAgua <= 0) {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Sin agua",
+        message: "No tienes unidades con id: agua en el inventario.",
+        type: "warning",
+        duration: 3500
+      });
+    }
+
+    return false;
+  }
+
+  if (destiladorMineralState.aguaCargada >= DESTILADOR_MINERAL_CONFIG.costoAgua) {
+    return false;
+  }
+
+  const consumoCorrecto = quitarItemsDestilador(DESTILADOR_MINERAL_CONFIG.aguaIds, 1);
+
+  if (!consumoCorrecto) {
+    if (typeof playerrorSound === "function") playerrorSound();
+    return false;
+  }
+
+  destiladorMineralState.aguaCargada += 1;
+  destiladorMineralState.etapa = "carga";
+
+  if (typeof playtockSound === "function") playtockSound();
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  renderDestiladorMineral();
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+    if (destiladorMineralState.etapa === "carga" && !destiladorMineralState.procesando) {
+      destiladorMineralState.etapa = "idle";
+      renderDestiladorMineral();
+    }
+  }, 650);
+
+  return true;
+}
+
+function otorgarRecompensasDestiladorMineral() {
+  for (const recompensa of DESTILADOR_MINERAL_CONFIG.recompensas) {
+    const baseItem = buscarItemBaseDestilador(recompensa.id);
+
+    if (!baseItem) {
+      console.warn("No existe el item en items.json:", recompensa.id);
+      continue;
+    }
+
+    const agregado = agregarItemAlInventario({
+      ...baseItem,
+      cantidad: recompensa.cantidad,
+      usos: baseItem.usos ?? null,
+      usos_maximos: baseItem.usos_maximos ?? null
+    });
+
+    if (!agregado && typeof playerrorSound === "function") {
+      playerrorSound();
+    }
+  }
+
+  if (typeof refreshInventarioUI === "function") {
+    refreshInventarioUI();
+  }
+
+  validarMisionesDespuesDestilador();
+
+  /*--//Sincronizar wordpress(Inicio)--*/
+  // Aquí debes guardar en WordPress el inventario actualizado.
+  // Recomendado: sincronizar window.inventarioUser completo dentro del progreso del jugador.
+  // Ejemplo futuro:
+  // if (typeof guardarProgresoJugadorEnWordPress === "function") {
+  //   guardarProgresoJugadorEnWordPress();
+  // }
+  /*--//Sincronizar wordpress(fin)--*/
+}
+
+function procesarDestiladorMineral() {
+  if (destiladorMineralState.procesando) return false;
+
+  if (destiladorMineralState.aguaCargada < DESTILADOR_MINERAL_CONFIG.costoAgua) {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Carga incompleta",
+        message: `Necesitas cargar 5 unidades de agua. Cargadas: ${destiladorMineralState.aguaCargada}.`,
+        type: "warning",
+        duration: 4000
+      });
+    }
+
+    return false;
+  }
+
+  destiladorMineralState.procesando = true;
+
+  const secuencia = [
+    { etapa: "calor", delay: 0, sound: "fuego" },
+    { etapa: "evaporacion", delay: 1300, sound: "tock" },
+    { etapa: "extraccion", delay: 2900, sound: "good" }
+  ];
+
+  for (const paso of secuencia) {
+    setTimeout(() => {
+      if (!document.getElementById("destilador-mineral-overlay")) return;
+
+      destiladorMineralState.etapa = paso.etapa;
+
+      if (paso.sound === "fuego" && typeof playFuegoSound === "function") {
+        playFuegoSound();
+      }
+
+      if (paso.sound === "tock" && typeof playtockSound === "function") {
+        playtockSound();
+      }
+
+      if (paso.sound === "good" && typeof playgoodSound === "function") {
+        playgoodSound();
+      }
+
+      renderDestiladorMineral();
+    }, paso.delay);
+  }
+
+  setTimeout(() => {
+    if (!document.getElementById("destilador-mineral-overlay")) return;
+
+    otorgarRecompensasDestiladorMineral();
+
+    destiladorMineralState.aguaCargada = 0;
+    destiladorMineralState.procesando = false;
+    destiladorMineralState.etapa = "extraccion";
+
+    renderDestiladorMineral();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Destilación completa",
+        message: "Obtuviste 1 sal mineral y 1 hierro.",
+        type: "success",
+        duration: 5000
+      });
+    }
+
+    setTimeout(() => {
+      if (!document.getElementById("destilador-mineral-overlay")) return;
+      destiladorMineralState.etapa = "idle";
+      renderDestiladorMineral();
+    }, 900);
+  }, 3900);
+
+  return true;
+}
+
+window.openDestiladorMineral = function () {
+  ensureDestiladorMineralStyles();
+
+  const existente = document.getElementById("destilador-mineral-overlay");
+  if (existente) existente.remove();
+
+  destiladorMineralState.aguaCargada = 0;
+  destiladorMineralState.procesando = false;
+  destiladorMineralState.etapa = "idle";
+
+  const overlay = document.createElement("div");
+  overlay.id = "destilador-mineral-overlay";
+  document.body.appendChild(overlay);
+
+  renderDestiladorMineral();
+};
+
 
 function tomarItemDeArcilla() {
 
@@ -15543,18 +18501,57 @@ function tomarItemDeArcilla() {
 }
 
 function tomarItemDeBasura() {
-
   if (!Array.isArray(itemsData) || itemsData.length === 0) return;
 
-  // ❌ Items prohibidos
-  const itemsProhibidos = ["escudo_de_hierro", "espada_de_hierro", "patines", "pico_escabador", "bumerang", "antorcha", "espada_de_madera", "escudo_de_madera", "pistola_laser"];
+  const LIMITE_BASURA = {
+    corazon: 8,
+    bateria: 15,
+    rueda: 16
+  };
 
-  // ✔ Filtrar items válidos
-  const itemsValidos = itemsData.filter(item => !itemsProhibidos.includes(item.id));
+  const basuraStats = JSON.parse(localStorage.getItem("basura_stats") || "{}");
 
-  if (itemsValidos.length === 0) return;
+  const itemsProhibidos = [
+    "escudo_de_hierro",
+    "espada_de_hierro",
+    "patines",
+    "pico_escabador",
+    "bumerang",
+    "antorcha",
+    "espada_de_madera",
+    "escudo_de_madera",
+    "pistola_lazer",
+    "bloque_de_arcilla",
+    "balinera",
+    "diodo_lazer",
+    "cobre",
+    "hierro",
+    "cable"
+  ];
 
-  // 🎲 Elegir uno aleatorio
+  const itemsValidos = itemsData.filter(item => {
+    if (!item || !item.id) return false;
+
+    if (itemsProhibidos.includes(item.id)) return false;
+
+    if (item.id === "corazon" || item.id === "bateria" || item.id === "rueda") {
+      return (basuraStats[item.id] || 0) < LIMITE_BASURA[item.id];
+    }
+
+    return true;
+  });
+
+  if (itemsValidos.length === 0) {
+    playerrorSound();
+    showPopupFeedback({
+      title: "Basura vacía",
+      message: "Ya no hay objetos útiles para encontrar aquí.",
+      type: "warning",
+      duration: 5000
+    });
+    return;
+  }
+
   const itemRandom = itemsValidos[Math.floor(Math.random() * itemsValidos.length)];
 
   const agregado = agregarItemAlInventario({
@@ -15571,6 +18568,13 @@ function tomarItemDeBasura() {
     return;
   }
 
+  if (itemRandom.id === "corazon" || itemRandom.id === "bateria" || itemRandom.id === "rueda") {
+    basuraStats[itemRandom.id] = (basuraStats[itemRandom.id] || 0) + 1;
+    localStorage.setItem("basura_stats", JSON.stringify(basuraStats));
+  }
+
+  playtockSound();
+
   showPopupFeedback({
     title: "Basura revisada",
     message: `Encontraste: ${itemRandom.nombre_item}`,
@@ -15581,6 +18585,7 @@ function tomarItemDeBasura() {
   if (typeof refreshInventarioUI === "function") {
     refreshInventarioUI();
   }
+
   const activeMissionId = window.missionSystem.activeMissionId;
   if (activeMissionId) {
     validarPasoRecolectarItems(activeMissionId);

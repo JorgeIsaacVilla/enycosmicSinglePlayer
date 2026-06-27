@@ -12415,6 +12415,8 @@ function continuarTrasGameOver() {
   function intentarCrearItemFinal() {
     if (!combinacionResultado) return;
 
+    const scrollInventario = getInventarioScrollState();
+
     const probabilidad =
       IQuser >= 700
         ? 1

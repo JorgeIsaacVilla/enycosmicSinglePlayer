@@ -1,0 +1,21 @@
+/*Scroll (inicio)*/
+::-webkit-scrollbar {
+    width: 3px; /* Ancho de la barra de desplazamiento */
+    height: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent1; /* Color de fondo del track (fondo de la barra) */
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-4); /* Color del "mango" de la barra de desplazamiento */
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color:blue; /* Cambio de color cuando se pasa el ratón por encima del mango */
+  }
+  ::-webkit-scrollbar-corner {
+    background-color: #f1f1f1; /* Color de la esquina de la barra de desplazamiento */
+  }
+  ::-webkit-scrollbar-button {
+    display: none; /* Oculta los botones de la barra de desplazamiento (flechas) */
+  }
+/*Scroll (fin)*/

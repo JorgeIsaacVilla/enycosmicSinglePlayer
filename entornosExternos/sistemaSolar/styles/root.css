@@ -1,0 +1,27 @@
+:root{
+    /*Text Color*/
+    --color-1:#fff;
+    --color-2:black;
+    --color-3:#7C49FF;
+    --color-4:#01c3dc;
+    --color-5:#ff914d;
+    --color-6:#c1ff72;
+  
+    /*background Colors*/
+    --background-1:#4A28A2;
+    --background-2:#00ff00;
+    --background-3:yellow;
+    --background-4:white;
+    --background-5:rgba(0, 0, 0, 0.911);
+    --background-6:#01C3DC;
+    --background-7:#F9A618;
+  
+    /*Text Sise*/
+    --text-1:5rem;
+    --text-2:1.6rem;
+    --text-3:1.8rem;
+    --text-4:2.4rem;
+    --text-5:1.4rem;
+    --text-7:2.1rem;
+    --text-6:3.4rem;
+  }

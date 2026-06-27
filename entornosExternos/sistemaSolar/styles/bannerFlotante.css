@@ -1,0 +1,55 @@
+.banner {
+    position: fixed;
+    bottom: -100px; /* Inicialmente fuera de la vista */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.89); /* Fondo oscuro con un toque arcade */
+    padding: 20px 30px;
+    border-radius: 10px; /* Bordes más suaves, estilo retro */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease; /* Transición suave */
+    z-index: 9999;
+    color: var(--color-1);
+    border: 2px solid var(--color-4); /* Borde verde neón */
+    box-shadow: 0 0 10px var(--color-4), 0 0 20px var(--color-4); /* Sombra verde neón */
+    text-shadow: 2px 2px 4px var(--background-2); /* Sombra de texto */
+    max-height: 80px;
+    overflow-y: scroll;
+    width: calc(100% - 96px);
+    max-width: 800px;
+}
+
+.banner p {
+    margin: 0;
+    max-width: 100%;
+}
+
+.banner button {
+    background: none;
+    border: none;
+    border-radius: 100%;
+    color: var(--color-4);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    font-size: var(--text-6);
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px;
+}
+
+/* Mostrar el banner con la animación de desplazarse hacia arriba */
+.banner.show {
+    bottom: 20px;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ocultar el banner con animación hacia abajo */
+.banner.hide {
+    bottom: -100px;
+    opacity: 0;
+    visibility: hidden;
+}
