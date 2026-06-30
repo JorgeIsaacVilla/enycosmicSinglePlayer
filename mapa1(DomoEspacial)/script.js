@@ -15507,8 +15507,521 @@ function continuarTrasGameOver() {
 // Total al completar 50: +10 IQ +20 cosmonedas
 // ======================================================
 
-//const PLANETARIO_QUIZ_STORAGE_KEY = "enycosmic_mapa1_planetario_quiz_v1";
+// ======================================================
+// SISTEMA REUTILIZABLE DE TELESCOPIOS - DOMO ESPACIAL
+// Vista liviana con zoom por rueda, drag y gesto táctil
+// ======================================================
 
+const TELESCOPIO_ASTRO_CONFIG = {
+  tycho: {
+    title: "Telescopio orbital / Cráter Tycho",
+    image: "https://enycosmicplayer.vercel.app/entornosExternos/sistemaSolar/astroFotografia/createrTycho.png",
+    alt: "Astrofotografía del cráter Tycho",
+    maxScale: 5,
+    description: `
+      <span>Cráter Tycho:</span>
+      una formación lunar brillante con rayos visibles que se extienden
+      por gran parte de la superficie. Usa zoom para observar detalles
+      de la astrofotografía.
+    `
+  },
+
+  jupiter: {
+    title: "Telescopio profundo / Júpiter",
+    image: "https://enycosmicplayer.vercel.app/entornosExternos/sistemaSolar/astroFotografia/Jupiter-galaxia.jpg",
+    alt: "Astrofotografía de Júpiter y cielo profundo",
+    maxScale: 6,
+    description: `
+      <span>Júpiter y cielo profundo:</span>
+      esta fotografía muestra a Júpiter y sus lunas principales.
+      Si observas con más atención, también descubrirás estrellas,
+      nebulosas y galaxias escondidas en el fondo. Es una imagen
+      tomada por mí hace años, y siempre he querido invitar a otros
+      a mirar más allá de lo evidente y buscar más a fondo.
+    `
+  }
+};
+
+let telescopioAstroState = {
+  scale: 1,
+  minScale: 1,
+  maxScale: 5,
+  translateX: 0,
+  translateY: 0,
+  dragging: false,
+  startX: 0,
+  startY: 0,
+  lastX: 0,
+  lastY: 0,
+  pinchStartDistance: 0,
+  pinchStartScale: 1
+};
+
+function ensureTelescopioAstroStyles() {
+  if (document.getElementById("telescopio-astro-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "telescopio-astro-style";
+
+  style.textContent = `
+    #telescopio-astro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(0,255,204,.08), rgba(0,0,0,.72) 58%),
+        rgba(0,0,0,.62);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #telescopio-astro-box {
+      width: min(94vw, 560px);
+      height: min(86vh, 640px);
+      background: #000;
+      color: #00ffcc;
+      border: 3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #032b2b,
+        0 0 22px rgba(0,255,204,.32),
+        0 16px 38px rgba(0,0,0,.7);
+      display: grid;
+      grid-template-rows: 42px 1fr auto;
+      overflow: hidden;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+    }
+
+    #telescopio-astro-header {
+      height: 42px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 8px;
+      background:
+        linear-gradient(90deg, rgba(0,255,204,.12), rgba(0,0,0,.95), rgba(0,255,204,.12)),
+        #050505;
+      border-bottom: 2px solid rgba(0,255,204,.75);
+      box-sizing: border-box;
+    }
+
+    #telescopio-astro-title {
+      font-size: 11px;
+      color: #00ffcc;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(0,255,204,.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #telescopio-astro-close {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      cursor: pointer;
+    }
+
+    #telescopio-astro-close:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 12px rgba(0,255,204,.8);
+    }
+
+    #telescopio-astro-view {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, transparent 0 45%, rgba(0,0,0,.25) 46%, rgba(0,0,0,.92) 73%),
+        radial-gradient(circle at center, rgba(0,255,204,.12), rgba(0,0,0,.95) 66%),
+        #000;
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+    }
+
+    #telescopio-astro-view.dragging {
+      cursor: grabbing;
+    }
+
+    #telescopio-astro-img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
+      will-change: transform;
+      pointer-events: none;
+      image-rendering: auto;
+    }
+
+    .telescopio-astro-ring {
+      position: absolute;
+      inset: 8%;
+      border: 2px solid rgba(0,255,204,.55);
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0 28px rgba(0,255,204,.14),
+        0 0 18px rgba(0,255,204,.2);
+      pointer-events: none;
+    }
+
+    .telescopio-astro-cross-x,
+    .telescopio-astro-cross-y {
+      position: absolute;
+      background: rgba(0,255,204,.5);
+      box-shadow: 0 0 8px rgba(0,255,204,.65);
+      pointer-events: none;
+    }
+
+    .telescopio-astro-cross-x {
+      left: 12%;
+      right: 12%;
+      top: 50%;
+      height: 1px;
+    }
+
+    .telescopio-astro-cross-y {
+      top: 12%;
+      bottom: 12%;
+      left: 50%;
+      width: 1px;
+    }
+
+    .telescopio-astro-scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -18px;
+      height: 18px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(0,255,204,.16),
+        transparent
+      );
+      animation: telescopioAstroScan 2.7s linear infinite;
+      pointer-events: none;
+    }
+
+    #telescopio-astro-info {
+      padding: 10px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.045) 0px,
+          rgba(0,255,204,.045) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        #020808;
+      border-top: 2px solid rgba(0,255,204,.68);
+      color: #ffffff;
+      font-size: 10px;
+      line-height: 1.45;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    #telescopio-astro-info span {
+      color: #ffe066;
+      text-shadow: 0 0 8px rgba(255,224,102,.7);
+    }
+
+    .telescopio-astro-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .telescopio-astro-btn {
+      min-width: 34px;
+      min-height: 30px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid rgba(0,255,204,.8);
+      font-family: arcade, monospace;
+      cursor: pointer;
+    }
+
+    .telescopio-astro-btn:hover {
+      background: #00ffcc;
+      color: #000;
+    }
+
+    @keyframes telescopioAstroScan {
+      from { top: -18px; }
+      to { top: 100%; }
+    }
+
+    @media (max-width: 440px) {
+      #telescopio-astro-box {
+        width: 94vw;
+        height: 84vh;
+      }
+
+      #telescopio-astro-info {
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function cerrarTelescopioAstroPopup() {
+  const overlay = document.getElementById("telescopio-astro-overlay");
+  if (overlay) overlay.remove();
+}
+
+function resetTelescopioAstroState(maxScale = 5) {
+  telescopioAstroState.scale = 1;
+  telescopioAstroState.minScale = 1;
+  telescopioAstroState.maxScale = maxScale;
+  telescopioAstroState.translateX = 0;
+  telescopioAstroState.translateY = 0;
+  telescopioAstroState.dragging = false;
+  telescopioAstroState.startX = 0;
+  telescopioAstroState.startY = 0;
+  telescopioAstroState.lastX = 0;
+  telescopioAstroState.lastY = 0;
+  telescopioAstroState.pinchStartDistance = 0;
+  telescopioAstroState.pinchStartScale = 1;
+}
+
+function aplicarTransformTelescopioAstro() {
+  const img = document.getElementById("telescopio-astro-img");
+  if (!img) return;
+
+  const s = telescopioAstroState;
+
+  img.style.transform = `
+    translate(-50%, -50%)
+    translate(${s.translateX}px, ${s.translateY}px)
+    scale(${s.scale})
+  `;
+}
+
+function clampTelescopioAstro() {
+  const s = telescopioAstroState;
+
+  s.scale = Math.max(s.minScale, Math.min(s.maxScale, s.scale));
+
+  if (s.scale <= 1) {
+    s.translateX = 0;
+    s.translateY = 0;
+    return;
+  }
+
+  const limit = 180 * s.scale;
+
+  s.translateX = Math.max(-limit, Math.min(limit, s.translateX));
+  s.translateY = Math.max(-limit, Math.min(limit, s.translateY));
+}
+
+function zoomTelescopioAstro(delta) {
+  const s = telescopioAstroState;
+
+  s.scale = Math.max(
+    s.minScale,
+    Math.min(s.maxScale, s.scale + delta)
+  );
+
+  clampTelescopioAstro();
+  aplicarTransformTelescopioAstro();
+}
+
+function getTouchDistanceTelescopioAstro(touches) {
+  if (!touches || touches.length < 2) return 0;
+
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+
+  return Math.hypot(dx, dy);
+}
+
+function bindTelescopioAstroEvents() {
+  const overlay = document.getElementById("telescopio-astro-overlay");
+  const view = document.getElementById("telescopio-astro-view");
+  const closeBtn = document.getElementById("telescopio-astro-close");
+  const zoomInBtn = document.getElementById("telescopio-astro-zoom-in");
+  const zoomOutBtn = document.getElementById("telescopio-astro-zoom-out");
+  const resetBtn = document.getElementById("telescopio-astro-reset");
+
+  if (!overlay || !view) return;
+
+  closeBtn.onclick = cerrarTelescopioAstroPopup;
+
+  zoomInBtn.onclick = () => zoomTelescopioAstro(0.25);
+  zoomOutBtn.onclick = () => zoomTelescopioAstro(-0.25);
+
+  resetBtn.onclick = () => {
+    resetTelescopioAstroState(telescopioAstroState.maxScale);
+    aplicarTransformTelescopioAstro();
+  };
+
+  overlay.addEventListener("pointerdown", function (e) {
+    if (e.target === overlay) {
+      e.preventDefault();
+      cerrarTelescopioAstroPopup();
+    }
+  }, { passive: false });
+
+  view.addEventListener("wheel", function (e) {
+    e.preventDefault();
+
+    const delta = e.deltaY < 0 ? 0.18 : -0.18;
+    zoomTelescopioAstro(delta);
+  }, { passive: false });
+
+  view.addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+
+    const s = telescopioAstroState;
+
+    s.dragging = true;
+    s.startX = e.clientX;
+    s.startY = e.clientY;
+    s.lastX = s.translateX;
+    s.lastY = s.translateY;
+
+    view.classList.add("dragging");
+
+    try {
+      view.setPointerCapture(e.pointerId);
+    } catch (_) { }
+  }, { passive: false });
+
+  view.addEventListener("pointermove", function (e) {
+    const s = telescopioAstroState;
+
+    if (!s.dragging || s.scale <= 1) return;
+
+    e.preventDefault();
+
+    const dx = e.clientX - s.startX;
+    const dy = e.clientY - s.startY;
+
+    s.translateX = s.lastX + dx;
+    s.translateY = s.lastY + dy;
+
+    clampTelescopioAstro();
+    aplicarTransformTelescopioAstro();
+  }, { passive: false });
+
+  view.addEventListener("pointerup", function () {
+    telescopioAstroState.dragging = false;
+    view.classList.remove("dragging");
+  });
+
+  view.addEventListener("pointercancel", function () {
+    telescopioAstroState.dragging = false;
+    view.classList.remove("dragging");
+  });
+
+  view.addEventListener("touchstart", function (e) {
+    if (e.touches.length === 2) {
+      telescopioAstroState.pinchStartDistance = getTouchDistanceTelescopioAstro(e.touches);
+      telescopioAstroState.pinchStartScale = telescopioAstroState.scale;
+    }
+  }, { passive: false });
+
+  view.addEventListener("touchmove", function (e) {
+    if (e.touches.length !== 2) return;
+
+    e.preventDefault();
+
+    const s = telescopioAstroState;
+    const distance = getTouchDistanceTelescopioAstro(e.touches);
+
+    if (!s.pinchStartDistance) return;
+
+    s.scale = s.pinchStartScale * (distance / s.pinchStartDistance);
+
+    clampTelescopioAstro();
+    aplicarTransformTelescopioAstro();
+  }, { passive: false });
+}
+
+function openTelescopioAstroPopup(configKey) {
+  const config = TELESCOPIO_ASTRO_CONFIG[configKey];
+  if (!config) return;
+
+  ensureTelescopioAstroStyles();
+
+  const existente = document.getElementById("telescopio-astro-overlay");
+  if (existente) existente.remove();
+
+  resetTelescopioAstroState(config.maxScale || 5);
+
+  const overlay = document.createElement("div");
+  overlay.id = "telescopio-astro-overlay";
+
+  overlay.innerHTML = `
+    <div id="telescopio-astro-box">
+      <div id="telescopio-astro-header">
+        <div id="telescopio-astro-title">${config.title}</div>
+        <button id="telescopio-astro-close" type="button">X</button>
+      </div>
+
+      <div id="telescopio-astro-view">
+        <img
+          id="telescopio-astro-img"
+          src="${config.image}"
+          alt="${config.alt}"
+          draggable="false"
+        >
+
+        <div class="telescopio-astro-ring"></div>
+        <div class="telescopio-astro-cross-x"></div>
+        <div class="telescopio-astro-cross-y"></div>
+        <div class="telescopio-astro-scan"></div>
+      </div>
+
+      <div id="telescopio-astro-info">
+        ${config.description}
+
+        <div class="telescopio-astro-controls">
+          <button id="telescopio-astro-zoom-out" class="telescopio-astro-btn" type="button">-</button>
+          <button id="telescopio-astro-reset" class="telescopio-astro-btn" type="button">1X</button>
+          <button id="telescopio-astro-zoom-in" class="telescopio-astro-btn" type="button">+</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  bindTelescopioAstroEvents();
+  aplicarTransformTelescopioAstro();
+}
+
+window.openTelescopioTychoPopup = function () {
+  openTelescopioAstroPopup("tycho");
+};
+
+window.openTelescopioJupiterPopup = function () {
+  openTelescopioAstroPopup("jupiter");
+};
+
+//const PLANETARIO_QUIZ_STORAGE_KEY = "enycosmic_mapa1_planetario_quiz_v1";
 const PLANETARIO_QUIZ_QUESTIONS = [
   {
     id: "pq001",
@@ -16997,6 +17510,76 @@ function ensurePlanetarioVirtualStyles() {
 function cerrarPlanetarioVirtualPopup() {
   const overlay = document.getElementById("planetario-virtual-overlay");
   if (overlay) overlay.remove();
+
+  detenerMusicaPopupPlanetario();
+  reanudarMusicaAmbienteDespuesPlanetario();
+}
+
+// ======================================================
+// AUDIO POPUP PLANETARIO - DOMO ESPACIAL
+// Pausa música ambiente y reproduce música del planetario
+// ======================================================
+
+const PLANETARIO_POPUP_AUDIO_SRC = "https://enycosmicplayer.vercel.app/entornosExternos/sistemaSolar/song/planetarioSong.mp3";
+
+let planetarioPopupAudio = null;
+let planetarioAmbientWasPlaying = false;
+
+function pausarMusicaAmbienteParaPlanetario() {
+  planetarioAmbientWasPlaying = false;
+
+  if (typeof ensureAmbientAudio === "function") {
+    const audio = ensureAmbientAudio();
+
+    if (audio && !audio.paused) {
+      planetarioAmbientWasPlaying = true;
+    }
+  }
+
+  if (typeof pauseAmbientMusic === "function") {
+    pauseAmbientMusic();
+  } else if (typeof ambientAudio !== "undefined" && ambientAudio) {
+    ambientAudio.pause();
+  }
+}
+
+function reproducirMusicaPopupPlanetario() {
+  if (!planetarioPopupAudio) {
+    planetarioPopupAudio = new Audio(PLANETARIO_POPUP_AUDIO_SRC);
+    planetarioPopupAudio.loop = true;
+    planetarioPopupAudio.volume = 0.75;
+  }
+
+  planetarioPopupAudio.currentTime = 0;
+
+  planetarioPopupAudio.play().catch(error => {
+    console.warn("El navegador bloqueó el audio del planetario hasta una interacción del usuario:", error);
+  });
+}
+
+function detenerMusicaPopupPlanetario() {
+  if (planetarioPopupAudio) {
+    planetarioPopupAudio.pause();
+    planetarioPopupAudio.currentTime = 0;
+  }
+}
+
+function reanudarMusicaAmbienteDespuesPlanetario() {
+  const ambienteActivo =
+    typeof getAmbientEnabled === "function"
+      ? getAmbientEnabled()
+      : true;
+
+  if (!ambienteActivo) return;
+  if (!planetarioAmbientWasPlaying) return;
+
+  if (typeof playAmbientMusic === "function") {
+    playAmbientMusic();
+  } else if (typeof ambientAudio !== "undefined" && ambientAudio) {
+    ambientAudio.play().catch(() => { });
+  }
+
+  planetarioAmbientWasPlaying = false;
 }
 
 window.openPlanetarioVirtualPopup = function () {
@@ -17004,6 +17587,8 @@ window.openPlanetarioVirtualPopup = function () {
 
   const existente = document.getElementById("planetario-virtual-overlay");
   if (existente) existente.remove();
+  pausarMusicaAmbienteParaPlanetario();
+  reproducirMusicaPopupPlanetario();
 
   const overlay = document.createElement("div");
   overlay.id = "planetario-virtual-overlay";
