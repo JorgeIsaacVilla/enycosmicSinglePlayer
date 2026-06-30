@@ -15499,6 +15499,395 @@ function continuarTrasGameOver() {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
 
+// ======================================================
+// SISTEMA EXTERNO REUTILIZABLE DE DIÁLOGOS DE OBJETOS
+// No modifica ni usa renderNPCDialog()
+// No toca window.npcDialogState
+// Imita el estilo visual de diálogo NPC
+// ======================================================
+
+const OBJETO_DIALOG_EXTERNO_CONFIG = {
+  momiaMonalisa: {
+    title: "Registro alienígena",
+    image: "https://enycosmicplayer.vercel.app/assets/images/momiaMonalisa.png",
+    alt: "Momia Monalisa alienígena",
+    lines: [
+      "Pero qué cara...!!!",
+      "Parece la momia de una especie alienígena.",
+      "Parece muy antigua.",
+      "¿Puede tener 10.000 años o más?"
+    ]
+  }
+};
+
+let objetoDialogExternoState = {
+  key: null,
+  lineIndex: 0
+};
+
+function ensureObjetoDialogExternoStyles() {
+  if (document.getElementById("objeto-dialog-externo-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "objeto-dialog-externo-style";
+
+  style.textContent = `
+    #objeto-dialog-externo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(0, 0, 0, 0.58);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+    }
+
+    #objeto-dialog-externo-panel {
+      width: min(94vw, 520px);
+      background: #000;
+      color: #00ffcc;
+      border: 3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #032b2b,
+        0 0 24px rgba(0,255,204,.34),
+        0 18px 40px rgba(0,0,0,.72);
+      display: grid;
+      grid-template-rows: 42px 155px auto;
+      overflow: hidden;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+    }
+
+    #objeto-dialog-externo-header {
+      height: 42px;
+      min-height: 42px;
+      background:
+        linear-gradient(90deg, rgba(0,255,204,.14), rgba(0,0,0,.95), rgba(0,255,204,.14)),
+        #050505;
+      border-bottom: 2px solid rgba(0,255,204,.78);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 8px;
+      box-sizing: border-box;
+    }
+
+    #objeto-dialog-externo-title {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00ffcc;
+      text-shadow: 0 0 8px rgba(0,255,204,.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #objeto-dialog-externo-close {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      cursor: pointer;
+    }
+
+    #objeto-dialog-externo-close:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 12px rgba(0,255,204,.8);
+    }
+
+    #objeto-dialog-externo-image-wrap {
+      position: relative;
+      background:
+        radial-gradient(circle at center, rgba(0,255,204,.14), transparent 58%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.045) 0px,
+          rgba(0,255,204,.045) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        #020808;
+      border-bottom: 2px solid rgba(0,255,204,.62);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #objeto-dialog-externo-image-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(0,255,204,.38);
+      box-shadow:
+        inset 0 0 18px rgba(0,255,204,.12),
+        0 0 12px rgba(0,255,204,.14);
+      pointer-events: none;
+    }
+
+    #objeto-dialog-externo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+      image-rendering: auto;
+    }
+
+    #objeto-dialog-externo-footer {
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,255,204,.04) 0px,
+          rgba(0,255,204,.04) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        #000;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #objeto-dialog-externo-line {
+      min-height: 46px;
+      margin: 0 0 10px 0;
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+      text-shadow: 0 0 8px rgba(0,255,204,.38);
+    }
+
+    #objeto-dialog-externo-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .objeto-dialog-externo-btn {
+      min-height: 34px;
+      padding: 6px 12px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid rgba(0,255,204,.8);
+      font-family: arcade, monospace;
+      font-size: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow:
+        0 0 10px rgba(0,255,204,.18),
+        inset 0 0 8px rgba(0,255,204,.05);
+    }
+
+    .objeto-dialog-externo-btn:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow:
+        0 0 12px #00ffcc,
+        0 0 26px rgba(0,255,204,.62);
+    }
+
+    @media (max-width: 440px) {
+      #objeto-dialog-externo-panel {
+        width: 94vw;
+        grid-template-rows: 42px 140px auto;
+      }
+
+      #objeto-dialog-externo-line {
+        font-size: 11px;
+      }
+
+      .objeto-dialog-externo-btn {
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeObjetoDialogExterno() {
+  const overlay = document.getElementById("objeto-dialog-externo-overlay");
+  if (overlay) overlay.remove();
+
+  objetoDialogExternoState.key = null;
+  objetoDialogExternoState.lineIndex = 0;
+}
+
+function renderObjetoDialogExterno() {
+  const config = OBJETO_DIALOG_EXTERNO_CONFIG[objetoDialogExternoState.key];
+  if (!config) return;
+
+  const titleEl = document.getElementById("objeto-dialog-externo-title");
+  const imageEl = document.getElementById("objeto-dialog-externo-image");
+  const lineEl = document.getElementById("objeto-dialog-externo-line");
+  const actionsEl = document.getElementById("objeto-dialog-externo-actions");
+
+  if (!titleEl || !imageEl || !lineEl || !actionsEl) return;
+
+  const lines = Array.isArray(config.lines) ? config.lines : [];
+  const total = lines.length;
+  const idx = Math.max(0, Math.min(objetoDialogExternoState.lineIndex, total - 1));
+
+  objetoDialogExternoState.lineIndex = idx;
+
+  titleEl.textContent = config.title || "Registro";
+  imageEl.src = config.image || "";
+  imageEl.alt = config.alt || config.title || "Registro";
+  lineEl.textContent = lines[idx] || "...";
+
+  const atFirst = idx <= 0;
+  const atLast = idx >= total - 1;
+
+  let html = "";
+
+  if (!atFirst) {
+    html += `
+      <button class="objeto-dialog-externo-btn" type="button" data-objeto-dialog-action="prev">
+        Anterior
+      </button>
+    `;
+  }
+
+  if (!atLast) {
+    html += `
+      <button class="objeto-dialog-externo-btn" type="button" data-objeto-dialog-action="next">
+        Siguiente
+      </button>
+    `;
+  } else {
+    html += `
+      <button class="objeto-dialog-externo-btn" type="button" data-objeto-dialog-action="close">
+        Cerrar
+      </button>
+    `;
+  }
+
+  actionsEl.innerHTML = html;
+}
+
+function handleObjetoDialogExternoAction(action) {
+  if (typeof playtockSound === "function") {
+    playtockSound();
+  }
+
+  if (action === "close") {
+    closeObjetoDialogExterno();
+    return;
+  }
+
+  if (action === "prev") {
+    objetoDialogExternoState.lineIndex--;
+    renderObjetoDialogExterno();
+    return;
+  }
+
+  if (action === "next") {
+    objetoDialogExternoState.lineIndex++;
+    renderObjetoDialogExterno();
+  }
+}
+
+function bindObjetoDialogExternoEvents() {
+  const overlay = document.getElementById("objeto-dialog-externo-overlay");
+  const closeBtn = document.getElementById("objeto-dialog-externo-close");
+
+  if (!overlay) return;
+
+  closeBtn?.addEventListener("click", () => {
+    handleObjetoDialogExternoAction("close");
+  });
+
+  closeBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    handleObjetoDialogExternoAction("close");
+  }, { passive: false });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      handleObjetoDialogExternoAction("close");
+    }
+  }, { passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-objeto-dialog-action]");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    handleObjetoDialogExternoAction(btn.dataset.objetoDialogAction);
+  });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    const btn = e.target.closest("[data-objeto-dialog-action]");
+    if (!btn) return;
+
+    if (e.pointerType === "mouse") return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    handleObjetoDialogExternoAction(btn.dataset.objetoDialogAction);
+  }, { passive: false });
+}
+
+function openObjetoDialogExterno(configKey) {
+  const config = OBJETO_DIALOG_EXTERNO_CONFIG[configKey];
+  if (!config) return;
+
+  ensureObjetoDialogExternoStyles();
+  closeObjetoDialogExterno();
+
+  objetoDialogExternoState.key = configKey;
+  objetoDialogExternoState.lineIndex = 0;
+
+  const overlay = document.createElement("div");
+  overlay.id = "objeto-dialog-externo-overlay";
+
+  overlay.innerHTML = `
+    <div id="objeto-dialog-externo-panel">
+      <div id="objeto-dialog-externo-header">
+        <div id="objeto-dialog-externo-title">Registro</div>
+        <button id="objeto-dialog-externo-close" type="button">X</button>
+      </div>
+
+      <div id="objeto-dialog-externo-image-wrap">
+        <img id="objeto-dialog-externo-image" src="" alt="Registro">
+      </div>
+
+      <div id="objeto-dialog-externo-footer">
+        <p id="objeto-dialog-externo-line">...</p>
+        <div id="objeto-dialog-externo-actions"></div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  bindObjetoDialogExternoEvents();
+  renderObjetoDialogExterno();
+}
+
+window.openMomiaMonalisaDialog = function () {
+  openObjetoDialogExterno("momiaMonalisa");
+};
+
 //Cuestionario de preguntas de planetario (inicio)
 // ======================================================
 // CUESTIONARIO PLANETARIO - MAPA 1 DOMO ESPACIAL
