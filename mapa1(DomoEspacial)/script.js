@@ -4,10 +4,8 @@
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-/*let userPostX = 2513;
-let userPostY = 2716;*/
-let userPostX = 233;
-let userPostY = 4700;
+let userPostX = 2513;
+let userPostY = 2716;
 
 function getSettingSfxVolume() {
   const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
