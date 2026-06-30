@@ -4212,6 +4212,21 @@
     "sonido_ambiente": null
   },
   {
+    "zona_id": "bloque_ambiente_11228",
+    "color": null,
+    "tipo": "visual cliqueable",
+    "funcion": "openComputadorInvestigacionLunar",
+    "x": 30,
+    "y": 4642,
+    "w": 130,
+    "h": 60,
+    "imagen": null,
+    "zIndexBase": 3300,
+    "sprites_1x10": null,
+    "velocidad_movimiento": null,
+    "sonido_ambiente": null
+  },
+  {
     "zona_id": "bloque_ambiente_11247",
     "color": null,
     "tipo": "visual cliqueable",

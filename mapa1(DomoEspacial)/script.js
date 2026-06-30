@@ -4,8 +4,10 @@
 /*Global Songs and efects (inicio) */
 let efectVolumen = 0.8;
 
-let userPostX = 2513;
-let userPostY = 2716;
+/*let userPostX = 2513;
+let userPostY = 2716;*/
+let userPostX = 233;
+let userPostY = 4700;
 
 function getSettingSfxVolume() {
   const raw = localStorage.getItem(LS_SETTINGS.sfxVolume);
@@ -12138,6 +12140,19 @@ function continuarTrasGameOver() {
     usos_maximos: 1
   });
 
+  window.inventarioUser.push({
+    id: "pistola_lazer",
+    nombre_item: "Pistola lazer",
+    tipo_item: "arma",
+    imagen: "../assets/items/pistolaLazer.svg",
+    agotable: true,
+    desaparece_al_agotarse: true,
+    cantidad: 1,
+    usos: 58,
+    usos_maximos: 58,
+    cuanto_quita_de_vida_al_enemigo: 15
+  });
+
 
   async function cargarItemsJSON() {
 
@@ -15500,10 +15515,447 @@ function continuarTrasGameOver() {
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
 
 // ======================================================
+// SISTEMA REUTILIZABLE DE COMPUTADORES RETRO / DOCUMENTOS
+// Estilo inspirado en sistemas operativos retro
+// No modifica el motor base
+// ======================================================
+
+const RETRO_PC_DOCS_CONFIG = {
+  investigacionLunar: {
+    osTitle: "Terminal de investigación",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Historia del alunizaje de la Luna",
+    statusText: "Documento cargado correctamente",
+    content: [
+      "Historia del alunizaje de la Luna",
+      "",
+      "En el año de 1969, el ser humano pisó por primera vez la Luna, un hito importante para la humanidad.",
+      "",
+      "Pero esto no se quedó solo en eso. Hubo muchas preguntas, y la curiosidad pudo más que las limitaciones tecnológicas de la época.",
+      "",
+      "En el año de 1971, el telescopio más potente de la Tierra encontró algo imposible en el lado oculto de la Luna.",
+      "",
+      "Era algo parecido a una nave con forma de grano de arroz, pero medía aproximadamente el equivalente a 18 estadios.",
+      "",
+      "Para el año de 1972 culminaron los estudios de los protocolos para el aterrizaje en el lado oculto de la Luna y la exploración de aquel objeto no identificado.",
+      "",
+      "En el año de 1973, un equipo de 4 astronautas, entre ingenieros, doctores y psicólogos, aterrizó y encontró dicha nave.",
+      "",
+      "Ingresaron y hallaron algo imposible: una especie humanoide femenina junto con otros 2 cadáveres masculinos.",
+      "",
+      "Medían más de 1.9 metros, tenían un pómulo sobresaliente en la frente y 6 dedos.",
+      "",
+      "Además, la nave presentaba indicios de haber pasado por alguna especie de guerra intergaláctica.",
+      "",
+      "¿Qué habrá pasado?, ¿cuándo pasó?, ¿por qué pasó? y ¿por qué está aquí, en el lado oculto de la Luna?"
+    ]
+  }
+};
+
+let retroPCDialogState = {
+  key: null
+};
+
+function ensureRetroPCStyles() {
+  if (document.getElementById("retro-pc-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "retro-pc-style";
+
+  style.textContent = `
+    #retro-pc-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.58);
+      font-family: arcade, monospace;
+    }
+
+    #retro-pc-window {
+      width: min(94vw, 760px);
+      height: min(88vh, 560px);
+      display: grid;
+      grid-template-rows: 30px 1fr 28px;
+      background: #c0c0c0;
+      border: 3px solid #e8e8e8;
+      border-right-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.22), 0 18px 40px rgba(0,0,0,.55);
+      overflow: hidden;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+    }
+
+    #retro-pc-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 6px;
+      box-sizing: border-box;
+      background: linear-gradient(90deg, #041a63, #0f6ec2);
+      color: #fff;
+      font-size: 10px;
+    }
+
+    #retro-pc-titlebar-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    #retro-pc-titlebar-dot {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border: 2px solid #000;
+      box-sizing: border-box;
+    }
+
+    #retro-pc-close {
+      width: 22px;
+      height: 20px;
+      min-width: 22px;
+      padding: 0;
+      border: 2px solid #f0f0f0;
+      border-right-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+      background: #c0c0c0;
+      color: #000;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    #retro-pc-body {
+      position: relative;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      background: #008080;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #retro-pc-sidebar {
+      background: linear-gradient(180deg, #0d6363, #064343);
+      border-right: 2px solid rgba(0,0,0,.35);
+      padding: 10px 8px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .retro-pc-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      font-size: 8px;
+      text-align: center;
+    }
+
+    .retro-pc-icon-box {
+      width: 42px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      background: #c0c0c0;
+      border: 2px solid #f0f0f0;
+      border-right-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+      color: #000;
+      font-size: 16px;
+    }
+
+    #retro-pc-desktop {
+      position: relative;
+      padding: 18px;
+      box-sizing: border-box;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.08)),
+        #008080;
+    }
+
+    #retro-word-window {
+      width: min(100%, 540px);
+      height: 100%;
+      max-height: 100%;
+      display: grid;
+      grid-template-rows: 26px 24px 1fr 24px;
+      background: #c0c0c0;
+      border: 3px solid #f0f0f0;
+      border-right-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+      box-sizing: border-box;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    #retro-word-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 6px;
+      box-sizing: border-box;
+      background: linear-gradient(90deg, #061d72, #1e84d1);
+      color: #fff;
+      font-size: 9px;
+    }
+
+    #retro-word-menubar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 8px;
+      box-sizing: border-box;
+      font-size: 8px;
+      color: #000;
+      background: #d4d0c8;
+      border-top: 1px solid #fff;
+      border-bottom: 1px solid #7d7d7d;
+    }
+
+    #retro-word-page-wrap {
+      background: #808080;
+      overflow: auto;
+      padding: 14px;
+      box-sizing: border-box;
+    }
+
+    #retro-word-page {
+      width: min(100%, 430px);
+      min-height: 100%;
+      margin: 0 auto;
+      background: #fff;
+      color: #111;
+      border: 1px solid #444;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35);
+      padding: 18px 18px 24px 18px;
+      box-sizing: border-box;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    #retro-word-doc-title {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    #retro-word-statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 8px;
+      box-sizing: border-box;
+      background: #d4d0c8;
+      border-top: 1px solid #7d7d7d;
+      font-size: 8px;
+      color: #000;
+    }
+
+    #retro-pc-taskbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 6px;
+      box-sizing: border-box;
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+    }
+
+    #retro-pc-start {
+      min-width: 64px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #c0c0c0;
+      border: 2px solid #f0f0f0;
+      border-right-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+      color: #000;
+      font-size: 8px;
+    }
+
+    #retro-pc-task-button {
+      height: 20px;
+      min-width: 140px;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      box-sizing: border-box;
+      background: #d4d0c8;
+      border: 2px solid #808080;
+      border-right-color: #fff;
+      border-bottom-color: #fff;
+      color: #000;
+      font-size: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 680px) {
+      #retro-pc-window {
+        width: 96vw;
+        height: 88vh;
+      }
+
+      #retro-pc-body {
+        grid-template-columns: 88px 1fr;
+      }
+
+      #retro-word-page {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      #retro-pc-sidebar {
+        display: none;
+      }
+
+      #retro-pc-body {
+        grid-template-columns: 1fr;
+      }
+
+      #retro-word-page {
+        width: 100%;
+        padding: 14px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeRetroPCPopup() {
+  const overlay = document.getElementById("retro-pc-overlay");
+  if (overlay) overlay.remove();
+  retroPCDialogState.key = null;
+}
+
+function buildRetroPCDocumentText(config) {
+  if (!config || !Array.isArray(config.content)) return "";
+  return config.content.join("\n");
+}
+
+function openRetroPCDocument(configKey) {
+  const config = RETRO_PC_DOCS_CONFIG[configKey];
+  if (!config) return;
+
+  ensureRetroPCStyles();
+  closeRetroPCPopup();
+
+  retroPCDialogState.key = configKey;
+
+  const overlay = document.createElement("div");
+  overlay.id = "retro-pc-overlay";
+
+  overlay.innerHTML = `
+    <div id="retro-pc-window">
+      <div id="retro-pc-titlebar">
+        <div id="retro-pc-titlebar-text">
+          <div id="retro-pc-titlebar-dot"></div>
+          <span>${config.osTitle}</span>
+        </div>
+        <button id="retro-pc-close" type="button">X</button>
+      </div>
+
+      <div id="retro-pc-body">
+        <div id="retro-pc-sidebar">
+          <div class="retro-pc-icon">
+            <div class="retro-pc-icon-box">🖥</div>
+            <span>Mi PC</span>
+          </div>
+
+          <div class="retro-pc-icon">
+            <div class="retro-pc-icon-box">📄</div>
+            <span>Informe</span>
+          </div>
+
+          <div class="retro-pc-icon">
+            <div class="retro-pc-icon-box">📁</div>
+            <span>Archivos</span>
+          </div>
+        </div>
+
+        <div id="retro-pc-desktop">
+          <div id="retro-word-window">
+            <div id="retro-word-titlebar">
+              <span>${config.wordWindowTitle}</span>
+              <span>▢</span>
+            </div>
+
+            <div id="retro-word-menubar">
+              <span>Archivo</span>
+              <span>Edición</span>
+              <span>Ver</span>
+              <span>Insertar</span>
+              <span>Formato</span>
+              <span>Ayuda</span>
+            </div>
+
+            <div id="retro-word-page-wrap">
+              <div id="retro-word-page">
+                <div id="retro-word-doc-title">${config.documentTitle}</div>
+                ${buildRetroPCDocumentText(config)}
+              </div>
+            </div>
+
+            <div id="retro-word-statusbar">
+              <span>${config.statusText}</span>
+              <span>Listo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="retro-pc-taskbar">
+        <div id="retro-pc-start">Inicio</div>
+        <div id="retro-pc-task-button">${config.documentTitle}</div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("retro-pc-close")?.addEventListener("click", closeRetroPCPopup);
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      closeRetroPCPopup();
+    }
+  }, { passive: false });
+}
+
+window.openComputadorInvestigacionLunar = function () {
+  openRetroPCDocument("investigacionLunar");
+};
+
+// ======================================================
 // SISTEMA EXTERNO REUTILIZABLE DE DIÁLOGOS DE OBJETOS
-// No modifica ni usa renderNPCDialog()
-// No toca window.npcDialogState
-// Imita el estilo visual de diálogo NPC
+// No modifica el sistema original del juego
+// Popup centrado + efecto de terror + ducking de ambiente
 // ======================================================
 
 const OBJETO_DIALOG_EXTERNO_CONFIG = {
@@ -15511,6 +15963,7 @@ const OBJETO_DIALOG_EXTERNO_CONFIG = {
     title: "Registro alienígena",
     image: "https://enycosmicplayer.vercel.app/assets/images/momiaMonalisa.png",
     alt: "Momia Monalisa alienígena",
+    soundEffect: "https://enycosmicplayer.vercel.app/assets/song/efect/terrorEfect1.mp3",
     lines: [
       "Pero qué cara...!!!",
       "Parece la momia de una especie alienígena.",
@@ -15525,6 +15978,11 @@ let objetoDialogExternoState = {
   lineIndex: 0
 };
 
+let objetoDialogExternoSound = null;
+let objetoDialogAmbientAudioRef = null;
+let objetoDialogAmbientPrevVolume = 1;
+let objetoDialogAmbientFadeInterval = null;
+
 function ensureObjetoDialogExternoStyles() {
   if (document.getElementById("objeto-dialog-externo-style")) return;
 
@@ -15538,7 +15996,7 @@ function ensureObjetoDialogExternoStyles() {
       z-index: 999999;
       background: rgba(0, 0, 0, 0.58);
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       padding: 14px;
       box-sizing: border-box;
@@ -15556,7 +16014,7 @@ function ensureObjetoDialogExternoStyles() {
         0 0 24px rgba(0,255,204,.34),
         0 18px 40px rgba(0,0,0,.72);
       display: grid;
-      grid-template-rows: 42px 155px auto;
+      grid-template-rows: 42px 220px auto;
       overflow: hidden;
       box-sizing: border-box;
       image-rendering: pixelated;
@@ -15608,21 +16066,22 @@ function ensureObjetoDialogExternoStyles() {
     #objeto-dialog-externo-image-wrap {
       position: relative;
       background:
-        radial-gradient(circle at center, rgba(0,255,204,.14), transparent 58%),
+        radial-gradient(circle at center, rgba(0,255,204,.10), transparent 58%),
         repeating-linear-gradient(
           to bottom,
-          rgba(0,255,204,.045) 0px,
-          rgba(0,255,204,.045) 2px,
+          rgba(0,255,204,.035) 0px,
+          rgba(0,255,204,.035) 2px,
           transparent 2px,
           transparent 6px
         ),
-        #020808;
+        #000;
       border-bottom: 2px solid rgba(0,255,204,.62);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
       box-sizing: border-box;
+      padding: 8px;
     }
 
     #objeto-dialog-externo-image-wrap::after {
@@ -15639,10 +16098,11 @@ function ensureObjetoDialogExternoStyles() {
     #objeto-dialog-externo-image {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       object-position: center center;
       display: block;
       image-rendering: auto;
+      background: #000;
     }
 
     #objeto-dialog-externo-footer {
@@ -15703,7 +16163,7 @@ function ensureObjetoDialogExternoStyles() {
     @media (max-width: 440px) {
       #objeto-dialog-externo-panel {
         width: 94vw;
-        grid-template-rows: 42px 140px auto;
+        grid-template-rows: 42px 190px auto;
       }
 
       #objeto-dialog-externo-line {
@@ -15719,7 +16179,96 @@ function ensureObjetoDialogExternoStyles() {
   document.head.appendChild(style);
 }
 
+function getObjetoDialogAmbientAudio() {
+  if (typeof ensureAmbientAudio === "function") {
+    const audio = ensureAmbientAudio();
+    if (audio) return audio;
+  }
+
+  if (typeof ambientAudio !== "undefined" && ambientAudio) {
+    return ambientAudio;
+  }
+
+  return null;
+}
+
+function clearObjetoDialogAmbientFade() {
+  if (objetoDialogAmbientFadeInterval) {
+    clearInterval(objetoDialogAmbientFadeInterval);
+    objetoDialogAmbientFadeInterval = null;
+  }
+}
+
+function duckObjetoDialogAmbientTo30() {
+  const ambient = getObjetoDialogAmbientAudio();
+  if (!ambient) return;
+
+  objetoDialogAmbientAudioRef = ambient;
+  objetoDialogAmbientPrevVolume = typeof ambient.volume === "number" ? ambient.volume : 1;
+
+  clearObjetoDialogAmbientFade();
+
+  const targetVolume = Math.max(0, Math.min(1, objetoDialogAmbientPrevVolume * 0.30));
+  ambient.volume = targetVolume;
+}
+
+function restoreObjetoDialogAmbientSlow() {
+  const ambient = objetoDialogAmbientAudioRef;
+  if (!ambient) return;
+
+  clearObjetoDialogAmbientFade();
+
+  const target = Math.max(0, Math.min(1, objetoDialogAmbientPrevVolume || 1));
+
+  objetoDialogAmbientFadeInterval = setInterval(() => {
+    if (!ambient) {
+      clearObjetoDialogAmbientFade();
+      return;
+    }
+
+    const step = 0.02;
+
+    if (ambient.volume >= target - step) {
+      ambient.volume = target;
+      clearObjetoDialogAmbientFade();
+      return;
+    }
+
+    ambient.volume = Math.min(target, ambient.volume + step);
+  }, 80);
+}
+
+function stopObjetoDialogSound() {
+  if (objetoDialogExternoSound) {
+    objetoDialogExternoSound.pause();
+    objetoDialogExternoSound.currentTime = 0;
+    objetoDialogExternoSound.onended = null;
+  }
+}
+
+function playObjetoDialogSound(config) {
+  stopObjetoDialogSound();
+
+  if (!config || !config.soundEffect) return;
+
+  objetoDialogExternoSound = new Audio(config.soundEffect);
+  objetoDialogExternoSound.volume = 1;
+
+  duckObjetoDialogAmbientTo30();
+
+  objetoDialogExternoSound.onended = function () {
+    restoreObjetoDialogAmbientSlow();
+  };
+
+  objetoDialogExternoSound.play().catch(() => {
+    restoreObjetoDialogAmbientSlow();
+  });
+}
+
 function closeObjetoDialogExterno() {
+  stopObjetoDialogSound();
+  restoreObjetoDialogAmbientSlow();
+
   const overlay = document.getElementById("objeto-dialog-externo-overlay");
   if (overlay) overlay.remove();
 
@@ -15882,6 +16431,7 @@ function openObjetoDialogExterno(configKey) {
 
   bindObjetoDialogExternoEvents();
   renderObjetoDialogExterno();
+  playObjetoDialogSound(config);
 }
 
 window.openMomiaMonalisaDialog = function () {
