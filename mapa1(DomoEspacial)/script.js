@@ -15512,6 +15512,949 @@ function continuarTrasGameOver() {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
 
+// ======================================================
+// SISTEMA DE JUEGOS ENYCOSMIC
+// Popup retro futurista con lista, nuevos, video e ingreso
+// ======================================================
+
+const ENYCOSMIC_GAMES_CONFIG = [
+  {
+    id: "puntitos",
+    nombre: "Puntitos",
+    descripcion: "Conecta puntos, descubre patrones y gana recompensas.",
+    nuevo: true,
+    premio: "+ IQ / Cosmonedas",
+    video: "../assets/videos/juegos/puntitosIntro.mp4",
+    url: "../juegos/puntitos/index.html"
+  },
+  {
+    id: "rompecabezas",
+    nombre: "Rompecabezas",
+    descripcion: "Ordena piezas, resuelve imágenes y entrena tu observación.",
+    nuevo: true,
+    premio: "+ IQ / Cosmonedas",
+    video: "../assets/videos/juegos/rompecabezasIntro.mp4",
+    url: "../juegos/rompecabezas/index.html"
+  },
+  {
+    id: "persecucion",
+    nombre: "Persecución",
+    descripcion: "Corre, esquiva obstáculos y supera el reto antes de que te alcancen.",
+    nuevo: false,
+    premio: "+ Items / Cosmonedas",
+    video: "../assets/videos/juegos/persecucionIntro.mp4",
+    url: "../juegos/persecucion/index.html"
+  }
+];
+
+let sistemaJuegosSelectedId = null;
+let sistemaJuegosVideoEl = null;
+let sistemaJuegosAmbientWasPlaying = false;
+
+function getSistemaJuegosSelectedGame() {
+  return ENYCOSMIC_GAMES_CONFIG.find(game => game.id === sistemaJuegosSelectedId) || null;
+}
+
+function pausarMusicaAmbienteParaSistemaJuegos() {
+  sistemaJuegosAmbientWasPlaying = false;
+
+  if (typeof ensureAmbientAudio === "function") {
+    const audio = ensureAmbientAudio();
+
+    if (audio && !audio.paused) {
+      sistemaJuegosAmbientWasPlaying = true;
+    }
+  }
+
+  if (typeof pauseAmbientMusic === "function") {
+    pauseAmbientMusic();
+  } else if (typeof ambientAudio !== "undefined" && ambientAudio) {
+    ambientAudio.pause();
+  }
+}
+
+function reanudarMusicaAmbienteDespuesSistemaJuegos() {
+  const ambienteActivo =
+    typeof getAmbientEnabled === "function"
+      ? getAmbientEnabled()
+      : true;
+
+  if (!ambienteActivo) return;
+  if (!sistemaJuegosAmbientWasPlaying) return;
+
+  if (typeof playAmbientMusic === "function") {
+    playAmbientMusic();
+  } else if (typeof ambientAudio !== "undefined" && ambientAudio) {
+    ambientAudio.play().catch(() => { });
+  }
+
+  sistemaJuegosAmbientWasPlaying = false;
+}
+
+function ensureSistemaJuegosStyles() {
+  if (document.getElementById("sistema-juegos-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "sistema-juegos-style";
+
+  style.textContent = `
+    #sistema-juegos-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(0, 255, 255, 0.12), transparent 46%),
+        linear-gradient(135deg, rgba(255, 0, 255, 0.12), rgba(0, 0, 0, 0.88));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      font-family: arcade, monospace;
+      pointer-events: auto;
+    }
+
+    #sistema-juegos-panel {
+      width: min(860px, 96vw);
+      max-height: 90vh;
+      background:
+        linear-gradient(180deg, rgba(8, 2, 30, 0.98), rgba(2, 0, 12, 0.98));
+      border: 3px solid #00f6ff;
+      box-shadow:
+        0 0 0 3px rgba(255, 0, 255, 0.55),
+        0 0 26px rgba(0, 246, 255, 0.7),
+        inset 0 0 22px rgba(255, 0, 255, 0.18);
+      color: #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #sistema-juegos-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.035) 0px,
+          rgba(255,255,255,0.035) 1px,
+          transparent 2px,
+          transparent 5px
+        );
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    #sistema-juegos-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: linear-gradient(90deg, #ff00d4, #00eaff);
+      color: #050014;
+      border-bottom: 3px solid #ffffff;
+    }
+
+    #sistema-juegos-title {
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    #sistema-juegos-close {
+      width: 30px;
+      height: 28px;
+      border: 2px solid #050014;
+      background: #ffffff;
+      color: #050014;
+      font-family: arcade, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #050014;
+    }
+
+    #sistema-juegos-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 14px;
+      padding: 14px;
+      box-sizing: border-box;
+      max-height: calc(90vh - 52px);
+      overflow: hidden;
+    }
+
+    #sistema-juegos-lista {
+      border: 2px solid rgba(0, 246, 255, 0.72);
+      background: rgba(0, 246, 255, 0.06);
+      box-shadow: inset 0 0 14px rgba(0, 246, 255, 0.16);
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .sistema-juegos-section-title {
+      margin: 8px 0 10px 0;
+      padding: 6px 8px;
+      font-size: 10px;
+      color: #00f6ff;
+      border: 1px solid rgba(0, 246, 255, 0.55);
+      background: rgba(0, 246, 255, 0.08);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .sistema-juegos-divider {
+      height: 2px;
+      margin: 12px 0;
+      background: linear-gradient(90deg, transparent, #ff00d4, #00f6ff, transparent);
+      box-shadow: 0 0 12px rgba(0, 246, 255, 0.65);
+    }
+
+    .sistema-juegos-card {
+      width: 100%;
+      border: 2px solid rgba(255, 0, 255, 0.58);
+      background:
+        linear-gradient(180deg, rgba(35, 0, 80, 0.85), rgba(5, 0, 22, 0.92));
+      color: #ffffff;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      text-align: left;
+      cursor: pointer;
+      font-family: arcade, monospace;
+      box-shadow:
+        0 0 10px rgba(255, 0, 255, 0.22),
+        inset 0 0 10px rgba(0, 246, 255, 0.12);
+    }
+
+    .sistema-juegos-card.is-selected {
+      border-color: #00f6ff;
+      box-shadow:
+        0 0 16px rgba(0, 246, 255, 0.65),
+        inset 0 0 12px rgba(0, 246, 255, 0.2);
+    }
+
+    .sistema-juegos-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .sistema-juegos-card-name {
+      font-size: 12px;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(0, 246, 255, 0.8);
+    }
+
+    .sistema-juegos-new-tag {
+      padding: 3px 6px;
+      border: 1px solid #ffdd4a;
+      color: #ffdd4a;
+      background: rgba(255, 221, 74, 0.12);
+      font-size: 9px;
+      box-shadow: 0 0 8px rgba(255, 221, 74, 0.5);
+      white-space: nowrap;
+    }
+
+    .sistema-juegos-card-desc {
+      margin: 0 0 6px 0;
+      font-size: 10px;
+      line-height: 1.45;
+      color: #d9ffff;
+    }
+
+    .sistema-juegos-card-premio {
+      font-size: 9px;
+      color: #8cffc8;
+    }
+
+    #sistema-juegos-preview {
+      border: 2px solid rgba(255, 0, 255, 0.62);
+      background: rgba(6, 0, 24, 0.92);
+      padding: 12px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      box-shadow: inset 0 0 18px rgba(255, 0, 255, 0.16);
+    }
+
+    #sistema-juegos-preview-title {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #ffffff;
+      text-shadow:
+        0 0 8px rgba(0, 246, 255, 0.9),
+        0 0 12px rgba(255, 0, 255, 0.65);
+    }
+
+    #sistema-juegos-preview-desc {
+      margin: 0 0 12px 0;
+      font-size: 11px;
+      line-height: 1.55;
+      color: #d9ffff;
+    }
+
+    #sistema-juegos-video-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 3px solid #00f6ff;
+      background:
+        radial-gradient(circle at center, rgba(0, 246, 255, 0.15), transparent 50%),
+        #050014;
+      box-shadow:
+        0 0 18px rgba(0, 246, 255, 0.55),
+        inset 0 0 16px rgba(255, 0, 255, 0.2);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    #sistema-juegos-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .sistema-juegos-video-placeholder {
+      text-align: center;
+      color: #00f6ff;
+      font-size: 11px;
+      line-height: 1.6;
+      padding: 12px;
+      text-shadow: 0 0 8px rgba(0, 246, 255, 0.9);
+    }
+
+    #sistema-juegos-ingresar {
+      width: 100%;
+      padding: 12px 14px;
+      border: 3px solid #00f6ff;
+      background: #12002e;
+      color: #ffffff;
+      font-family: arcade, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      text-shadow: 0 0 8px #00f6ff;
+      box-shadow:
+        0 0 14px rgba(0, 246, 255, 0.55),
+        inset 0 0 12px rgba(255, 0, 255, 0.22);
+    }
+
+    #sistema-juegos-ingresar:hover,
+    #sistema-juegos-close:hover,
+    .sistema-juegos-card:hover {
+      filter: brightness(1.2);
+    }
+
+    @media (max-width: 760px) {
+      #sistema-juegos-body {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+
+      #sistema-juegos-lista,
+      #sistema-juegos-preview {
+        overflow-y: visible;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeSistemaJuegosPopup() {
+  if (sistemaJuegosVideoEl) {
+    sistemaJuegosVideoEl.pause();
+    sistemaJuegosVideoEl.currentTime = 0;
+    sistemaJuegosVideoEl = null;
+  }
+
+  const overlay = document.getElementById("sistema-juegos-overlay");
+  if (overlay) overlay.remove();
+
+  reanudarMusicaAmbienteDespuesSistemaJuegos();
+}
+
+function buildSistemaJuegosCard(game) {
+  return `
+    <button class="sistema-juegos-card ${game.id === sistemaJuegosSelectedId ? "is-selected" : ""}" type="button" data-game-id="${game.id}">
+      <div class="sistema-juegos-card-top">
+        <div class="sistema-juegos-card-name">${game.nombre}</div>
+        ${game.nuevo ? `<div class="sistema-juegos-new-tag">NUEVO</div>` : ""}
+      </div>
+
+      <p class="sistema-juegos-card-desc">${game.descripcion}</p>
+      <div class="sistema-juegos-card-premio">${game.premio || ""}</div>
+    </button>
+  `;
+}
+
+function renderSistemaJuegosLista() {
+  const lista = document.getElementById("sistema-juegos-lista");
+  if (!lista) return;
+
+  const nuevos = ENYCOSMIC_GAMES_CONFIG.filter(game => game.nuevo);
+  const conocidos = ENYCOSMIC_GAMES_CONFIG.filter(game => !game.nuevo);
+
+  let html = "";
+
+  if (nuevos.length) {
+    html += `<div class="sistema-juegos-section-title">Juegos nuevos</div>`;
+    html += nuevos.map(buildSistemaJuegosCard).join("");
+  }
+
+  if (nuevos.length && conocidos.length) {
+    html += `<div class="sistema-juegos-divider"></div>`;
+  }
+
+  if (conocidos.length) {
+    html += `<div class="sistema-juegos-section-title">Juegos conocidos</div>`;
+    html += conocidos.map(buildSistemaJuegosCard).join("");
+  }
+
+  lista.innerHTML = html;
+}
+
+function renderSistemaJuegosPreview() {
+  const preview = document.getElementById("sistema-juegos-preview");
+  if (!preview) return;
+
+  const game = getSistemaJuegosSelectedGame();
+
+  if (!game) {
+    preview.innerHTML = `
+      <div id="sistema-juegos-preview-title">Selecciona un juego</div>
+      <p id="sistema-juegos-preview-desc">
+        Elige un juego de la lista para ver su introducción.
+      </p>
+      <div id="sistema-juegos-video-wrap">
+        <div class="sistema-juegos-video-placeholder">
+          ENY://GAME_LIBRARY<br>
+          WAITING_SELECTION
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (sistemaJuegosVideoEl) {
+    sistemaJuegosVideoEl.pause();
+    sistemaJuegosVideoEl.currentTime = 0;
+    sistemaJuegosVideoEl = null;
+  }
+
+  const videoHTML = game.video
+    ? `
+      <video id="sistema-juegos-video" src="${game.video}" autoplay muted playsinline loop></video>
+    `
+    : `
+      <div class="sistema-juegos-video-placeholder">
+        INTRO DEL JUEGO<br>
+        VIDEO NO ASIGNADO
+      </div>
+    `;
+
+  preview.innerHTML = `
+    <div id="sistema-juegos-preview-title">${game.nombre}</div>
+
+    <p id="sistema-juegos-preview-desc">
+      ${game.descripcion}
+    </p>
+
+    <div id="sistema-juegos-video-wrap">
+      ${videoHTML}
+    </div>
+
+    <button id="sistema-juegos-ingresar" type="button">
+      Ingresar a juego
+    </button>
+  `;
+
+  sistemaJuegosVideoEl = document.getElementById("sistema-juegos-video");
+
+  if (sistemaJuegosVideoEl) {
+    sistemaJuegosVideoEl.play().catch(() => { });
+  }
+
+  const ingresarBtn = document.getElementById("sistema-juegos-ingresar");
+
+  ingresarBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    ingresarASistemaJuego();
+  });
+
+  ingresarBtn?.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, { passive: false });
+
+  ingresarBtn?.addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    ingresarASistemaJuego();
+  }, { passive: false });
+}
+
+function seleccionarSistemaJuego(gameId) {
+  const existe = ENYCOSMIC_GAMES_CONFIG.some(game => game.id === gameId);
+  if (!existe) return;
+
+  sistemaJuegosSelectedId = gameId;
+
+  if (typeof playtockSound === "function") {
+    playtockSound();
+  }
+
+  renderSistemaJuegosLista();
+  renderSistemaJuegosPreview();
+}
+
+function ingresarASistemaJuego() {
+  const game = getSistemaJuegosSelectedGame();
+  if (!game || !game.url) return;
+
+  if (typeof playtockSound === "function") {
+    playtockSound();
+  }
+
+  window.location.href = game.url;
+}
+
+function bindSistemaJuegosEvents(overlay) {
+  const closeBtn = overlay.querySelector("#sistema-juegos-close");
+
+  function cerrar(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation();
+      }
+    }
+
+    if (typeof playtockSound === "function") {
+      playtockSound();
+    }
+
+    closeSistemaJuegosPopup();
+  }
+
+  closeBtn?.addEventListener("click", cerrar, true);
+
+  closeBtn?.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
+  }, { capture: true, passive: false });
+
+  closeBtn?.addEventListener("pointerup", cerrar, { capture: true, passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    const card = e.target.closest(".sistema-juegos-card");
+
+    if (card) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      seleccionarSistemaJuego(card.dataset.gameId);
+      return;
+    }
+
+    if (e.target === overlay) {
+      cerrar(e);
+    }
+  }, true);
+
+  overlay.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+  }, { capture: true });
+
+  overlay.addEventListener("pointerup", (e) => {
+    const card = e.target.closest(".sistema-juegos-card");
+
+    if (card) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      seleccionarSistemaJuego(card.dataset.gameId);
+    }
+  }, { capture: true, passive: false });
+}
+
+function openSistemaJuegosPopup() {
+  ensureSistemaJuegosStyles();
+  closeSistemaJuegosPopup();
+
+  const primerosNuevos = ENYCOSMIC_GAMES_CONFIG.filter(game => game.nuevo);
+  const primerosConocidos = ENYCOSMIC_GAMES_CONFIG.filter(game => !game.nuevo);
+  const primerJuego = primerosNuevos[0] || primerosConocidos[0] || null;
+
+  sistemaJuegosSelectedId = primerJuego ? primerJuego.id : null;
+
+  pausarMusicaAmbienteParaSistemaJuegos();
+
+  const overlay = document.createElement("div");
+  overlay.id = "sistema-juegos-overlay";
+
+  overlay.innerHTML = `
+    <div id="sistema-juegos-panel">
+      <div id="sistema-juegos-header">
+        <div id="sistema-juegos-title">Sistema de juegos</div>
+        <button id="sistema-juegos-close" type="button">X</button>
+      </div>
+
+      <div id="sistema-juegos-body">
+        <div id="sistema-juegos-lista"></div>
+        <div id="sistema-juegos-preview"></div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  renderSistemaJuegosLista();
+  renderSistemaJuegosPreview();
+  bindSistemaJuegosEvents(overlay);
+}
+
+window.openSistemaJuegosPopup = openSistemaJuegosPopup;
+
+// ======================================================
+// POPUP RETRO FUTURISTA: SERVIDOR MULTIPLAYER
+// Sistema externo / DOM / estilo Enycosmic
+// ======================================================
+
+const MULTIPLAYER_SERVER_CONFIG = {
+  title: "Servidor multiplayer",
+  message: "Servidor multiplayer No disponible.",
+  closeText: "Cerrar",
+
+  // Preparado para el futuro:
+  // Cuando exista un juego online, estos botones podrán redireccionar.
+  createGroupUrl: null,
+  joinGroupUrl: null
+};
+
+function ensureServidorMultiplayerStyles() {
+  if (document.getElementById("servidor-multiplayer-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "servidor-multiplayer-style";
+
+  style.textContent = `
+    #servidor-multiplayer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(255, 0, 255, 0.12), transparent 42%),
+        linear-gradient(135deg, rgba(0, 255, 255, 0.10), rgba(0, 0, 0, 0.86));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      font-family: arcade, monospace;
+      pointer-events: auto;
+    }
+
+    #servidor-multiplayer-panel {
+      width: min(430px, 94vw);
+      background:
+        linear-gradient(180deg, rgba(15, 5, 35, 0.98), rgba(3, 0, 18, 0.98));
+      border: 3px solid #00f6ff;
+      box-shadow:
+        0 0 0 3px rgba(255, 0, 255, 0.55),
+        0 0 24px rgba(0, 246, 255, 0.65),
+        inset 0 0 20px rgba(255, 0, 255, 0.18);
+      color: #eaffff;
+      image-rendering: pixelated;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #servidor-multiplayer-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.04) 0px,
+          rgba(255, 255, 255, 0.04) 1px,
+          transparent 2px,
+          transparent 5px
+        );
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    #servidor-multiplayer-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      background:
+        linear-gradient(90deg, #ff00d4, #00eaff);
+      color: #050014;
+      border-bottom: 3px solid #ffffff;
+      text-shadow: none;
+    }
+
+    #servidor-multiplayer-title {
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    #servidor-multiplayer-close {
+      width: 30px;
+      height: 28px;
+      border: 2px solid #050014;
+      background: #ffffff;
+      color: #050014;
+      font-family: arcade, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #050014;
+    }
+
+    #servidor-multiplayer-body {
+      position: relative;
+      z-index: 1;
+      padding: 22px 18px 18px 18px;
+      text-align: center;
+    }
+
+    .servidor-multiplayer-icon {
+      width: 78px;
+      height: 58px;
+      margin: 0 auto 18px auto;
+      position: relative;
+      border: 3px solid #00f6ff;
+      background:
+        linear-gradient(180deg, #1e0057, #050014 62%, #29005e);
+      box-shadow:
+        0 0 18px rgba(0, 246, 255, 0.75),
+        inset 0 0 14px rgba(255, 0, 255, 0.55);
+    }
+
+    .servidor-multiplayer-icon::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 8px;
+      height: 18px;
+      background:
+        linear-gradient(180deg, #00eaff, #ff52e5);
+      box-shadow: 0 0 12px #00eaff;
+    }
+
+    .servidor-multiplayer-icon::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 8px;
+      height: 8px;
+      background:
+        linear-gradient(90deg, #ffcc00 0 22%, transparent 22% 36%, #ff005d 36% 58%, transparent 58% 72%, #00ff8a 72%);
+    }
+
+    .servidor-multiplayer-message {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #ffffff;
+      text-shadow:
+        0 0 8px rgba(0, 246, 255, 0.9),
+        0 0 12px rgba(255, 0, 255, 0.6);
+    }
+
+    .servidor-multiplayer-status {
+      margin: 14px auto 0 auto;
+      display: inline-block;
+      padding: 6px 9px;
+      border: 2px solid rgba(0, 246, 255, 0.7);
+      background: rgba(0, 246, 255, 0.08);
+      color: #00f6ff;
+      font-size: 10px;
+      line-height: 1.4;
+      text-align: left;
+      box-shadow: inset 0 0 12px rgba(0, 246, 255, 0.16);
+    }
+
+    #servidor-multiplayer-actions {
+      position: relative;
+      z-index: 1;
+      padding: 0 18px 18px 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #servidor-multiplayer-ok {
+      min-width: 130px;
+      padding: 10px 14px;
+      border: 3px solid #00f6ff;
+      background: #11002e;
+      color: #ffffff;
+      font-family: arcade, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      text-shadow: 0 0 8px #00f6ff;
+      box-shadow:
+        0 0 14px rgba(0, 246, 255, 0.55),
+        inset 0 0 12px rgba(255, 0, 255, 0.22);
+    }
+
+    #servidor-multiplayer-ok:hover,
+    #servidor-multiplayer-close:hover {
+      filter: brightness(1.25);
+    }
+
+    @media (max-width: 520px) {
+      #servidor-multiplayer-panel {
+        width: 94vw;
+      }
+
+      .servidor-multiplayer-message {
+        font-size: 13px;
+      }
+
+      #servidor-multiplayer-title {
+        font-size: 11px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeServidorMultiplayerPopup() {
+  const overlay = document.getElementById("servidor-multiplayer-overlay");
+  if (overlay) overlay.remove();
+}
+
+function openServidorMultiplayerPopup() {
+  ensureServidorMultiplayerStyles();
+  closeServidorMultiplayerPopup();
+
+  const cfg = MULTIPLAYER_SERVER_CONFIG;
+
+  const overlay = document.createElement("div");
+  overlay.id = "servidor-multiplayer-overlay";
+
+  overlay.innerHTML = `
+    <div id="servidor-multiplayer-panel">
+      <div id="servidor-multiplayer-header">
+        <div id="servidor-multiplayer-title">${cfg.title}</div>
+        <button id="servidor-multiplayer-close" type="button">X</button>
+      </div>
+
+      <div id="servidor-multiplayer-body">
+        <div class="servidor-multiplayer-icon"></div>
+
+        <p class="servidor-multiplayer-message">
+          ${cfg.message}
+        </p>
+
+        <div class="servidor-multiplayer-status">
+          ENY://MULTIPLAYER_SERVER<br>
+          STATUS: OFFLINE<br>
+          GROUP_ACCESS: LOCKED
+        </div>
+      </div>
+
+      <div id="servidor-multiplayer-actions">
+        <button id="servidor-multiplayer-ok" type="button">
+          ${cfg.closeText}
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector("#servidor-multiplayer-close");
+  const okBtn = overlay.querySelector("#servidor-multiplayer-ok");
+
+  function cerrar(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation();
+      }
+    }
+
+    if (typeof playtockSound === "function") {
+      playtockSound();
+    }
+
+    closeServidorMultiplayerPopup();
+  }
+
+  [closeBtn, okBtn].forEach(btn => {
+    if (!btn) return;
+
+    btn.addEventListener("click", cerrar, true);
+
+    btn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation();
+      }
+    }, { capture: true, passive: false });
+
+    btn.addEventListener("pointerup", cerrar, { capture: true, passive: false });
+  });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
+
+    if (e.target === overlay) {
+      cerrar(e);
+    }
+  }, { capture: true, passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
+  }, true);
+}
+
+window.openServidorMultiplayerPopup = openServidorMultiplayerPopup;
 
 /* =========================================================
    ALGORITMOS DE CONOCIMIENTO - POPUP REUTILIZABLE ENYCOSMIC
