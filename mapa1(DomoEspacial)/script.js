@@ -6541,7 +6541,7 @@ function continuarTrasGameOver() {
 
       bubbleText: "",
       bubbleTimer: 0,
-      bubbleMaxTime: 2200,
+      bubbleMaxTime: 4000,
       tiempoHablaCooldown: 0,
       tiempoMinHabla: 1800,
       tiempoMaxHabla: 5000,
@@ -6625,7 +6625,7 @@ function continuarTrasGameOver() {
 
       bubbleText: "",
       bubbleTimer: 0,
-      bubbleMaxTime: 2600,
+      bubbleMaxTime: 4000,
 
       tiempoHablaCooldown: 0,
       tiempoMinHabla: 4000,
@@ -15512,40 +15512,1457 @@ function continuarTrasGameOver() {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
 
+
+/* =========================================================
+   ALGORITMOS DE CONOCIMIENTO - POPUP REUTILIZABLE ENYCOSMIC
+   ========================================================= */
+
+const ALGORITMO_CONOCIMIENTO_CONFIG = {
+  voynich: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "MANUSCRITO VOYNICH",
+    primary: "#39a8ff",
+    secondary: "#0a2d5f",
+    accent: "#8fd3ff",
+    danger: "#ff4d6d",
+    glyphs: "ᚠ⍜⎍⟟⌇∆⟊⟒⌰⟒⊬⋔⟒⌇⟟⊑⍜⊬⎎⟟⩔",
+    hint: "Pedestal activo. Algoritmo detectado. Lectura parcial bloqueada por una incriptación desconocida.",
+    placeholder: "Clave de descifrado"
+  },
+
+  tesla: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "TESLA",
+    primary: "#6c41ff",
+    secondary: "#1b103f",
+    accent: "#b6a2ff",
+    danger: "#ff5a7a",
+    glyphs: "Ψ Ω Σ Φ ∆ λ ⟟ ⌇ ⍜ ⊬ ⨁ Ψ",
+    hint: "Pedestal activo. Algoritmo detectado. Patrón energético alterado por un bloqueo de origen no identificado.",
+    placeholder: "Clave de descifrado"
+  },
+
+  hacker: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "HACKER",
+    primary: "#44ff88",
+    secondary: "#09321c",
+    accent: "#b7ffd0",
+    danger: "#ff5a7a",
+    glyphs: "₿ ⌘ ⍜ ⊬ ⨁ ⎎ ⟟ ∆ ⌰ ⌇ 101101",
+    hint: "Pedestal activo. Algoritmo detectado. Lenguaje interno cubierto por cifrado ajeno.",
+    placeholder: "Clave de descifrado"
+  },
+
+  mecanica: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "MECÁNICO",
+    primary: "#ffbe2e",
+    secondary: "#4a2800",
+    accent: "#ffe2a3",
+    danger: "#ff5a7a",
+    glyphs: "⚙ ω r₁ r₂ ∆ τ ⌬ 011010",
+    hint: "Pedestal activo. Algoritmo detectado. Estructura de conocimiento bloqueada por intervención desconocida.",
+    placeholder: "Clave de descifrado"
+  },
+
+  matlog: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "MATLOG",
+    primary: "#5f8dff",
+    secondary: "#2a0f4f",
+    accent: "#d1c4ff",
+    danger: "#ff5a7a",
+    glyphs: "∴ ∵ ∑ ⊢ ⊨ ⇌ ∆ ⍜ ⎎ ⌇",
+    hint: "Pedestal activo. Algoritmo detectado. Secuencia matemática incriptada por una fuente desconocida.",
+    placeholder: "Clave de descifrado"
+  },
+
+  logico: {
+    title: "ALGORITMO INCRIPTADO",
+    subtitle: "LÓGICO",
+    primary: "#37e8ff",
+    secondary: "#082d36",
+    accent: "#b8f7ff",
+    danger: "#ff5a7a",
+    glyphs: "⊢ ⇒ ⇔ ∀ ∃ ⌇ ⍜ ⊬ ⟟ ∆",
+    hint: "Pedestal activo. Algoritmo detectado. Lectura lógica detenida por una alteración no autorizada.",
+    placeholder: "Clave de descifrado"
+  }
+};
+
+function ensureAlgoritmoConocimientoStyles() {
+  if (document.getElementById("algoritmo-conocimiento-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "algoritmo-conocimiento-styles";
+  style.textContent = `
+    @keyframes enyAlgoPulse {
+      0% { opacity: 0.25; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.03); }
+      100% { opacity: 0.25; transform: scale(1); }
+    }
+
+    @keyframes enyAlgoScan {
+      0% { transform: translateY(-120%); opacity: 0; }
+      15% { opacity: 0.8; }
+      100% { transform: translateY(320%); opacity: 0; }
+    }
+
+    @keyframes enyAlgoFlicker {
+      0%, 100% { opacity: 1; }
+      10% { opacity: 0.9; }
+      20% { opacity: 1; }
+      30% { opacity: 0.75; }
+      40% { opacity: 1; }
+      50% { opacity: 0.85; }
+      60% { opacity: 1; }
+      70% { opacity: 0.8; }
+      80% { opacity: 1; }
+      90% { opacity: 0.95; }
+    }
+
+    @keyframes enyAlgoAlarm {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function playAlgoritmoErrorSound() {
+  if (typeof playerrorSound === "function") {
+    playerrorSound();
+    return;
+  }
+
+  try {
+    const audio = new Audio("https://enycosmicplayer.vercel.app/assets/song/efect/error.mp3");
+    audio.volume = 0.9;
+    audio.play().catch(() => { });
+  } catch (e) { }
+}
+
+function closeAlgoritmoConocimientoPopup() {
+  const popup = document.getElementById("algoritmo-conocimiento-overlay");
+  if (popup) popup.remove();
+}
+
+function createAlienMatrixLine(chars) {
+  const line = document.createElement("div");
+  line.textContent = chars;
+  line.style.whiteSpace = "nowrap";
+  line.style.fontSize = "11px";
+  line.style.lineHeight = "11px";
+  line.style.opacity = (0.12 + Math.random() * 0.18).toFixed(2);
+  line.style.letterSpacing = "1px";
+  line.style.userSelect = "none";
+  return line;
+}
+
+function fillAlienMatrix(container, chars, color) {
+  container.innerHTML = "";
+  container.style.color = color;
+
+  for (let i = 0; i < 55; i++) {
+    let row = "";
+    for (let j = 0; j < 70; j++) {
+      row += chars[Math.floor(Math.random() * chars.length)] + " ";
+    }
+    container.appendChild(createAlienMatrixLine(row));
+  }
+}
+
+function mostrarAlarmaAlgoritmo(panel, mensaje, colorPeligro) {
+  panel.textContent = mensaje;
+  panel.style.display = "block";
+  panel.style.color = colorPeligro;
+  panel.style.borderColor = colorPeligro;
+  panel.style.boxShadow = `0 0 10px ${colorPeligro}`;
+  panel.style.animation = "enyAlgoAlarm 0.32s linear 2";
+
+  setTimeout(() => {
+    panel.style.animation = "";
+  }, 700);
+}
+
+function abrirAlgoritmoConocimientoPopup(configKey = "voynich") {
+  ensureAlgoritmoConocimientoStyles();
+  closeAlgoritmoConocimientoPopup();
+
+  const cfg = ALGORITMO_CONOCIMIENTO_CONFIG[configKey] || ALGORITMO_CONOCIMIENTO_CONFIG.voynich;
+
+  const overlay = document.createElement("div");
+  overlay.id = "algoritmo-conocimiento-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.inset = "0";
+  overlay.style.zIndex = "999999";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.background = "rgba(0,0,0,0.72)";
+  overlay.style.backdropFilter = "blur(4px)";
+  overlay.addEventListener("click", function (e) {
+    if (e.target === overlay) closeAlgoritmoConocimientoPopup();
+  });
+
+  const panel = document.createElement("div");
+  panel.style.position = "relative";
+  panel.style.width = "min(92vw, 640px)";
+  panel.style.minHeight = "460px";
+  panel.style.background = `linear-gradient(180deg, ${cfg.secondary} 0%, #02070d 100%)`;
+  panel.style.border = `2px solid ${cfg.primary}`;
+  panel.style.boxShadow = `0 0 28px ${cfg.primary}, inset 0 0 18px rgba(255,255,255,0.05)`;
+  panel.style.overflow = "hidden";
+  panel.style.fontFamily = '"Press Start 2P", monospace';
+  panel.style.color = cfg.accent;
+
+  const matrixBg = document.createElement("div");
+  matrixBg.style.position = "absolute";
+  matrixBg.style.inset = "0";
+  matrixBg.style.overflow = "hidden";
+  matrixBg.style.opacity = "0.85";
+  matrixBg.style.pointerEvents = "none";
+  fillAlienMatrix(matrixBg, cfg.glyphs, cfg.primary);
+
+  const scanLine = document.createElement("div");
+  scanLine.style.position = "absolute";
+  scanLine.style.left = "0";
+  scanLine.style.right = "0";
+  scanLine.style.top = "0";
+  scanLine.style.height = "80px";
+  scanLine.style.background = `linear-gradient(180deg, transparent 0%, ${cfg.primary}22 40%, ${cfg.primary}55 50%, ${cfg.primary}22 60%, transparent 100%)`;
+  scanLine.style.pointerEvents = "none";
+  scanLine.style.animation = "enyAlgoScan 3s linear infinite";
+
+  const noise = document.createElement("div");
+  noise.style.position = "absolute";
+  noise.style.inset = "0";
+  noise.style.pointerEvents = "none";
+  noise.style.background = "repeating-linear-gradient(180deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 2px, transparent 4px)";
+  noise.style.mixBlendMode = "screen";
+  noise.style.opacity = "0.35";
+
+  const header = document.createElement("div");
+  header.style.position = "relative";
+  header.style.zIndex = "2";
+  header.style.display = "flex";
+  header.style.alignItems = "center";
+  header.style.justifyContent = "space-between";
+  header.style.padding = "14px 16px";
+  header.style.borderBottom = `2px solid ${cfg.primary}`;
+  header.style.background = "rgba(0,0,0,0.45)";
+
+  const titleWrap = document.createElement("div");
+  titleWrap.style.display = "flex";
+  titleWrap.style.flexDirection = "column";
+  titleWrap.style.gap = "6px";
+
+  const title = document.createElement("div");
+  title.textContent = cfg.title;
+  title.style.fontSize = "15px";
+  title.style.color = cfg.primary;
+  title.style.textShadow = `0 0 10px ${cfg.primary}`;
+  title.style.animation = "enyAlgoFlicker 2.2s infinite";
+
+  const subtitle = document.createElement("div");
+  subtitle.textContent = cfg.subtitle;
+  subtitle.style.fontSize = "10px";
+  subtitle.style.color = cfg.accent;
+  subtitle.style.opacity = "0.95";
+
+  titleWrap.appendChild(title);
+  titleWrap.appendChild(subtitle);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.textContent = "✕";
+  closeBtn.style.width = "42px";
+  closeBtn.style.height = "42px";
+  closeBtn.style.cursor = "pointer";
+  closeBtn.style.border = `2px solid ${cfg.primary}`;
+  closeBtn.style.background = "#050505";
+  closeBtn.style.color = cfg.primary;
+  closeBtn.style.fontFamily = '"Press Start 2P", monospace';
+  closeBtn.style.fontSize = "16px";
+  closeBtn.style.boxShadow = `0 0 10px ${cfg.primary}`;
+  closeBtn.onclick = closeAlgoritmoConocimientoPopup;
+
+  header.appendChild(titleWrap);
+  header.appendChild(closeBtn);
+
+  const content = document.createElement("div");
+  content.style.position = "relative";
+  content.style.zIndex = "2";
+  content.style.padding = "22px 18px 20px";
+  content.style.display = "flex";
+  content.style.flexDirection = "column";
+  content.style.alignItems = "center";
+  content.style.gap = "16px";
+
+  const core = document.createElement("div");
+  core.style.width = "130px";
+  core.style.height = "130px";
+  core.style.borderRadius = "50%";
+  core.style.background = `radial-gradient(circle, ${cfg.accent} 0%, ${cfg.primary} 30%, ${cfg.secondary} 62%, transparent 72%)`;
+  core.style.boxShadow = `0 0 20px ${cfg.primary}, 0 0 45px ${cfg.primary}, inset 0 0 18px rgba(255,255,255,0.4)`;
+  core.style.animation = "enyAlgoPulse 1.8s ease-in-out infinite";
+
+  const hint = document.createElement("div");
+  hint.textContent = cfg.hint;
+  hint.style.fontSize = "11px";
+  hint.style.lineHeight = "1.8";
+  hint.style.textAlign = "center";
+  hint.style.maxWidth = "500px";
+  hint.style.color = cfg.accent;
+  hint.style.textShadow = `0 0 8px ${cfg.primary}`;
+
+  const inputWrap = document.createElement("div");
+  inputWrap.style.width = "100%";
+  inputWrap.style.maxWidth = "470px";
+  inputWrap.style.display = "flex";
+  inputWrap.style.flexDirection = "column";
+  inputWrap.style.gap = "8px";
+
+  const inputLabel = document.createElement("div");
+  inputLabel.textContent = "CLAVE DE ACCESO";
+  inputLabel.style.fontSize = "10px";
+  inputLabel.style.color = cfg.primary;
+  inputLabel.style.textShadow = `0 0 8px ${cfg.primary}`;
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = cfg.placeholder;
+  input.autocomplete = "off";
+  input.spellcheck = false;
+  input.style.width = "100%";
+  input.style.boxSizing = "border-box";
+  input.style.padding = "14px 12px";
+  input.style.background = "rgba(0,0,0,0.78)";
+  input.style.border = `2px solid ${cfg.primary}`;
+  input.style.color = cfg.accent;
+  input.style.fontFamily = '"Press Start 2P", monospace';
+  input.style.fontSize = "10px";
+  input.style.outline = "none";
+  input.style.boxShadow = `inset 0 0 12px ${cfg.primary}33, 0 0 10px ${cfg.primary}55`;
+
+  const alarmBox = document.createElement("div");
+  alarmBox.style.display = "none";
+  alarmBox.style.width = "100%";
+  alarmBox.style.boxSizing = "border-box";
+  alarmBox.style.padding = "12px";
+  alarmBox.style.fontSize = "10px";
+  alarmBox.style.lineHeight = "1.8";
+  alarmBox.style.textAlign = "center";
+  alarmBox.style.background = "rgba(20,0,0,0.65)";
+  alarmBox.style.border = `2px solid ${cfg.danger}`;
+  alarmBox.style.textShadow = `0 0 6px ${cfg.danger}`;
+
+  inputWrap.appendChild(inputLabel);
+  inputWrap.appendChild(input);
+  inputWrap.appendChild(alarmBox);
+
+  const buttonRow = document.createElement("div");
+  buttonRow.style.display = "flex";
+  buttonRow.style.flexWrap = "wrap";
+  buttonRow.style.justifyContent = "center";
+  buttonRow.style.gap = "12px";
+  buttonRow.style.marginTop = "6px";
+
+  const aceptarBtn = document.createElement("button");
+  aceptarBtn.type = "button";
+  aceptarBtn.textContent = "ACEPTAR";
+  aceptarBtn.style.minWidth = "150px";
+  aceptarBtn.style.padding = "14px 16px";
+  aceptarBtn.style.cursor = "pointer";
+  aceptarBtn.style.border = `2px solid ${cfg.primary}`;
+  aceptarBtn.style.background = "rgba(0,0,0,0.82)";
+  aceptarBtn.style.color = cfg.primary;
+  aceptarBtn.style.fontFamily = '"Press Start 2P", monospace';
+  aceptarBtn.style.fontSize = "11px";
+  aceptarBtn.style.boxShadow = `0 0 12px ${cfg.primary}`;
+
+  const cerrarBtn = document.createElement("button");
+  cerrarBtn.type = "button";
+  cerrarBtn.textContent = "CERRAR";
+  cerrarBtn.style.minWidth = "150px";
+  cerrarBtn.style.padding = "14px 16px";
+  cerrarBtn.style.cursor = "pointer";
+  cerrarBtn.style.border = `2px solid ${cfg.accent}`;
+  cerrarBtn.style.background = "rgba(0,0,0,0.82)";
+  cerrarBtn.style.color = cfg.accent;
+  cerrarBtn.style.fontFamily = '"Press Start 2P", monospace';
+  cerrarBtn.style.fontSize = "11px";
+  cerrarBtn.style.boxShadow = `0 0 12px ${cfg.primary}`;
+  cerrarBtn.onclick = closeAlgoritmoConocimientoPopup;
+
+  function intentarAcceso() {
+    playAlgoritmoErrorSound();
+    mostrarAlarmaAlgoritmo(
+      alarmBox,
+      "ACCESO NO AUTORIZADO",
+      cfg.danger
+    );
+    input.focus();
+    input.select();
+  }
+
+  aceptarBtn.onclick = intentarAcceso;
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      intentarAcceso();
+    }
+  });
+
+  buttonRow.appendChild(aceptarBtn);
+  buttonRow.appendChild(cerrarBtn);
+
+  content.appendChild(core);
+  content.appendChild(hint);
+  content.appendChild(inputWrap);
+  content.appendChild(buttonRow);
+
+  panel.appendChild(matrixBg);
+  panel.appendChild(scanLine);
+  panel.appendChild(noise);
+  panel.appendChild(header);
+  panel.appendChild(content);
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+
+  setTimeout(() => input.focus(), 60);
+}
+
+/* =========================================================
+   FUNCIONES GLOBALES PARA USAR EN LOS BLOQUES DEL MAPA
+   ========================================================= */
+
+window.openAlgoritmoConocimientoPopup = function () {
+  abrirAlgoritmoConocimientoPopup("voynich");
+};
+
+window.openAlgoritmoTeslaPopup = function () {
+  abrirAlgoritmoConocimientoPopup("tesla");
+};
+
+window.openAlgoritmoHackerPopup = function () {
+  abrirAlgoritmoConocimientoPopup("hacker");
+};
+
+window.openAlgoritmoMecanicaPopup = function () {
+  abrirAlgoritmoConocimientoPopup("mecanica");
+};
+
+window.openAlgoritmoMatlogPopup = function () {
+  abrirAlgoritmoConocimientoPopup("matlog");
+};
+
+window.openAlgoritmoLogicoPopup = function () {
+  abrirAlgoritmoConocimientoPopup("logico");
+};
+
+
 // ======================================================
 // SISTEMA REUTILIZABLE DE COMPUTADORES RETRO / DOCUMENTOS
 // Estilo inspirado en sistemas operativos retro
 // No modifica el motor base
 // ======================================================
 
+// ======================================================
+// POPUP REUTILIZABLE: ACCESO NO AUTORIZADO
+// Sistema externo / DOM / estilo Enycosmic
+// ======================================================
+
+function ensureAccesoNoAutorizadoStyles() {
+  if (document.getElementById("acceso-no-autorizado-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "acceso-no-autorizado-style";
+
+  style.textContent = `
+    #acceso-no-autorizado-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background:
+        radial-gradient(circle at center, rgba(0, 255, 204, 0.10), transparent 42%),
+        rgba(0, 0, 0, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      font-family: arcade, monospace;
+      pointer-events: auto;
+    }
+
+    #acceso-no-autorizado-panel {
+      position: relative;
+      width: min(92vw, 500px);
+      background:
+        linear-gradient(180deg, rgba(0, 255, 204, 0.08), rgba(0, 0, 0, 0.96)),
+        #000;
+      color: #ffffff;
+      border: 3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px rgba(0, 70, 70, 0.9),
+        0 0 18px rgba(0, 255, 204, 0.45),
+        0 0 42px rgba(0, 255, 204, 0.22),
+        inset 0 0 22px rgba(0, 255, 204, 0.08);
+      overflow: hidden;
+      box-sizing: border-box;
+      animation: accesoNoAutorizadoEntrada 180ms ease-out;
+    }
+
+    #acceso-no-autorizado-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0, 255, 204, 0.055) 0px,
+          rgba(0, 255, 204, 0.055) 2px,
+          transparent 2px,
+          transparent 6px
+        );
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.55;
+    }
+
+    #acceso-no-autorizado-panel::after {
+      content: "CLASSIFIED // ENYCOSMIC SYSTEM // ROUTE LOCKED";
+      position: absolute;
+      left: -20px;
+      right: -20px;
+      top: 54%;
+      transform: rotate(-8deg);
+      color: rgba(255, 40, 80, 0.13);
+      font-size: 18px;
+      letter-spacing: 3px;
+      text-align: center;
+      pointer-events: none;
+      text-shadow: 0 0 12px rgba(255, 40, 80, 0.34);
+    }
+
+    #acceso-no-autorizado-header {
+      position: relative;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 8px;
+      box-sizing: border-box;
+      background:
+        linear-gradient(90deg, rgba(0,255,204,.22), rgba(0,0,0,.94), rgba(255,0,80,.18)),
+        #050505;
+      border-bottom: 2px solid rgba(0, 255, 204, 0.8);
+      z-index: 2;
+    }
+
+    #acceso-no-autorizado-title {
+      color: #ff3d6e;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 8px rgba(255, 61, 110, 0.95),
+        0 0 16px rgba(255, 61, 110, 0.45);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #acceso-no-autorizado-close {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      font-family: arcade, monospace;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,255,204,.18);
+    }
+
+    #acceso-no-autorizado-close:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 16px rgba(0,255,204,.8);
+    }
+
+    #acceso-no-autorizado-body {
+      position: relative;
+      z-index: 2;
+      padding: 18px 16px 16px;
+      box-sizing: border-box;
+    }
+
+    .acceso-no-autorizado-alerta {
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 61, 110, 0.9);
+      color: #ff3d6e;
+      font-size: 34px;
+      background:
+        radial-gradient(circle at center, rgba(255, 61, 110, 0.18), transparent 62%),
+        rgba(0,0,0,.88);
+      box-shadow:
+        0 0 16px rgba(255, 61, 110, 0.48),
+        inset 0 0 18px rgba(255, 61, 110, 0.12);
+      text-shadow: 0 0 10px rgba(255, 61, 110, 0.95);
+    }
+
+    .acceso-no-autorizado-linea {
+      margin: 0 auto 12px;
+      max-width: 420px;
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 1.55;
+      text-align: center;
+      text-shadow: 0 0 8px rgba(0, 255, 204, 0.25);
+    }
+
+    .acceso-no-autorizado-linea.principal {
+      color: #00ffcc;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow:
+        0 0 8px rgba(0,255,204,.8),
+        0 0 18px rgba(0,255,204,.35);
+    }
+
+    .acceso-no-autorizado-linea.clasificado {
+      color: #ff3d6e;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 8px rgba(255, 61, 110, 0.86),
+        0 0 18px rgba(255, 61, 110, 0.32);
+    }
+
+    .acceso-no-autorizado-encriptado {
+      margin: 14px auto 0;
+      padding: 8px;
+      max-width: 420px;
+      border: 1px solid rgba(0,255,204,.38);
+      color: rgba(0,255,204,.72);
+      background: rgba(0,255,204,.05);
+      font-size: 9px;
+      line-height: 1.5;
+      text-align: center;
+      letter-spacing: 1px;
+      box-shadow: inset 0 0 14px rgba(0,255,204,.08);
+    }
+
+    #acceso-no-autorizado-actions {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px 16px;
+      box-sizing: border-box;
+    }
+
+    #acceso-no-autorizado-ok {
+      min-height: 34px;
+      padding: 7px 14px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid rgba(0,255,204,.86);
+      font-family: arcade, monospace;
+      font-size: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow:
+        0 0 10px rgba(0,255,204,.18),
+        inset 0 0 8px rgba(0,255,204,.05);
+    }
+
+    #acceso-no-autorizado-ok:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow:
+        0 0 12px #00ffcc,
+        0 0 26px rgba(0,255,204,.62);
+    }
+
+    @keyframes accesoNoAutorizadoEntrada {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @media (max-width: 440px) {
+      #acceso-no-autorizado-panel {
+        width: 94vw;
+      }
+
+      .acceso-no-autorizado-linea {
+        font-size: 11px;
+      }
+
+      .acceso-no-autorizado-linea.principal {
+        font-size: 12px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeAccesoNoAutorizadoPopup() {
+  const overlay = document.getElementById("acceso-no-autorizado-overlay");
+  if (overlay) overlay.remove();
+}
+
+function openAccesoNoAutorizadoPopup() {
+  ensureAccesoNoAutorizadoStyles();
+  closeAccesoNoAutorizadoPopup();
+
+  const overlay = document.createElement("div");
+  overlay.id = "acceso-no-autorizado-overlay";
+
+  overlay.innerHTML = `
+    <div id="acceso-no-autorizado-panel">
+      <div id="acceso-no-autorizado-header">
+        <div id="acceso-no-autorizado-title">Acceso no autorizado</div>
+        <button id="acceso-no-autorizado-close" type="button">X</button>
+      </div>
+
+      <div id="acceso-no-autorizado-body">
+        <div class="acceso-no-autorizado-alerta">!</div>
+
+        <p class="acceso-no-autorizado-linea principal">
+          Acceso no autorizado
+        </p>
+
+        <p class="acceso-no-autorizado-linea">
+          El sistema ha detectado una ruta activa, pero tus credenciales actuales no poseen autorización de ingreso.
+        </p>
+
+        <p class="acceso-no-autorizado-linea clasificado">
+          Esta ruta permanece clasificada.
+        </p>
+
+        <div class="acceso-no-autorizado-encriptado">
+          ENY://ROUTE_STATUS/LOCKED<br>
+          ACCESS_KEY: ████-███-CLASSIFIED<br>
+          SCHOOL_AUTHORITY: REQUIRED
+        </div>
+      </div>
+
+      <div id="acceso-no-autorizado-actions">
+<button id="acceso-no-autorizado-ok" type="button">
+  Cerrar
+</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector("#acceso-no-autorizado-close");
+  const okBtn = overlay.querySelector("#acceso-no-autorizado-ok");
+
+  function cerrarAccesoNoAutorizado(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation();
+      }
+    }
+
+    if (typeof playtockSound === "function") {
+      playtockSound();
+    }
+
+    closeAccesoNoAutorizadoPopup();
+  }
+
+  [closeBtn, okBtn].forEach(btn => {
+    if (!btn) return;
+
+    btn.addEventListener("click", cerrarAccesoNoAutorizado, true);
+
+    btn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation();
+      }
+    }, { capture: true, passive: false });
+
+    btn.addEventListener("pointerup", cerrarAccesoNoAutorizado, { capture: true, passive: false });
+  });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
+
+    if (e.target === overlay) {
+      cerrarAccesoNoAutorizado(e);
+    }
+  }, { capture: true, passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
+  }, true);
+}
+
+window.openAccesoNoAutorizadoPopup = openAccesoNoAutorizadoPopup;
+
 const RETRO_PC_DOCS_CONFIG = {
   investigacionLunar: {
     osTitle: "Terminal de investigación",
     wordWindowTitle: "WordPad.exe",
-    documentTitle: "Historia del alunizaje de la Luna",
+    documentTitle: "Informe sobre el alunizaje",
     statusText: "Documento cargado correctamente",
     content: [
-      "Historia del alunizaje de la Luna",
+      "Informe sobre el alunizaje",
       "",
-      "En el año de 1969, el ser humano pisó por primera vez la Luna, un hito importante para la humanidad.",
+      "En el año 1969, el ser humano pisó por primera vez la superficie lunar. Fue uno de los hitos científicos y tecnológicos más importantes de la humanidad.",
       "",
-      "Pero esto no se quedó solo en eso. Hubo muchas preguntas, y la curiosidad pudo más que las limitaciones tecnológicas de la época.",
+      "Sin embargo, aquel acontecimiento no cerró las preguntas; por el contrario, abrió otras mucho más profundas. La curiosidad científica comenzó a superar los límites tecnológicos de la época.",
       "",
-      "En el año de 1971, el telescopio más potente de la Tierra encontró algo imposible en el lado oculto de la Luna.",
+      "En 1971, durante una serie de observaciones astronómicas de alta precisión, uno de los telescopios más avanzados de la Tierra detectó una anomalía imposible en la cara oculta de la Luna.",
       "",
-      "Era algo parecido a una nave con forma de grano de arroz, pero medía aproximadamente el equivalente a 18 estadios.",
+      "El objeto tenía una silueta alargada, similar a una estructura fusiforme o a un grano de arroz metálico. Sus dimensiones eran descomunales: aproximadamente el equivalente a 18 estadios de longitud.",
       "",
-      "Para el año de 1972 culminaron los estudios de los protocolos para el aterrizaje en el lado oculto de la Luna y la exploración de aquel objeto no identificado.",
+      "Para 1972, culminaron los estudios preliminares y se desarrollaron protocolos especiales para un alunizaje en la cara oculta de la Luna, con el objetivo de explorar aquella estructura no identificada.",
       "",
-      "En el año de 1973, un equipo de 4 astronautas, entre ingenieros, doctores y psicólogos, aterrizó y encontró dicha nave.",
+      "En 1973, una misión tripulada compuesta por 4 especialistas —entre ingenieros, médicos y expertos en conducta humana— descendió en una zona próxima a la anomalía.",
       "",
-      "Ingresaron y hallaron algo imposible: una especie humanoide femenina junto con otros 2 cadáveres masculinos.",
+      "Al ingresar en la estructura, encontraron algo que desafiaba toda explicación conocida: tres restos biológicos de morfología humanoide.",
       "",
-      "Medían más de 1.9 metros, tenían un pómulo sobresaliente en la frente y 6 dedos.",
+      "Uno de los cuerpos correspondía a una entidad femenina. Los otros dos parecían pertenecer a individuos masculinos.",
       "",
-      "Además, la nave presentaba indicios de haber pasado por alguna especie de guerra intergaláctica.",
+      "Medían más de 1.9 metros de altura, presentaban una prominencia ósea en la región frontal del cráneo y tenían 6 dedos en cada extremidad superior.",
       "",
-      "¿Qué habrá pasado?, ¿cuándo pasó?, ¿por qué pasó? y ¿por qué está aquí, en el lado oculto de la Luna?"
+      "El interior de la nave mostraba daños estructurales severos, marcas de impacto, zonas carbonizadas y señales compatibles con un conflicto de origen desconocido.",
+      "",
+      "Los registros preliminares sugieren que la nave pudo haber participado en algún tipo de enfrentamiento interestelar antes de quedar varada en la cara oculta de la Luna.",
+      "",
+      "¿Qué ocurrió allí?, ¿cuándo sucedió?, ¿quiénes eran esas entidades? y, sobre todo, ¿por qué terminaron ocultas en la Luna?"
+    ]
+  },
+
+  ecuacionesGraficasBasicas: {
+    osTitle: "Terminal educativa",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Ecuaciones gráficas",
+    statusText: "Documento cargado correctamente",
+
+    sections: [
+      {
+        type: "title",
+        text: "Ecuaciones gráficas"
+      },
+      {
+        type: "paragraph",
+        text: "Una ecuación gráfica es una regla que convierte números en puntos dentro de un plano."
+      },
+      {
+        type: "paragraph",
+        text: "El plano tiene dos direcciones principales: x representa el movimiento horizontal, e y representa el movimiento vertical."
+      },
+      {
+        type: "paragraph",
+        text: "Cuando una ecuación nos da varios valores de x e y, podemos poner esos puntos en el plano. Al unirlos o mirarlos juntos, aparece una forma: una línea, una curva o un patrón."
+      },
+
+      {
+        type: "subtitle",
+        text: "Ejemplo básico: y = x"
+      },
+      {
+        type: "paragraph",
+        text: "En esta ecuación, y siempre vale lo mismo que x. Si x vale 1, y vale 1. Si x vale 2, y vale 2."
+      },
+      {
+        type: "table",
+        headers: ["x", "y"],
+        rows: [
+          ["0", "0"],
+          ["1", "1"],
+          ["2", "2"],
+          ["3", "3"],
+          ["4", "4"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica de y = x",
+        xMin: 0,
+        xMax: 4,
+        yMin: 0,
+        yMax: 4,
+        points: [
+          [0, 0],
+          [1, 1],
+          [2, 2],
+          [3, 3],
+          [4, 4]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "El resultado es una línea diagonal que sube de forma ordenada."
+      },
+
+      {
+        type: "subtitle",
+        text: "Raíz cuadrada"
+      },
+      {
+        type: "paragraph",
+        text: "La raíz cuadrada busca el número que, multiplicado por sí mismo, da otro número."
+      },
+      {
+        type: "paragraph",
+        text: "Por ejemplo, la raíz cuadrada de 9 es 3, porque 3 × 3 = 9."
+      },
+      {
+        type: "table",
+        headers: ["x", "√x"],
+        rows: [
+          ["0", "0"],
+          ["1", "1"],
+          ["4", "2"],
+          ["9", "3"],
+          ["16", "4"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica de y = √x",
+        xMin: 0,
+        xMax: 16,
+        yMin: 0,
+        yMax: 4,
+        points: [
+          [0, 0],
+          [1, 1],
+          [4, 2],
+          [9, 3],
+          [16, 4]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "Esta gráfica sube, pero cada vez más despacio."
+      },
+
+      {
+        type: "subtitle",
+        text: "Logaritmo base 10"
+      },
+      {
+        type: "paragraph",
+        text: "El logaritmo base 10 pregunta cuántas veces debemos usar el número 10 para llegar a otro número."
+      },
+      {
+        type: "paragraph",
+        text: "Por ejemplo, log10(100) = 2, porque 10 × 10 = 100."
+      },
+      {
+        type: "table",
+        headers: ["x", "log10(x)"],
+        rows: [
+          ["1", "0"],
+          ["10", "1"],
+          ["100", "2"],
+          ["1000", "3"],
+          ["10000", "4"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica de y = log10(x)",
+        xMin: 1,
+        xMax: 10000,
+        yMin: 0,
+        yMax: 4,
+        points: [
+          [1, 0],
+          [10, 1],
+          [100, 2],
+          [1000, 3],
+          [10000, 4]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "La gráfica del logaritmo crece, pero lo hace lentamente. Sirve para entender números muy grandes de una forma más simple."
+      },
+
+      {
+        type: "subtitle",
+        text: "Seno"
+      },
+      {
+        type: "paragraph",
+        text: "El seno ayuda a medir movimientos que suben y bajan, como una ola."
+      },
+      {
+        type: "paragraph",
+        text: "En una gráfica, el seno forma una curva suave que sube, baja y vuelve a repetirse."
+      },
+      {
+        type: "table",
+        headers: ["ángulo", "seno"],
+        rows: [
+          ["0°", "0"],
+          ["90°", "1"],
+          ["180°", "0"],
+          ["270°", "-1"],
+          ["360°", "0"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica simple del seno",
+        xMin: 0,
+        xMax: 360,
+        yMin: -1,
+        yMax: 1,
+        points: [
+          [0, 0],
+          [90, 1],
+          [180, 0],
+          [270, -1],
+          [360, 0]
+        ]
+      },
+
+      {
+        type: "subtitle",
+        text: "Coseno"
+      },
+      {
+        type: "paragraph",
+        text: "El coseno también forma una curva de ola, pero empieza desde arriba."
+      },
+      {
+        type: "paragraph",
+        text: "Seno y coseno se parecen mucho. Ambos sirven para estudiar giros, ondas, círculos, luz, sonido y movimiento."
+      },
+      {
+        type: "table",
+        headers: ["ángulo", "coseno"],
+        rows: [
+          ["0°", "1"],
+          ["90°", "0"],
+          ["180°", "-1"],
+          ["270°", "0"],
+          ["360°", "1"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica simple del coseno",
+        xMin: 0,
+        xMax: 360,
+        yMin: -1,
+        yMax: 1,
+        points: [
+          [0, 1],
+          [90, 0],
+          [180, -1],
+          [270, 0],
+          [360, 1]
+        ]
+      },
+
+      {
+        type: "subtitle",
+        text: "Tangente"
+      },
+      {
+        type: "paragraph",
+        text: "La tangente ayuda a comparar inclinaciones. Sirve para saber qué tan empinada puede ser una dirección."
+      },
+      {
+        type: "paragraph",
+        text: "Cuando la tangente crece mucho, la línea se vuelve casi vertical."
+      },
+      {
+        type: "table",
+        headers: ["ángulo", "tangente"],
+        rows: [
+          ["0°", "0"],
+          ["30°", "0.58"],
+          ["45°", "1"],
+          ["60°", "1.73"]
+        ]
+      },
+      {
+        type: "chart",
+        title: "Gráfica simple de la tangente",
+        xMin: 0,
+        xMax: 60,
+        yMin: 0,
+        yMax: 2,
+        points: [
+          [0, 0],
+          [30, 0.58],
+          [45, 1],
+          [60, 1.73]
+        ]
+      },
+
+      {
+        type: "subtitle",
+        text: "Idea final"
+      },
+      {
+        type: "paragraph",
+        text: "Una ecuación es una regla matemática. Una gráfica es la forma visual de esa regla."
+      },
+      {
+        type: "paragraph",
+        text: "Al mirar la gráfica, podemos entender cómo cambia una cantidad cuando otra cambia."
+      },
+      {
+        type: "paragraph",
+        text: "Por eso las ecuaciones gráficas son útiles para estudiar caminos, alturas, ondas, energía, sonidos, movimiento y muchos fenómenos del universo."
+      }
+    ]
+  },
+
+  quimicaDestilador: {
+    osTitle: "Terminal de laboratorio",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Materia, minerales y destilación",
+    statusText: "Documento cargado correctamente",
+
+    sections: [
+      {
+        type: "title",
+        text: "Materia, minerales y destilación"
+      },
+      {
+        type: "paragraph",
+        text: "La materia es todo aquello que tiene masa y ocupa espacio. El agua, el aire, una roca, un grano de sal, una gota de lluvia y el hierro son formas de materia."
+      },
+      {
+        type: "paragraph",
+        text: "La materia puede cambiar de forma, mezclarse, separarse y transformarse. Comprender esas propiedades permite estudiar el agua, los minerales, los alimentos, el cuerpo humano, la energía y muchos procesos de la naturaleza."
+      },
+      {
+        type: "chem_states"
+      },
+
+      {
+        type: "subtitle",
+        text: "Estados de la materia"
+      },
+      {
+        type: "paragraph",
+        text: "En un sólido, las partículas están muy juntas. Por eso una piedra, un cristal de sal o un trozo de hierro mantienen su forma."
+      },
+      {
+        type: "paragraph",
+        text: "En un líquido, las partículas siguen cerca, pero pueden moverse unas sobre otras. Por eso el agua puede fluir, llenar un recipiente y cambiar de forma sin dejar de ser agua."
+      },
+      {
+        type: "paragraph",
+        text: "En un gas, las partículas están mucho más separadas. Por eso el vapor de agua puede subir, expandirse y ocupar más espacio."
+      },
+
+      {
+        type: "subtitle",
+        text: "Agua mineralizada"
+      },
+      {
+        type: "paragraph",
+        text: "El agua mineralizada contiene pequeñas cantidades de minerales disueltos. Aunque parezca transparente, puede llevar sodio, cloruro, calcio, magnesio, potasio, bicarbonatos y trazas de hierro."
+      },
+      {
+        type: "paragraph",
+        text: "Cuando un mineral se disuelve en agua, muchas veces se separa en partículas cargadas llamadas iones. Esos iones son tan pequeños que no se ven a simple vista, pero cambian las propiedades del agua."
+      },
+      {
+        type: "paragraph",
+        text: "Por eso dos vasos de agua pueden verse iguales, pero comportarse distinto: uno puede tener más minerales, otro menos; uno puede conducir mejor la electricidad, otro casi nada."
+      },
+
+      {
+        type: "subtitle",
+        text: "Por qué el agua mineralizada conduce electricidad"
+      },
+      {
+        type: "paragraph",
+        text: "El agua extremadamente pura conduce muy poco la electricidad porque casi no tiene partículas cargadas moviéndose dentro de ella."
+      },
+      {
+        type: "paragraph",
+        text: "Cuando el agua tiene minerales disueltos, aparecen iones. Los iones pueden moverse por el líquido y transportar carga eléctrica. Por eso el agua mineralizada es más conductiva que el agua muy pura."
+      },
+      {
+        type: "table",
+        headers: ["Tipo de agua", "Cantidad de iones", "Conductividad"],
+        rows: [
+          ["Agua muy pura", "Muy pocos", "Muy baja"],
+          ["Agua potable común", "Algunos", "Media"],
+          ["Agua mineralizada", "Más iones", "Mayor"],
+          ["Agua salada", "Muchos iones", "Alta"]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "Esta propiedad se usa en laboratorios, sensores, cultivos hidropónicos, análisis de calidad del agua y estudios ambientales."
+      },
+
+      {
+        type: "subtitle",
+        text: "El destilador"
+      },
+      {
+        type: "distiller_diagram"
+      },
+      {
+        type: "paragraph",
+        text: "Un destilador usa calor para separar sustancias aprovechando sus diferentes puntos de cambio. El agua puede evaporarse, subir como vapor y luego condensarse otra vez como líquido."
+      },
+      {
+        type: "paragraph",
+        text: "Los minerales disueltos no evaporan de la misma manera que el agua. Cuando el agua se evapora, muchas sales quedan atrás y se concentran en el recipiente."
+      },
+      {
+        type: "paragraph",
+        text: "Si el calentamiento continúa, queda menos agua líquida y la concentración de minerales aumenta. Luego esos minerales pueden estudiarse, filtrarse, cristalizarse o separarse con otros métodos."
+      },
+
+      {
+        type: "subtitle",
+        text: "Pasos básicos de una separación por destilación"
+      },
+      {
+        type: "table",
+        headers: ["Paso", "Qué ocurre", "Resultado"],
+        rows: [
+          ["1. Calentar", "El agua recibe energía térmica", "Las partículas se mueven más rápido"],
+          ["2. Evaporar", "Parte del agua pasa a vapor", "El vapor se separa de muchos minerales"],
+          ["3. Condensar", "El vapor se enfría", "Vuelve a formar agua líquida"],
+          ["4. Concentrar", "Los minerales quedan en menor cantidad de agua", "La mezcla se vuelve más rica en sales"],
+          ["5. Separar", "Se filtra, evapora o cristaliza", "Se obtienen residuos minerales"]
+        ]
+      },
+
+      {
+        type: "subtitle",
+        text: "Sal disuelta en el agua"
+      },
+      {
+        type: "paragraph",
+        text: "La sal común se llama cloruro de sodio. Cuando entra en el agua, puede separarse en dos tipos de iones: sodio y cloruro."
+      },
+      {
+        type: "paragraph",
+        text: "Esos iones quedan repartidos por el agua. No flotan como granos visibles; están distribuidos a escala microscópica."
+      },
+      {
+        type: "paragraph",
+        text: "Si el agua se evapora poco a poco, los iones se concentran. Cuando queda muy poca agua, la sal puede volver a formar cristales."
+      },
+
+      {
+        type: "subtitle",
+        text: "Hierro en el agua"
+      },
+      {
+        type: "paragraph",
+        text: "El hierro puede aparecer en el agua en cantidades muy pequeñas. A veces está disuelto como ion; otras veces puede estar asociado a partículas, óxidos o sedimentos."
+      },
+      {
+        type: "paragraph",
+        text: "Cuando el hierro se oxida, puede formar materiales rojizos o marrones. Por eso algunas aguas dejan manchas de color óxido en piedras, tuberías o recipientes."
+      },
+      {
+        type: "paragraph",
+        text: "Separar hierro del agua suele ser más difícil que concentrar sal, porque normalmente aparece en cantidades mucho menores."
+      },
+
+      {
+        type: "subtitle",
+        text: "Ejemplo aproximado por cada gota"
+      },
+      {
+        type: "paragraph",
+        text: "Supongamos una gota de agua de 0.05 mL. Si esa agua contiene 250 mg/L de sales disueltas y 0.3 mg/L de hierro, cada gota tendría una cantidad pequeñísima de minerales, pero un número enorme de partículas."
+      },
+      {
+        type: "table",
+        headers: ["Contenido en una gota", "Cantidad aproximada", "Interpretación"],
+        rows: [
+          ["Volumen de la gota", "0.05 mL", "Una gota pequeña"],
+          ["Sales disueltas", "0.0125 mg", "Cantidad visible solo al acumular muchas gotas"],
+          ["Hierro disuelto", "0.000015 mg", "Una traza microscópica"],
+          ["Unidades de sal", "≈ 1.3 × 10^17", "Un número inmenso de partículas"],
+          ["Iones de hierro", "≈ 1.6 × 10^14", "También muchísimos, aunque la masa sea mínima"]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "Esto muestra una idea importante: algo puede pesar casi nada y aun así contener muchísimas partículas."
+      },
+
+      {
+        type: "subtitle",
+        text: "Cuánta agua se necesita para reunir 1 gramo"
+      },
+      {
+        type: "paragraph",
+        text: "La cantidad de agua necesaria depende de la concentración mineral. Si hay muchos minerales por litro, se necesita menos agua. Si hay pocos minerales por litro, se necesita mucha más."
+      },
+      {
+        type: "table",
+        headers: ["Sustancia", "Concentración usada como ejemplo", "Agua necesaria para 1 g"],
+        rows: [
+          ["Sales disueltas", "250 mg/L", "≈ 4 litros"],
+          ["Hierro disuelto", "0.3 mg/L", "≈ 3333 litros"]
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "El cálculo es simple: 1 gramo equivale a 1000 miligramos. Si un litro tiene 250 mg de sales, entonces 1000 ÷ 250 = 4 litros."
+      },
+      {
+        type: "paragraph",
+        text: "Para el hierro del ejemplo: 1000 ÷ 0.3 = 3333. Por eso se necesitarían miles de litros para acumular 1 gramo de hierro si la concentración fuera tan baja."
+      },
+
+      {
+        type: "subtitle",
+        text: "Curiosidad: hierro en la arena de la playa"
+      },
+      {
+        type: "paragraph",
+        text: "En algunas playas existe arena oscura rica en minerales de hierro, como magnetita. La magnetita puede responder a un imán porque tiene propiedades magnéticas."
+      },
+      {
+        type: "paragraph",
+        text: "Una forma sencilla de observarlo es acercar un imán cubierto con una bolsa plástica a arena seca. Algunas partículas oscuras pueden pegarse a la zona del imán. Al retirar la bolsa, esas partículas se desprenden fácilmente."
+      },
+      {
+        type: "paragraph",
+        text: "Este experimento muestra que no todo lo que parece arena es igual. Dentro de una muestra puede haber cuarzo, fragmentos de conchas, minerales volcánicos y partículas con hierro."
+      },
+      {
+        type: "paragraph",
+        text: "Nunca debe hacerse en zonas protegidas, reservas naturales o lugares donde esté prohibido retirar arena. La observación científica debe respetar el entorno."
+      },
+
+      {
+        type: "subtitle",
+        text: "Curiosidad: obtener sal por evaporación"
+      },
+      {
+        type: "paragraph",
+        text: "Cuando el agua salada se deja evaporar, el agua pasa al aire como vapor y las sales quedan atrás. Por eso en las salinas se usa el sol y el viento para concentrar agua salada hasta formar cristales."
+      },
+      {
+        type: "paragraph",
+        text: "El proceso puede tardar mucho tiempo, porque depende del calor, la cantidad de agua, el viento, la humedad y la concentración inicial de sal."
+      },
+
+      {
+        type: "subtitle",
+        text: "Agua mineralizada y cuerpo humano"
+      },
+      {
+        type: "paragraph",
+        text: "El cuerpo humano usa agua para transportar sustancias, regular temperatura, lubricar tejidos y permitir reacciones químicas internas."
+      },
+      {
+        type: "paragraph",
+        text: "Los minerales disueltos en el agua pueden aportar electrolitos. Los electrolitos participan en señales nerviosas, contracción muscular, equilibrio de líquidos y funcionamiento celular."
+      },
+      {
+        type: "paragraph",
+        text: "El hierro cumple funciones importantes en el organismo, especialmente en el transporte de oxígeno en la sangre. Sin embargo, el hierro necesario para el cuerpo normalmente se obtiene sobre todo de los alimentos."
+      },
+      {
+        type: "paragraph",
+        text: "El agua mineralizada puede apoyar la hidratación cuando es potable y segura, pero no debe confundirse con medicina. La calidad del agua siempre importa: debe estar libre de contaminantes peligrosos."
+      },
+      {
+        type: "table",
+        headers: ["Componente", "Papel en el cuerpo", "Idea clave"],
+        rows: [
+          ["Agua", "Hidratación y transporte", "Permite que muchas funciones ocurran"],
+          ["Sodio", "Equilibrio de líquidos", "Debe mantenerse en cantidades adecuadas"],
+          ["Potasio", "Músculos y señales nerviosas", "Trabaja junto con otros electrolitos"],
+          ["Magnesio", "Función muscular y celular", "Participa en muchas reacciones"],
+          ["Hierro", "Transporte de oxígeno", "Es esencial, pero en exceso también puede ser dañino"]
+        ]
+      },
+
+      {
+        type: "subtitle",
+        text: "Energía y minerales"
+      },
+      {
+        type: "paragraph",
+        text: "El agua mineralizada no entrega energía como lo hacen los carbohidratos, las grasas o las proteínas. No funciona como combustible calórico."
+      },
+      {
+        type: "paragraph",
+        text: "Su relación con la energía del cuerpo es indirecta: si una persona está deshidratada o baja en electrolitos, puede sentirse cansada. Al recuperar agua y minerales necesarios, el cuerpo puede funcionar mejor."
+      },
+      {
+        type: "paragraph",
+        text: "Por eso los minerales no son magia: son piezas pequeñas que ayudan a que los sistemas del cuerpo trabajen con orden."
+      },
+
+      {
+        type: "subtitle",
+        text: "Resumen de laboratorio"
+      },
+      {
+        type: "paragraph",
+        text: "La materia puede encontrarse como sólido, líquido o gas. El agua puede disolver minerales invisibles a simple vista. Al calentarla, evaporarla y condensarla, es posible separar sustancias según sus propiedades."
+      },
+      {
+        type: "paragraph",
+        text: "La sal suele concentrarse con facilidad cuando el agua se evapora. El hierro puede encontrarse en trazas disueltas, en sedimentos o en minerales magnéticos como la magnetita."
+      },
+      {
+        type: "paragraph",
+        text: "Comprender estos procesos permite leer mejor la naturaleza: el agua, la arena, los minerales, la electricidad, el cuerpo humano y las transformaciones de la materia están conectados por reglas químicas observables."
+      }
     ]
   }
 };
@@ -15810,7 +17227,294 @@ function ensureRetroPCStyles() {
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+    .retro-doc-title {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 16px;
+    }
 
+    .retro-doc-subtitle {
+      text-align: center;
+      font-size: 13px;
+      margin: 16px 0 10px 0;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .retro-doc-paragraph {
+      margin: 0 0 12px 0;
+      white-space: pre-line;
+    }
+
+    .retro-doc-image {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      margin: 10px auto 14px auto;
+      border: 1px solid #444;
+      background: #f5f5f5;
+    }
+
+    .retro-doc-table-wrap {
+      overflow-x: auto;
+      margin: 10px 0 14px 0;
+    }
+
+    .retro-doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    .retro-doc-table th,
+    .retro-doc-table td {
+      border: 1px solid #444;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .retro-doc-table th {
+      background: #e9e9e9;
+    }
+
+    .retro-doc-chart-wrap {
+      margin: 12px 0 16px 0;
+      border: 1px solid #444;
+      padding: 10px;
+      background: #f8f8f8;
+    }
+
+    .retro-doc-chart-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .retro-doc-chart-canvas {
+      display: block;
+      width: 100%;
+      max-width: 460px;
+      height: auto;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #777;
+    }
+    .retro-chem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 12px 0 16px 0;
+    }
+
+    .retro-chem-card {
+      border: 1px solid #444;
+      background: #f7f7f7;
+      padding: 10px 8px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .retro-chem-card-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .retro-chem-box {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 8px auto;
+      border: 1px solid #666;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .retro-chem-particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #0b58d0;
+    }
+
+    .retro-chem-card-text {
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .retro-distiller-wrap {
+      margin: 12px 0 16px 0;
+      border: 1px solid #444;
+      background: #f8f8f8;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    .retro-distiller-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .retro-distiller-diagram {
+      display: grid;
+      grid-template-columns: 1.2fr 0.6fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .retro-distiller-tank {
+      position: relative;
+      height: 180px;
+      border: 2px solid #555;
+      background: linear-gradient(180deg, #fefefe, #efefef);
+      overflow: hidden;
+    }
+
+    .retro-distiller-water {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52%;
+      background: linear-gradient(180deg, #7ec8ff, #2f84d0);
+      border-top: 2px solid #ffffff;
+    }
+
+    .retro-distiller-bubbles {
+      position: absolute;
+      inset: auto 0 35% 0;
+      height: 55px;
+    }
+
+    .retro-distiller-bubble {
+      position: absolute;
+      bottom: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .retro-distiller-label {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      font-size: 10px;
+      text-align: center;
+      background: rgba(255,255,255,0.78);
+      padding: 2px 4px;
+      box-sizing: border-box;
+    }
+
+    .retro-distiller-label.top {
+      top: 8px;
+    }
+
+    .retro-distiller-label.mid {
+      top: 64px;
+    }
+
+    .retro-distiller-fire {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38px;
+      height: 38px;
+      background: radial-gradient(circle at 50% 60%, #ffd84d 0%, #ff8c00 42%, #d61b00 72%, transparent 73%);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(255,120,0,.6);
+    }
+
+    .retro-distiller-pipe-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+
+    .retro-distiller-pipe {
+      position: relative;
+      width: 100%;
+      max-width: 90px;
+      height: 140px;
+      border: 3px solid #666;
+      border-left: none;
+      border-bottom: none;
+      border-radius: 0 40px 0 0;
+      box-sizing: border-box;
+    }
+
+    .retro-distiller-vapor {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(190,190,190,.55) 0, rgba(190,190,190,.55) 10px, transparent 11px),
+        radial-gradient(circle at 72% 45%, rgba(190,190,190,.42) 0, rgba(190,190,190,.42) 11px, transparent 12px),
+        radial-gradient(circle at 45% 70%, rgba(190,190,190,.38) 0, rgba(190,190,190,.38) 10px, transparent 11px);
+    }
+
+    .retro-distiller-output {
+      display: grid;
+      gap: 10px;
+    }
+
+    .retro-distiller-box {
+      border: 1px solid #555;
+      background: #fff;
+      padding: 10px;
+      box-sizing: border-box;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .retro-distiller-box-title {
+      font-weight: bold;
+      font-size: 11px;
+    }
+
+    .retro-distiller-box-text {
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .retro-distiller-note {
+      margin-top: 10px;
+      font-size: 10px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    @media (max-width: 680px) {
+      .retro-chem-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .retro-distiller-diagram {
+        grid-template-columns: 1fr;
+      }
+
+      .retro-distiller-pipe-area {
+        min-height: 70px;
+      }
+
+      .retro-distiller-pipe {
+        height: 60px;
+        max-width: 120px;
+      }
+    }
     @media (max-width: 680px) {
       #retro-pc-window {
         width: 96vw;
@@ -15851,9 +17555,368 @@ function closeRetroPCPopup() {
   retroPCDialogState.key = null;
 }
 
-function buildRetroPCDocumentText(config) {
-  if (!config || !Array.isArray(config.content)) return "";
-  return config.content.join("\n");
+function buildRetroChemStates() {
+  const wrap = document.createElement("div");
+  wrap.className = "retro-chem-grid";
+
+  const cards = [
+    {
+      title: "Sólido",
+      text: "Las partículas están muy juntas y casi no cambian de lugar.",
+      particles: [
+        [16, 16], [36, 16], [56, 16],
+        [16, 36], [36, 36], [56, 36],
+        [16, 56], [36, 56], [56, 56]
+      ]
+    },
+    {
+      title: "Líquido",
+      text: "Las partículas siguen juntas, pero pueden moverse y fluir.",
+      particles: [
+        [18, 54], [38, 48], [58, 58],
+        [24, 28], [50, 26], [68, 42],
+        [14, 72], [44, 70], [70, 74]
+      ]
+    },
+    {
+      title: "Gas",
+      text: "Las partículas están más separadas y se mueven libremente.",
+      particles: [
+        [10, 10], [58, 12], [24, 36],
+        [68, 44], [14, 62], [46, 70],
+        [72, 84]
+      ]
+    }
+  ];
+
+  cards.forEach(card => {
+    const cardEl = document.createElement("div");
+    cardEl.className = "retro-chem-card";
+
+    const title = document.createElement("div");
+    title.className = "retro-chem-card-title";
+    title.textContent = card.title;
+
+    const box = document.createElement("div");
+    box.className = "retro-chem-box";
+
+    card.particles.forEach(([left, top]) => {
+      const p = document.createElement("div");
+      p.className = "retro-chem-particle";
+      p.style.left = `${left}px`;
+      p.style.top = `${top}px`;
+      box.appendChild(p);
+    });
+
+    const text = document.createElement("div");
+    text.className = "retro-chem-card-text";
+    text.textContent = card.text;
+
+    cardEl.appendChild(title);
+    cardEl.appendChild(box);
+    cardEl.appendChild(text);
+    wrap.appendChild(cardEl);
+  });
+
+  return wrap;
+}
+
+function buildRetroDistillerDiagram() {
+  const wrap = document.createElement("div");
+  wrap.className = "retro-distiller-wrap";
+
+  wrap.innerHTML = `
+    <div class="retro-distiller-title">Esquema del proceso de destilación</div>
+
+    <div class="retro-distiller-diagram">
+      <div class="retro-distiller-tank">
+        <div class="retro-distiller-label top">1. Agua mineralizada</div>
+        <div class="retro-distiller-label mid">2. Calor y evaporación</div>
+        <div class="retro-distiller-water"></div>
+        <div class="retro-distiller-bubbles">
+          <div class="retro-distiller-bubble" style="left:18px;"></div>
+          <div class="retro-distiller-bubble" style="left:34px; bottom:10px;"></div>
+          <div class="retro-distiller-bubble" style="left:50px; bottom:18px;"></div>
+          <div class="retro-distiller-bubble" style="left:68px; bottom:6px;"></div>
+          <div class="retro-distiller-bubble" style="left:84px; bottom:14px;"></div>
+        </div>
+        <div class="retro-distiller-fire"></div>
+      </div>
+
+      <div class="retro-distiller-pipe-area">
+        <div class="retro-distiller-pipe">
+          <div class="retro-distiller-vapor"></div>
+        </div>
+      </div>
+
+      <div class="retro-distiller-output">
+        <div class="retro-distiller-box">
+          <div class="retro-distiller-box-title">3. Vapor separado</div>
+          <div class="retro-distiller-box-text">El agua pasa a gas y se aleja de muchos minerales disueltos.</div>
+        </div>
+        <div class="retro-distiller-box">
+          <div class="retro-distiller-box-title">4. Condensación</div>
+          <div class="retro-distiller-box-text">El vapor se enfría y vuelve a convertirse en agua líquida.</div>
+        </div>
+        <div class="retro-distiller-box">
+          <div class="retro-distiller-box-title">5. Concentrado mineral</div>
+          <div class="retro-distiller-box-text">La sal, el hierro y otros minerales quedan más concentrados en el recipiente inicial.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="retro-distiller-note">
+      El destilador aprovecha una propiedad fundamental de la materia:
+      distintas sustancias cambian de estado o se separan en condiciones diferentes.
+    </div>
+  `;
+
+  return wrap;
+}
+
+function createRetroDocElement(section) {
+  if (!section || !section.type) {
+    return document.createTextNode("");
+  }
+
+  if (section.type === "title") {
+    const el = document.createElement("div");
+    el.className = "retro-doc-title";
+    el.textContent = section.text || "";
+    return el;
+  }
+
+  if (section.type === "subtitle") {
+    const el = document.createElement("div");
+    el.className = "retro-doc-subtitle";
+    el.textContent = section.text || "";
+    return el;
+  }
+
+  if (section.type === "paragraph") {
+    const el = document.createElement("p");
+    el.className = "retro-doc-paragraph";
+    el.textContent = section.text || "";
+    return el;
+  }
+
+  if (section.type === "image") {
+    const img = document.createElement("img");
+    img.className = "retro-doc-image";
+    img.src = section.src || "";
+    img.alt = section.alt || "Imagen";
+    return img;
+  }
+
+  if (section.type === "table") {
+    const wrap = document.createElement("div");
+    wrap.className = "retro-doc-table-wrap";
+
+    const table = document.createElement("table");
+    table.className = "retro-doc-table";
+
+    if (Array.isArray(section.headers) && section.headers.length) {
+      const thead = document.createElement("thead");
+      const tr = document.createElement("tr");
+
+      section.headers.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        tr.appendChild(th);
+      });
+
+      thead.appendChild(tr);
+      table.appendChild(thead);
+    }
+
+    if (Array.isArray(section.rows) && section.rows.length) {
+      const tbody = document.createElement("tbody");
+
+      section.rows.forEach(row => {
+        const tr = document.createElement("tr");
+
+        row.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+    }
+
+    wrap.appendChild(table);
+    return wrap;
+  }
+
+  if (section.type === "chart") {
+    const wrap = document.createElement("div");
+    wrap.className = "retro-doc-chart-wrap";
+
+    const title = document.createElement("div");
+    title.className = "retro-doc-chart-title";
+    title.textContent = section.title || "Gráfica";
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "retro-doc-chart-canvas";
+    canvas.width = 460;
+    canvas.height = 300;
+
+    wrap.appendChild(title);
+    wrap.appendChild(canvas);
+
+    setTimeout(() => {
+      drawRetroChart(canvas, section);
+    }, 0);
+
+    return wrap;
+  }
+
+  if (section.type === "chem_states") {
+    return buildRetroChemStates();
+  }
+
+  if (section.type === "distiller_diagram") {
+    return buildRetroDistillerDiagram();
+  }
+
+  return document.createTextNode("");
+}
+
+function renderRetroPCDocumentContent(config) {
+  const page = document.getElementById("retro-word-page");
+  if (!page || !config) return;
+
+  page.innerHTML = "";
+
+  if (Array.isArray(config.sections)) {
+    config.sections.forEach(section => {
+      page.appendChild(createRetroDocElement(section));
+    });
+
+    return;
+  }
+
+  const title = document.createElement("div");
+  title.className = "retro-doc-title";
+  title.textContent = config.documentTitle || "Documento";
+  page.appendChild(title);
+
+  if (Array.isArray(config.content)) {
+    config.content.forEach(line => {
+      const p = document.createElement("p");
+      p.className = "retro-doc-paragraph";
+      p.textContent = line;
+      page.appendChild(p);
+    });
+  }
+}
+
+function drawRetroChart(canvas, chart) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const padLeft = 42;
+  const padRight = 16;
+  const padTop = 16;
+  const padBottom = 34;
+
+  const plotW = w - padLeft - padRight;
+  const plotH = h - padTop - padBottom;
+
+  const xMin = Number(chart.xMin ?? 0);
+  const xMax = Number(chart.xMax ?? 4);
+  const yMin = Number(chart.yMin ?? 0);
+  const yMax = Number(chart.yMax ?? 4);
+
+  const points = Array.isArray(chart.points) ? chart.points : [];
+
+  function mapX(x) {
+    return padLeft + ((x - xMin) / (xMax - xMin || 1)) * plotW;
+  }
+
+  function mapY(y) {
+    return padTop + plotH - ((y - yMin) / (yMax - yMin || 1)) * plotH;
+  }
+
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.strokeStyle = "#dddddd";
+  ctx.lineWidth = 1;
+
+  for (let x = xMin; x <= xMax; x++) {
+    const px = mapX(x);
+    ctx.beginPath();
+    ctx.moveTo(px, padTop);
+    ctx.lineTo(px, padTop + plotH);
+    ctx.stroke();
+  }
+
+  for (let y = yMin; y <= yMax; y++) {
+    const py = mapY(y);
+    ctx.beginPath();
+    ctx.moveTo(padLeft, py);
+    ctx.lineTo(padLeft + plotW, py);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 1.5;
+
+  ctx.beginPath();
+  ctx.moveTo(padLeft, padTop);
+  ctx.lineTo(padLeft, padTop + plotH);
+  ctx.lineTo(padLeft + plotW, padTop + plotH);
+  ctx.stroke();
+
+  ctx.fillStyle = "#000000";
+  ctx.font = "12px Courier New";
+  ctx.textAlign = "center";
+
+  for (let x = xMin; x <= xMax; x++) {
+    ctx.fillText(String(x), mapX(x), padTop + plotH + 18);
+  }
+
+  ctx.textAlign = "right";
+
+  for (let y = yMin; y <= yMax; y++) {
+    ctx.fillText(String(y), padLeft - 8, mapY(y) + 4);
+  }
+
+  if (!points.length) return;
+
+  ctx.strokeStyle = "#0b58d0";
+  ctx.fillStyle = "#d02020";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+
+  points.forEach((point, index) => {
+    const px = mapX(point[0]);
+    const py = mapY(point[1]);
+
+    if (index === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  });
+
+  ctx.stroke();
+
+  points.forEach(point => {
+    const px = mapX(point[0]);
+    const py = mapY(point[1]);
+
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
 }
 
 function openRetroPCDocument(configKey) {
@@ -15913,10 +17976,7 @@ function openRetroPCDocument(configKey) {
             </div>
 
             <div id="retro-word-page-wrap">
-              <div id="retro-word-page">
-                <div id="retro-word-doc-title">${config.documentTitle}</div>
-                ${buildRetroPCDocumentText(config)}
-              </div>
+<div id="retro-word-page"></div>
             </div>
 
             <div id="retro-word-statusbar">
@@ -15935,6 +17995,7 @@ function openRetroPCDocument(configKey) {
   `;
 
   document.body.appendChild(overlay);
+  renderRetroPCDocumentContent(config);
 
   document.getElementById("retro-pc-close")?.addEventListener("click", closeRetroPCPopup);
 
@@ -15950,6 +18011,13 @@ window.openComputadorInvestigacionLunar = function () {
   openRetroPCDocument("investigacionLunar");
 };
 
+window.openComputadorEcuacionesGraficas = function () {
+  openRetroPCDocument("ecuacionesGraficasBasicas");
+};
+
+window.openComputadorQuimicaDestilador = function () {
+  openRetroPCDocument("quimicaDestilador");
+};
 // ======================================================
 // SISTEMA EXTERNO REUTILIZABLE DE DIÁLOGOS DE OBJETOS
 // No modifica el sistema original del juego
@@ -16326,7 +18394,65 @@ function renderObjetoDialogExterno() {
   actionsEl.innerHTML = html;
 }
 
+let objetoDialogExternoActionLocked = false;
+let objetoDialogExternoPointer = {
+  active: false,
+  startX: 0,
+  startY: 0,
+  moved: false,
+  target: null
+};
+
+function canUseObjetoDialogExternoAction() {
+  if (objetoDialogExternoActionLocked) return false;
+
+  objetoDialogExternoActionLocked = true;
+
+  setTimeout(() => {
+    objetoDialogExternoActionLocked = false;
+  }, 450);
+
+  return true;
+}
+
+function beginObjetoDialogExternoTap(e, target) {
+  objetoDialogExternoPointer.active = true;
+  objetoDialogExternoPointer.startX = e.clientX;
+  objetoDialogExternoPointer.startY = e.clientY;
+  objetoDialogExternoPointer.moved = false;
+  objetoDialogExternoPointer.target = target || null;
+}
+
+function moveObjetoDialogExternoTap(e) {
+  if (!objetoDialogExternoPointer.active) return;
+
+  const dx = e.clientX - objetoDialogExternoPointer.startX;
+  const dy = e.clientY - objetoDialogExternoPointer.startY;
+
+  if (Math.abs(dx) > 18 || Math.abs(dy) > 18) {
+    objetoDialogExternoPointer.moved = true;
+  }
+}
+
+function canCommitObjetoDialogExternoTap(target) {
+  if (!objetoDialogExternoPointer.active) return false;
+  if (objetoDialogExternoPointer.moved) return false;
+  if (!target || !objetoDialogExternoPointer.target) return false;
+
+  return (
+    target === objetoDialogExternoPointer.target ||
+    objetoDialogExternoPointer.target.contains(target)
+  );
+}
+
+function endObjetoDialogExternoTap() {
+  objetoDialogExternoPointer.active = false;
+  objetoDialogExternoPointer.target = null;
+}
+
 function handleObjetoDialogExternoAction(action) {
+  if (!canUseObjetoDialogExternoAction()) return;
+
   if (typeof playtockSound === "function") {
     playtockSound();
   }
@@ -16345,6 +18471,7 @@ function handleObjetoDialogExternoAction(action) {
   if (action === "next") {
     objetoDialogExternoState.lineIndex++;
     renderObjetoDialogExterno();
+    return;
   }
 }
 
@@ -16354,44 +18481,81 @@ function bindObjetoDialogExternoEvents() {
 
   if (!overlay) return;
 
-  closeBtn?.addEventListener("click", () => {
-    handleObjetoDialogExternoAction("close");
-  });
+  function getObjetoDialogActionTarget(e) {
+    return (
+      e.target.closest("[data-objeto-dialog-action]") ||
+      e.target.closest("#objeto-dialog-externo-close")
+    );
+  }
 
-  closeBtn?.addEventListener("pointerdown", (e) => {
-    if (e.pointerType === "mouse") return;
-    e.preventDefault();
-    handleObjetoDialogExternoAction("close");
-  }, { passive: false });
+  function getObjetoDialogAction(target) {
+    if (!target) return null;
+
+    if (target.id === "objeto-dialog-externo-close") {
+      return "close";
+    }
+
+    return target.dataset.objetoDialogAction || null;
+  }
 
   overlay.addEventListener("pointerdown", (e) => {
-    if (e.target === overlay) {
-      e.preventDefault();
-      handleObjetoDialogExternoAction("close");
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const target = getObjetoDialogActionTarget(e);
+
+    if (target) {
+      beginObjetoDialogExternoTap(e, target);
+    } else {
+      beginObjetoDialogExternoTap(e, overlay);
     }
-  }, { passive: false });
+  }, { capture: true, passive: false });
+
+  overlay.addEventListener("pointermove", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    moveObjetoDialogExternoTap(e);
+  }, { capture: true, passive: false });
+
+  overlay.addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const target = getObjetoDialogActionTarget(e);
+
+    if (target && canCommitObjetoDialogExternoTap(target)) {
+      const action = getObjetoDialogAction(target);
+      handleObjetoDialogExternoAction(action);
+      endObjetoDialogExternoTap();
+      return;
+    }
+
+    if (e.target === overlay && canCommitObjetoDialogExternoTap(overlay)) {
+      handleObjetoDialogExternoAction("close");
+      endObjetoDialogExternoTap();
+      return;
+    }
+
+    endObjetoDialogExternoTap();
+  }, { capture: true, passive: false });
+
+  overlay.addEventListener("pointercancel", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    endObjetoDialogExternoTap();
+  }, { capture: true, passive: false });
 
   overlay.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-objeto-dialog-action]");
-    if (!btn) return;
-
     e.preventDefault();
     e.stopPropagation();
-
-    handleObjetoDialogExternoAction(btn.dataset.objetoDialogAction);
-  });
-
-  overlay.addEventListener("pointerdown", (e) => {
-    const btn = e.target.closest("[data-objeto-dialog-action]");
-    if (!btn) return;
-
-    if (e.pointerType === "mouse") return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    handleObjetoDialogExternoAction(btn.dataset.objetoDialogAction);
-  }, { passive: false });
+    e.stopImmediatePropagation();
+  }, { capture: true, passive: false });
 }
 
 function openObjetoDialogExterno(configKey) {
