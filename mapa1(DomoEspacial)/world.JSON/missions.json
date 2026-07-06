@@ -1212,6 +1212,209 @@
         ],
         "codigoSecreto": null
       }
+    },
+    {
+      "id": "m6",
+      "nombre": "El misterio del cofre",
+      "tipo": "secundaria",
+      "clasificacion": "diaria",
+      "descripcion": "Recolecta códigos encriptados en forma de ecuaciones para descubrir el misterio del cofre. Luego deberás emprender un viaje más profundo para seguir las pistas y acercarte al misterio del cosmos.",
+      "estadoFinalizacion": {
+        "tipo": "automatica",
+        "condicion": "todos_los_pasos",
+        "requiereNPCFinal": false
+      },
+      "condiciones": {
+        "nivelIQMinimo": 0,
+        "misionesRequeridas": [],
+        "itemsRequeridos": []
+      },
+      "npcs": [
+        {
+          "id": "npc01",
+          "nombre": "Doctor Cyron",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+          "posicion": {
+            "x": 4769,
+            "y": 3787
+          },
+          "conversation_default": "Este cofre lleva más de 80 años descubierto.",
+          "dialogos": {
+            "inicio": [
+              "Este cofre lleva más de 80 años.",
+              "Y hasta hoy nadie ha podido abrirlo.",
+              "En esa época iniciaban incursiones Planetarias.",
+              "En uno de esos planetas hallaron este cofre.",
+              "Trae signos que no hemos logrado descifrar.",
+              "Pero...",
+              "Un estudiante llamado Jack hizo un hallazgo.",
+              "Él es ingeniero en investigación.",
+              "Se ha tardado en venir.",
+              "Búscalo y apóyalo en resolver este problema."
+            ],
+            "en_progreso": [
+              "Busca a Jack y apóyalo con este misterio.",
+              "Él es ingeniero en investigación.",
+              "Se ha tardado en venir."
+            ],
+            "completado": [
+              "Así que las líneas se interceptan en Marte...",
+              "Ahora recuerdo algo importante.",
+              "En el domo hay un portal a cuevas marcianas.",
+              "Ese portal fue habilitado hace 80 años.",
+              "Quizá allí esté la llave del cofre.",
+              "Ve, pero lleva mucha agua y buen equipo.",
+              "Marte es inhóspito y lleno de arcillas.",
+              "También hallarás algunos minerales.",
+              "Tiene lógica: es el planeta rojo, jajajaja.",
+              "Mucha suerte, muchacho."
+            ]
+          }
+        },
+        {
+          "id": "npc02",
+          "nombre": "Jack",
+          "rol": "inicio",
+          "imagen": "../assets/avatares/npc/mapa1/Jack.png",
+          "posicion": {
+            "x": 2783,
+            "y": 1007
+          },
+          "conversation_default": "Pero... ¿qué vieron mis ojos?",
+          "dialogos": {
+            "inicio": [
+              "Pero... ¿qué vieron mis ojos?",
+              "Son criaturas extrañas..."
+            ],
+            "en_progreso": [
+              "Hola... ¿Cyron te envió para resolver esto?",
+              "Lo siento, ya no tengo las ecuaciones.",
+              "Iba al centro de control cuando vi al director.",
+              "Entró al laberinto y decidí seguirlo.",
+              "Quería mostrarle mi descubrimiento.",
+              "Pero criaturas reptilianas lo secuestraron.",
+              "También se llevaron a otro profesor.",
+              "Me vieron, pero escapé rápido.",
+              "Creo que allí perdí las ecuaciones.",
+              "¿Me ayudas a buscar las tres tarjetas?",
+              "Una cayó entre arcillas al sur del laberinto.",
+              "Otra se perdió en el ala oeste.",
+              "La última la perdí en el acuario del norte.",
+              "Mis nervios estaban fuera de control.",
+              "Cuando las encuentres, imprime los PDF.",
+              "Escanéalos con la Metacámara del Metafón.",
+              "Ese algoritmo descifrará las ecuaciones.",
+              "Luego ve al tablero del centro de control.",
+              "Escribe allí las ecuaciones descifradas.",
+              "Después de eso no sé qué sigue...",
+              "Éxitos, y mucho cuidado."
+            ],
+            "completado": [
+              "En los mundos hay cosas muy valiosas.",
+              "Una son los algoritmos de especialidad.",
+              "Cada civilización tiene su propio sistema.",
+              "Sirven para coleccionar conocimiento.",
+              "La Metacámara tiene un algoritmo útil.",
+              "Puede descifrar algunos códigos antiguos.",
+              "Si encuentras uno, imprime su PDF.",
+              "Guárdalo y escanéalo con cuidado.",
+              "Puede ser invaluable para ti."
+            ]
+          }
+        }
+      ],
+      "pasos": [
+        {
+          "step": 1,
+          "id": "m6s1",
+          "tipo": "hablar_npc",
+          "npcId": "npc01",
+          "titulo": "Habla con el Doctor Cyron",
+          "descripcion": "Habla con el Doctor Cyron para conocer el origen del cofre y entender por qué nadie ha logrado abrirlo.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc01",
+            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "posicion": {
+              "x": 4769,
+              "y": 3787
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 2,
+          "id": "m6s2",
+          "tipo": "hablar_npc",
+          "npcId": "npc02",
+          "titulo": "Habla con Jack",
+          "descripcion": "Busca a Jack para descubrir qué encontró y por qué perdió las tarjetas con las ecuaciones.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc02",
+            "imagen": "../assets/avatares/npc/mapa1/Jack.png",
+            "posicion": {
+              "x": 2783,
+              "y": 1007
+            }
+          }
+        },
+        {
+          "step": 3,
+          "id": "m6s3",
+          "tipo": "completar_reto",
+          "retoId": "descifrarEcuacionesLineales",
+          "titulo": "Descifra las ecuaciones lineales",
+          "descripcion": "Busca las tres tarjetas con ecuaciones lineales. Hay dos en el laberinto y una en el acuario del norte. Imprime los PDF, escanéalos con la Metacámara del Metafón y luego escribe las ecuaciones en el tablero holográfico del centro de control.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "funcion",
+            "objetivoId": "descifrarEcuacionesLineales",
+            "imagen": null,
+            "posicion": {
+              "x": 4690,
+              "y": 3855
+            }
+          },
+          "otorgaItems": []
+        },
+        {
+          "step": 4,
+          "id": "m6s4",
+          "tipo": "hablar_npc",
+          "npcId": "npc01",
+          "titulo": "Vuelve con el Doctor Cyron",
+          "descripcion": "Muéstrale al Doctor Cyron el resultado del descifrado y escucha la nueva pista sobre Marte.",
+          "estadoInicial": false,
+          "verificador": {
+            "tipoObjetivo": "npc",
+            "objetivoId": "npc01",
+            "imagen": "../assets/avatares/npc/mapa1/Arkon.png",
+            "posicion": {
+              "x": 4769,
+              "y": 3787
+            }
+          }
+        }
+      ],
+      "recompensas": {
+        "iq": 25,
+        "cosmonedas": 70,
+        "items": [
+          {
+            "id": "corazon",
+            "cantidad": 3
+          },
+          {
+            "id": "cobre",
+            "cantidad": 12
+          }
+        ],
+        "codigoSecreto": null
+      }
     }
   ]
 }

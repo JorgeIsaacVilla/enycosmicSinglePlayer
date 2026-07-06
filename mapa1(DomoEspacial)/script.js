@@ -15511,7 +15511,2170 @@ function continuarTrasGameOver() {
 
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
+// ======================================================
+// TABLERO HOLOGRÁFICO: SISTEMA SOLAR EN ECUACIONES
+// Misión m6 - El misterio del cofre
+// Versión estable: drag + mobile + reinicio + cotas + zoom
+// ======================================================
 
+const TABLERO_ECUACIONES_STORAGE_KEY = "eny_m6_tablero_ecuaciones_lineales_v4";
+const TABLERO_ECUACIONES_RETO_ID = "descifrarEcuacionesLineales";
+
+const TABLERO_ECUACIONES_BASE = [
+  {
+    id: "ec1",
+    formula: "x² + y² = 50",
+    tipo: "circle",
+    x: 0,
+    y: 0,
+    r: Math.sqrt(50),
+    color: "#dfff5d",
+    fixed: true
+  },
+  {
+    id: "ec18",
+    formula: "x = 4",
+    tipo: "vertical",
+    x: 4,
+    color: "#ff174d",
+    fixed: true
+  },
+  {
+    id: "f",
+    formula: "y = -10",
+    tipo: "horizontal",
+    y: -10,
+    color: "#ff174d",
+    fixed: true
+  }
+];
+
+const TABLERO_ECUACIONES_PLANETAS = [
+  {
+    id: "ec2",
+    formula: "(x + 5)² + (y + 8)² = 0.5",
+    fragmentos: ["(x + 5)²", "+ (y + 8)²", "= 0.5"],
+    tipo: "circle",
+    x: -5,
+    y: -8,
+    r: Math.sqrt(0.5),
+    color: "#9a9a9a"
+  },
+  {
+    id: "ec3",
+    formula: "(x + 3)² + (y + 10)² = 0.8",
+    fragmentos: ["(x + 3)²", "+ (y + 10)²", "= 0.8"],
+    tipo: "circle",
+    x: -3,
+    y: -10,
+    r: Math.sqrt(0.8),
+    color: "#d8ad5f"
+  },
+  {
+    id: "ec4",
+    formula: "x² + (y + 12)² = 1.2",
+    fragmentos: ["x²", "+ (y + 12)²", "= 1.2"],
+    tipo: "circle",
+    x: 0,
+    y: -12,
+    r: Math.sqrt(1.2),
+    color: "#4aa3ff"
+  },
+  {
+    id: "ec5",
+    formula: "(x - 1.5)² + (y + 11)² = 0.1",
+    fragmentos: ["(x - 1.5)²", "+ (y + 11)²", "= 0.1"],
+    tipo: "circle",
+    x: 1.5,
+    y: -11,
+    r: Math.sqrt(0.1),
+    color: "#d7d7d7"
+  },
+  {
+    id: "ec6",
+    formula: "(x - 4)² + (y + 10)² = 0.5",
+    fragmentos: ["(x - 4)²", "+ (y + 10)²", "= 0.5"],
+    tipo: "circle",
+    x: 4,
+    y: -10,
+    r: Math.sqrt(0.5),
+    color: "#ff4b35"
+  },
+  {
+    id: "ec7",
+    formula: "(x - 8)² + (y + 7)² = 3",
+    fragmentos: ["(x - 8)²", "+ (y + 7)²", "= 3"],
+    tipo: "circle",
+    x: 8,
+    y: -7,
+    r: Math.sqrt(3),
+    color: "#d98545"
+  },
+  {
+    id: "ec8",
+    formula: "(x - 7)² + (y + 9)² = 0.03",
+    fragmentos: ["(x - 7)²", "+ (y + 9)²", "= 0.03"],
+    tipo: "circle",
+    x: 7,
+    y: -9,
+    r: Math.sqrt(0.03),
+    color: "#f0a66f"
+  },
+  {
+    id: "ec9",
+    formula: "(x - 9)² + (y + 5)² = 0.04",
+    fragmentos: ["(x - 9)²", "+ (y + 5)²", "= 0.04"],
+    tipo: "circle",
+    x: 9,
+    y: -5,
+    r: Math.sqrt(0.04),
+    color: "#9d94ff"
+  },
+  {
+    id: "ec10",
+    formula: "(x - 9.6)² + (y + 4.2)² = 0.06",
+    fragmentos: ["(x - 9.6)²", "+ (y + 4.2)²", "= 0.06"],
+    tipo: "circle",
+    x: 9.6,
+    y: -4.2,
+    r: Math.sqrt(0.06),
+    color: "#bdbdbd"
+  },
+  {
+    id: "ec11",
+    formula: "(x - 12)² + (y + 1)² = 2",
+    fragmentos: ["(x - 12)²", "+ (y + 1)²", "= 2"],
+    tipo: "circle",
+    x: 12,
+    y: -1,
+    r: Math.sqrt(2),
+    color: "#d9c17a"
+  },
+  {
+    id: "ec12",
+    formula: "(x - 12)² + (5y + 5)² = 10",
+    fragmentos: ["(x - 12)²", "+ (5y + 5)²", "= 10"],
+    tipo: "ellipse",
+    x: 12,
+    y: -1,
+    rx: Math.sqrt(10),
+    ry: Math.sqrt(10) / 5,
+    color: "#62c7ff"
+  },
+  {
+    id: "ec13",
+    formula: "(x - 12)² + (5y + 5)² = 7",
+    fragmentos: ["(x - 12)²", "+ (5y + 5)²", "= 7"],
+    tipo: "ellipse",
+    x: 12,
+    y: -1,
+    rx: Math.sqrt(7),
+    ry: Math.sqrt(7) / 5,
+    color: "#ff5f5f"
+  },
+  {
+    id: "ec14",
+    formula: "(x - 12)² + (5y + 5)² = 5",
+    fragmentos: ["(x - 12)²", "+ (5y + 5)²", "= 5"],
+    tipo: "ellipse",
+    x: 12,
+    y: -1,
+    rx: Math.sqrt(5),
+    ry: Math.sqrt(5) / 5,
+    color: "#ff9b47"
+  },
+  {
+    id: "ec15",
+    formula: "(x - 12)² + (y - 3)² = 0.8",
+    fragmentos: ["(x - 12)²", "+ (y - 3)²", "= 0.8"],
+    tipo: "circle",
+    x: 12,
+    y: 3,
+    r: Math.sqrt(0.8),
+    color: "#8d7aff"
+  },
+  {
+    id: "ec16",
+    formula: "(x - 13)² + (y - 6)² = 0.8",
+    fragmentos: ["(x - 13)²", "+ (y - 6)²", "= 0.8"],
+    tipo: "circle",
+    x: 13,
+    y: 6,
+    r: Math.sqrt(0.8),
+    color: "#8c8c8c"
+  },
+  {
+    id: "ec17",
+    formula: "(x - 15)² + (y - 8)² = 0.4",
+    fragmentos: ["(x - 15)²", "+ (y - 8)²", "= 0.4"],
+    tipo: "circle",
+    x: 15,
+    y: 8,
+    r: Math.sqrt(0.4),
+    color: "#2e927c"
+  }
+];
+
+const TABLERO_ECUACIONES_LAYOUT = [
+  { id: "row-ec2", targetId: "ec2", color: "#9a9a9a" },
+  { spacer: true },
+
+  { id: "row-ec3", targetId: "ec3", color: "#d8ad5f" },
+  { spacer: true },
+
+  { id: "row-ec4", targetId: "ec4", color: "#4aa3ff" },
+  { id: "row-ec5", targetId: "ec5", color: "#d7d7d7" },
+  { spacer: true },
+
+  { id: "row-ec6", targetId: "ec6", color: "#ff4b35" },
+  { spacer: true },
+
+  { id: "row-ec7", targetId: "ec7", color: "#d98545" },
+  { id: "row-ec8", targetId: "ec8", color: "#f0a66f" },
+  { id: "row-ec9", targetId: "ec9", color: "#9d94ff" },
+  { id: "row-ec10", targetId: "ec10", color: "#bdbdbd" },
+  { spacer: true },
+
+  { id: "row-ec11", targetId: "ec11", color: "#d9c17a" },
+  { id: "row-ec12", targetId: "ec12", color: "#62c7ff" },
+  { id: "row-ec13", targetId: "ec13", color: "#ff5f5f" },
+  { id: "row-ec14", targetId: "ec14", color: "#ff9b47" },
+  { spacer: true },
+
+  { id: "row-ec15", targetId: "ec15", color: "#8d7aff" },
+  { spacer: true },
+
+  { id: "row-ec16", targetId: "ec16", color: "#8c8c8c" },
+  { spacer: true },
+
+  { id: "row-ec17", targetId: "ec17", color: "#2e927c" }
+];
+
+const TABLERO_ALPHABET = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+const TABLERO_SECRET_WORD_LENGTH = 5;
+
+let tableroEcuacionesState = {
+  placed: {},
+  answerLetters: ["", "", "", "", ""],
+  solved: false
+};
+
+let tableroDragState = null;
+let tableroRafId = null;
+let tableroResizeHandler = null;
+let tableroZoomLevel = 1;
+
+function getTableroFragments() {
+  const list = [];
+
+  TABLERO_ECUACIONES_PLANETAS.forEach(eq => {
+    eq.fragmentos.forEach((text, index) => {
+      list.push({
+        id: `${eq.id}_p${index + 1}`,
+        eqId: eq.id,
+        index,
+        text
+      });
+    });
+  });
+
+  return list;
+}
+
+function getTableroFragmentById(fragmentId) {
+  return getTableroFragments().find(f => f.id === fragmentId) || null;
+}
+
+function getTableroEquationById(eqId) {
+  return TABLERO_ECUACIONES_PLANETAS.find(eq => eq.id === eqId) || null;
+}
+
+function getTableroPlacedFragmentIds() {
+  return Object.values(tableroEcuacionesState.placed).filter(Boolean);
+}
+
+function getTableroFragmentCurrentSlot(fragmentId) {
+  for (const [slotKey, currentFragmentId] of Object.entries(tableroEcuacionesState.placed)) {
+    if (currentFragmentId === fragmentId) return slotKey;
+  }
+
+  return null;
+}
+
+function normalizeTableroRespuesta(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function loadTableroEcuacionesState() {
+  try {
+    const raw = localStorage.getItem(TABLERO_ECUACIONES_STORAGE_KEY);
+    if (!raw) return;
+
+    const saved = JSON.parse(raw);
+
+    tableroEcuacionesState = {
+      placed: saved.placed && typeof saved.placed === "object" ? saved.placed : {},
+      answerLetters: Array.isArray(saved.answerLetters)
+        ? saved.answerLetters.slice(0, TABLERO_SECRET_WORD_LENGTH).concat(["", "", "", "", ""]).slice(0, TABLERO_SECRET_WORD_LENGTH)
+        : ["", "", "", "", ""],
+      solved: saved.solved === true
+    };
+  } catch (_) {
+    tableroEcuacionesState = {
+      placed: {},
+      answerLetters: ["", "", "", "", ""],
+      solved: false
+    };
+  }
+}
+
+function saveTableroEcuacionesState() {
+  localStorage.setItem(
+    TABLERO_ECUACIONES_STORAGE_KEY,
+    JSON.stringify(tableroEcuacionesState)
+  );
+}
+
+function clearTableroEcuacionesState() {
+  localStorage.removeItem(TABLERO_ECUACIONES_STORAGE_KEY);
+
+  localStorage.removeItem("eny_m6_tablero_ecuaciones_lineales_v1");
+  localStorage.removeItem("eny_m6_tablero_ecuaciones_lineales_v2");
+  localStorage.removeItem("eny_m6_tablero_ecuaciones_lineales_v3");
+  localStorage.removeItem("eny_m6_tablero_ecuaciones_lineales_v4");
+}
+
+function reiniciarTableroHolografico() {
+  clearTableroEcuacionesState();
+
+  tableroEcuacionesState = {
+    placed: {},
+    answerLetters: ["", "", "", "", ""],
+    solved: false
+  };
+
+  tableroZoomLevel = 1;
+
+  if (tableroDragState?.ghost) {
+    tableroDragState.ghost.remove();
+  }
+
+  tableroDragState = null;
+
+  if (typeof playtockSound === "function") {
+    playtockSound();
+  }
+
+  renderTableroHolografico();
+  updateTableroZoomLabel();
+  resizeTableroCanvas();
+
+  if (typeof showPopupFeedback === "function") {
+    showPopupFeedback({
+      title: "Panel reiniciado",
+      message: "El tablero gráfico volvió a su estado inicial.",
+      type: "success",
+      duration: 3500
+    });
+  }
+}
+
+function getCompletedEquationIds() {
+  const completed = [];
+
+  for (const row of TABLERO_ECUACIONES_LAYOUT) {
+    if (!row || row.spacer) continue;
+
+    const eq = getTableroEquationById(row.targetId);
+    if (!eq) continue;
+
+    const expected = eq.fragmentos.map((_, index) => `${eq.id}_p${index + 1}`);
+
+    const current = [
+      tableroEcuacionesState.placed[`${row.id}__part_0`] || null,
+      tableroEcuacionesState.placed[`${row.id}__part_1`] || null,
+      tableroEcuacionesState.placed[`${row.id}__part_2`] || null
+    ];
+
+    const correct = expected.every((fragmentId, index) => current[index] === fragmentId);
+
+    if (correct) {
+      completed.push(eq.id);
+    }
+  }
+
+  return completed;
+}
+
+function ensureTableroHolograficoStyles() {
+  [
+    "tablero-holografico-style",
+    "tablero-holografico-style-v2",
+    "tablero-holografico-style-v3",
+    "tablero-holografico-style-v4"
+  ].forEach(id => {
+    const old = document.getElementById(id);
+    if (old) old.remove();
+  });
+
+  const style = document.createElement("style");
+  style.id = "tablero-holografico-style-v4";
+
+  style.textContent = `
+  #popup-feedback {
+  z-index: 1000005 !important;
+}
+
+.popup-feedback {
+  z-index: 1000005 !important;
+}
+.tablero-bank-equation-row {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0 2px 2px 0;
+  border: none;
+  background: transparent;
+  min-height: 0;
+  min-width: 0;
+  box-shadow: none;
+  vertical-align: top;
+}
+    #tablero-holografico-overlay,
+    #tablero-holografico-overlay * {
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    #tablero-holografico-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(0, 0, 0, 0.84);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      font-family: arcade, monospace;
+      color: #d9fff6;
+      touch-action: none;
+    }
+
+    #tablero-holografico-panel {
+      width: min(1220px, 98vw);
+      height: min(740px, 95vh);
+      background: #020807;
+      border: 3px solid #00ffd2;
+      box-shadow:
+        0 0 18px rgba(0, 255, 210, 0.62),
+        inset 0 0 18px rgba(0, 255, 210, 0.16);
+      display: grid;
+      grid-template-rows: 48px minmax(0, 1fr) 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #tablero-holografico-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 255, 210, 0.03) 0px,
+          rgba(0, 255, 210, 0.03) 1px,
+          transparent 2px,
+          transparent 5px
+        );
+      opacity: 0.6;
+      z-index: 1;
+    }
+
+    #tablero-holografico-header {
+      position: relative;
+      z-index: 2;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px;
+      background: #031917;
+      border-bottom: 3px solid #00ffd2;
+      color: #d9fff6;
+    }
+
+    #tablero-holografico-title {
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #d9fff6;
+      text-shadow: 0 0 8px rgba(0, 255, 210, 0.75);
+    }
+
+    #tablero-holografico-close {
+      width: 34px;
+      height: 30px;
+      border: 2px solid #00ffd2;
+      background: #020807;
+      color: #d9fff6;
+      font-family: arcade, monospace;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 210, 0.45);
+    }
+
+    #tablero-holografico-main {
+      position: relative;
+      z-index: 2;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .tablero-panel-box {
+      border: 2px solid rgba(0, 255, 210, 0.78);
+      background:
+        linear-gradient(180deg, rgba(0, 255, 210, 0.04), rgba(0, 0, 0, 0.24));
+      box-shadow: inset 0 0 16px rgba(0, 255, 210, 0.14);
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tablero-panel-title {
+      flex: 0 0 auto;
+      padding: 7px 9px;
+      border-bottom: 2px solid rgba(0, 255, 210, 0.52);
+      font-size: 12px;
+      line-height: 1.35;
+      color: #d9fff6;
+      text-shadow: 0 0 8px rgba(0, 255, 210, 0.45);
+      background: rgba(0, 255, 210, 0.03);
+    }
+
+    #tablero-panel-izquierdo {
+      padding: 8px;
+      overflow: auto;
+      min-height: 0;
+    }
+
+    .tablero-base-row {
+      border: 2px solid rgba(0, 255, 210, 0.4);
+      color: #d9fff6;
+      background: rgba(0, 255, 210, 0.04);
+      padding: 7px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      line-height: 1.45;
+      text-shadow: 0 0 6px rgba(0, 255, 210, 0.35);
+    }
+
+    .tablero-equation-row {
+      border: 2px solid currentColor;
+      background: rgba(0, 0, 0, 0.3);
+      margin-bottom: 8px;
+      padding: 5px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      box-shadow:
+        0 0 8px rgba(0, 255, 210, 0.14),
+        inset 0 0 8px rgba(0, 255, 210, 0.08);
+    }
+
+    .tablero-equation-row.is-complete {
+      box-shadow:
+        0 0 14px currentColor,
+        inset 0 0 10px rgba(255, 255, 255, 0.08);
+    }
+
+    .tablero-equation-parts {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 5px;
+      min-width: max-content;
+      padding-bottom: 3px;
+    }
+
+    .tablero-part-slot {
+      min-height: 28px;
+      min-width: 88px;
+      width: max-content;
+      border: 2px dashed rgba(217, 255, 246, 0.3);
+      color: #d9fff6;
+      background: rgba(0, 255, 210, 0.025);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 7px;
+      font-size: 10px;
+      line-height: 1.2;
+      white-space: nowrap;
+      touch-action: none;
+      flex: 0 0 auto;
+    }
+
+    .tablero-part-slot[data-filled="1"] {
+      border-style: solid;
+      border-color: currentColor;
+      color: inherit;
+      background: rgba(255, 255, 255, 0.05);
+      text-shadow: 0 0 8px currentColor;
+      cursor: grab;
+    }
+
+    .tablero-part-placeholder {
+      opacity: 0.5;
+      color: #8eb7af;
+    }
+
+    .tablero-spacer {
+      height: 11px;
+      margin: 7px 0;
+      border-top: 2px solid rgba(0, 255, 210, 0.14);
+      border-bottom: 2px solid rgba(0, 255, 210, 0.06);
+    }
+
+    #tablero-grafica-area {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #tablero-canvas-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      background: #020807;
+      position: relative;
+      box-shadow:
+        inset 0 0 20px rgba(0, 255, 210, 0.12),
+        0 0 16px rgba(0, 255, 210, 0.35);
+    }
+
+    #tablero-canvas {
+      display: block;
+      width: auto;
+      height: auto;
+      min-width: 100%;
+      min-height: 100%;
+      image-rendering: pixelated;
+    }
+
+    #tablero-grafica-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+
+    #tablero-grafica-zoom {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tablero-zoom-btn {
+      min-width: 28px;
+      height: 23px;
+      border: 2px solid #00ffd2;
+      background: #020807;
+      color: #e9fff9;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 255, 210, 0.35);
+    }
+
+    #tablero-zoom-label {
+      min-width: 48px;
+      text-align: center;
+      color: #dffff7;
+      font-size: 9px;
+    }
+
+    #tablero-panel-inferior {
+      position: relative;
+      z-index: 2;
+      border-top: 3px solid #00ffd2;
+      background: #031917;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 10px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    #tablero-fragmentos-panel,
+    #tablero-respuesta-panel {
+      min-height: 0;
+    }
+
+#tablero-fragmentos-bank {
+  flex: 1;
+  overflow: auto;
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-content: flex-start;
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.tablero-fragment-token {
+  border: 2px solid rgba(0, 255, 210, 0.72);
+  background: #020807;
+  color: #e9fff9;
+  padding: 4px 6px;
+  min-height: 24px;
+  font-size: 14px;
+  line-height: 1.1;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  box-shadow:
+    0 0 8px rgba(0, 255, 210, 0.24),
+    inset 0 0 8px rgba(0, 255, 210, 0.08);
+  white-space: nowrap;
+}
+
+    .tablero-fragment-token.is-dragging-source,
+    .tablero-part-slot.is-dragging-source {
+      opacity: 0.2;
+    }
+
+    #tablero-reiniciar-btn {
+      flex: 0 0 auto;
+      width: calc(100% - 14px);
+      margin: 0 7px 7px;
+      border: 2px solid #00ffd2;
+      background: #020807;
+      color: #e9fff9;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      padding: 7px 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 210, 0.3);
+    }
+
+    #tablero-respuesta-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 7px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #tablero-answer-slots {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+      flex: 0 0 auto;
+    }
+
+    .tablero-letter-slot {
+      height: 38px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      position: relative;
+      font-size: 20px;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(0, 255, 210, 0.5);
+    }
+
+    .tablero-letter-slot::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      bottom: 3px;
+      height: 2px;
+      background: #d9fff6;
+      box-shadow: 0 0 8px rgba(0, 255, 210, 0.55);
+    }
+
+    #tablero-keyboard {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      flex: 1 1 auto;
+      align-content: start;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .tablero-key {
+      min-height: 28px;
+      border: 2px solid rgba(0, 255, 210, 0.7);
+      background: #020807;
+      color: #e9fff9;
+      font-family: arcade, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(0, 255, 210, 0.22);
+    }
+
+    #tablero-respuesta-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex: 0 0 auto;
+    }
+
+    #tablero-validar-btn,
+    #tablero-borrar-btn {
+      flex: 1;
+      border: 2px solid #00ffd2;
+      background: #020807;
+      color: #e9fff9;
+      font-family: arcade, monospace;
+      font-size: 11px;
+      padding: 8px 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 210, 0.3);
+    }
+
+    .tablero-fragment-token:hover,
+    .tablero-key:hover,
+    #tablero-validar-btn:hover,
+    #tablero-borrar-btn:hover,
+    #tablero-reiniciar-btn:hover,
+    #tablero-holografico-close:hover,
+    .tablero-zoom-btn:hover {
+      filter: brightness(1.2);
+    }
+
+    .tablero-ghost {
+      position: fixed;
+      z-index: 1000001;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      width: max-content;
+      max-width: 240px;
+      opacity: 0.95;
+    }
+
+    .tablero-equation-row.flash-ok {
+      animation: tableroEquationOk 0.8s ease-in-out 2;
+    }
+      #tablero-descargar-imagen-btn {
+  width: auto;
+  min-width: 126px;
+  padding: 0 8px;
+  justify-content: center;
+}
+
+    @keyframes tableroEquationOk {
+      0%, 100% {
+        filter: brightness(1);
+        transform: scale(1);
+      }
+      50% {
+        filter: brightness(1.8);
+        transform: scale(1.025);
+      }
+    }
+
+    @media (max-width: 900px) {
+    #tablero-descargar-imagen-btn {
+  min-width: 104px;
+  font-size: 8px;
+  padding: 0 5px;
+}
+.tablero-bank-equation-row {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 2px;
+  padding: 0;
+  margin: 0 2px 2px 0;
+  min-height: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+      #tablero-holografico-panel {
+        height: 96vh;
+        grid-template-rows: 48px minmax(0, 1fr) 355px;
+      }
+
+      #tablero-holografico-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(185px, 1fr) 145px;
+        overflow: hidden;
+      }
+
+      #tablero-grafica-area {
+        order: 1;
+        min-height: 185px;
+      }
+
+      #tablero-panel-izquierdo-box {
+        order: 2;
+        min-height: 0;
+      }
+
+      #tablero-panel-izquierdo {
+        padding: 6px;
+      }
+
+      .tablero-base-row {
+        font-size: 9px;
+        padding: 5px;
+        margin-bottom: 5px;
+      }
+
+      .tablero-equation-row {
+        padding: 4px;
+        margin-bottom: 5px;
+      }
+
+      .tablero-equation-parts {
+        gap: 4px;
+      }
+
+      .tablero-part-slot {
+        min-width: 74px;
+        min-height: 25px;
+        font-size: 9px;
+        padding: 4px 6px;
+      }
+
+      #tablero-panel-inferior {
+        grid-template-columns: 1fr;
+        grid-template-rows: 155px minmax(0, 1fr);
+        overflow: hidden;
+      }
+
+      #tablero-fragmentos-panel {
+        min-width: 0;
+        min-height: 0;
+        height: auto;
+      }
+
+#tablero-fragmentos-bank {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overflow-y: auto;
+  gap: 2px;
+  padding: 4px;
+}
+
+.tablero-fragment-token {
+  font-size: 12px;
+  min-height: 22px;
+  padding: 4px 5px;
+}
+
+      .tablero-panel-title {
+        font-size: 10px;
+        padding: 5px 7px;
+      }
+
+      #tablero-grafica-toolbar {
+        gap: 5px;
+      }
+
+      #tablero-grafica-zoom {
+        gap: 3px;
+      }
+
+      .tablero-zoom-btn {
+        min-width: 24px;
+        height: 21px;
+        font-size: 9px;
+      }
+
+      #tablero-zoom-label {
+        min-width: 40px;
+        font-size: 8px;
+      }
+
+      .tablero-letter-slot {
+        height: 32px;
+        font-size: 17px;
+      }
+
+      #tablero-keyboard {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+      }
+
+      .tablero-key {
+        min-height: 25px;
+        font-size: 10px;
+      }
+
+      #tablero-validar-btn,
+      #tablero-borrar-btn {
+        padding: 7px 6px;
+        font-size: 10px;
+      }
+
+      #tablero-reiniciar-btn {
+        flex: 0 0 auto;
+        width: calc(100% - 12px);
+        margin: 0 6px 6px;
+        padding: 5px 6px;
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function closeTableroHolograficoEcuaciones() {
+  if (tableroRafId) {
+    cancelAnimationFrame(tableroRafId);
+    tableroRafId = null;
+  }
+
+  if (tableroResizeHandler) {
+    window.removeEventListener("resize", tableroResizeHandler);
+    tableroResizeHandler = null;
+  }
+
+  document.removeEventListener("pointermove", handleTableroDocumentPointerMove, false);
+  document.removeEventListener("pointerup", handleTableroDocumentPointerUp, false);
+  document.removeEventListener("pointercancel", handleTableroDocumentPointerCancel, false);
+
+  const overlay = document.getElementById("tablero-holografico-overlay");
+  if (overlay) overlay.remove();
+
+  if (tableroDragState?.ghost) {
+    tableroDragState.ghost.remove();
+  }
+
+  tableroDragState = null;
+}
+
+function buildTableroFragmentTokenHTML(fragment) {
+  return `<div class="tablero-fragment-token" data-fragment-id="${fragment.id}">${fragment.text}</div>`;
+}
+
+function buildTableroEquationRowHTML(row) {
+  if (row.spacer) return `<div class="tablero-spacer"></div>`;
+
+  const completed = getCompletedEquationIds().includes(row.targetId);
+
+  const slots = [0, 1, 2].map(index => {
+    const slotKey = `${row.id}__part_${index}`;
+    const fragmentId = tableroEcuacionesState.placed[slotKey] || "";
+    const fragment = getTableroFragmentById(fragmentId);
+
+    return `
+      <div
+        class="tablero-part-slot"
+        data-slot-key="${slotKey}"
+        data-row-id="${row.id}"
+        data-part-index="${index}"
+        data-filled="${fragment ? "1" : "0"}"
+      >
+        ${fragment ? `<span>${fragment.text}</span>` : `<span class="tablero-part-placeholder">frag. ${index + 1}</span>`}
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div
+      class="tablero-equation-row ${completed ? "is-complete" : ""}"
+      data-row-id="${row.id}"
+      data-target-id="${row.targetId}"
+      style="color:${row.color};"
+    >
+      <div class="tablero-equation-parts">${slots}</div>
+    </div>
+  `;
+}
+
+function getTableroStableFragmentOrder(eq) {
+  const numero = parseInt(String(eq.id).replace("ec", ""), 10) || 0;
+
+  const patrones = [
+    [1, 0, 2],
+    [2, 0, 1],
+    [1, 2, 0],
+    [2, 1, 0],
+    [0, 2, 1]
+  ];
+
+  return patrones[(numero - 2) % patrones.length] || [1, 0, 2];
+}
+
+function getTableroBankGroupsHTML() {
+  const used = getTableroPlacedFragmentIds();
+
+  const html = TABLERO_ECUACIONES_PLANETAS.map(eq => {
+    const pattern = getTableroStableFragmentOrder(eq);
+
+    const orderedFragments = pattern
+      .map(index => ({
+        id: `${eq.id}_p${index + 1}`,
+        eqId: eq.id,
+        index,
+        text: eq.fragmentos[index]
+      }))
+      .filter(fragment => !used.includes(fragment.id));
+
+    if (!orderedFragments.length) return "";
+
+    return `
+      <div class="tablero-bank-equation-row" data-eq-id="${eq.id}">
+        ${orderedFragments.map(fragment => buildTableroFragmentTokenHTML(fragment)).join("")}
+      </div>
+    `;
+  }).filter(Boolean).join("");
+
+  return html || `<div class="tablero-fragment-token">Todos los fragmentos están en el panel.</div>`;
+}
+
+function renderTableroHolografico() {
+  const left = document.getElementById("tablero-panel-izquierdo");
+  const bank = document.getElementById("tablero-fragmentos-bank");
+  const answerSlots = document.getElementById("tablero-answer-slots");
+
+  if (left) {
+    left.innerHTML = `
+      <div class="tablero-base-row">BASE<br>x² + y² = 50</div>
+      <div class="tablero-base-row">CRUZ<br>x = 4<br>y = -10</div>
+      ${TABLERO_ECUACIONES_LAYOUT.map(buildTableroEquationRowHTML).join("")}
+    `;
+  }
+
+  if (bank) {
+    bank.innerHTML = getTableroBankGroupsHTML();
+  }
+
+  if (answerSlots) {
+    answerSlots.innerHTML = tableroEcuacionesState.answerLetters.map(letter => `
+      <div class="tablero-letter-slot">${letter ? letter.toUpperCase() : "&nbsp;"}</div>
+    `).join("");
+  }
+  updateTableroDownloadButton();
+  scheduleDrawTableroCanvas();
+}
+
+function resizeTableroCanvas() {
+  const canvas = document.getElementById("tablero-canvas");
+  const wrap = document.getElementById("tablero-canvas-wrap");
+  if (!canvas || !wrap) return;
+
+  const rect = wrap.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const hasSolvedLayout =
+    tableroEcuacionesState.solved && getCompletedEquationIds().length > 0;
+
+  let baseWidth = Math.max(420, Math.floor(rect.width));
+  let baseHeight = Math.max(280, Math.floor(rect.height));
+
+  if (hasSolvedLayout) {
+    baseWidth = Math.max(baseWidth, 1420);
+    baseHeight = Math.max(baseHeight, 980);
+  }
+
+  const cssWidth = Math.floor(baseWidth * tableroZoomLevel);
+  const cssHeight = Math.floor(baseHeight * tableroZoomLevel);
+
+  canvas.width = Math.floor(cssWidth * dpr);
+  canvas.height = Math.floor(cssHeight * dpr);
+  canvas.style.width = `${cssWidth}px`;
+  canvas.style.height = `${cssHeight}px`;
+  canvas.dataset.dpr = String(dpr);
+
+  scheduleDrawTableroCanvas();
+}
+
+function scheduleDrawTableroCanvas() {
+  if (tableroRafId) return;
+
+  tableroRafId = requestAnimationFrame(() => {
+    tableroRafId = null;
+    drawTableroCanvas();
+  });
+}
+
+function updateTableroZoomLabel() {
+  const label = document.getElementById("tablero-zoom-label");
+  if (!label) return;
+
+  label.textContent = `${Math.round(tableroZoomLevel * 100)}%`;
+}
+
+function setTableroZoomLevel(nextZoom) {
+  tableroZoomLevel = Math.max(0.7, Math.min(2.4, Number(nextZoom) || 1));
+
+  updateTableroZoomLabel();
+  resizeTableroCanvas();
+}
+
+function getTableroCanvasInsets(canvas) {
+  const hasSolvedLayout =
+    tableroEcuacionesState.solved && getCompletedEquationIds().length > 0;
+
+  if (!hasSolvedLayout) {
+    return {
+      left: 18,
+      right: 18,
+      top: 18,
+      bottom: 18
+    };
+  }
+
+  return {
+    left: 260,
+    right: 380,
+    top: 42,
+    bottom: 300
+  };
+}
+
+function getTableroPlotTransform(canvas, bounds) {
+  const insets = getTableroCanvasInsets(canvas);
+
+  const plotW = canvas.width - insets.left - insets.right;
+  const plotH = canvas.height - insets.top - insets.bottom;
+
+  const worldW = bounds.xMax - bounds.xMin;
+  const worldH = bounds.yMax - bounds.yMin;
+
+  const scale = Math.min(plotW / worldW, plotH / worldH);
+
+  const usedW = worldW * scale;
+  const usedH = worldH * scale;
+
+  return {
+    scale,
+    offsetX: insets.left + (plotW - usedW) / 2,
+    offsetY: insets.top + (plotH - usedH) / 2,
+    insets
+  };
+}
+
+function tableroWorldToCanvas(x, y, canvas, bounds) {
+  const t = getTableroPlotTransform(canvas, bounds);
+
+  return {
+    x: t.offsetX + (x - bounds.xMin) * t.scale,
+    y: t.offsetY + (bounds.yMax - y) * t.scale
+  };
+}
+
+function drawTableroCanvas() {
+  const canvas = document.getElementById("tablero-canvas");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const bounds = { xMin: -18, xMax: 20, yMin: -16, yMax: 10 };
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#010504";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawTableroGrid(ctx, canvas, bounds);
+
+  TABLERO_ECUACIONES_BASE.forEach(eq => {
+    drawTableroEquation(ctx, canvas, bounds, eq);
+  });
+
+  const completedIds = getCompletedEquationIds();
+
+  completedIds.forEach(eqId => {
+    const eq = getTableroEquationById(eqId);
+    if (eq) drawTableroEquation(ctx, canvas, bounds, eq);
+  });
+
+  if (tableroEcuacionesState.solved && completedIds.length) {
+    drawTableroValidationLabels(ctx, canvas, bounds, completedIds);
+  }
+}
+
+function drawTableroGrid(ctx, canvas, bounds) {
+  ctx.save();
+
+  const t = getTableroPlotTransform(canvas, bounds);
+
+  const left = t.offsetX;
+  const right = t.offsetX + (bounds.xMax - bounds.xMin) * t.scale;
+  const top = t.offsetY;
+  const bottom = t.offsetY + (bounds.yMax - bounds.yMin) * t.scale;
+
+  for (let x = Math.ceil(bounds.xMin); x <= bounds.xMax; x++) {
+    const p = tableroWorldToCanvas(x, 0, canvas, bounds);
+
+    ctx.strokeStyle = "rgba(0, 255, 210, 0.12)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.moveTo(p.x, top);
+    ctx.lineTo(p.x, bottom);
+    ctx.stroke();
+  }
+
+  for (let y = Math.ceil(bounds.yMin); y <= bounds.yMax; y++) {
+    const p = tableroWorldToCanvas(0, y, canvas, bounds);
+
+    ctx.strokeStyle = "rgba(0, 255, 210, 0.12)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.moveTo(left, p.y);
+    ctx.lineTo(right, p.y);
+    ctx.stroke();
+  }
+
+  const ejeYTop = tableroWorldToCanvas(0, bounds.yMax, canvas, bounds);
+  const ejeYBottom = tableroWorldToCanvas(0, bounds.yMin, canvas, bounds);
+
+  ctx.strokeStyle = "rgba(220, 255, 250, 0.9)";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 7]);
+
+  ctx.beginPath();
+  ctx.moveTo(ejeYTop.x, top);
+  ctx.lineTo(ejeYBottom.x, bottom);
+  ctx.stroke();
+
+  const ejeXLeft = tableroWorldToCanvas(bounds.xMin, 0, canvas, bounds);
+  const ejeXRight = tableroWorldToCanvas(bounds.xMax, 0, canvas, bounds);
+
+  ctx.beginPath();
+  ctx.moveTo(left, ejeXLeft.y);
+  ctx.lineTo(right, ejeXRight.y);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "rgba(220, 255, 250, 0.95)";
+  ctx.shadowColor = "#00ffd2";
+  ctx.shadowBlur = 8;
+  ctx.font = `${Math.max(12, Math.floor(canvas.width * 0.014))}px arcade, monospace`;
+
+  ctx.fillText("eje y", ejeYTop.x + 10, top + 18);
+  ctx.fillText("eje x", right - 68, ejeXLeft.y - 10);
+
+  ctx.restore();
+}
+
+function drawTableroEquation(ctx, canvas, bounds, eq) {
+  ctx.save();
+
+  ctx.strokeStyle = eq.color;
+  ctx.fillStyle = eq.color;
+  ctx.shadowColor = eq.color;
+  ctx.shadowBlur = eq.fixed ? 18 : 15;
+  ctx.lineWidth = eq.fixed ? 3 : 4;
+
+  if (eq.tipo === "circle") {
+    const center = tableroWorldToCanvas(eq.x, eq.y, canvas, bounds);
+    const right = tableroWorldToCanvas(eq.x + eq.r, eq.y, canvas, bounds);
+    const radius = Math.abs(right.x - center.x);
+
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    if (!eq.fixed) {
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, Math.max(2, radius * 0.06), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  if (eq.tipo === "ellipse") {
+    const center = tableroWorldToCanvas(eq.x, eq.y, canvas, bounds);
+    const rxPoint = tableroWorldToCanvas(eq.x + eq.rx, eq.y, canvas, bounds);
+    const ryPoint = tableroWorldToCanvas(eq.x, eq.y + eq.ry, canvas, bounds);
+
+    ctx.beginPath();
+    ctx.ellipse(
+      center.x,
+      center.y,
+      Math.abs(rxPoint.x - center.x),
+      Math.abs(ryPoint.y - center.y),
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.stroke();
+  }
+
+  if (eq.tipo === "vertical") {
+    const t = getTableroPlotTransform(canvas, bounds);
+    const p = tableroWorldToCanvas(eq.x, 0, canvas, bounds);
+
+    ctx.beginPath();
+    ctx.moveTo(p.x, t.offsetY);
+    ctx.lineTo(p.x, t.offsetY + (bounds.yMax - bounds.yMin) * t.scale);
+    ctx.stroke();
+  }
+
+  if (eq.tipo === "horizontal") {
+    const t = getTableroPlotTransform(canvas, bounds);
+    const p = tableroWorldToCanvas(0, eq.y, canvas, bounds);
+
+    ctx.beginPath();
+    ctx.moveTo(t.offsetX, p.y);
+    ctx.lineTo(t.offsetX + (bounds.xMax - bounds.xMin) * t.scale, p.y);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawTableroLabelBox(ctx, x, y, title, formula, color) {
+  const titleFont = 10;
+  const formulaFont = 8;
+  const padX = 7;
+  const padTop = 5;
+  const lineGap = 3;
+
+  ctx.save();
+
+  ctx.font = `bold ${titleFont}px arcade, monospace`;
+  const titleWidth = ctx.measureText(title).width;
+
+  ctx.font = `${formulaFont}px arcade, monospace`;
+  const formulaWidth = ctx.measureText(formula).width;
+
+  const w = Math.max(titleWidth, formulaWidth) + padX * 2;
+  const h = padTop + titleFont + lineGap + formulaFont + 7;
+
+  ctx.fillStyle = "rgba(2, 8, 7, 0.90)";
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.4;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 6;
+
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.fillStyle = color;
+  ctx.font = `bold ${titleFont}px arcade, monospace`;
+  ctx.fillText(title, x + padX, y + padTop + titleFont - 1);
+
+  ctx.font = `${formulaFont}px arcade, monospace`;
+  ctx.fillText(formula, x + padX, y + padTop + titleFont + lineGap + formulaFont);
+
+  ctx.restore();
+
+  return { x, y, w, h };
+}
+
+function drawTableroValidationLabels(ctx, canvas, bounds, completedIds) {
+  ctx.save();
+
+  const t = getTableroPlotTransform(canvas, bounds);
+  const plotLeft = t.offsetX;
+  const plotTop = t.offsetY;
+  const plotRight = t.offsetX + (bounds.xMax - bounds.xMin) * t.scale;
+  const plotBottom = t.offsetY + (bounds.yMax - bounds.yMin) * t.scale;
+
+  const leftX = Math.max(24, plotLeft - 238);
+  const rightX = plotRight + 44;
+  const bottomY = plotBottom + 46;
+
+  const layout = {
+    ec2: { x: leftX, y: plotBottom - 220 },
+    ec3: { x: leftX, y: plotBottom - 164 },
+    ec4: { x: leftX, y: plotBottom - 108 },
+    ec5: { x: leftX, y: plotBottom - 52 },
+
+    ec6: { x: plotLeft + 10, y: bottomY },
+    ec7: { x: plotLeft + 10, y: bottomY + 66 },
+    ec8: { x: plotLeft + 220, y: bottomY + 18 },
+    ec9: { x: plotLeft + 220, y: bottomY + 84 },
+    ec10: { x: plotLeft + 455, y: bottomY + 52 },
+
+    ec11: { x: rightX, y: plotTop + 20 },
+    ec12: { x: rightX, y: plotTop + 78 },
+    ec13: { x: rightX, y: plotTop + 136 },
+    ec14: { x: rightX, y: plotTop + 194 },
+    ec15: { x: rightX, y: plotTop + 252 },
+    ec16: { x: rightX, y: plotTop + 310 },
+    ec17: { x: rightX, y: plotTop + 368 }
+  };
+
+  completedIds.forEach((eqId) => {
+    const eq = getTableroEquationById(eqId);
+    if (!eq) return;
+
+    const pos = layout[eqId];
+    if (!pos) return;
+
+    const center = tableroWorldToCanvas(eq.x, eq.y, canvas, bounds);
+
+    const box = drawTableroLabelBox(
+      ctx,
+      pos.x,
+      pos.y,
+      eqId.toUpperCase(),
+      eq.formula,
+      eq.color
+    );
+
+    const boxCenterX = box.x + box.w / 2;
+    const boxCenterY = box.y + box.h / 2;
+
+    let attachX = box.x;
+    let attachY = boxCenterY;
+
+    let elbow1X = center.x;
+    let elbow1Y = center.y;
+    let elbow2X = center.x;
+    let elbow2Y = center.y;
+
+    if (box.x + box.w < plotLeft) {
+      attachX = box.x + box.w;
+      attachY = boxCenterY;
+
+      elbow1X = center.x - 34;
+      elbow1Y = center.y;
+
+      elbow2X = elbow1X;
+      elbow2Y = attachY;
+    } else if (box.x > plotRight) {
+      attachX = box.x;
+      attachY = boxCenterY;
+
+      elbow1X = center.x + 34;
+      elbow1Y = center.y;
+
+      elbow2X = elbow1X;
+      elbow2Y = attachY;
+    } else {
+      attachX = boxCenterX;
+      attachY = box.y;
+
+      elbow1X = center.x;
+      elbow1Y = center.y + 34;
+
+      elbow2X = attachX;
+      elbow2Y = elbow1Y;
+    }
+
+    ctx.save();
+
+    ctx.strokeStyle = eq.color;
+    ctx.lineWidth = 1.35;
+    ctx.shadowColor = eq.color;
+    ctx.shadowBlur = 5;
+
+    ctx.beginPath();
+    ctx.moveTo(center.x, center.y);
+    ctx.lineTo(elbow1X, elbow1Y);
+    ctx.lineTo(elbow2X, elbow2Y);
+    ctx.lineTo(attachX, attachY);
+    ctx.stroke();
+
+    ctx.fillStyle = eq.color;
+
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(attachX, attachY, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  });
+
+  ctx.restore();
+}
+
+function beginTableroDrag(fragmentId, sourceEl, e) {
+  const fragment = getTableroFragmentById(fragmentId);
+  if (!fragment || !sourceEl) return;
+
+  if (typeof playtockSound === "function") playtockSound();
+
+  const ghost = document.createElement("div");
+  ghost.className = "tablero-fragment-token tablero-ghost";
+  ghost.textContent = fragment.text;
+  document.body.appendChild(ghost);
+
+  tableroDragState = {
+    fragmentId,
+    sourceEl,
+    ghost,
+    pointerId: e.pointerId,
+    fromSlotKey: sourceEl.dataset.slotKey || null
+  };
+
+  try {
+    sourceEl.setPointerCapture?.(e.pointerId);
+  } catch (_) { }
+
+  sourceEl.classList.add("is-dragging-source");
+  moveTableroGhost(e.clientX, e.clientY);
+}
+
+function moveTableroGhost(x, y) {
+  if (!tableroDragState?.ghost) return;
+
+  tableroDragState.ghost.style.left = `${x}px`;
+  tableroDragState.ghost.style.top = `${y}px`;
+}
+
+function endTableroDrag(e) {
+  if (!tableroDragState) return;
+
+  const { fragmentId, ghost, sourceEl, fromSlotKey } = tableroDragState;
+
+  if (ghost) ghost.style.display = "none";
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  if (ghost) ghost.style.display = "";
+
+  const targetSlot = target?.closest?.(".tablero-part-slot");
+  const bank = target?.closest?.("#tablero-fragmentos-bank");
+
+  if (targetSlot) {
+    const targetSlotKey = targetSlot.dataset.slotKey;
+    const existingInTarget = tableroEcuacionesState.placed[targetSlotKey] || null;
+
+    const currentSlot = getTableroFragmentCurrentSlot(fragmentId);
+
+    if (currentSlot) {
+      delete tableroEcuacionesState.placed[currentSlot];
+    }
+
+    if (existingInTarget && fromSlotKey && fromSlotKey !== targetSlotKey) {
+      tableroEcuacionesState.placed[fromSlotKey] = existingInTarget;
+    }
+
+    tableroEcuacionesState.placed[targetSlotKey] = fragmentId;
+    saveTableroEcuacionesState();
+  } else if (bank) {
+    const currentSlot = getTableroFragmentCurrentSlot(fragmentId);
+
+    if (currentSlot) {
+      delete tableroEcuacionesState.placed[currentSlot];
+      saveTableroEcuacionesState();
+    }
+  }
+
+  sourceEl?.classList.remove("is-dragging-source");
+  ghost?.remove();
+
+  tableroDragState = null;
+  renderTableroHolografico();
+}
+
+function addTableroLetter(letter) {
+  const nextEmptyIndex = tableroEcuacionesState.answerLetters.findIndex(l => !l);
+  if (nextEmptyIndex === -1) return;
+
+  if (typeof playtockSound === "function") {
+    playtockSound();
+  }
+
+  tableroEcuacionesState.answerLetters[nextEmptyIndex] = String(letter || "").toLowerCase();
+
+  saveTableroEcuacionesState();
+  renderTableroHolografico();
+}
+
+function borrarTableroLetter() {
+  for (let i = tableroEcuacionesState.answerLetters.length - 1; i >= 0; i--) {
+    if (tableroEcuacionesState.answerLetters[i]) {
+      if (typeof playtockSound === "function") {
+        playtockSound();
+      }
+
+      tableroEcuacionesState.answerLetters[i] = "";
+      saveTableroEcuacionesState();
+      renderTableroHolografico();
+      return;
+    }
+  }
+}
+
+function validarRespuestaTableroHolografico() {
+  const fullAnswer = normalizeTableroRespuesta(
+    tableroEcuacionesState.answerLetters.join("")
+  );
+
+  if (fullAnswer !== "marte") {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Respuesta incorrecta",
+        message: "La coordenada secreta aún no coincide.",
+        type: "warning",
+        duration: 4500
+      });
+    }
+
+    return;
+  }
+
+  tableroEcuacionesState.solved = true;
+  saveTableroEcuacionesState();
+
+  tableroZoomLevel = 1;
+  resizeTableroCanvas();
+  updateTableroZoomLabel();
+  updateTableroDownloadButton();
+
+  if (typeof playgoodSound === "function") playgoodSound();
+
+  const completedIds = getCompletedEquationIds();
+
+  if (completedIds.length) {
+    completedIds.forEach(eqId => {
+      const row = TABLERO_ECUACIONES_LAYOUT.find(item => item.targetId === eqId);
+      if (!row) return;
+
+      const rowEl = document.querySelector(`.tablero-equation-row[data-row-id="${row.id}"]`);
+      if (rowEl) rowEl.classList.add("flash-ok");
+    });
+  }
+
+  scheduleDrawTableroCanvas();
+
+  if (typeof showPopupFeedback === "function") {
+    showPopupFeedback({
+      title: "Descifrado correcto",
+      message: "La cruz se intercepta en Marte.",
+      type: "success",
+      duration: 5000
+    });
+  }
+
+  setTimeout(() => {
+    if (typeof completarRetoMission === "function") {
+      completarRetoMission(TABLERO_ECUACIONES_RETO_ID);
+    }
+
+    if (typeof refreshMissionPanelIfOpen === "function") {
+      refreshMissionPanelIfOpen();
+    }
+  }, completedIds.length ? 1800 : 350);
+}
+
+function bindTableroHolograficoEvents(overlay) {
+  const closeBtn = overlay.querySelector("#tablero-holografico-close");
+  const validarBtn = overlay.querySelector("#tablero-validar-btn");
+  const borrarBtn = overlay.querySelector("#tablero-borrar-btn");
+  const reiniciarBtn = overlay.querySelector("#tablero-reiniciar-btn");
+  const zoomInBtn = overlay.querySelector("#tablero-zoom-in");
+  const zoomOutBtn = overlay.querySelector("#tablero-zoom-out");
+  const zoomResetBtn = overlay.querySelector("#tablero-zoom-reset");
+  const descargarImagenBtn = overlay.querySelector("#tablero-descargar-imagen-btn");
+
+  function cerrar(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    closeTableroHolograficoEcuaciones();
+  }
+
+  function handleZoomIn(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setTableroZoomLevel(+(tableroZoomLevel + 0.15).toFixed(2));
+  }
+
+  function handleZoomOut(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setTableroZoomLevel(+(tableroZoomLevel - 0.15).toFixed(2));
+  }
+
+  function handleZoomReset(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setTableroZoomLevel(1);
+  }
+
+  closeBtn?.addEventListener("click", cerrar);
+
+  closeBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    cerrar(e);
+  }, { passive: false });
+
+  validarBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    validarRespuestaTableroHolografico();
+  });
+
+  validarBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    e.stopPropagation();
+    validarRespuestaTableroHolografico();
+  }, { passive: false });
+
+  borrarBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    borrarTableroLetter();
+  });
+
+  borrarBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    e.stopPropagation();
+    borrarTableroLetter();
+  }, { passive: false });
+
+  reiniciarBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    reiniciarTableroHolografico();
+  });
+
+  reiniciarBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    e.stopPropagation();
+    reiniciarTableroHolografico();
+  }, { passive: false });
+
+  zoomInBtn?.addEventListener("click", handleZoomIn);
+  zoomOutBtn?.addEventListener("click", handleZoomOut);
+  zoomResetBtn?.addEventListener("click", handleZoomReset);
+
+  zoomInBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    handleZoomIn(e);
+  }, { passive: false });
+
+  zoomOutBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    handleZoomOut(e);
+  }, { passive: false });
+
+  zoomResetBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    handleZoomReset(e);
+  }, { passive: false });
+
+  descargarImagenBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    descargarImagenTableroHolografico();
+  });
+
+  descargarImagenBtn?.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    e.stopPropagation();
+    descargarImagenTableroHolografico();
+  }, { passive: false });
+
+  overlay.addEventListener("click", (e) => {
+    const key = e.target.closest(".tablero-key");
+
+    if (key) {
+      e.preventDefault();
+      e.stopPropagation();
+      addTableroLetter(key.dataset.letter);
+    }
+  }, true);
+
+  overlay.addEventListener("pointerdown", (e) => {
+    const fragmentToken = e.target.closest(".tablero-fragment-token[data-fragment-id]");
+    const filledSlot = e.target.closest(".tablero-part-slot[data-filled='1']");
+
+    let fragmentId = null;
+    let sourceEl = null;
+
+    if (fragmentToken) {
+      fragmentId = fragmentToken.dataset.fragmentId;
+      sourceEl = fragmentToken;
+    }
+
+    if (filledSlot) {
+      const slotKey = filledSlot.dataset.slotKey;
+      fragmentId = tableroEcuacionesState.placed[slotKey];
+      sourceEl = filledSlot;
+      sourceEl.dataset.fragmentId = fragmentId;
+    }
+
+    if (!fragmentId || !sourceEl) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    beginTableroDrag(fragmentId, sourceEl, e);
+  }, { passive: false });
+
+  document.addEventListener("pointermove", handleTableroDocumentPointerMove, { passive: false });
+  document.addEventListener("pointerup", handleTableroDocumentPointerUp, { passive: false });
+  document.addEventListener("pointercancel", handleTableroDocumentPointerCancel, { passive: true });
+
+  updateTableroZoomLabel();
+}
+
+function handleTableroDocumentPointerMove(e) {
+  if (!tableroDragState) return;
+  if (e.pointerId !== tableroDragState.pointerId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  moveTableroGhost(e.clientX, e.clientY);
+}
+
+function handleTableroDocumentPointerUp(e) {
+  if (!tableroDragState) return;
+  if (e.pointerId !== tableroDragState.pointerId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  endTableroDrag(e);
+}
+
+function handleTableroDocumentPointerCancel() {
+  if (!tableroDragState) return;
+
+  tableroDragState.ghost?.remove();
+  tableroDragState.sourceEl?.classList.remove("is-dragging-source");
+  tableroDragState = null;
+}
+
+function buildTableroKeyboardHTML() {
+  return TABLERO_ALPHABET.map(letter => `
+    <button class="tablero-key" type="button" data-letter="${letter}">
+      ${letter}
+    </button>
+  `).join("");
+}
+
+function tableroPuedeDescargarImagen() {
+  const completedIds = getCompletedEquationIds();
+
+  return (
+    tableroEcuacionesState.solved === true &&
+    completedIds.length === TABLERO_ECUACIONES_PLANETAS.length
+  );
+}
+
+function updateTableroDownloadButton() {
+  const btn = document.getElementById("tablero-descargar-imagen-btn");
+  if (!btn) return;
+
+  btn.style.display = tableroPuedeDescargarImagen() ? "inline-flex" : "none";
+}
+
+function descargarImagenTableroHolografico() {
+  if (!tableroPuedeDescargarImagen()) {
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Imagen no disponible",
+        message: "Completa todas las ecuaciones antes de descargar.",
+        type: "warning",
+        duration: 4000
+      });
+    }
+
+    return;
+  }
+
+  const sourceCanvas = document.getElementById("tablero-canvas");
+  if (!sourceCanvas) return;
+
+  const exportCanvas = document.createElement("canvas");
+  const padding = 70;
+  const headerH = 120;
+  const footerH = 70;
+
+  exportCanvas.width = sourceCanvas.width + padding * 2;
+  exportCanvas.height = sourceCanvas.height + headerH + footerH + padding;
+
+  const ctx = exportCanvas.getContext("2d");
+
+  ctx.fillStyle = "#020807";
+  ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+  ctx.strokeStyle = "#00ffd2";
+  ctx.lineWidth = 6;
+  ctx.shadowColor = "#00ffd2";
+  ctx.shadowBlur = 18;
+  ctx.strokeRect(24, 24, exportCanvas.width - 48, exportCanvas.height - 48);
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#d9fff6";
+  ctx.font = "28px arcade, monospace";
+  ctx.fillText("ENYCOSMIC", padding, 68);
+
+  ctx.font = "18px arcade, monospace";
+  ctx.fillText("La escuela espacial", padding, 96);
+
+  ctx.font = "14px arcade, monospace";
+  ctx.fillStyle = "#9ffff0";
+  ctx.fillText("Tablero holográfico · calculadora gráfica", padding, 120);
+
+  try {
+    if (typeof logoImg !== "undefined" && logoImg && logoImg.complete) {
+      ctx.drawImage(
+        logoImg,
+        exportCanvas.width - padding - 90,
+        42,
+        80,
+        80
+      );
+    }
+  } catch (_) { }
+
+  ctx.drawImage(sourceCanvas, padding, headerH + 24);
+
+  ctx.fillStyle = "#d9fff6";
+  ctx.font = "14px arcade, monospace";
+  ctx.fillText(
+    "Resultado: la cruz se intercepta en Marte.",
+    padding,
+    exportCanvas.height - 48
+  );
+
+  const link = document.createElement("a");
+  link.download = "enycosmic-tablero-holografico-marte.png";
+  link.href = exportCanvas.toDataURL("image/png");
+  link.click();
+
+  if (typeof playgoodSound === "function") {
+    playgoodSound();
+  }
+}
+
+function openTableroHolograficoEcuaciones() {
+  ensureTableroHolograficoStyles();
+  closeTableroHolograficoEcuaciones();
+  loadTableroEcuacionesState();
+
+  const overlay = document.createElement("div");
+  overlay.id = "tablero-holografico-overlay";
+
+  overlay.innerHTML = `
+    <div id="tablero-holografico-panel">
+      <div id="tablero-holografico-header">
+        <div id="tablero-holografico-title">Tablero holográfico · calculadora gráfica</div>
+        <button id="tablero-holografico-close" type="button">X</button>
+      </div>
+
+      <div id="tablero-holografico-main">
+        <div id="tablero-panel-izquierdo-box" class="tablero-panel-box">
+          <div class="tablero-panel-title">Completa las ecuaciones</div>
+          <div id="tablero-panel-izquierdo"></div>
+        </div>
+
+        <div id="tablero-grafica-area">
+          <div class="tablero-panel-box" style="height:100%;">
+            <div class="tablero-panel-title">
+              <div id="tablero-grafica-toolbar">
+                <span>Gráficas</span>
+
+<div id="tablero-grafica-zoom">
+  <button id="tablero-zoom-out" class="tablero-zoom-btn" type="button">-</button>
+  <span id="tablero-zoom-label">100%</span>
+  <button id="tablero-zoom-in" class="tablero-zoom-btn" type="button">+</button>
+  <button id="tablero-zoom-reset" class="tablero-zoom-btn" type="button">1:1</button>
+  <button id="tablero-descargar-imagen-btn" class="tablero-zoom-btn" type="button" style="display:none;">
+    Descargar imagen
+  </button>
+</div>
+              </div>
+            </div>
+
+            <div id="tablero-canvas-wrap">
+              <canvas id="tablero-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tablero-panel-inferior">
+        <div id="tablero-fragmentos-panel" class="tablero-panel-box">
+          <div class="tablero-panel-title">Arrastra el fragmento de ecuación hasta completar la ecuación completa</div>
+          <div id="tablero-fragmentos-bank"></div>
+
+          <button id="tablero-reiniciar-btn" type="button">
+            Reiniciar panel gráfico
+          </button>
+        </div>
+
+        <div id="tablero-respuesta-panel" class="tablero-panel-box">
+          <div class="tablero-panel-title">¿En dónde se intercepta la cruz?</div>
+
+          <div id="tablero-respuesta-body">
+            <div id="tablero-answer-slots"></div>
+
+            <div id="tablero-keyboard">
+              ${buildTableroKeyboardHTML()}
+            </div>
+
+            <div id="tablero-respuesta-actions">
+              <button id="tablero-borrar-btn" type="button">Borrar</button>
+              <button id="tablero-validar-btn" type="button">Validar respuesta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  tableroZoomLevel = 1;
+
+  renderTableroHolografico();
+  bindTableroHolograficoEvents(overlay);
+  updateTableroZoomLabel();
+
+  setTimeout(() => {
+    resizeTableroCanvas();
+    drawTableroCanvas();
+  }, 0);
+
+  tableroResizeHandler = () => {
+    resizeTableroCanvas();
+  };
+
+  window.addEventListener("resize", tableroResizeHandler, { passive: true });
+}
+
+window.openTableroHolograficoEcuaciones = openTableroHolograficoEcuaciones;
+window.descifrarEcuacionesLineales = openTableroHolograficoEcuaciones;
+window.decifrarEcuacionesLineales = openTableroHolograficoEcuaciones;
 // ======================================================
 // SISTEMA DE JUEGOS ENYCOSMIC
 // Popup retro futurista con lista, nuevos, video e ingreso
@@ -15521,13 +17684,31 @@ const ENYCOSMIC_GAMES_CONFIG = [
   {
     id: "puntitos",
     nombre: "Puntitos",
-    descripcion: "Conecta puntos, descubre patrones y gana recompensas.",
+    descripcion: "¡Úne los puntos de colores y crea un laberinto único 🟠🟡🟢! Cada nivel es un desafío estratégico 🔥. ¡Pon a prueba tu habilidad para resolverlo! 🎮💡",
     nuevo: true,
-    premio: "+ IQ / Cosmonedas",
-    video: "../assets/videos/juegos/puntitosIntro.mp4",
-    url: "../juegos/puntitos/index.html"
+    premio: "+ IQ / Cosmonedas / Items",
+    video: "https://www.youtube.com/embed/5m_2spbQ-Pk",
+    url: "https://www.youtube.com/embed/5m_2spbQ-Pk"
   },
   {
+    id: "bin_card",
+    nombre: "Bin Card",
+    descripcion: "¡Reta tus reflejos y agilidad mental! ⚡️🎮 Encuentra los pares antes de que se acabe el tiempo ⏳. ¡Hazlo más rápido que nadie! 🚀💡",
+    nuevo: true,
+    premio: "+ IQ / Cosmonedas / Items",
+    video: "https://www.youtube.com/embed/j4am5RL4RcM",
+    url: "https://www.youtube.com/embed/j4am5RL4RcM"
+  },
+  {
+    id: "adiBINa",
+    nombre: "AdiBINa",
+    descripcion: "¡Desafía tu mente con adivinanzas! 🧠💡 Adivina las palabras antes de que el tiempo se acabe ⏳. ¡Evita el pastelazo y gana premios! 🎁🎉",
+    nuevo: true,
+    premio: "+ IQ / Cosmonedas / Items",
+    video: "https://www.youtube.com/embed/fg29-8Sh3gU",
+    url: "https://www.youtube.com/embed/fg29-8Sh3gU"
+  },
+  /*{
     id: "rompecabezas",
     nombre: "Rompecabezas",
     descripcion: "Ordena piezas, resuelve imágenes y entrena tu observación.",
@@ -15544,15 +17725,104 @@ const ENYCOSMIC_GAMES_CONFIG = [
     premio: "+ Items / Cosmonedas",
     video: "../assets/videos/juegos/persecucionIntro.mp4",
     url: "../juegos/persecucion/index.html"
-  }
+  }*/
 ];
 
 let sistemaJuegosSelectedId = null;
 let sistemaJuegosVideoEl = null;
+let sistemaJuegosIframeEl = null;
 let sistemaJuegosAmbientWasPlaying = false;
 
 function getSistemaJuegosSelectedGame() {
   return ENYCOSMIC_GAMES_CONFIG.find(game => game.id === sistemaJuegosSelectedId) || null;
+}
+
+function getYoutubeVideoId(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return null;
+
+  const patterns = [
+    /youtube\.com\/embed\/([^?&/]+)/,
+    /youtube\.com\/watch\?v=([^?&/]+)/,
+    /youtu\.be\/([^?&/]+)/,
+    /youtube\.com\/shorts\/([^?&/]+)/
+  ];
+
+  for (const pattern of patterns) {
+    const match = raw.match(pattern);
+    if (match && match[1]) return match[1];
+  }
+
+  return null;
+}
+
+function isYoutubeVideo(url) {
+  return !!getYoutubeVideoId(url);
+}
+
+function isMP4Video(url) {
+  return /\.(mp4|webm|ogg)(\?.*)?$/i.test(String(url || ""));
+}
+
+function buildSistemaJuegosVideoHTML(game) {
+  const videoUrl = String(game?.video || "").trim();
+
+  if (!videoUrl) {
+    return `
+      <div class="sistema-juegos-video-placeholder">
+        INTRO DEL JUEGO<br>
+        VIDEO NO ASIGNADO
+      </div>
+    `;
+  }
+
+  const youtubeId = getYoutubeVideoId(videoUrl);
+
+  if (youtubeId) {
+    const youtubeSrc =
+      `https://www.youtube-nocookie.com/embed/${youtubeId}` +
+      `?autoplay=1` +
+      `&mute=0` +
+      `&loop=1` +
+      `&playlist=${youtubeId}` +
+      `&controls=0` +
+      `&disablekb=1` +
+      `&fs=0` +
+      `&rel=0` +
+      `&playsinline=1` +
+      `&iv_load_policy=3` +
+      `&modestbranding=1`;
+
+    return `
+      <iframe
+        id="sistema-juegos-youtube"
+        src="${youtubeSrc}"
+        title="${game.nombre || "Intro del juego"}"
+        allow="autoplay; encrypted-media"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    `;
+  }
+
+  if (isMP4Video(videoUrl)) {
+    return `
+    <video
+      id="sistema-juegos-video"
+      src="${videoUrl}"
+      autoplay
+      playsinline
+      loop
+      preload="auto">
+    </video>
+  `;
+  }
+
+  return `
+    <div class="sistema-juegos-video-placeholder">
+      FORMATO DE VIDEO NO SOPORTADO<br>
+      USA MP4, WEBM, OGG O YOUTUBE
+    </div>
+  `;
 }
 
 function pausarMusicaAmbienteParaSistemaJuegos() {
@@ -15817,12 +18087,34 @@ function ensureSistemaJuegosStyles() {
       margin-bottom: 12px;
     }
 
-    #sistema-juegos-video-wrap video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+#sistema-juegos-video-wrap video,
+#sistema-juegos-video-wrap iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  pointer-events: none;
+}
+
+#sistema-juegos-video-wrap video {
+  object-fit: cover;
+}
+
+#sistema-juegos-video-wrap video::-webkit-media-controls {
+  display: none !important;
+}
+
+#sistema-juegos-video-wrap video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+#sistema-juegos-video-wrap video::-webkit-media-controls-play-button {
+  display: none !important;
+}
+
+#sistema-juegos-video-wrap video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
 
     .sistema-juegos-video-placeholder {
       text-align: center;
@@ -15876,6 +18168,8 @@ function closeSistemaJuegosPopup() {
     sistemaJuegosVideoEl.currentTime = 0;
     sistemaJuegosVideoEl = null;
   }
+
+  sistemaJuegosIframeEl = null;
 
   const overlay = document.getElementById("sistema-juegos-overlay");
   if (overlay) overlay.remove();
@@ -15951,16 +18245,9 @@ function renderSistemaJuegosPreview() {
     sistemaJuegosVideoEl = null;
   }
 
-  const videoHTML = game.video
-    ? `
-      <video id="sistema-juegos-video" src="${game.video}" autoplay muted playsinline loop></video>
-    `
-    : `
-      <div class="sistema-juegos-video-placeholder">
-        INTRO DEL JUEGO<br>
-        VIDEO NO ASIGNADO
-      </div>
-    `;
+  sistemaJuegosIframeEl = null;
+
+  const videoHTML = buildSistemaJuegosVideoHTML(game);
 
   preview.innerHTML = `
     <div id="sistema-juegos-preview-title">${game.nombre}</div>
@@ -15979,8 +18266,14 @@ function renderSistemaJuegosPreview() {
   `;
 
   sistemaJuegosVideoEl = document.getElementById("sistema-juegos-video");
+  sistemaJuegosIframeEl = document.getElementById("sistema-juegos-youtube");
 
   if (sistemaJuegosVideoEl) {
+    sistemaJuegosVideoEl.muted = false;
+    sistemaJuegosVideoEl.volume = 1;
+    sistemaJuegosVideoEl.loop = true;
+    sistemaJuegosVideoEl.playsInline = true;
+
     sistemaJuegosVideoEl.play().catch(() => { });
   }
 
@@ -19579,7 +21872,7 @@ const TELESCOPIO_ASTRO_CONFIG = {
       <span>Júpiter y cielo profundo:</span>
       esta fotografía muestra a Júpiter y sus lunas principales.
       Si observas con más atención, también descubrirás estrellas,
-      nebulosas y galaxias escondidas en el fondo. Es una imagen
+      nebulosas y galaxias escondidas en el fondo (Sugiero ver la imagen de noche o en una zona muy oscura). Es una imagen
       tomada por mí hace años, y siempre he querido invitar a otros
       a mirar más allá de lo evidente y buscar más a fondo.
     `

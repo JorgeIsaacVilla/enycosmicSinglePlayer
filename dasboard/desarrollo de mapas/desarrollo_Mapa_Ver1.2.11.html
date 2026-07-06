@@ -383,6 +383,25 @@ textarea,
 .entities-layer.ambiente-guide-mode .node{
   pointer-events:none!important;
 }
+.mission-step-group[hidden]{
+  display:none!important;
+}
+
+.mission-subtitle{
+  margin:10px 0 6px;
+  color:var(--ok);
+  font-size:12px;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+
+.mission-soft-box{
+  border:1px solid rgba(64,220,255,.14);
+  border-radius:12px;
+  padding:10px;
+  margin-top:10px;
+  background:rgba(0,0,0,.16);
+}
   </style>
 </head>
 <body>
@@ -591,7 +610,7 @@ Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo<
         </section>
         <section id="tabMisiones" class="tab-panel">
           <div class="notice">Llena los datos, ubica el NPC de misión, agrega pasos y presiona “Cargar misión”. Al final descarga missions.json.</div>
-          <div class="section"><p class="section-title">Misión actual</p><div class="row"><div><label>ID misión automático</label><input id="missionId" type="text" value="m1" readonly></div><div><label>Nombre</label><input id="missionName" type="text" value="Nueva misión"></div></div><div class="row"><div><label>Tipo</label><select id="missionType"><option value="principal">principal</option><option value="secundaria" selected>secundaria</option><option value="diaria">diaria</option></select></div><div><label>Clasificación</label><input id="missionClass" type="text" value="diaria"></div></div><label>Descripción</label><textarea id="missionDesc">Describe aquí la misión.</textarea><div class="row-3"><div><label>IQ</label><input id="missionIq" type="number" value="3"></div><div><label>Cosmonedas</label><input id="missionCoins" type="number" value="10"></div><div><label>Código</label><input id="missionSecret" type="text"></div></div><label>Items recompensa: id,cantidad por línea</label><textarea id="missionRewardItems">corazon,1</textarea></div>
+          <div class="section"><p class="section-title">Misión actual</p><div class="row"><div><label>ID misión automático</label><input id="missionId" type="text" value="m1" readonly></div><div><label>Nombre</label><input id="missionName" type="text" value="Nueva misión"></div></div><div class="row"><div><label>Tipo</label><select id="missionType"><option value="principal">principal</option><option value="secundaria" selected>secundaria</option><option value="diaria">diaria</option></select></div><div><label>Clasificación</label><input id="missionClass" type="text" value="diaria"></div></div><label>Descripción</label><textarea id="missionDesc">Describe aquí la misión.</textarea></div>
           <div class="section"><p class="section-title">NPC de misión</p><button id="missionNpcTool" style="width:100%">Ubicar NPC de misión</button><div class="row"><div><label>ID NPC</label><input id="missionNpcId" type="text" value="npc01"></div><div><label>Nombre NPC</label><input id="missionNpcName" type="text" value="Doctor Cyron"></div></div><label>Sprite preview</label>
 <input id="missionNpcFile" type="file" accept="image/*">
 
@@ -611,9 +630,127 @@ Creo que revisaré mis misiones en el metafon.</textarea><label>Diálogos miedo<
 <p class="hint">Preview interno: ./source/NPCambiente/. Ruta final JSON: ../assets/avatares/npc/mapa1/.</p>
 
 <label>Ruta imagen JSON</label>
-<input id="missionNpcImagePath" type="text"><label>Diálogo 1</label><textarea id="missionNpcDialog1">Hola, cosmonauta.</textarea><label>Diálogo 2</label><textarea id="missionNpcDialog2">Aún no completas el objetivo.</textarea><label>Diálogo final</label><textarea id="missionNpcDialogFinal">Misión completada. Excelente trabajo.</textarea><label>Función de cumplimiento</label><input id="missionCompleteFunction" type="text"></div>
-          <div class="section"><p class="section-title">Agregar paso</p><div class="row"><div><label>Tipo de paso</label><select id="stepType"><option value="hablar_npc">hablar_npc</option><option value="hablar_npc_entrega">hablar_npc_entrega</option><option value="recolectar_items">recolectar_items</option><option value="funcion">funcion</option></select></div><div><label>Título</label><input id="stepTitle" type="text" value="Nuevo paso"></div></div><label>Descripción paso</label><textarea id="stepDesc">Describe el objetivo del paso.</textarea><div class="row"><div><label>NPC ID / objetivo</label><input id="stepNpcId" type="text" value="npc01"></div><div><label>Función siguiente paso</label><input id="stepFunction" type="text"></div></div><label>Items requeridos: id,cantidad</label><textarea id="stepItems"></textarea><label>Items que entrega el jugador</label><textarea id="stepEntregaItems"></textarea><label>Items que otorga el paso</label><textarea id="stepOtorgaItems"></textarea><div class="row" style="margin-top:10px"><button id="addStep" class="primary">Agregar paso</button><button id="clearSteps" class="warning">Limpiar pasos</button></div><div class="list" id="stepList" style="margin-top:10px"></div></div>
-          <div class="section"><p class="section-title">Cargar y exportar misiones</p><button id="loadMission" class="primary" style="width:100%;margin-bottom:8px">Cargar misión al JSON</button><label>Cargar missions.json</label><input id="importMissions" type="file" accept="application/json"><button id="downloadMissions" class="primary" style="width:100%">Descargar JSON de misiones</button><label>Misiones cargadas</label><div class="list" id="missionList"></div><label>Vista previa</label><textarea id="missionPreview" class="json-preview" readonly></textarea></div>
+<input id="missionNpcImagePath" type="text"><div class="mission-soft-box">
+  <div class="mission-subtitle">Agregar diálogo a NPC de misión</div>
+
+  <label>Diálogo 1</label>
+  <textarea id="missionNpcDialog1">Hola, cosmonauta.</textarea>
+
+  <label>Diálogo 2</label>
+  <textarea id="missionNpcDialog2">Aún no completas el objetivo.</textarea>
+
+  <label>Diálogo final</label>
+  <textarea id="missionNpcDialogFinal">Misión completada. Excelente trabajo.</textarea>
+
+  <button id="applyMissionNpcDialogs" class="primary" style="width:100%;margin-top:10px">
+    Agregar sistema de diálogos
+  </button>
+
+  <p class="hint">Este botón guarda los diálogos dentro del NPC de misión seleccionado o del último NPC ubicado para esta misión.</p>
+</div>
+</div>
+          
+          <div class="section">
+  <p class="section-title">Agregar paso</p>
+
+  <div class="row">
+    <div>
+      <label>Tipo de paso</label>
+      <select id="stepType">
+        <option value="hablar_npc">hablar_npc</option>
+        <option value="recolectar_items">recolectar_items</option>
+        <option value="funcion">funcion</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Título</label>
+      <input id="stepTitle" type="text" value="Nuevo paso">
+    </div>
+  </div>
+
+  <label>Descripción paso</label>
+  <textarea id="stepDesc">Describe el objetivo del paso.</textarea>
+
+  <div id="stepNpcFields" class="mission-step-group mission-soft-box">
+    <div class="mission-subtitle">Paso de diálogo con NPC</div>
+
+    <label>NPC ID / objetivo</label>
+    <input id="stepNpcId" type="text" value="npc01">
+
+    <p class="hint">Este paso usará el NPC de misión que acabas de ubicar en el mapa. Al agregar el paso, el panel se reinicia para que puedas ubicar otro NPC sin borrar el anterior.</p>
+  </div>
+
+  <div id="stepItemsFields" class="mission-step-group mission-soft-box" hidden>
+    <div class="mission-subtitle">Reto de recolección</div>
+
+    <label>Items requeridos: id,cantidad</label>
+    <textarea id="stepItems" placeholder="plastico,3&#10;corazon,1&#10;sal,2"></textarea>
+
+    <p class="hint">Ejemplos: plastico,3 · corazon,1 · sal,2</p>
+  </div>
+
+  <div id="stepCoordsFields" class="mission-step-group mission-soft-box" hidden>
+  <div class="mission-subtitle">Ubicación del reto en Metamap</div>
+
+  <div class="row">
+    <div>
+      <label>X objetivo</label>
+      <input id="stepTargetX" type="number" value="0">
+    </div>
+
+    <div>
+      <label>Y objetivo</label>
+      <input id="stepTargetY" type="number" value="0">
+    </div>
+  </div>
+
+  <p class="hint">Usa estas coordenadas para indicar dónde debe apuntar el Metamap cuando el paso sea recolectar items o activar una función.</p>
+</div>
+
+  <div id="stepFunctionFields" class="mission-step-group mission-soft-box" hidden>
+    <div class="mission-subtitle">Función del reto</div>
+
+    <label id="stepFunctionLabel">Función para cumplir reto</label>
+    <input id="stepFunction" type="text" placeholder="validarRetoRecolectarPlastico">
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <button id="addStep" class="primary">Agregar paso</button>
+    <button id="clearSteps" class="warning">Limpiar pasos</button>
+  </div>
+
+  <div class="list" id="stepList" style="margin-top:10px"></div>
+</div>
+<div class="section">
+  <p class="section-title">Asignar recompensa por cumplimiento de misión</p>
+
+  <div class="row-3">
+    <div>
+      <label>IQ</label>
+      <input id="missionIq" type="number" value="3">
+    </div>
+
+    <div>
+      <label>Cosmonedas</label>
+      <input id="missionCoins" type="number" value="10">
+    </div>
+
+    <div>
+      <label>Código</label>
+      <input id="missionSecret" type="text">
+    </div>
+  </div>
+
+  <label>Items recompensa: id,cantidad por línea</label>
+  <textarea id="missionRewardItems">corazon,1</textarea>
+
+  <label>Función final de cumplimiento</label>
+  <input id="missionCompleteFunction" type="text">
+
+  <p class="hint">Esta recompensa se entrega al completar la misión completa, no al agregar un paso individual.</p>
+</div>          
+<div class="section"><p class="section-title">Cargar y exportar misiones</p><button id="loadMission" class="primary" style="width:100%;margin-bottom:8px">Cargar misión al JSON</button><label>Cargar missions.json</label><input id="importMissions" type="file" accept="application/json"><button id="downloadMissions" class="primary" style="width:100%">Descargar JSON de misiones</button><label>Misiones cargadas</label><div class="list" id="missionList"></div><label>Vista previa</label><textarea id="missionPreview" class="json-preview" readonly></textarea></div>
         </section>
       </div>
     </aside>
@@ -1985,11 +2122,85 @@ else{
       if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';
 if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;
 if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;
-      $('ambTipo1').value=(it.tipo||'visual').split(' ')[0]||'visual';$('ambTipo2').value=(it.tipo||'').split(' ')[1]||'';$('ambColor').value=it.color||'#ff0000';$('ambTransparent').checked=!it.color;$('ambZ').value=it.zIndexBase||3300;$('ambImagePath').value=it.imagen||'';$('ambFunction').value=it.funcion||'';$('ambSubtype').value=it.subtipo||'';if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;if($('ambRealW'))$('ambRealW').value=it.w||80;if($('ambRealH'))$('ambRealH').value=it.h||80;if(it.subtipo==='bloque_arcilla'){$('arcillaPrefix').value=(it.zona_id||'bloque_arcilla').replace(/_?\d+$/,'')||'bloque_arcilla';$('arcillaImagePath').value=it.imagen||'../assets/items/bloqueArcilla.svg';$('arcillaW').value=it.w||64;$('arcillaH').value=it.h||64;$('arcillaZ').value=it.zIndexBase||3300;$('arcillaPdr').value=it.pdr??12;$('arcillaPdrMax').value=it.pdr_max??12;$('arcillaFunction').value=it.funcion||''}}if(kind==='enemy'){$('enemyName').value=it.nombre;$('enemyType').value=it.tipo;$('enemyImagePath').value=it.imagen||'';$('enemyW').value=it.w;$('enemyH').value=it.h;$('enemyFramesX').value=it.framesX||1; if($('enemyFramesY'))$('enemyFramesY').value=it.framesY||1;$('enemyLife').value=it.vida;$('enemyAttack').value=it.ataque;$('enemySpeed').value=it.speed;$('enemyVision').value=it.vision;$('enemyAttackAnim').value=it.attackAnim||'';$('enemyDeathScript').value=it.deathScript||'';$('enemyDialogs').value=(it.dialogos||[]).join('\n');$('enemyAttackDialogs').value=(it.dialogosAtack||[]).join('\n')}if(kind==='light'){$('lightType').value=it.tipo;$('lightColor').value=it.color||'';$('lightImagePath').value=it.imagen||'';$('lightW').value=it.w;$('lightH').value=it.h;$('lightFunction').value=it.functionName||''}if(kind==='npc'){$('npcName').value=it.nombre;$('npcImagePath').value=it.imagen||'';$('npcW').value=it.w||64;$('npcH').value=it.h||64;$('npcSpeed').value=it.velocidad;$('npcDialogs').value=(it.dialogos_automaticos||[]).join('\n');$('npcFearDialogs').value=(it.dialogos_miedo||[]).join('\n')}if(kind==='item'){$('itemPrefix').value=(it.instancia_id||it.id||'itm_mapa').replace(/_?\d+$/,'')||'itm_mapa';$('itemId').value=it.item_id||'';if($('itemCatalogSelect')&&state.itemCatalog.some(x=>x.id===it.item_id))$('itemCatalogSelect').value=it.item_id;const def=getItemDefinition(it.item_id);$('itemImagePath').value=it.imagen||def?.imagen||'';$('itemSize').value=it.size||it.w||32;$('itemZ').value=it.zIndexBase||3400;const info=$('itemCatalogInfo');if(info){const img=it.imagen||def?.imagen||'';const file=getFileNameFromPath(img);info.textContent=`${def?.nombre_item||it.item_id||'Item'} · preview: ${file?`source/items/${file}`:'sin imagen'}`}}if(kind==='missionNpc'){$('missionNpcId').value=it.id;$('missionNpcName').value=it.nombre;$('missionNpcImagePath').value=it.imagen||'';$('missionNpcDialog1').value=(it.dialogos?.inicio||[]).join('\n');$('missionNpcDialog2').value=(it.dialogos?.en_progreso||[]).join('\n');$('missionNpcDialogFinal').value=(it.dialogos?.completado||[]).join('\n')}}
+      $('ambTipo1').value=(it.tipo||'visual').split(' ')[0]||'visual';$('ambTipo2').value=(it.tipo||'').split(' ')[1]||'';$('ambColor').value=it.color||'#ff0000';$('ambTransparent').checked=!it.color;$('ambZ').value=it.zIndexBase||3300;$('ambImagePath').value=it.imagen||'';$('ambFunction').value=it.funcion||'';$('ambSubtype').value=it.subtipo||'';if($('ambSpritePath'))$('ambSpritePath').value=it.sprites_1x10||'';if($('ambUseSprite'))$('ambUseSprite').checked=!!it.sprites_1x10;if($('ambSpriteSpeed'))$('ambSpriteSpeed').value=it.velocidad_movimiento??1.1;if($('ambRealW'))$('ambRealW').value=it.w||80;if($('ambRealH'))$('ambRealH').value=it.h||80;if(it.subtipo==='bloque_arcilla'){$('arcillaPrefix').value=(it.zona_id||'bloque_arcilla').replace(/_?\d+$/,'')||'bloque_arcilla';$('arcillaImagePath').value=it.imagen||'../assets/items/bloqueArcilla.svg';$('arcillaW').value=it.w||64;$('arcillaH').value=it.h||64;$('arcillaZ').value=it.zIndexBase||3300;$('arcillaPdr').value=it.pdr??12;$('arcillaPdrMax').value=it.pdr_max??12;$('arcillaFunction').value=it.funcion||''}}if(kind==='enemy'){$('enemyName').value=it.nombre;$('enemyType').value=it.tipo;$('enemyImagePath').value=it.imagen||'';$('enemyW').value=it.w;$('enemyH').value=it.h;$('enemyFramesX').value=it.framesX||1; if($('enemyFramesY'))$('enemyFramesY').value=it.framesY||1;$('enemyLife').value=it.vida;$('enemyAttack').value=it.ataque;$('enemySpeed').value=it.speed;$('enemyVision').value=it.vision;$('enemyAttackAnim').value=it.attackAnim||'';$('enemyDeathScript').value=it.deathScript||'';$('enemyDialogs').value=(it.dialogos||[]).join('\n');$('enemyAttackDialogs').value=(it.dialogosAtack||[]).join('\n')}if(kind==='light'){$('lightType').value=it.tipo;$('lightColor').value=it.color||'';$('lightImagePath').value=it.imagen||'';$('lightW').value=it.w;$('lightH').value=it.h;$('lightFunction').value=it.functionName||''}if(kind==='npc'){$('npcName').value=it.nombre;$('npcImagePath').value=it.imagen||'';$('npcW').value=it.w||64;$('npcH').value=it.h||64;$('npcSpeed').value=it.velocidad;$('npcDialogs').value=(it.dialogos_automaticos||[]).join('\n');$('npcFearDialogs').value=(it.dialogos_miedo||[]).join('\n')}if(kind==='item'){$('itemPrefix').value=(it.instancia_id||it.id||'itm_mapa').replace(/_?\d+$/,'')||'itm_mapa';$('itemId').value=it.item_id||'';if($('itemCatalogSelect')&&state.itemCatalog.some(x=>x.id===it.item_id))$('itemCatalogSelect').value=it.item_id;const def=getItemDefinition(it.item_id);$('itemImagePath').value=it.imagen||def?.imagen||'';$('itemSize').value=it.size||it.w||32;$('itemZ').value=it.zIndexBase||3400;const info=$('itemCatalogInfo');if(info){const img=it.imagen||def?.imagen||'';const file=getFileNameFromPath(img);info.textContent=`${def?.nombre_item||it.item_id||'Item'} · preview: ${file?`source/items/${file}`:'sin imagen'}`}}if(kind==='missionNpc'){
+  $('missionNpcId').value=it.id;
+  $('missionNpcName').value=it.nombre;
+  $('missionNpcImagePath').value=it.imagen||'';
+  $('missionNpcDialog1').value=(it.dialogos?.inicio||[]).join('\n');
+  $('missionNpcDialog2').value=(it.dialogos?.en_progreso||[]).join('\n');
+  $('missionNpcDialogFinal').value=(it.dialogos?.completado||[]).join('\n');
 
-    function placeItem(kind,pos){let item;if(kind==='ambiente'){item=cfgAmb();item.x=round(pos.x);item.y=round(pos.y);state.data.ambiente.push(item)}if(kind==='enemy'){item=cfgEnemy();item.x=round(pos.x);item.y=round(pos.y);state.data.enemy.push(item)}if(kind==='light'){item=cfgLight();item.x=round(pos.x);item.y=round(pos.y);state.data.light.push(item)}if(kind==='npc'){item=cfgNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.npc.push(item)}if(kind==='missionNpc'){item=cfgMissionNpc();item.x=round(pos.x);item.y=round(pos.y);state.data.missionNpcs=[item]}if(item){select(kind,item.id||item.zona_id||item.nombre_id||item.nombre);saveLocalSoon()}}
+  if($('stepNpcId'))$('stepNpcId').value=it.id;
+
+  updateMissionStepUI?.();
+}}
+
+function placeItem(kind,pos){
+  let item;
+
+  if(kind==='ambiente'){
+    item=cfgAmb();
+    item.x=round(pos.x);
+    item.y=round(pos.y);
+    state.data.ambiente.push(item);
+  }
+
+  if(kind==='enemy'){
+    item=cfgEnemy();
+    item.x=round(pos.x);
+    item.y=round(pos.y);
+    state.data.enemy.push(item);
+  }
+
+  if(kind==='light'){
+    item=cfgLight();
+    item.x=round(pos.x);
+    item.y=round(pos.y);
+    state.data.light.push(item);
+  }
+
+  if(kind==='npc'){
+    item=cfgNpc();
+    item.x=round(pos.x);
+    item.y=round(pos.y);
+    state.data.npc.push(item);
+  }
+
+  if(kind==='missionNpc'){
+    const missionId=currentMissionDraftId();
+
+    item=cfgMissionNpc();
+    item.x=round(pos.x);
+    item.y=round(pos.y);
+
+    item._draftMissionId=missionId;
+    item.dashboardId='draft_'+missionId+'_'+safeId(item.id,'npc_mision')+'_'+Date.now();
+
+    state.data.missionNpcs.push(item);
+
+    if($('stepNpcId'))$('stepNpcId').value=item.id;
+  }
+
+  if(item){
+    select(kind,itemIdentity(item));
+    saveLocalSoon();
+  }
+}
+
+
     function duplicate(kind,id,dx=20,dy=20){const arr=arrFor(kind),it=getItem(kind,id);if(!it)return;const copy=JSON.parse(JSON.stringify(it));if(kind==='ambiente')copy.zona_id=it.subtipo==='bloque_arcilla'?uid('arcilla',$('arcillaPrefix').value):uid('ambiente',$('ambPrefix').value);if(kind==='item'){const nid=uid('item',$('itemPrefix').value);copy.id=nid;copy.instancia_id=nid}if(kind==='enemy')copy.id=uid('enemy',$('enemyPrefix').value);if(kind==='light')copy.nombre_id=uid('light',$('lightPrefix').value);if(kind==='npc')copy.id=uid('npc','npc_ambiente');if(kind==='missionNpc')copy.id=uid('missionNpc','npc_mision');copy.x=round(clamp(it.x+dx,0,state.mapSize-(it.w||64)));copy.y=round(clamp(it.y+dy,0,state.mapSize-(it.h||64)));arr.push(copy);select(kind,copy.id||copy.zona_id||copy.nombre_id||copy.nombre);saveLocalSoon()}
-    function removeItem(kind,id){const arr=arrFor(kind),i=arr.findIndex(x=>(x.id||x.instancia_id||x.zona_id||x.nombre_id||x.nombre)===id);if(i>-1)arr.splice(i,1);state.selected={kind:null,id:null};renderAll();saveLocalSoon()}
+
+function removeItem(kind,id){
+  const arr=arrFor(kind);
+  const i=arr.findIndex(x=>itemIdentity(x)===id);
+
+  if(i>-1)arr.splice(i,1);
+
+  state.selected={kind:null,id:null};
+  renderAll();
+  saveLocalSoon();
+}
+
     function makeLine(kind,start,end,template){const w=template.w||64,h=template.h||64,step=Math.max(8,Math.max(w,h)+(kind==='ambiente'?8:20)),dx=end.x-start.x,dy=end.y-start.y,dist=Math.hypot(dx,dy),count=Math.max(1,Math.floor(dist/step)+1);for(let i=0;i<count;i++){duplicate(kind,template.id||template.instancia_id||template.zona_id||template.nombre_id||template.nombre,0,0);const arr=arrFor(kind),c=arr[arr.length-1],ratio=count===1?0:i/(count-1);c.x=round(start.x+dx*ratio);c.y=round(start.y+dy*ratio)}saveLocalSoon();renderAll()}
     function applySelected(){const {kind,id}=state.selected;if(!id)return setStatus('No hay elemento seleccionado.');const it=getItem(kind,id);if(!it)return;if(kind==='ambiente'&&it.subtipo==='bloque_arcilla'){applyArcillaSelected();return}if(kind==='ambiente')Object.assign(it,cfgAmb(),{zona_id:it.zona_id,x:it.x,y:it.y,w:it.w,h:it.h});if(kind==='enemy')Object.assign(it,cfgEnemy(),{id:it.id,x:it.x,y:it.y});if(kind==='light')Object.assign(it,cfgLight(),{nombre_id:it.nombre_id,x:it.x,y:it.y});if(kind==='npc')Object.assign(it,cfgNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='missionNpc')Object.assign(it,cfgMissionNpc(),{id:it.id,x:it.x,y:it.y});if(kind==='item'){applyItemSelected();return}renderAll();saveLocalSoon();setStatus(kind==='ambiente'?'Componente ambiente actualizado.':'Cambios aplicados.')}
     function ambPrimaryAction(){state.selected={kind:null,id:null};setTool('amb-place');detectAmbRealSize(true);renderAll();setStatus('Modo ubicar componente ambiente activo. Haz clic sobre el mapa para colocarlo. Para modificar un bloque existente usa “Actualizar seleccionado”.')}
@@ -2196,59 +2407,314 @@ function missionsJson(){
   syncMissionNpcCoordinatesToMissions();
   return{missions:state.data.missions||[]};
 }
+function currentMissionDraftId(){
+  return $('missionId')?.value?.trim()||nextMissionId();
+}
 
+function draftMissionNpcs(missionId=currentMissionDraftId()){
+  return (state.data.missionNpcs||[]).filter(n=>n._draftMissionId===missionId);
+}
+
+function nextMissionNpcId(){
+  return 'npc'+pad(draftMissionNpcs().length+1);
+}
+
+function activeDraftMissionNpc(missionId=currentMissionDraftId()){
+  const selected=state.selected.kind==='missionNpc'
+    ?getItem('missionNpc',state.selected.id)
+    :null;
+
+  if(selected&&selected._draftMissionId===missionId){
+    return selected;
+  }
+
+  const draft=draftMissionNpcs(missionId);
+  return draft[draft.length-1]||null;
+}
+
+function clearMissionNpcPreview(){
+  state.previews.missionNpc=null;
+  state.previewNames.missionNpc=null;
+  setAssetPreview('missionNpcImagePreview',null);
+}
+
+function resetMissionNpcBuilderAfterStep(){
+  const nextId=nextMissionNpcId();
+
+  if($('missionNpcId'))$('missionNpcId').value=nextId;
+  if($('stepNpcId'))$('stepNpcId').value=nextId;
+
+  if($('missionNpcName'))$('missionNpcName').value='NPC misión '+nextId;
+  if($('missionNpcImagePath'))$('missionNpcImagePath').value='';
+
+  if($('missionNpcDialog1'))$('missionNpcDialog1').value='Hola, cosmonauta.';
+  if($('missionNpcDialog2'))$('missionNpcDialog2').value='Aún no completas el objetivo.';
+  if($('missionNpcDialogFinal'))$('missionNpcDialogFinal').value='Misión completada. Excelente trabajo.';
+
+  if($('stepTitle'))$('stepTitle').value='Nuevo paso';
+  if($('stepDesc'))$('stepDesc').value='Describe el objetivo del paso.';
+  if($('stepItems'))$('stepItems').value='';
+  if($('stepFunction'))$('stepFunction').value='';
+  if($('stepTargetX'))$('stepTargetX').value=0;
+if($('stepTargetY'))$('stepTargetY').value=0;
+
+  clearMissionNpcPreview();
+  updateMissionStepUI();
+}
+
+function updateMissionStepUI(){
+  const tipo=$('stepType')?.value||'hablar_npc';
+
+  const npcFields=$('stepNpcFields');
+  const itemFields=$('stepItemsFields');
+  const coordsFields=$('stepCoordsFields');
+  const functionFields=$('stepFunctionFields');
+
+  if(npcFields)npcFields.hidden=tipo!=='hablar_npc';
+  if(itemFields)itemFields.hidden=tipo!=='recolectar_items';
+  if(coordsFields)coordsFields.hidden=!(tipo==='recolectar_items'||tipo==='funcion');
+  if(functionFields)functionFields.hidden=!(tipo==='recolectar_items'||tipo==='funcion');
+
+  if($('stepFunctionLabel')){
+    $('stepFunctionLabel').textContent='Función para cumplir reto';
+  }
+
+  if(tipo==='hablar_npc'){
+    const npc=activeDraftMissionNpc();
+    const npcId=npc?.id||$('missionNpcId')?.value?.trim()||nextMissionNpcId();
+
+    if($('stepNpcId'))$('stepNpcId').value=npcId;
+  }
+}
+
+function missionNpcToMissionJson(n){
+  return{
+    id:n.id,
+    nombre:n.nombre,
+    rol:n.rol||'inicio',
+    imagen:n.imagen,
+    posicion:{
+      x:round(n.x||0),
+      y:round(n.y||0)
+    },
+    conversation_default:n.conversation_default||'',
+    dialogos:n.dialogos||{inicio:[],en_progreso:[],completado:[]}
+  };
+}
     function renderSteps(){const box=$('stepList');box.innerHTML='';if(!state.data.missionSteps.length){box.innerHTML='<div class="list-item"><div>No hay pasos agregados.</div></div>';return}state.data.missionSteps.forEach((s,i)=>{const div=document.createElement('div');div.className='list-item';div.innerHTML=`<div>${i+1}. ${s.titulo}<small>${s.tipo} · ${s.descripcion}</small></div><button class="mini-btn" data-stepdel="${i}">x</button>`;box.appendChild(div)})}
     
+    function stepTargetPosition(){
+  return{
+    x:round($('stepTargetX')?.value||0),
+    y:round($('stepTargetY')?.value||0)
+  };
+}
+
+function applyMissionNpcDialogSystem(silent=false){
+  const missionId=currentMissionDraftId();
+
+  let npc=null;
+
+  if(state.selected.kind==='missionNpc'){
+    const selectedNpc=getItem('missionNpc',state.selected.id);
+
+    if(selectedNpc&&selectedNpc._draftMissionId===missionId){
+      npc=selectedNpc;
+    }
+  }
+
+  if(!npc){
+    npc=activeDraftMissionNpc(missionId);
+  }
+
+  if(!npc){
+    if(!silent)setStatus('Primero ubica o selecciona un NPC de misión.');
+    return false;
+  }
+
+  const npcId=$('missionNpcId')?.value?.trim()||npc.id||nextMissionNpcId();
+
+  npc.id=npcId;
+  npc.nombre=$('missionNpcName')?.value?.trim()||npc.nombre||'NPC Misión';
+  npc.imagen=$('missionNpcImagePath')?.value?.trim()||npc.imagen||null;
+  npc.conversation_default=lines($('missionNpcDialog1')?.value||'')[0]||'';
+
+  npc.dialogos={
+    inicio:lines($('missionNpcDialog1')?.value||''),
+    en_progreso:lines($('missionNpcDialog2')?.value||''),
+    completado:lines($('missionNpcDialogFinal')?.value||'')
+  };
+
+  if($('stepNpcId'))$('stepNpcId').value=npc.id;
+
+  renderAll();
+  saveLocalSoon();
+
+  if(!silent){
+    setStatus('Sistema de diálogos agregado al NPC de misión: '+npc.nombre+'.');
+  }
+
+  return true;
+}
     
 function addStep(){
   syncMissionIdField();
 
-  const mId=$('missionId').value.trim()||nextMissionId();
+  const mId=currentMissionDraftId();
   const n=state.data.missionSteps.length+1;
-  const npcId=$('stepNpcId').value.trim()||$('missionNpcId').value.trim()||'npc01';
   const tipo=$('stepType').value;
-  const npc=state.data.missionNpcs[0];
-  const pos=npc?{x:round(npc.x),y:round(npc.y)}:{x:0,y:0};
-  const img=npc?.imagen||$('missionNpcImagePath').value.trim()||null;
+  const title=$('stepTitle').value.trim()||`Paso ${n}`;
+  const desc=$('stepDesc').value.trim()||'';
 
   const s={
     step:n,
     id:`${mId}s${n}`,
     tipo,
-    npcId,
-    titulo:$('stepTitle').value.trim()||`Paso ${n}`,
-    descripcion:$('stepDesc').value.trim()||'',
-    estadoInicial:false,
-    verificador:{
-      tipoObjetivo:tipo.includes('npc')?'npc':'objeto',
-      objetivoId:npcId,
-      imagen:img,
-      posicion:pos
-    },
-    otorgaItems:parseItems($('stepOtorgaItems').value)
+    titulo:title,
+    descripcion:desc,
+    estadoInicial:false
   };
 
-  const objItems=parseItems($('stepItems').value);
-  const entrega=parseItems($('stepEntregaItems').value);
+if(tipo==='hablar_npc'){
+  applyMissionNpcDialogSystem(true);
 
-  if(objItems.length)s.objetivosItems=objItems;
-  if(entrega.length)s.entregaItems=entrega;
-  if($('stepFunction').value.trim())s.funcion_siguiente_paso=$('stepFunction').value.trim();
+  const npc=activeDraftMissionNpc(mId);
+
+  if(!npc){
+    setStatus('Primero ubica un NPC de misión en el mapa.');
+    return;
+  }
+
+    const npcId=npc.id||$('missionNpcId').value.trim()||nextMissionNpcId();
+
+    s.npcId=npcId;
+    s.verificador={
+      tipoObjetivo:'npc',
+      objetivoId:npcId,
+      imagen:npc.imagen||$('missionNpcImagePath').value.trim()||null,
+      posicion:{
+        x:round(npc.x||0),
+        y:round(npc.y||0)
+      }
+    };
+  }
+
+  if(tipo==='recolectar_items'){
+    const objItems=parseItems($('stepItems')?.value||'');
+
+    if(!objItems.length){
+      setStatus('Agrega al menos un item requerido para el paso de recolección.');
+      return;
+    }
+
+s.verificador={
+  tipoObjetivo:'objeto',
+  objetivoId:'items_requeridos',
+  imagen:null,
+  posicion:stepTargetPosition()
+};
+
+    if($('stepFunction')?.value?.trim()){
+      s.funcion_siguiente_paso=$('stepFunction').value.trim();
+    }
+  }
+
+  if(tipo==='funcion'){
+    const fn=$('stepFunction')?.value?.trim();
+
+    if(!fn){
+      setStatus('Escribe la función para cumplir reto.');
+      return;
+    }
+
+s.verificador={
+  tipoObjetivo:'funcion',
+  objetivoId:fn,
+  imagen:null,
+  posicion:stepTargetPosition()
+};
+
+    s.funcion_siguiente_paso=fn;
+  }
 
   state.data.missionSteps.push(s);
+
   renderSteps();
+  resetMissionNpcBuilderAfterStep();
   saveLocalSoon();
+
+  setStatus('Paso agregado. Puedes ubicar otro NPC de misión sin borrar el anterior.');
 }
 
+function visualMissionNpcFromMission(n,missionIndex,npcIndex){
+  const mission=state.data.missions?.[missionIndex]||{};
+  const missionId=mission.id||('m'+(missionIndex+1));
+  const pos=n.posicion||{};
+
+  return{
+    dashboardId:missionNpcDashboardId(missionIndex,npcIndex),
+    _missionId:missionId,
+    _missionIndex:missionIndex,
+    _npcIndex:npcIndex,
+
+    id:n.id||`npc_mision_${pad(missionIndex+1)}_${pad(npcIndex+1)}`,
+    nombre:n.nombre||`NPC misión ${npcIndex+1}`,
+    rol:n.rol||'inicio',
+    imagen:n.imagen||null,
+    preview:null,
+    previewName:null,
+    w:round(n.w??n.tamano?.w??64)||64,
+    h:round(n.h??n.tamano?.h??64)||64,
+    x:round(n.x??pos.x??0),
+    y:round(n.y??pos.y??0),
+    conversation_default:n.conversation_default||'',
+    dialogos:n.dialogos||{
+      inicio:[],
+      en_progreso:[],
+      completado:[]
+    }
+  };
+}
+
+function rebuildMissionNpcLayerFromMissions(keepDraft=false){
+  const currentDraftId=currentMissionDraftId?.()||nextMissionId();
+
+  const draftNpcs=keepDraft
+    ?(state.data.missionNpcs||[]).filter(n=>n._draftMissionId===currentDraftId)
+    :[];
+
+  const missionNpcs=[];
+
+  (state.data.missions||[]).forEach((mission,missionIndex)=>{
+    (mission.npcs||[]).forEach((npc,npcIndex)=>{
+      missionNpcs.push(
+        visualMissionNpcFromMission(npc,missionIndex,npcIndex)
+      );
+    });
+  });
+
+  state.data.missionNpcs=[
+    ...missionNpcs,
+    ...draftNpcs
+  ];
+
+  return state.data.missionNpcs;
+}
 
 function loadMission(){
+  applyMissionNpcDialogSystem(true);
   renumberMissions();
 
   const missionId=nextMissionId();
+
   if($('missionId'))$('missionId').value=missionId;
 
-  const npc=state.data.missionNpcs[0]||cfgMissionNpc();
-  const completeFunc=$('missionCompleteFunction').value.trim();
+  const completeFunc=$('missionCompleteFunction')?.value?.trim()||'';
+  const draftNpcs=draftMissionNpcs(missionId);
+
+  const missionNpcs=draftNpcs.length
+    ?draftNpcs.map(missionNpcToMissionJson)
+    :[missionNpcToMissionJson(cfgMissionNpc())];
 
   const mission={
     id:missionId,
@@ -2266,18 +2732,7 @@ function loadMission(){
       misionesRequeridas:[],
       itemsRequeridos:[]
     },
-    npcs:[{
-      id:npc.id,
-      nombre:npc.nombre,
-      rol:npc.rol||'inicio',
-      imagen:npc.imagen,
-      posicion:{
-        x:round(npc.x||0),
-        y:round(npc.y||0)
-      },
-      conversation_default:npc.conversation_default||'',
-      dialogos:npc.dialogos
-    }],
+    npcs:missionNpcs,
     pasos:[...state.data.missionSteps],
     recompensas:{
       iq:round($('missionIq').value)||0,
@@ -2291,9 +2746,25 @@ function loadMission(){
 
   state.data.missions.push(mission);
 
+  const missionIndex=state.data.missions.length-1;
+
+  draftNpcs.forEach((npc,npcIndex)=>{
+    npc._missionId=mission.id;
+    npc._missionIndex=missionIndex;
+    npc._npcIndex=npcIndex;
+    npc.dashboardId=missionNpcDashboardId(missionIndex,npcIndex);
+    delete npc._draftMissionId;
+  });
+
   renumberMissions();
 
+  rebuildMissionNpcLayerFromMissions(false);
+
   state.data.missionSteps=[];
+
+  syncMissionIdField();
+  resetMissionNpcBuilderAfterStep();
+
   renderAll();
   saveLocalSoon();
 
@@ -2386,6 +2857,12 @@ function loadEnemyImport(json){
 }
 function loadLightImport(json){const arr=Array.isArray(json)?json:(json.luces||json.iluminacion||[]);state.data.light=arr.map((l,i)=>({nombre_id:l.nombre_id||l.id||`luz_importada_${pad(i+1)}`,tipo:l.tipo||'antorcha',imagen:l.imagen||null,preview:null,w:round(l.w??l.width??60),h:round(l.h??l.height??60),color:l.color||null,functionName:l.functionName||l.funcion||l['function']||null,x:round(l.x??l.posicion?.x??0),y:round(l.y??l.posicion?.y??0)}));syncNextCounters()}
 function loadNpcImport(json){const arr=Array.isArray(json)?json:(json.npcs||json.NPCambiente||[]);state.data.npc=arr.map((n,i)=>({id:n.id||`npc_ambiente_${pad(i+1)}`,imagen:n.imagen||null,preview:null,nombre:n.nombre||n.name||`NPC ${i+1}`,velocidad:Number(n.velocidad??n.speed??1.2),w:round(n.w??n.tamano?.w??64),h:round(n.h??n.tamano?.h??64),dialogos_automaticos:n.dialogos_automaticos||n.dialogosAutomaticos||[],dialogos_miedo:n.dialogos_miedo||n.dialogosMiedo||[],x:round(n.x??n.posicion?.x??0),y:round(n.y??n.posicion?.y??0)}));syncNextCounters()}
+/* VERSION VIEJA
+  Carga misiones desde un JSON externo.
+  El JSON puede ser un array de misiones o un objeto con la propiedad "missions" o "misiones".
+  Cada misión puede tener un array de NPCs en la propiedad "npcs".
+  Cada NPC puede tener propiedades como id, nombre, rol, imagen, dialogos, etc.
+
 function loadMissionsImport(json){
   const arr=Array.isArray(json)?json:(json.missions||json.misiones||[]);
 
@@ -2420,6 +2897,19 @@ function loadMissionsImport(json){
   });
 
   renumberMissions();
+  syncMissionNpcCoordinatesToMissions();
+  syncNextCounters();
+}
+*/
+
+function loadMissionsImport(json){
+  const arr=Array.isArray(json)?json:(json.missions||json.misiones||[]);
+
+  state.data.missions=arr;
+  state.data.missionNpcs=[];
+
+  renumberMissions();
+  rebuildMissionNpcLayerFromMissions(false);
   syncMissionNpcCoordinatesToMissions();
   syncNextCounters();
 }
@@ -3684,7 +4174,11 @@ $('sourceMissionNpcGallery')?.addEventListener('click',e=>{
   $('downloadMissions').addEventListener('click',()=>download('missions.json',missionsJson()));
 
   $('addStep').addEventListener('click',addStep);
-
+  $('applyMissionNpcDialogs')?.addEventListener('click',e=>{
+  e.preventDefault();
+  applyMissionNpcDialogSystem(false);
+});
+$('stepType')?.addEventListener('change',updateMissionStepUI);
   $('clearSteps').addEventListener('click',()=>{
     state.data.missionSteps=[];
     renderSteps();
@@ -3845,6 +4339,10 @@ $('missionJsonModal')?.addEventListener('click',e=>{
       redoAction();
     }
   });
+
+  updateMissionStepUI();
+syncMissionIdField();
+resetMissionNpcBuilderAfterStep();
 }
     
     function saveJsonEditor(){const modal=$('jsonModal');const kind=(modal?.dataset?.kind||state.jsonEditor?.kind||'').trim();const originalId=(modal?.dataset?.id||state.jsonEditor?.id||'').trim();if(!kind||!originalId){setStatus('No hay componente activo para guardar. Abre el editor desde el lápiz del componente.');return false}let obj;try{obj=JSON.parse($('jsonEditorText').value)}catch(e){console.error(e);setStatus('El JSON tiene un error de sintaxis. Revísalo antes de guardar.');return false}const arr=arrFor(kind);let idx=arr.findIndex(x=>String(itemIdentity(x))===String(originalId));if(idx<0&&state.selected?.kind===kind)idx=arr.findIndex(x=>String(itemIdentity(x))===String(state.selected.id));if(idx<0){setStatus('No encontré el componente seleccionado para guardar. Selecciónalo de nuevo y abre el lápiz.');return false}try{const current=arr[idx];const merged=normalizeEditorSavedObject(kind,current,obj);const newId=itemIdentity(merged)||originalId;arr[idx]=merged;state.selected={kind,id:newId};if(kind==='ambiente'){if(merged.sprites_1x10){state.previews.ambiente=null;state.previewNames.ambiente=null}else if(merged.imagen&&getFileNameFromPath(merged.imagen)!==state.previewNames.ambiente){state.previews.ambiente=null;state.previewNames.ambiente=null}}try{fillForm(kind,merged)}catch(e){console.warn('No se pudo refrescar el formulario después de guardar:',e)}try{refreshFormPreview(kind,merged)}catch(e){console.warn('No se pudo refrescar el preview después de guardar:',e)}renderAll();pushHistory();saveLocal();closeJsonEditor();setStatus('JSON del componente guardado y aplicado al mapa.');return true}catch(e){console.error(e);setStatus('No se pudo guardar el JSON. Revisa que el objeto tenga un formato válido.');return false}}
