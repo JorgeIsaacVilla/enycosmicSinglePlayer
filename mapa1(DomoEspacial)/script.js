@@ -6929,6 +6929,8 @@ function continuarTrasGameOver() {
     return false;
   }
 
+  window.completarRetoMission = completarRetoMission;
+
   window.reto_codificacion_01 = function () {
     openRetoPopup("reto_codificacion_01", completarRetoMission);
   };
@@ -17270,8 +17272,8 @@ function validarRespuestaTableroHolografico() {
   }
 
   setTimeout(() => {
-    if (typeof completarRetoMission === "function") {
-      completarRetoMission(TABLERO_ECUACIONES_RETO_ID);
+    if (typeof window.completarRetoMission === "function") {
+      window.completarRetoMission(TABLERO_ECUACIONES_RETO_ID);
     }
 
     if (typeof refreshMissionPanelIfOpen === "function") {

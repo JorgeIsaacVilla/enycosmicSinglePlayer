@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>Enycosmic · Generador de Markers PNG + PATT</title>
+
+  <style>
+    :root {
+      --bg: #071010;
+      --panel: #0b1717;
+      --panel-2: #102020;
+      --line: #00f5d4;
+      --line-soft: rgba(0, 245, 212, 0.35);
+      --text: #e9fffb;
+      --muted: #9ac8c0;
+      --danger: #ff4d6d;
+      --ok: #8df9a8;
+      --shadow: 0 0 20px rgba(0, 245, 212, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(0, 245, 212, 0.06), transparent 35%),
+        linear-gradient(180deg, #050808 0%, #081212 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: min(1380px, calc(100% - 24px));
+      margin: 18px auto 36px;
+    }
+
+    .header {
+      border: 2px solid var(--line);
+      background: rgba(5, 15, 15, 0.95);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: 1px;
+      color: var(--text);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .panel {
+      border: 2px solid var(--line);
+      background: rgba(5, 15, 15, 0.95);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .panel-head {
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(0, 245, 212, 0.1), rgba(0, 245, 212, 0.03));
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .panel-body {
+      padding: 14px;
+    }
+
+    .grid-top {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 16px;
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--line-soft);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .upload-zone input[type="file"] {
+      width: 100%;
+      display: block;
+      margin-top: 10px;
+      color: var(--text);
+    }
+
+    .upload-help {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin-top: 10px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .control {
+      border: 1px solid var(--line-soft);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .control label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+
+    .control input[type="range"],
+    .control input[type="number"] {
+      width: 100%;
+    }
+
+    .control .value {
+      margin-top: 6px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      appearance: none;
+      border: 2px solid var(--line);
+      background: rgba(0, 245, 212, 0.08);
+      color: var(--text);
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 8px;
+      transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 0 0 rgba(0, 245, 212, 0);
+    }
+
+    button:hover {
+      background: rgba(0, 245, 212, 0.16);
+      box-shadow: 0 0 16px rgba(0, 245, 212, 0.22);
+      transform: translateY(-1px);
+    }
+
+    button.secondary {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.05);
+    }
+
+    button.danger {
+      border-color: rgba(255, 77, 109, 0.6);
+      background: rgba(255, 77, 109, 0.08);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-pill {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(6, 15, 15, 0.98), rgba(10, 24, 24, 0.95));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 15px;
+      word-break: break-word;
+    }
+
+    .tag {
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+
+    .card-body {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .preview-box {
+      border: 1px solid var(--line-soft);
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .preview-box h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .preview-box img,
+    .preview-box canvas {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+      background: #000;
+    }
+
+    .meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 14px 14px;
+    }
+
+    .empty-state {
+      border: 2px dashed var(--line-soft);
+      padding: 30px 18px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .ok {
+      color: var(--ok);
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .grid-top {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-body {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="header">
+      <h1 class="title">Generador de Markers PNG + PATT</h1>
+      <p class="subtitle">
+        Carga una o varias imágenes PNG, genera la versión con borde lista para imprimir
+        y descarga también el archivo .patt para AR.js / MetaCamAR.
+      </p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">Configuración y carga</div>
+      <div class="panel-body">
+        <div class="grid-top">
+          <div class="upload-zone">
+            <div>Selecciona una o varias imágenes PNG:</div>
+            <input id="fileInput" type="file" accept="image/png,image/*" multiple />
+            <div class="upload-help">
+              Recomendación:
+              usa imágenes cuadradas o rectangulares con buen contraste.
+              El sistema generará un marcador con borde negro y margen blanco interno.
+              El .patt se crea desde la misma imagen final generada.
+            </div>
+
+            <div class="actions">
+              <button id="btnProcess">Generar markers</button>
+              <button id="btnClear" class="danger">Limpiar todo</button>
+            </div>
+
+            <div class="status-bar">
+              <div class="status-pill">Archivos: <span id="fileCount">0</span></div>
+              <div class="status-pill">Markers listos: <span id="markerCount">0</span></div>
+              <div class="status-pill">PATT listos: <span id="pattCount">0</span></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="controls-grid">
+              <div class="control">
+                <label for="sizeInput">Tamaño de salida (px)</label>
+                <input id="sizeInput" type="number" min="256" max="2048" step="64" value="1024" />
+                <div class="value">Ejemplo: 1024</div>
+              </div>
+
+              <div class="control">
+                <label for="borderInput">Borde negro (%)</label>
+                <input id="borderInput" type="range" min="10" max="35" step="1" value="20" />
+                <div class="value"><span id="borderValue">20</span>%</div>
+              </div>
+
+              <div class="control">
+                <label for="whiteMarginInput">Margen blanco interno (%)</label>
+                <input id="whiteMarginInput" type="range" min="2" max="18" step="1" value="8" />
+                <div class="value"><span id="whiteMarginValue">8</span>%</div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="btnDownloadAllPng" class="secondary" disabled>Descargar todos los PNG</button>
+              <button id="btnGenerateAllPatt" class="secondary" disabled>Generar todos los .patt</button>
+              <button id="btnDownloadAllZip" disabled>Descargar ZIP completo</button>
+            </div>
+
+            <div class="footer-note">
+              Nota:
+              para generar archivos <code>.patt</code> se usa la utilidad de AR.js.
+              Si algún navegador bloquea algo por permisos, prueba servir este archivo con un servidor local.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">Resultados</div>
+      <div class="panel-body">
+        <div id="cardsContainer" class="cards">
+          <div class="empty-state">
+            Todavía no hay imágenes cargadas.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Librerías externas -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/examples/marker-training/threex-arpatternfile.js"></script>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const btnProcess = document.getElementById("btnProcess");
+    const btnClear = document.getElementById("btnClear");
+    const btnDownloadAllPng = document.getElementById("btnDownloadAllPng");
+    const btnGenerateAllPatt = document.getElementById("btnGenerateAllPatt");
+    const btnDownloadAllZip = document.getElementById("btnDownloadAllZip");
+
+    const sizeInput = document.getElementById("sizeInput");
+    const borderInput = document.getElementById("borderInput");
+    const whiteMarginInput = document.getElementById("whiteMarginInput");
+
+    const borderValue = document.getElementById("borderValue");
+    const whiteMarginValue = document.getElementById("whiteMarginValue");
+
+    const fileCount = document.getElementById("fileCount");
+    const markerCount = document.getElementById("markerCount");
+    const pattCount = document.getElementById("pattCount");
+
+    const cardsContainer = document.getElementById("cardsContainer");
+
+    let entries = [];
+
+    borderInput.addEventListener("input", () => {
+      borderValue.textContent = borderInput.value;
+    });
+
+    whiteMarginInput.addEventListener("input", () => {
+      whiteMarginValue.textContent = whiteMarginInput.value;
+    });
+
+    btnProcess.addEventListener("click", async () => {
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) {
+        alert("Primero carga una o varias imágenes PNG.");
+        return;
+      }
+
+      await buildEntriesFromFiles(files);
+    });
+
+    btnClear.addEventListener("click", () => {
+      entries = [];
+      fileInput.value = "";
+      renderCards();
+      refreshCounters();
+      refreshTopButtons();
+    });
+
+    btnDownloadAllPng.addEventListener("click", async () => {
+      if (!entries.length) return;
+
+      for (const entry of entries) {
+        if (!entry.markerBlob) continue;
+        saveAs(entry.markerBlob, entry.outputPngName);
+      }
+    });
+
+    btnGenerateAllPatt.addEventListener("click", async () => {
+      if (!entries.length) return;
+
+      for (const entry of entries) {
+        if (!entry.markerDataUrl) continue;
+        if (!entry.pattText) {
+          try {
+            entry.pattText = await generatePattFromDataUrl(entry.markerDataUrl);
+          } catch (error) {
+            console.error(error);
+            alert("Hubo un error generando uno de los archivos .patt.");
+            break;
+          }
+        }
+      }
+
+      renderCards();
+      refreshCounters();
+      refreshTopButtons();
+    });
+
+    btnDownloadAllZip.addEventListener("click", async () => {
+      if (!entries.length) return;
+
+      try {
+        const zip = new JSZip();
+
+        for (const entry of entries) {
+          if (!entry.markerBlob) continue;
+
+          zip.file(entry.outputPngName, entry.markerBlob);
+
+          if (!entry.pattText) {
+            entry.pattText = await generatePattFromDataUrl(entry.markerDataUrl);
+          }
+
+          zip.file(entry.outputPattName, entry.pattText);
+        }
+
+        const content = await zip.generateAsync({ type: "blob" });
+        saveAs(content, "enycosmic_markers_y_patt.zip");
+
+        renderCards();
+        refreshCounters();
+        refreshTopButtons();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo generar el ZIP completo.");
+      }
+    });
+
+    async function buildEntriesFromFiles(files) {
+      const outputSize = parseInt(sizeInput.value, 10) || 1024;
+      const borderRatio = (parseInt(borderInput.value, 10) || 20) / 100;
+      const whiteMarginRatio = (parseInt(whiteMarginInput.value, 10) || 8) / 100;
+
+      entries = [];
+
+      for (const file of files) {
+        const imageDataUrl = await readFileAsDataURL(file);
+        const image = await loadImage(imageDataUrl);
+
+        const markerCanvas = createMarkerCanvas({
+          image,
+          size: outputSize,
+          borderRatio,
+          whiteMarginRatio
+        });
+
+        const markerDataUrl = markerCanvas.toDataURL("image/png");
+        const markerBlob = dataUrlToBlob(markerDataUrl);
+
+        const cleanName = removeExtension(file.name);
+        const outputPngName = `${cleanName}_marker.png`;
+        const outputPattName = `${cleanName}.patt`;
+
+        entries.push({
+          id: cryptoRandomId(),
+          originalFile: file,
+          baseName: cleanName,
+          originalDataUrl: imageDataUrl,
+          originalWidth: image.width,
+          originalHeight: image.height,
+          markerCanvas,
+          markerDataUrl,
+          markerBlob,
+          outputPngName,
+          outputPattName,
+          pattText: null
+        });
+      }
+
+      renderCards();
+      refreshCounters();
+      refreshTopButtons();
+    }
+
+    function createMarkerCanvas({ image, size, borderRatio, whiteMarginRatio }) {
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      // Fondo negro total
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, size, size);
+
+      // Área blanca interna
+      const blackBorder = Math.round(size * borderRatio);
+      const whiteMargin = Math.round(size * whiteMarginRatio);
+
+      const whiteX = blackBorder;
+      const whiteY = blackBorder;
+      const whiteW = size - blackBorder * 2;
+      const whiteH = size - blackBorder * 2;
+
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(whiteX, whiteY, whiteW, whiteH);
+
+      // Área útil de imagen dentro de la zona blanca
+      const innerX = whiteX + whiteMargin;
+      const innerY = whiteY + whiteMargin;
+      const innerW = whiteW - whiteMargin * 2;
+      const innerH = whiteH - whiteMargin * 2;
+
+      fitAndDrawImage(ctx, image, innerX, innerY, innerW, innerH);
+
+      return canvas;
+    }
+
+    function fitAndDrawImage(ctx, img, x, y, w, h) {
+      const imgRatio = img.width / img.height;
+      const boxRatio = w / h;
+
+      let drawW, drawH, drawX, drawY;
+
+      if (imgRatio > boxRatio) {
+        drawW = w;
+        drawH = w / imgRatio;
+        drawX = x;
+        drawY = y + (h - drawH) / 2;
+      } else {
+        drawH = h;
+        drawW = h * imgRatio;
+        drawX = x + (w - drawW) / 2;
+        drawY = y;
+      }
+
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+
+    function renderCards() {
+      if (!entries.length) {
+        cardsContainer.innerHTML = `
+          <div class="empty-state">
+            Todavía no hay imágenes cargadas.
+          </div>
+        `;
+        return;
+      }
+
+      cardsContainer.innerHTML = "";
+
+      entries.forEach((entry) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const cardHead = document.createElement("div");
+        cardHead.className = "card-head";
+        cardHead.innerHTML = `
+          <h3 class="card-title">${escapeHtml(entry.originalFile.name)}</h3>
+          <div class="tag">${entry.originalWidth} × ${entry.originalHeight}px</div>
+        `;
+
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+
+        const previewOriginal = document.createElement("div");
+        previewOriginal.className = "preview-box";
+        previewOriginal.innerHTML = `
+          <h4>Imagen original</h4>
+          <img src="${entry.originalDataUrl}" alt="preview original">
+          <div class="meta">
+            Nombre base: ${escapeHtml(entry.baseName)}
+          </div>
+        `;
+
+        const previewMarker = document.createElement("div");
+        previewMarker.className = "preview-box";
+        previewMarker.innerHTML = `
+          <h4>Marker generado</h4>
+          <img src="${entry.markerDataUrl}" alt="preview marker">
+          <div class="meta">
+            PNG: ${escapeHtml(entry.outputPngName)}<br>
+            PATT: ${escapeHtml(entry.outputPattName)}<br>
+            Estado PATT:
+            ${
+              entry.pattText
+                ? `<span class="ok">generado</span>`
+                : `<span class="small">pendiente</span>`
+            }
+          </div>
+        `;
+
+        cardBody.appendChild(previewOriginal);
+        cardBody.appendChild(previewMarker);
+
+        const cardActions = document.createElement("div");
+        cardActions.className = "card-actions";
+
+        const btnDownloadPng = document.createElement("button");
+        btnDownloadPng.textContent = "Descargar PNG";
+        btnDownloadPng.addEventListener("click", () => {
+          saveAs(entry.markerBlob, entry.outputPngName);
+        });
+
+        const btnGeneratePatt = document.createElement("button");
+        btnGeneratePatt.className = "secondary";
+        btnGeneratePatt.textContent = entry.pattText ? "Regenerar .patt" : "Generar .patt";
+        btnGeneratePatt.addEventListener("click", async () => {
+          try {
+            btnGeneratePatt.disabled = true;
+            btnGeneratePatt.textContent = "Generando...";
+            entry.pattText = await generatePattFromDataUrl(entry.markerDataUrl);
+            renderCards();
+            refreshCounters();
+            refreshTopButtons();
+          } catch (error) {
+            console.error(error);
+            alert("No se pudo generar el archivo .patt para esta imagen.");
+            renderCards();
+          }
+        });
+
+        const btnDownloadPatt = document.createElement("button");
+        btnDownloadPatt.textContent = "Descargar .patt";
+        btnDownloadPatt.disabled = !entry.pattText;
+        btnDownloadPatt.addEventListener("click", async () => {
+          try {
+            if (!entry.pattText) {
+              entry.pattText = await generatePattFromDataUrl(entry.markerDataUrl);
+            }
+            downloadTextFile(entry.outputPattName, entry.pattText);
+            renderCards();
+            refreshCounters();
+            refreshTopButtons();
+          } catch (error) {
+            console.error(error);
+            alert("No se pudo descargar el archivo .patt.");
+          }
+        });
+
+        cardActions.appendChild(btnDownloadPng);
+        cardActions.appendChild(btnGeneratePatt);
+        cardActions.appendChild(btnDownloadPatt);
+
+        card.appendChild(cardHead);
+        card.appendChild(cardBody);
+        card.appendChild(cardActions);
+
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function refreshCounters() {
+      fileCount.textContent = String(entries.length);
+      markerCount.textContent = String(entries.filter(e => !!e.markerBlob).length);
+      pattCount.textContent = String(entries.filter(e => !!e.pattText).length);
+    }
+
+    function refreshTopButtons() {
+      const hasEntries = entries.length > 0;
+      btnDownloadAllPng.disabled = !hasEntries;
+      btnGenerateAllPatt.disabled = !hasEntries;
+      btnDownloadAllZip.disabled = !hasEntries;
+    }
+
+    function generatePattFromDataUrl(dataUrl) {
+      return new Promise((resolve, reject) => {
+        if (!window.THREEx || !THREEx.ArPatternFile) {
+          reject(new Error("THREEx.ArPatternFile no está disponible."));
+          return;
+        }
+
+        try {
+          THREEx.ArPatternFile.encodeImageURL(dataUrl, function (patternFileString) {
+            resolve(patternFileString);
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    function removeExtension(filename) {
+      return filename.replace(/\.[^/.]+$/, "");
+    }
+
+    function dataUrlToBlob(dataUrl) {
+      const parts = dataUrl.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const binary = atob(parts[1]);
+      const array = [];
+
+      for (let i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+      }
+
+      return new Blob([new Uint8Array(array)], { type: mime });
+    }
+
+    function downloadTextFile(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      saveAs(blob, filename);
+    }
+
+    function cryptoRandomId() {
+      return "id_" + Math.random().toString(36).slice(2, 11);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>
