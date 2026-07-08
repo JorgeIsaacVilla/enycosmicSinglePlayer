@@ -36,8 +36,8 @@ const tarjetasEspecialidad = [
     {
         id: "ec2",
         nombre: "Tarjeta EC2",
-        patternUrl: "./src/-ec2.patt",
-        glbUrl: "./src/-ec2.glb",
+        patternUrl: "./src/ec2.patt",
+        glbUrl: "./src/ec2.glb",
 
         scale: 1.2,
         x: 1,

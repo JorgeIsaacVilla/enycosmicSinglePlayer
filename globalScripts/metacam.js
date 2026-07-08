@@ -9,7 +9,7 @@ registerGlobalModule("metacam_ar", {
         ensureMetaMapCSS();
       }
 
-      console.log("Abrir Cámara AR en index.html");
+      console.log("Abrir Cámara AR en iframe");
 
       if (document.getElementById("camera-ar-overlay")) return;
 
@@ -17,30 +17,134 @@ registerGlobalModule("metacam_ar", {
       const gameCanvas = document.getElementById("game");
       const previousGameCanvasVisibility = gameCanvas ? gameCanvas.style.visibility : "";
 
+      if (!wrap) {
+        console.error("No existe el contenedor #wrap");
+        return;
+      }
+
       wrap.insertAdjacentHTML(
         "beforeend",
         `
-          <div id="camera-ar-overlay">
-            <div class="camera-ar-header">
-              <div class="camera-ar-title">MetaCam AR</div>
-              <button class="camera-ar-close" type="button" aria-label="Cerrar">✕</button>
-            </div>
+          <div
+            id="camera-ar-overlay"
+            style="
+              position: fixed;
+              width: 100vw;
+              height: 100vh;
+              z-index: 999999;
+              background: rgba(0, 0, 0, 0.55);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 14px;
+              box-sizing: border-box;
+            "
+          >
+            <div
+              id="camera-ar-panel"
+              style="
+                position: relative;
+                width: min(96vw, 1100px);
+                height: min(90vh, 760px);
+                background: #000;
+                border: 3px solid #00ffd5;
+                box-shadow:
+                  0 0 0 2px #001a24,
+                  6px 6px 0 #000,
+                  0 0 24px rgba(0, 255, 213, 0.45);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                font-family: 'Courier New', monospace;
+              "
+            >
+              <div
+                class="camera-ar-header"
+                style="
+                  height: 42px;
+                  min-height: 42px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 0 8px 0 12px;
+                  box-sizing: border-box;
+                  background: rgba(0, 0, 0, 0.88);
+                  border-bottom: 3px solid #00ffd5;
+                  color: #00ffd5;
+                "
+              >
+                <div
+                  class="camera-ar-title"
+                  style="
+                    font-size: 13px;
+                    font-weight: 900;
+                    letter-spacing: 1px;
+                    text-transform: uppercase;
+                    text-shadow:
+                      2px 2px 0 #000,
+                      0 0 8px rgba(0, 255, 213, 0.8);
+                  "
+                >
+                  MetaCam AR
+                </div>
 
-            <div class="camera-ar-stage" id="camera-ar-stage">
-              <div class="camera-ar-info" id="camera-ar-info">
-                Apunta la cámara a tu marcador para ver el video en AR.<br>
-                (Toca la pantalla una vez si el video no arranca).
+                <button
+                  class="camera-ar-close"
+                  type="button"
+                  aria-label="Cerrar"
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    border: 2px solid #00ffd5;
+                    border-radius: 0;
+                    background: rgba(0, 0, 0, 0.9);
+                    color: #00ffd5;
+                    font-family: 'Courier New', monospace;
+                    font-size: 16px;
+                    font-weight: 900;
+                    line-height: 1;
+                    cursor: pointer;
+                    box-shadow:
+                      3px 3px 0 #000,
+                      0 0 0 1px rgba(255,255,255,0.12) inset;
+                  "
+                >
+                  X
+                </button>
               </div>
 
-              <video
-                id="camera-ar-video-source"
-                class="camera-ar-video-source"
-                src="./interactions/MetaCamAR/src/render.mp4"
-                loop
-                muted
-                playsinline
-                webkit-playsinline
-              ></video>
+              <div
+                id="camera-ar-stage"
+                style="
+                  position: relative;
+                  flex: 1;
+                  width: 100%;
+                  height: 100%;
+                  min-height: 0;
+                  overflow: hidden;
+                  background: #000;
+                "
+              >
+                <iframe
+                  id="camera-ar-iframe"
+                  src="https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html"
+                  allow="camera; microphone; fullscreen; autoplay; xr-spatial-tracking"
+                  allowfullscreen
+                  style="
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    min-width: 100%;
+                    min-height: 100%;
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                    display: block;
+                    background: #000;
+                  "
+                ></iframe>
+              </div>
             </div>
           </div>
         `
@@ -51,248 +155,41 @@ registerGlobalModule("metacam_ar", {
       }
 
       const overlay = document.getElementById("camera-ar-overlay");
-      const stage = overlay.querySelector("#camera-ar-stage");
-      const infoEl = overlay.querySelector("#camera-ar-info");
       const closeBtn = overlay.querySelector(".camera-ar-close");
-      const videoEl = overlay.querySelector("#camera-ar-video-source");
-
-      const state = {
-        scene: null,
-        camera: null,
-        renderer: null,
-        arToolkitSource: null,
-        arToolkitContext: null,
-        markerRoot: null,
-        videoTexture: null,
-        animationId: null,
-        resizeHandler: null,
-        camVideoEl: null
-      };
-
-      function loadScriptOnce(src) {
-        return new Promise((resolve, reject) => {
-          const existing = document.querySelector(`script[src="${src}"]`);
-          if (existing) {
-            if (existing.dataset.loaded === "true") {
-              resolve();
-              return;
-            }
-            existing.addEventListener("load", () => resolve(), { once: true });
-            existing.addEventListener("error", reject, { once: true });
-            return;
-          }
-
-          const s = document.createElement("script");
-          s.src = src;
-          s.async = true;
-          s.onload = () => {
-            s.dataset.loaded = "true";
-            resolve();
-          };
-          s.onerror = reject;
-          document.head.appendChild(s);
-        });
-      }
+      const iframe = document.getElementById("camera-ar-iframe");
 
       function closeCameraAR() {
-        if (state.animationId) {
-          cancelAnimationFrame(state.animationId);
-          state.animationId = null;
+        if (iframe) {
+          iframe.src = "about:blank";
         }
-
-        if (state.resizeHandler) {
-          window.removeEventListener("resize", state.resizeHandler);
-        }
-
-        try {
-          if (state.videoTexture) {
-            state.videoTexture.dispose();
-          }
-        } catch (err) {}
-
-        try {
-          if (state.renderer) {
-            state.renderer.dispose();
-            if (state.renderer.domElement && state.renderer.domElement.parentNode) {
-              state.renderer.domElement.parentNode.removeChild(state.renderer.domElement);
-            }
-          }
-        } catch (err) {}
-
-        try {
-          if (state.camVideoEl && state.camVideoEl.srcObject) {
-            state.camVideoEl.srcObject.getTracks().forEach(track => track.stop());
-          }
-          if (state.camVideoEl && state.camVideoEl.parentNode) {
-            state.camVideoEl.parentNode.removeChild(state.camVideoEl);
-          }
-        } catch (err) {}
-
-        try {
-          videoEl.pause();
-          videoEl.removeAttribute("src");
-          videoEl.load();
-        } catch (err) {}
 
         if (gameCanvas) {
           gameCanvas.style.visibility = previousGameCanvasVisibility;
         }
 
-        if (overlay.parentNode) {
+        if (overlay && overlay.parentNode) {
           overlay.parentNode.removeChild(overlay);
         }
       }
 
       closeBtn.addEventListener("click", closeCameraAR);
-      closeBtn.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        closeCameraAR();
-      }, { passive: false });
 
-      Promise.all([
-        loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),
-        loadScriptOnce("https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/three.js/build/ar-threex.js")
-      ]).then(() => {
-        const THREE = window.THREE;
-        const THREEx = window.THREEx;
+      closeBtn.addEventListener(
+        "pointerdown",
+        function (e) {
+          e.preventDefault();
+          closeCameraAR();
+        },
+        { passive: false }
+      );
 
-        if (!THREE || !THREEx) {
-          throw new Error("Three.js o AR.js no cargaron.");
-        }
-
-        state.scene = new THREE.Scene();
-
-        state.camera = new THREE.Camera();
-        state.scene.add(state.camera);
-
-        state.renderer = new THREE.WebGLRenderer({
-          antialias: true,
-          alpha: true,
-          preserveDrawingBuffer: false
-        });
-        state.renderer.setClearColor(0x000000, 0);
-        state.renderer.setPixelRatio(window.devicePixelRatio || 1);
-        state.renderer.setSize(stage.clientWidth, stage.clientHeight);
-        state.renderer.domElement.style.position = "absolute";
-        state.renderer.domElement.style.top = "0";
-        state.renderer.domElement.style.left = "0";
-        state.renderer.domElement.style.width = "100%";
-        state.renderer.domElement.style.height = "100%";
-        state.renderer.domElement.style.zIndex = "2";
-        state.renderer.domElement.style.pointerEvents = "none";
-        state.renderer.domElement.style.background = "transparent";
-        stage.appendChild(state.renderer.domElement);
-
-        state.arToolkitSource = new THREEx.ArToolkitSource({
-          sourceType: "webcam"
-        });
-
-        state.resizeHandler = function () {
-          if (!state.arToolkitSource) return;
-
-          state.renderer.setSize(stage.clientWidth, stage.clientHeight);
-
-          state.arToolkitSource.onResize();
-          state.arToolkitSource.copySizeTo(state.renderer.domElement);
-
-          if (state.arToolkitContext && state.arToolkitContext.arController !== null) {
-            state.arToolkitSource.copySizeTo(state.arToolkitContext.arController.canvas);
-          }
-        };
-
-        state.arToolkitSource.init(() => {
-          state.resizeHandler();
-
-          if (state.arToolkitSource.domElement) {
-            state.camVideoEl = state.arToolkitSource.domElement;
-            state.camVideoEl.style.position = "absolute";
-            state.camVideoEl.style.top = "0";
-            state.camVideoEl.style.left = "0";
-            state.camVideoEl.style.width = "100%";
-            state.camVideoEl.style.height = "100%";
-            state.camVideoEl.style.objectFit = "cover";
-            state.camVideoEl.style.zIndex = "1";
-            state.camVideoEl.style.background = "transparent";
-            stage.appendChild(state.camVideoEl);
-          }
-        });
-
-        window.addEventListener("resize", state.resizeHandler);
-
-        state.arToolkitContext = new THREEx.ArToolkitContext({
-          cameraParametersUrl: "./interactions/MetaCamAR/repo/camera_para.dat",
-          detectionMode: "mono"
-        });
-
-        state.arToolkitContext.init(() => {
-          state.camera.projectionMatrix.copy(state.arToolkitContext.getProjectionMatrix());
-        });
-
-        state.markerRoot = new THREE.Group();
-        state.scene.add(state.markerRoot);
-
-        new THREEx.ArMarkerControls(state.arToolkitContext, state.markerRoot, {
-          type: "pattern",
-          patternUrl: "./interactions/MetaCamAR/src/markerQR.patt"
-        });
-
-        const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-        state.scene.add(light);
-
-        const tryPlayVideo = () => {
-          if (videoEl.paused) {
-            videoEl.play().catch(() => {});
-          }
-        };
-
-        stage.addEventListener("click", tryPlayVideo, { once: true });
-        stage.addEventListener("touchstart", tryPlayVideo, { once: true, passive: true });
-
-        state.videoTexture = new THREE.VideoTexture(videoEl);
-        state.videoTexture.minFilter = THREE.LinearFilter;
-        state.videoTexture.magFilter = THREE.LinearFilter;
-        state.videoTexture.format = THREE.RGBFormat;
-
-        const planeGeo = new THREE.PlaneGeometry(1.6, 0.9);
-        const planeMat = new THREE.MeshBasicMaterial({
-          map: state.videoTexture,
-          side: THREE.DoubleSide
-        });
-
-        const videoPlane = new THREE.Mesh(planeGeo, planeMat);
-        videoPlane.position.y = 0;
-        videoPlane.rotation.x = -Math.PI / 2;
-        state.markerRoot.add(videoPlane);
-
-        function update() {
-          if (state.arToolkitSource && state.arToolkitSource.ready !== false) {
-            state.arToolkitContext.update(state.arToolkitSource.domElement);
-
-            if (state.markerRoot.visible) {
-              if (videoEl.paused) {
-                videoEl.play().catch(() => {});
-              }
-              infoEl.style.display = "none";
-            }
-          }
-        }
-
-        function render() {
-          state.renderer.render(state.scene, state.camera);
-        }
-
-        function animate() {
-          if (!document.getElementById("camera-ar-overlay")) return;
-          state.animationId = requestAnimationFrame(animate);
-          update();
-          render();
-        }
-
-        animate();
-      }).catch((err) => {
-        console.error("Error cargando Camera AR:", err);
-        infoEl.innerHTML = `No se pudo iniciar la cámara AR.`;
-      });
+      overlay.addEventListener(
+        "pointerdown",
+        function (e) {
+          e.stopPropagation();
+        },
+        { passive: true }
+      );
     };
   }
 });
