@@ -9335,8 +9335,8 @@
   {
     "zona_id": "ec1_16234",
     "color": null,
-    "tipo": "visual",
-    "funcion": null,
+    "tipo": "visual cliqueable",
+    "funcion": "abrirDocumentoEncriptadoEc1",
     "x": 852,
     "y": 381,
     "w": 17,
@@ -9350,8 +9350,8 @@
   {
     "zona_id": "ec2_16235",
     "color": null,
-    "tipo": "visual",
-    "funcion": null,
+    "tipo": "visual cliqueable",
+    "funcion": "abrirDocumentoEncriptadoEc2",
     "x": 98,
     "y": 3517,
     "w": 17,
@@ -9365,8 +9365,8 @@
   {
     "zona_id": "ec3_16236",
     "color": null,
-    "tipo": "visual",
-    "funcion": null,
+    "tipo": "visual cliqueable",
+    "funcion": "abrirDocumentoEncriptadoEc3",
     "x": 1539,
     "y": 4967,
     "w": 17,

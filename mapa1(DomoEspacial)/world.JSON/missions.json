@@ -1226,7 +1226,9 @@
       },
       "condiciones": {
         "nivelIQMinimo": 0,
-        "misionesRequeridas": [],
+        "misionesRequeridas": [
+          "m2"
+        ],
         "itemsRequeridos": []
       },
       "npcs": [
@@ -1379,7 +1381,7 @@
           "tipo": "hablar_npc",
           "npcId": "npc02",
           "titulo": "Habla con Jack",
-          "descripcion": "Busca a Jack para descubrir qué encontró y por qué perdió las tarjetas con las ecuaciones.",
+          "descripcion": "Busca a Jack para descubrir qué encontró.",
           "estadoInicial": false,
           "verificador": {
             "tipoObjetivo": "npc",

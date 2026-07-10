@@ -15514,6 +15514,1249 @@ function continuarTrasGameOver() {
 /*ESPACIO DE NUEVAS FUNCIONES PARA MAPAS INDIVIDUALES (INICIO) */
 //En este espacio se pondrán las funciones inerentes a las misiones he interacciones en cada mapa por individual. ya que cada mapa tendrá su sistema de misiones. internas.
 // ======================================================
+
+// ======================================================
+// DOCUMENTOS ENCRIPTADOS EC
+// Formato NPCmissions + PNG carta + QR generado en JS
+// ======================================================
+
+const DOCUMENTOS_ENCRIPTADOS_EC = {
+  ec1_16234: {
+    id: "ec1",
+    zonaId: "ec1_16234",
+    tituloChat: "INFORME",
+    tituloPNG: "Mensaje encriptado",
+    subtituloPNG: "Ecuación lineal ec1",
+    nombreArchivo: "mensaje_encriptado_ec1.png",
+    avatarUrl: "../assets/spriteAmbiente/informe.svg",
+    avatarZoom: 4,
+    markerUrl: "../interactions/MetaCamAR/src/ec1_marker.png",
+    metaCamUrl: "https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html",
+    logoUrls: [
+      "../assets/src/logo.png",
+      "../assets/logo.png",
+      "https://enycosmicplayer.vercel.app/assets/src/logo.png"
+    ],
+    lines: [
+      { imageType: "avatar", text: "Parece un documento importante." },
+      { imageType: "avatar", text: "Está extraviado." },
+      { imageType: "avatar", text: "Creo que lo abriré." },
+      { imageType: "marker", text: "Parece escritura alienígena." },
+      { imageType: "marker", text: "¿Será un mensaje encriptado?" },
+      { imageType: "marker", text: "Tengo que imprimir este documento." },
+      { imageType: "marker", text: "Luego usaré la metacámara de mi metafón." },
+      { imageType: "marker", text: "Quizá el algoritmo revele algo." }
+    ]
+  },
+
+  ec2_16235: {
+    id: "ec2",
+    zonaId: "ec2_16235",
+    tituloChat: "INFORME",
+    tituloPNG: "Mensaje encriptado",
+    subtituloPNG: "Ecuación lineal ec2",
+    nombreArchivo: "mensaje_encriptado_ec2.png",
+    avatarUrl: "../assets/spriteAmbiente/informe.svg",
+    avatarZoom: 4,
+    markerUrl: "../interactions/MetaCamAR/src/ec2_marker.png",
+    metaCamUrl: "https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html",
+    logoUrls: [
+      "../assets/src/logo.png",
+      "../assets/logo.png",
+      "https://enycosmicplayer.vercel.app/assets/src/logo.png"
+    ],
+    lines: [
+      { imageType: "avatar", text: "¿Qué? ¿Un documento?" },
+      { imageType: "avatar", text: "Esto será..." },
+      { imageType: "avatar", text: "No puede ser." },
+      { imageType: "marker", text: "Tiene escritura de origen alienígena." },
+      { imageType: "marker", text: "Está encriptada." },
+      { imageType: "marker", text: "Tengo que imprimir este documento." },
+      { imageType: "marker", text: "Luego usaré la metacámara de mi metafón." },
+      { imageType: "marker", text: "El algoritmo de mi metafón podría descifrarlo." }
+    ]
+  },
+
+  ec3_16236: {
+    id: "ec3",
+    zonaId: "ec3_16236",
+    tituloChat: "INFORME",
+    tituloPNG: "Mensaje encriptado",
+    subtituloPNG: "Ecuación lineal ec3",
+    nombreArchivo: "mensaje_encriptado_ec3.png",
+    avatarUrl: "../assets/spriteAmbiente/informe.svg",
+    avatarZoom: 4,
+    markerUrl: "../interactions/MetaCamAR/src/ec3_marker.png",
+    metaCamUrl: "https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html",
+    logoUrls: [
+      "../assets/src/logo.png",
+      "../assets/logo.png",
+      "https://enycosmicplayer.vercel.app/assets/src/logo.png"
+    ],
+    lines: [
+      { imageType: "avatar", text: "¿Un informe perdido?" },
+      { imageType: "avatar", text: "Tiene algo extraño." },
+      { imageType: "avatar", text: "Lo revisaré con cuidado." },
+      { imageType: "marker", text: "Es un código secreto." },
+      { imageType: "marker", text: "Parece parte de una secuencia." },
+      { imageType: "marker", text: "Tengo que imprimir este documento." },
+      { imageType: "marker", text: "Después usaré la metacámara de mi metafón." },
+      { imageType: "marker", text: "Tal vez revele algún mensaje encriptado." }
+    ]
+  }
+};
+
+let documentoEncriptadoActual = null;
+let documentoEncriptadoPasoActual = 0;
+let documentoEncriptadoDescargado = false;
+let documentoEncriptadoLock = false;
+
+// ======================================================
+// ESTILOS DEL CHAT DESDE JAVASCRIPT
+// Similar al formato NPCmissions
+// ======================================================
+
+function inyectarEstilosDocumentosEncriptadosEC() {
+  if (document.getElementById("documentos-encriptados-ec-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "documentos-encriptados-ec-styles";
+
+  style.textContent = `
+    #documento-encriptado-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(0, 0, 0, 0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      pointer-events: auto;
+      font-family: arcade, monospace;
+      image-rendering: pixelated;
+    }
+
+    #documento-encriptado-panel {
+      width: min(94vw, 520px);
+      background: #000;
+      color: #00ffcc;
+      border: 3px solid #00ffcc;
+      box-shadow:
+        0 0 0 2px #032b2b,
+        0 0 24px rgba(0,255,204,.34),
+        0 18px 40px rgba(0,0,0,.72);
+      display: grid;
+      grid-template-rows: 42px 220px auto;
+      overflow: hidden;
+      box-sizing: border-box;
+      image-rendering: pixelated;
+    }
+
+    #documento-encriptado-header {
+      height: 42px;
+      min-height: 42px;
+      background:
+        linear-gradient(90deg, rgba(0,255,204,.14), rgba(0,0,0,.95), rgba(0,255,204,.14)),
+        #050505;
+      border-bottom: 2px solid rgba(0,255,204,.78);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 8px;
+      box-sizing: border-box;
+    }
+
+    #documento-encriptado-title {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00ffcc;
+      line-height: 1;
+    }
+
+    #documento-encriptado-close {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #00ffcc;
+      background: #001c18;
+      color: #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 13px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-sizing: border-box;
+      padding: 0;
+    }
+
+    #documento-encriptado-portrait-wrap {
+      height: 220px;
+      min-height: 220px;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,255,204,.035) 0px,
+          rgba(0,255,204,.035) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        radial-gradient(circle at center, rgba(0,255,204,.10), transparent 54%),
+        #020706;
+      border-bottom: 2px solid rgba(0,255,204,.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+
+    #documento-encriptado-portrait {
+      display: block;
+      max-width: 92%;
+      max-height: 92%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      transform-origin: center center;
+      filter:
+        drop-shadow(0 0 8px rgba(0,255,204,.34))
+        drop-shadow(0 0 18px rgba(0,255,204,.16));
+    }
+
+    #documento-encriptado-portrait.is-marker {
+      background: #ffffff;
+      padding: 8px;
+      border: 0;
+      image-rendering: auto;
+      transform: scale(1) !important;
+      filter: drop-shadow(0 0 10px rgba(0,255,204,.24));
+    }
+
+    #documento-encriptado-footer {
+      min-height: 126px;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,255,204,.04) 0px,
+          rgba(0,255,204,.04) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        #020706;
+      padding: 14px 14px 12px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    #documento-encriptado-line {
+      margin: 0;
+      color: #ffffff;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.7;
+      min-height: 38px;
+      text-shadow: 0 0 8px rgba(0,255,204,.42);
+      letter-spacing: .2px;
+    }
+
+    #documento-encriptado-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .documento-encriptado-btn {
+      min-width: 96px;
+      min-height: 34px;
+      border: 3px solid #00ffcc;
+      background: #001c18;
+      color: #00ffcc;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      line-height: 1;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+
+    .documento-encriptado-btn:active,
+    #documento-encriptado-close:active {
+      transform: translateY(2px);
+    }
+
+    .documento-encriptado-btn:disabled {
+      opacity: .42;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #documento-encriptado-popup {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 1000000;
+      background: #000;
+      border: 3px solid #00ffcc;
+      color: #ffffff;
+      padding: 14px 16px;
+      font-family: arcade, monospace;
+      font-size: 10px;
+      line-height: 1.6;
+      box-shadow:
+        0 0 0 2px #032b2b,
+        0 0 20px rgba(0,255,204,.32);
+      display: none;
+      text-align: center;
+      max-width: 86vw;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 540px) {
+      #documento-encriptado-panel {
+        width: min(94vw, 440px);
+        grid-template-rows: 42px 190px auto;
+      }
+
+      #documento-encriptado-portrait-wrap {
+        height: 190px;
+        min-height: 190px;
+      }
+
+      #documento-encriptado-line {
+        font-size: 10px;
+      }
+
+      .documento-encriptado-btn {
+        min-width: 92px;
+        font-size: 9px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+// ======================================================
+// UI DEL CHAT
+// ======================================================
+
+function crearUIDocumentoEncriptadoSiNoExiste() {
+  inyectarEstilosDocumentosEncriptadosEC();
+
+  if (document.getElementById("documento-encriptado-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "documento-encriptado-overlay";
+
+  overlay.innerHTML = `
+    <div id="documento-encriptado-panel">
+      <div id="documento-encriptado-header">
+        <div id="documento-encriptado-title">INFORME</div>
+        <button id="documento-encriptado-close" type="button">X</button>
+      </div>
+
+      <div id="documento-encriptado-portrait-wrap">
+        <img id="documento-encriptado-portrait" src="" alt="Documento">
+      </div>
+
+      <div id="documento-encriptado-footer">
+        <p id="documento-encriptado-line">...</p>
+        <div id="documento-encriptado-actions"></div>
+      </div>
+    </div>
+  `;
+
+  const popup = document.createElement("div");
+  popup.id = "documento-encriptado-popup";
+  popup.textContent = "Código encriptado descargado exitosamente.";
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(popup);
+
+  const closeBtn = overlay.querySelector("#documento-encriptado-close");
+
+  closeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    cerrarDocumentoEncriptado();
+  });
+
+  closeBtn.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    e.preventDefault();
+    cerrarDocumentoEncriptado();
+  }, { passive: false });
+}
+
+function abrirDocumentoEncriptadoPorZona(zonaId) {
+  const config = DOCUMENTOS_ENCRIPTADOS_EC[zonaId];
+
+  if (!config) {
+    console.warn("No existe documento encriptado para:", zonaId);
+    return;
+  }
+
+  crearUIDocumentoEncriptadoSiNoExiste();
+
+  documentoEncriptadoActual = config;
+  documentoEncriptadoPasoActual = 0;
+  documentoEncriptadoDescargado = false;
+
+  document.getElementById("documento-encriptado-overlay").style.display = "flex";
+
+  renderDocumentoEncriptadoPaso();
+}
+
+function abrirDocumentoEncriptadoEc1() {
+  abrirDocumentoEncriptadoPorZona("ec1_16234");
+}
+
+function abrirDocumentoEncriptadoEc2() {
+  abrirDocumentoEncriptadoPorZona("ec2_16235");
+}
+
+function abrirDocumentoEncriptadoEc3() {
+  abrirDocumentoEncriptadoPorZona("ec3_16236");
+}
+
+function cerrarDocumentoEncriptado() {
+  if (typeof playtockSound === "function") playtockSound();
+
+  const overlay = document.getElementById("documento-encriptado-overlay");
+  if (overlay) overlay.style.display = "none";
+
+  documentoEncriptadoActual = null;
+  documentoEncriptadoPasoActual = 0;
+  documentoEncriptadoDescargado = false;
+}
+
+function renderDocumentoEncriptadoPaso() {
+  if (!documentoEncriptadoActual) return;
+
+  const config = documentoEncriptadoActual;
+  const line = config.lines[documentoEncriptadoPasoActual];
+  const total = config.lines.length;
+  const atFirst = documentoEncriptadoPasoActual <= 0;
+  const atLast = documentoEncriptadoPasoActual >= total - 1;
+
+  const titleEl = document.getElementById("documento-encriptado-title");
+  const portraitEl = document.getElementById("documento-encriptado-portrait");
+  const lineEl = document.getElementById("documento-encriptado-line");
+  const actionsEl = document.getElementById("documento-encriptado-actions");
+
+  if (!titleEl || !portraitEl || !lineEl || !actionsEl) return;
+
+  titleEl.textContent = config.tituloChat || "INFORME";
+  lineEl.textContent = line?.text || "...";
+
+  if (line?.imageType === "marker") {
+    portraitEl.src = config.markerUrl;
+    portraitEl.alt = config.subtituloPNG;
+    portraitEl.className = "is-marker";
+    portraitEl.style.transform = "scale(1)";
+  } else {
+    portraitEl.src = config.avatarUrl;
+    portraitEl.alt = "Informe";
+    portraitEl.className = "";
+    portraitEl.style.transform = `scale(${config.avatarZoom || 1})`;
+  }
+
+  let buttonsHTML = "";
+
+  if (!atFirst) {
+    buttonsHTML += `
+      <button class="documento-encriptado-btn" type="button" data-doc-action="prev">Anterior</button>
+    `;
+  }
+
+  if (!atLast) {
+    buttonsHTML += `
+      <button class="documento-encriptado-btn" type="button" data-doc-action="next">Siguiente</button>
+    `;
+  } else if (!documentoEncriptadoDescargado) {
+    buttonsHTML += `
+      <button class="documento-encriptado-btn" type="button" data-doc-action="download">Descargar PNG</button>
+    `;
+  } else {
+    buttonsHTML += `
+      <button class="documento-encriptado-btn" type="button" data-doc-action="close">Cerrar</button>
+    `;
+  }
+
+  actionsEl.innerHTML = buttonsHTML;
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest?.("#documento-encriptado-actions [data-doc-action]");
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  handleDocumentoEncriptadoAction(btn.dataset.docAction);
+}, true);
+
+document.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "mouse") return;
+
+  const btn = e.target.closest?.("#documento-encriptado-actions [data-doc-action]");
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  handleDocumentoEncriptadoAction(btn.dataset.docAction);
+}, { capture: true, passive: false });
+
+async function handleDocumentoEncriptadoAction(action) {
+  if (documentoEncriptadoLock) return;
+
+  documentoEncriptadoLock = true;
+
+  setTimeout(() => {
+    documentoEncriptadoLock = false;
+  }, 350);
+
+  if (typeof playtockSound === "function") playtockSound();
+
+  if (action === "prev") {
+    documentoEncriptadoPasoActual = Math.max(0, documentoEncriptadoPasoActual - 1);
+    renderDocumentoEncriptadoPaso();
+    return;
+  }
+
+  if (action === "next") {
+    const total = documentoEncriptadoActual?.lines?.length || 1;
+    documentoEncriptadoPasoActual = Math.min(total - 1, documentoEncriptadoPasoActual + 1);
+    renderDocumentoEncriptadoPaso();
+    return;
+  }
+
+  if (action === "download") {
+    await accionFinalDocumentoEncriptado();
+    return;
+  }
+
+  if (action === "close") {
+    cerrarDocumentoEncriptado();
+  }
+}
+
+async function accionFinalDocumentoEncriptado() {
+  if (!documentoEncriptadoActual) return;
+
+  if (documentoEncriptadoDescargado) {
+    cerrarDocumentoEncriptado();
+    return;
+  }
+
+  try {
+    await descargarPNGDocumentoEncriptado(documentoEncriptadoActual);
+
+    documentoEncriptadoDescargado = true;
+    mostrarPopupDocumentoEncriptado("Código encriptado descargado exitosamente.");
+    renderDocumentoEncriptadoPaso();
+  } catch (error) {
+    console.error("Error generando PNG:", error);
+    alert("No se pudo generar el PNG. Revisa la ruta del marker o logo.");
+  }
+}
+
+function mostrarPopupDocumentoEncriptado(texto) {
+  const popup = document.getElementById("documento-encriptado-popup");
+  if (!popup) return;
+
+  popup.textContent = texto;
+  popup.style.display = "block";
+
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 2600);
+}
+
+// ======================================================
+// PNG CARTA IMPRIMIBLE ESTILO ENYCOSMIC
+// AQUÍ VA EL DISEÑO DE LA HOJA COMPLETA
+// ======================================================
+
+async function descargarPNGDocumentoEncriptado(config) {
+  const markerImg = await cargarImagenEC(config.markerUrl);
+  const qrImg = await generarQRCanvasEny(config.metaCamUrl, 820);
+
+  let logoImg = null;
+
+  for (const logoUrl of config.logoUrls || []) {
+    try {
+      logoImg = await cargarImagenEC(logoUrl);
+      break;
+    } catch (_) { }
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1275;
+  canvas.height = 1650;
+
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width;
+  const H = canvas.height;
+
+  const COL = {
+    paper: "#fbffff",
+    ink: "#123640",
+    softInk: "#2a5c67",
+    line: "#0aaeb7",
+    lineSoft: "rgba(10,174,183,0.22)",
+    lineVerySoft: "rgba(10,174,183,0.10)",
+    glow: "rgba(0,255,210,0.12)",
+    glow2: "rgba(127,92,255,0.10)",
+    accent: "#6e44ff",
+    accent2: "#00d9d9",
+    gold: "#c6b56f"
+  };
+
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.fillStyle = COL.paper;
+  ctx.fillRect(0, 0, W, H);
+
+  const gradTop = ctx.createRadialGradient(W * 0.5, 120, 80, W * 0.5, 120, 580);
+  gradTop.addColorStop(0, "rgba(110,68,255,0.10)");
+  gradTop.addColorStop(0.45, "rgba(0,217,217,0.08)");
+  gradTop.addColorStop(1, "rgba(0,217,217,0)");
+  ctx.fillStyle = gradTop;
+  ctx.fillRect(0, 0, W, 350);
+
+  const gradBottom = ctx.createRadialGradient(W * 0.5, H - 180, 80, W * 0.5, H - 180, 620);
+  gradBottom.addColorStop(0, "rgba(0,217,217,0.07)");
+  gradBottom.addColorStop(0.55, "rgba(110,68,255,0.05)");
+  gradBottom.addColorStop(1, "rgba(0,217,217,0)");
+  ctx.fillStyle = gradBottom;
+  ctx.fillRect(0, H - 380, W, 380);
+
+  ctx.strokeStyle = "rgba(10,174,183,0.78)";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(42, 42, W - 84, H - 84);
+
+  ctx.strokeStyle = "rgba(10,174,183,0.92)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(62, 62, W - 124, H - 124);
+
+  drawEnycosmicPaperDecor(ctx, W, H, COL);
+
+  const headerY = 82;
+
+  if (logoImg) {
+    ctx.save();
+    ctx.shadowColor = "rgba(110,68,255,0.16)";
+    ctx.shadowBlur = 18;
+    dibujarImagenContainEC(ctx, logoImg, 95, 82, 92, 92);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = "#075965";
+    ctx.font = "bold 24px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText("ENYCOSMIC", 95, 130);
+  }
+
+  ctx.fillStyle = "#0a2d36";
+  ctx.font = "bold 42px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(config.tituloPNG || "Mensaje encriptado", W / 2, headerY + 38);
+
+  ctx.fillStyle = "#0b6f85";
+  ctx.font = "28px Arial";
+  ctx.fillText(config.subtituloPNG || "", W / 2, headerY + 80);
+
+  ctx.strokeStyle = COL.line;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(115, 185);
+  ctx.lineTo(W - 115, 185);
+  ctx.stroke();
+
+  ctx.fillStyle = "#163840";
+  ctx.font = "bold 26px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("Instrucciones", 115, 245);
+
+  ctx.fillStyle = "#2a2a2a";
+  ctx.font = "18px Arial";
+
+  const leftTextX = 115;
+  let lineY = 285;
+  const lineHeight = 30;
+
+  const instrucciones = [
+    "1. Imprime este documento.",
+    "2. Recorta el código encriptado en full calidad. Ten cuidado de no romper",
+    "   ni dañar el código negro, ya que si se altera puede dejar de funcionar.",
+    "   Se recomienda dejar bordes blancos alrededor del código.",
+    "3. El paso más importante: entra desde tu teléfono celular o desde un",
+    "   dispositivo con cámara a la siguiente página:",
+    config.metaCamUrl || "https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html",
+    "   O escanea con tu dispositivo el código QR incluido en este documento.",
+    "4. Descifra el mensaje oculto."
+  ];
+
+  for (const txt of instrucciones) {
+    if (txt === (config.metaCamUrl || "https://enycosmicplayer.vercel.app/interactions/MetaCamAR/index.html")) {
+      ctx.fillStyle = "#173d7a";
+      ctx.font = "18px Arial";
+      ctx.fillText(txt, leftTextX, lineY);
+      ctx.fillStyle = "#2a2a2a";
+      ctx.font = "18px Arial";
+    } else {
+      ctx.fillText(txt, leftTextX, lineY);
+    }
+
+    lineY += lineHeight;
+  }
+
+  const qrSize = 135;
+  const qrX = W - 305;
+  const qrY = 275;
+
+  ctx.save();
+  ctx.fillStyle = "rgba(10,174,183,0.04)";
+  ctx.fillRect(qrX - 14, qrY - 14, qrSize + 28, qrSize + 28);
+  ctx.strokeStyle = "rgba(10,174,183,0.35)";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(qrX - 14, qrY - 14, qrSize + 28, qrSize + 28);
+  ctx.restore();
+
+  ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+  ctx.fillStyle = "#244850";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+
+  wrapTextCanvasEC(
+    ctx,
+    "Escanea este QR para abrir la metacámara.",
+    qrX + qrSize / 2,
+    qrY + qrSize + 28,
+    200,
+    19
+  );
+
+  const cutAreaX = 220;
+  const cutAreaY = 760;
+  const cutAreaW = 700;
+  const cutAreaH = 700;
+
+  ctx.fillStyle = "#0b6f85";
+  ctx.font = "bold 18px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("Recorta por la línea punteada", W / 2, cutAreaY - 22);
+
+  ctx.save();
+  ctx.setLineDash([10, 8]);
+  ctx.strokeStyle = "#1e5e6c";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(cutAreaX, cutAreaY, cutAreaW, cutAreaH);
+  ctx.restore();
+
+  ctx.fillStyle = "#0b6f85";
+  ctx.font = "40px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("✂", cutAreaX - 42, cutAreaY + 26);
+  ctx.fillText("✂", cutAreaX + cutAreaW + 8, cutAreaY + cutAreaH - 6);
+
+  ctx.save();
+  ctx.fillStyle = "rgba(10,174,183,0.018)";
+  ctx.fillRect(cutAreaX + 1, cutAreaY + 1, cutAreaW - 2, cutAreaH - 2);
+  ctx.restore();
+
+  const markerSize = 470;
+  const markerX = cutAreaX + (cutAreaW - markerSize) / 2;
+  const markerY = cutAreaY + (cutAreaH - markerSize) / 2;
+
+  ctx.save();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(markerX - 34, markerY - 34, markerSize + 68, markerSize + 68);
+  ctx.restore();
+
+  ctx.drawImage(markerImg, markerX, markerY, markerSize, markerSize);
+
+  ctx.strokeStyle = COL.line;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(115, H - 145);
+  ctx.lineTo(W - 115, H - 145);
+  ctx.stroke();
+
+  ctx.fillStyle = "#163840";
+  ctx.font = "bold 18px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    "Nota: no pierdas este código secreto. Podría servirte más adelante.",
+    W / 2,
+    H - 102
+  );
+
+  descargarCanvasComoPNGEC(canvas, config.nombreArchivo);
+}
+
+// ======================================================
+// HELPERS DEL PNG
+// ======================================================
+
+function descargarCanvasComoPNGEC(canvas, nombreArchivo) {
+  const link = document.createElement("a");
+  link.download = nombreArchivo;
+  link.href = canvas.toDataURL("image/png");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+async function cargarImagenEC(src) {
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("No se pudo cargar imagen: " + src));
+
+    img.src = src;
+  });
+}
+
+function dibujarImagenContainEC(ctx, img, x, y, w, h) {
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const scale = Math.min(w / iw, h / ih);
+  const rw = iw * scale;
+  const rh = ih * scale;
+  const rx = x + (w - rw) / 2;
+  const ry = y + (h - rh) / 2;
+
+  ctx.drawImage(img, rx, ry, rw, rh);
+}
+
+function drawEnycosmicPaperDecor(ctx, W, H, COL) {
+  ctx.save();
+
+  const stars = [
+    [150, 160], [1000, 188], [165, 630], [1045, 690],
+    [210, 1425], [1080, 1395], [950, 1520], [1180, 410]
+  ];
+
+  for (const [x, y] of stars) {
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(10,174,183,0.16)";
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(10,174,183,0.24)";
+    ctx.lineWidth = 1;
+    ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  drawSoftPlanetEC(ctx, 175, 1200, 26, {
+    planet: "rgba(0,217,217,0.07)",
+    ring: "rgba(110,68,255,0.10)",
+    stroke: "rgba(10,174,183,0.12)"
+  });
+
+  drawSoftPlanetEC(ctx, 1065, 240, 18, {
+    planet: "rgba(198,181,111,0.06)",
+    ring: "rgba(10,174,183,0.10)",
+    stroke: "rgba(10,174,183,0.11)"
+  });
+
+  drawSoftPlanetEC(ctx, 1040, 1085, 22, {
+    planet: "rgba(110,68,255,0.06)",
+    ring: "rgba(0,217,217,0.08)",
+    stroke: "rgba(10,174,183,0.10)"
+  });
+
+  ctx.beginPath();
+  ctx.strokeStyle = "rgba(10,174,183,0.08)";
+  ctx.lineWidth = 2;
+  ctx.arc(W / 2, 300, 470, Math.PI * 0.12, Math.PI * 0.88);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "rgba(110,68,255,0.06)";
+  ctx.lineWidth = 1.5;
+  ctx.arc(W / 2, H - 260, 420, Math.PI * 1.08, Math.PI * 1.92);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawSoftPlanetEC(ctx, x, y, r, colors) {
+  ctx.save();
+
+  const grad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 2, x, y, r * 2.2);
+  grad.addColorStop(0, colors.planet || "rgba(0,217,217,0.08)");
+  grad.addColorStop(1, "rgba(0,217,217,0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 2.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.fillStyle = colors.planet || "rgba(0,217,217,0.08)";
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.strokeStyle = colors.stroke || "rgba(10,174,183,0.12)";
+  ctx.lineWidth = 1.4;
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.translate(x, y);
+  ctx.rotate(-0.28);
+
+  ctx.beginPath();
+  ctx.strokeStyle = colors.ring || "rgba(110,68,255,0.08)";
+  ctx.lineWidth = 2;
+  ctx.ellipse(0, 0, r * 1.8, r * 0.55, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function wrapTextCanvasEC(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = String(text || "").split(" ");
+  let line = "";
+  let currentY = y;
+
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + " ";
+    const testWidth = ctx.measureText(testLine).width;
+
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line.trim(), x, currentY);
+      line = words[n] + " ";
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+
+  if (line.trim()) {
+    ctx.fillText(line.trim(), x, currentY);
+  }
+}
+
+// ======================================================
+// QR GENERADO EN JAVASCRIPT
+// IMPORTANTE: ESTA FUNCIÓN SOLO CREA EL QR
+// NO VA EL DISEÑO DE LA HOJA AQUÍ
+// ======================================================
+
+async function generarQRCanvasEny(texto, pxSize) {
+  const matriz = generarMatrizQRBasicaEC(texto);
+  const modulos = matriz.length;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = pxSize;
+  canvas.height = pxSize;
+
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, pxSize, pxSize);
+
+  const margen = 4;
+  const total = modulos + margen * 2;
+  const celda = Math.floor(pxSize / total);
+  const inicio = Math.floor((pxSize - celda * modulos) / 2);
+
+  ctx.fillStyle = "#000000";
+
+  for (let y = 0; y < modulos; y++) {
+    for (let x = 0; x < modulos; x++) {
+      if (matriz[y][x]) {
+        ctx.fillRect(inicio + x * celda, inicio + y * celda, celda, celda);
+      }
+    }
+  }
+
+  return canvas;
+}
+
+function generarMatrizQRBasicaEC(texto) {
+  const version = 5;
+  const size = 21 + (version - 1) * 4;
+  const dataCodewords = 108;
+  const eccCodewords = 26;
+  const mask = 0;
+
+  const modules = Array.from({ length: size }, () => Array(size).fill(false));
+  const reserved = Array.from({ length: size }, () => Array(size).fill(false));
+
+  function set(x, y, v, r = true) {
+    if (x < 0 || y < 0 || x >= size || y >= size) return;
+    modules[y][x] = !!v;
+    if (r) reserved[y][x] = true;
+  }
+
+  function finder(x, y) {
+    for (let dy = -1; dy <= 7; dy++) {
+      for (let dx = -1; dx <= 7; dx++) {
+        const xx = x + dx;
+        const yy = y + dy;
+
+        if (xx < 0 || yy < 0 || xx >= size || yy >= size) continue;
+
+        const on =
+          (dx >= 0 && dx <= 6 && (dy === 0 || dy === 6)) ||
+          (dy >= 0 && dy <= 6 && (dx === 0 || dx === 6)) ||
+          (dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4);
+
+        set(xx, yy, on);
+      }
+    }
+  }
+
+  function alignment(cx, cy) {
+    for (let dy = -2; dy <= 2; dy++) {
+      for (let dx = -2; dx <= 2; dx++) {
+        const dist = Math.max(Math.abs(dx), Math.abs(dy));
+        set(cx + dx, cy + dy, dist !== 1);
+      }
+    }
+  }
+
+  finder(0, 0);
+  finder(size - 7, 0);
+  finder(0, size - 7);
+
+  for (let i = 8; i < size - 8; i++) {
+    set(i, 6, i % 2 === 0);
+    set(6, i, i % 2 === 0);
+  }
+
+  alignment(30, 30);
+  set(8, size - 8, true);
+
+  for (let i = 0; i < 9; i++) {
+    if (i !== 6) {
+      reserved[8][i] = true;
+      reserved[i][8] = true;
+    }
+  }
+
+  for (let i = 0; i < 8; i++) {
+    reserved[8][size - 1 - i] = true;
+    reserved[size - 1 - i][8] = true;
+  }
+
+  const data = crearDatosQRByteEC(texto, dataCodewords);
+  const ecc = crearECCQR(data, eccCodewords);
+  const allCodewords = data.concat(ecc);
+
+  const bits = [];
+
+  allCodewords.forEach(cw => {
+    for (let i = 7; i >= 0; i--) {
+      bits.push(((cw >>> i) & 1) === 1);
+    }
+  });
+
+  let bitIndex = 0;
+  let upward = true;
+
+  for (let x = size - 1; x >= 1; x -= 2) {
+    if (x === 6) x--;
+
+    for (let i = 0; i < size; i++) {
+      const y = upward ? size - 1 - i : i;
+
+      for (let dx = 0; dx < 2; dx++) {
+        const xx = x - dx;
+
+        if (reserved[y][xx]) continue;
+
+        let bit = bitIndex < bits.length ? bits[bitIndex++] : false;
+
+        if ((xx + y) % 2 === 0) bit = !bit;
+
+        modules[y][xx] = bit;
+      }
+    }
+
+    upward = !upward;
+  }
+
+  dibujarFormatoQR(modules, reserved, size, mask);
+
+  return modules;
+}
+
+function crearDatosQRByteEC(texto, dataCodewords) {
+  const bytes = new TextEncoder().encode(texto);
+  const bits = [];
+
+  function add(value, length) {
+    for (let i = length - 1; i >= 0; i--) {
+      bits.push((value >>> i) & 1);
+    }
+  }
+
+  add(0b0100, 4);
+  add(bytes.length, 8);
+
+  bytes.forEach(b => add(b, 8));
+
+  const maxBits = dataCodewords * 8;
+  const terminator = Math.min(4, maxBits - bits.length);
+
+  for (let i = 0; i < terminator; i++) bits.push(0);
+  while (bits.length % 8 !== 0) bits.push(0);
+
+  const data = [];
+
+  for (let i = 0; i < bits.length; i += 8) {
+    let v = 0;
+
+    for (let j = 0; j < 8; j++) {
+      v = (v << 1) | bits[i + j];
+    }
+
+    data.push(v);
+  }
+
+  let pad = 0xec;
+
+  while (data.length < dataCodewords) {
+    data.push(pad);
+    pad = pad === 0xec ? 0x11 : 0xec;
+  }
+
+  return data.slice(0, dataCodewords);
+}
+
+function crearECCQR(data, eccCount) {
+  const gen = crearGeneradorRSEC(eccCount);
+  const res = Array(eccCount).fill(0);
+
+  for (const b of data) {
+    const factor = b ^ res.shift();
+    res.push(0);
+
+    for (let i = 0; i < eccCount; i++) {
+      res[i] ^= gfMulEC(gen[i], factor);
+    }
+  }
+
+  return res;
+}
+
+function crearGeneradorRSEC(degree) {
+  let result = [1];
+
+  for (let i = 0; i < degree; i++) {
+    result = polyMulEC(result, [1, gfPowEC(2, i)]);
+  }
+
+  return result.slice(1);
+}
+
+function polyMulEC(a, b) {
+  const out = Array(a.length + b.length - 1).fill(0);
+
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < b.length; j++) {
+      out[i + j] ^= gfMulEC(a[i], b[j]);
+    }
+  }
+
+  return out;
+}
+
+function gfMulEC(x, y) {
+  let z = 0;
+
+  for (let i = 7; i >= 0; i--) {
+    z = (z << 1) ^ ((z >>> 7) * 0x11d);
+    z ^= ((y >>> i) & 1) * x;
+  }
+
+  return z & 0xff;
+}
+
+function gfPowEC(x, power) {
+  let y = 1;
+
+  for (let i = 0; i < power; i++) {
+    y = gfMulEC(y, x);
+  }
+
+  return y;
+}
+
+function dibujarFormatoQR(modules, reserved, size, mask) {
+  const eccLevelBits = 1;
+  const data = (eccLevelBits << 3) | mask;
+  let rem = data << 10;
+  const poly = 0x537;
+
+  for (let i = 14; i >= 10; i--) {
+    if (((rem >>> i) & 1) !== 0) {
+      rem ^= poly << (i - 10);
+    }
+  }
+
+  const format = (((data << 10) | rem) ^ 0x5412) & 0x7fff;
+
+  function bit(i) {
+    return ((format >>> i) & 1) !== 0;
+  }
+
+  const pos1 = [
+    [8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5],
+    [8, 7], [8, 8], [7, 8], [5, 8], [4, 8], [3, 8],
+    [2, 8], [1, 8], [0, 8]
+  ];
+
+  const pos2 = [
+    [size - 1, 8], [size - 2, 8], [size - 3, 8],
+    [size - 4, 8], [size - 5, 8], [size - 6, 8],
+    [size - 7, 8], [8, size - 8], [8, size - 7],
+    [8, size - 6], [8, size - 5], [8, size - 4],
+    [8, size - 3], [8, size - 2], [8, size - 1]
+  ];
+
+  for (let i = 0; i < 15; i++) {
+    const b = bit(i);
+
+    modules[pos1[i][1]][pos1[i][0]] = b;
+    modules[pos2[i][1]][pos2[i][0]] = b;
+
+    reserved[pos1[i][1]][pos1[i][0]] = true;
+    reserved[pos2[i][1]][pos2[i][0]] = true;
+  }
+}
+
+// ======================================================
+// EXPOSICIÓN GLOBAL PARA ambiente.json
+// ======================================================
+
+window.abrirDocumentoEncriptadoEc1 = abrirDocumentoEncriptadoEc1;
+window.abrirDocumentoEncriptadoEc2 = abrirDocumentoEncriptadoEc2;
+window.abrirDocumentoEncriptadoEc3 = abrirDocumentoEncriptadoEc3;
+
+window.cerrarDocumentoEncriptado = cerrarDocumentoEncriptado;
+window.accionFinalDocumentoEncriptado = accionFinalDocumentoEncriptado;
+
 // TABLERO HOLOGRÁFICO: SISTEMA SOLAR EN ECUACIONES
 // Misión m6 - El misterio del cofre
 // Versión estable: drag + mobile + reinicio + cotas + zoom
