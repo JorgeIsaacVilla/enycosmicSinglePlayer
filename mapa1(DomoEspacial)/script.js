@@ -26885,3 +26885,1793 @@ function resetPlayerProfile() {
 }
 
 //resetPlayerProfile() 
+
+/* =========================================================
+   COFRE SECRETO DE MARTE - DESCUBRIMIENTO ABIERTO
+   Objeto ambiente: bloque_ambiente_11345
+   Función ambiente.json: abrirCofreSecretoMarte
+
+   Flujo:
+   cofre → panel alienígena → código sal121:5-7
+   → panel Nuevas funciones → secuencia antigua
+   → diálogo final → recompensa → aliado
+========================================================= */
+
+(function () {
+  const COFRE_MARTE_STORAGE_KEY = "eny_cofre_marte_11345_v2";
+  const ALIADO_ARMADURA_STORAGE_KEY = "eny_aliado_armadura_antigua_unlocked";
+
+  const COFRE_MARTE_CONFIG = {
+    titulo: "COFRE ANTIGUO",
+    imagenCofre: "../assets/spriteAmbiente/cofreSecreto.svg",
+
+    // El jugador escribe sal121:5-7.
+    // Internamente validamos sin signos:
+    // sal121:5-7 → SAL12157
+    codigoSecretoNormalizado: "SAL12157",
+
+    recompensaIQ: 25,
+    recompensaCosmonedas: 250,
+
+    // Ajusta esta ruta si tu aliado.js vive en otra carpeta.
+    aliadoScriptSrc: "../globalScripts/aliado.js",
+    aliadoModuleId: "aliado_reptiliano_test"
+  };
+
+  const COFRE_INTRO_DIALOGOS = [
+    "Veamos...",
+    "Es un cofre muy antiguo.",
+    "Pero al parecer tiene tecnología de punta...",
+    "Oh, mira. Un panel secreto..."
+  ];
+
+  const COFRE_POST_CODIGO_DIALOGOS = [
+    "¿Qué? ¿La Biblia?",
+    "¿Qué tiene que ver el libro más antiguo del mundo con todo esto?",
+    "Me pregunto qué dirá en ese versículo.",
+    "Creo que tendré ahora que buscar una Biblia e investigar un poco.",
+    "Espera... hay algo más."
+  ];
+
+  const COFRE_FINAL_DIALOGOS = [
+    "¿Conque hay un Dios del todo en esta historia?",
+    "¿Será ese tal Mesías un ser de otro mundo?",
+    "Tendré que investigar un poco más sobre esa historia.",
+    "Espera... es una armadura.",
+    "En la antigüedad le dirían una armadura espiritual muy antigua.",
+    "Al parecer una parte del espíritu del Dios del todo se encuentra en esa armadura.",
+    "¿Y me va a ayudar en mi aventura para protegerme?"
+  ];
+
+  const SECUENCIA_ANTIGUA_OBJETIVO = [
+    "JEHOVÁ", "ES", "TU", "GUARDADOR",
+    "JEHOVÁ", "ES", "TU", "SOMBRA",
+    "A", "TU", "MANO", "DERECHA",
+    "EL", "SOL", "NO", "TE", "FATIGARÁ",
+    "DE", "DÍA",
+    "NI", "LA", "LUNA", "DE", "NOCHE",
+    "JEHOVÁ", "TE", "GUARDARÁ", "DE", "TODO", "MAL",
+    "ÉL", "GUARDARÁ", "TU", "ALMA"
+  ];
+
+  const SECUENCIA_ANTIGUA_RELLENO = [
+    "MARTE", "ORIGEN", "CÓDIGO", "PUERTA", "ARCILLA", "CIELO",
+    "NÚCLEO", "ASTRO", "CLAVE", "SISTEMA", "MISTERIO", "PANEL",
+    "ALIENÍGENA", "MAPA", "COFRE", "SECRETO", "TECNOLOGÍA", "ANTIGUO",
+    "LUZ", "SOMBRA", "RUTA", "METAFÓN", "METACÁMARA", "ALGORITMO",
+    "ENERGÍA", "SEÑAL", "PLANETA", "ÓRBITA", "GRAVEDAD", "TEMPLO",
+    "LIBRO", "HISTORIA", "VERSÍCULO", "INVESTIGAR", "ARMADURA", "ESPÍRITU",
+    "MISIÓN", "AVENTURA", "PROTEGER", "PROPÓSITO", "MUNDO", "REMANENTE",
+    "ESCUDO", "CASCO", "PLATA", "NEÓN", "GUÍA", "FUERZA",
+    "GUARDIA", "VIDA", "NOCHE", "DÍA", "ALMA", "FARO",
+    "CAMINO", "MENSAJE", "LECTURA", "SABIDURÍA", "REY", "SALMO",
+    "PROMESA", "PACTO", "CREACIÓN", "TIERRA", "LUNA", "SOL",
+    "ESTRELLA", "GALAXIA", "COSMOS", "NAVE", "BASE", "CUEVA",
+    "ROCA", "MINERAL", "RUNA", "PANTALLA", "ENIGMA", "BÚSQUEDA",
+    "HALLAZGO", "MEMORIA", "ARCHIVO", "MÓDULO", "ZONA", "RANGO",
+    "SECUENCIA", "DESCIFRAR", "PALABRA", "ORDEN", "CLARO", "OCULTO",
+    "FUTURO", "PASADO", "VIEJO", "NUEVO", "PODER", "AYUDA",
+    "ALIADO", "RECOMPENSA", "IQ", "COSMONEDA", "AVATAR", "JUGADOR"
+  ];
+
+  let cofreMarteState = null;
+  let secuenciaAntiguaSeleccionadas = [];
+  let secuenciaAntiguaPalabras = [];
+
+  function escapeHtmlCofre(text) {
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function normalizeCodeInput(value) {
+    return String(value || "")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "");
+  }
+
+  function mezclarArrayCofre(arr) {
+    const out = [...arr];
+
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+
+    return out;
+  }
+
+  function crearPoolSecuenciaAntigua() {
+    const objetivo = SECUENCIA_ANTIGUA_OBJETIVO.map((text, index) => ({
+      id: "obj_" + index,
+      text,
+      selected: false
+    }));
+
+    const faltan = Math.max(0, 120 - objetivo.length);
+
+    const relleno = Array.from({ length: faltan }, (_, i) => ({
+      id: "relleno_" + i,
+      text: SECUENCIA_ANTIGUA_RELLENO[i % SECUENCIA_ANTIGUA_RELLENO.length],
+      selected: false
+    }));
+
+    return mezclarArrayCofre(objetivo.concat(relleno));
+  }
+
+  function getCofreSavedState() {
+    try {
+      const raw = localStorage.getItem(COFRE_MARTE_STORAGE_KEY);
+      if (!raw) return { rewardClaimed: false };
+
+      const data = JSON.parse(raw);
+
+      return {
+        rewardClaimed: !!data.rewardClaimed
+      };
+    } catch (_) {
+      return { rewardClaimed: false };
+    }
+  }
+
+  function saveCofreState(data) {
+    try {
+      localStorage.setItem(COFRE_MARTE_STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn("No se pudo guardar estado del cofre:", e);
+    }
+  }
+
+  function ensureCofreMarteStyles() {
+    if (document.getElementById("cofre-marte-styles")) return;
+
+    const style = document.createElement("style");
+    style.id = "cofre-marte-styles";
+
+    style.textContent = `
+      #cofre-marte-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 900000;
+        background: rgba(0,0,0,.68);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        box-sizing: border-box;
+      }
+
+      #cofre-marte-modal {
+        width: min(95vw, 620px);
+        max-height: 95vh;
+        background: #000;
+        border: 3px solid #00ffcc;
+        box-shadow:
+          0 0 0 2px #032b2b,
+          0 0 18px rgba(0,255,204,.26);
+        font-family: arcade, monospace;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      #cofre-marte-header {
+        height: 46px;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 2px solid #00ffcc;
+        padding: 0 10px;
+        background: #020706;
+        box-sizing: border-box;
+      }
+
+      #cofre-marte-title {
+        color: #00ffcc;
+        font-size: 14px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+      }
+
+      #cofre-marte-close {
+        width: 34px;
+        height: 34px;
+        border: 2px solid #00ffcc;
+        background: #111;
+        color: #fff;
+        font-family: arcade, monospace;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #cofre-marte-body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: auto;
+        box-sizing: border-box;
+      }
+
+      .cofre-dialog-visual {
+        height: 230px;
+        border: 2px solid #00ffcc;
+        background:
+          radial-gradient(circle at center, rgba(0,255,204,.10), transparent 48%),
+          repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,204,.05) 0px,
+            rgba(0,255,204,.05) 1px,
+            transparent 2px,
+            transparent 6px
+          ),
+          #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .cofre-dialog-visual img {
+        max-width: 82%;
+        max-height: 82%;
+        image-rendering: pixelated;
+        object-fit: contain;
+        filter:
+          drop-shadow(0 0 8px rgba(0,255,204,.35))
+          drop-shadow(0 0 18px rgba(0,255,204,.18));
+      }
+
+      .cofre-dialog-line {
+        min-height: 78px;
+        border-top: 2px solid #00ffcc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        font-size: 14px;
+        line-height: 1.55;
+        padding: 12px 16px;
+        background:
+          repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,204,.05) 0px,
+            rgba(0,255,204,.05) 1px,
+            transparent 2px,
+            transparent 6px
+          ),
+          #020b0e;
+        box-sizing: border-box;
+      }
+
+      .cofre-dialog-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding-top: 4px;
+      }
+
+      .cofre-btn {
+        min-width: 132px;
+        min-height: 40px;
+        border: 2px solid #00ffcc;
+        background: #001c18;
+        color: #fff;
+        font-family: arcade, monospace;
+        cursor: pointer;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .cofre-btn:hover {
+        background: #06322d;
+      }
+
+      .cofre-panel-box {
+        border: 2px solid #00ffcc;
+        background:
+          radial-gradient(circle at top, rgba(0,255,204,.08), transparent 38%),
+          repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,204,.04) 0px,
+            rgba(0,255,204,.04) 1px,
+            transparent 2px,
+            transparent 6px
+          ),
+          #021016;
+        padding: 14px;
+        box-sizing: border-box;
+      }
+
+      .cofre-panel-title {
+        color: #00ffcc;
+        font-size: 15px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .cofre-panel-sub {
+        color: #d6ffff;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 14px;
+        text-align: center;
+      }
+
+      .cofre-code-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cofre-code-segments {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .cofre-code-group {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .cofre-code-box {
+        width: 38px;
+        height: 46px;
+        border: 2px solid #00ffcc;
+        background: #00131a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 16px;
+        text-transform: uppercase;
+        box-shadow: 0 0 8px rgba(0,255,204,.18);
+      }
+
+      .cofre-code-separator {
+        color: #ffd84a;
+        font-size: 24px;
+        line-height: 1;
+        padding: 0 1px;
+      }
+
+      .cofre-code-real-input {
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        display: block;
+        border: 2px solid #00ffcc;
+        background: #041116;
+        color: #fff;
+        font-family: arcade, monospace;
+        font-size: 13px;
+        padding: 10px 12px;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      .cofre-reward-card {
+        border: 2px solid #00ffcc;
+        background:
+          radial-gradient(circle at 50% 12%, rgba(0,255,204,.12), transparent 36%),
+          repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,204,.04) 0px,
+            rgba(0,255,204,.04) 1px,
+            transparent 2px,
+            transparent 6px
+          ),
+          #020706;
+        padding: 14px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .cofre-reward-title {
+        color: #ffffff;
+        font-size: 17px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+      }
+
+      .cofre-reward-desc {
+        color: #d8ffff;
+        font-size: 12px;
+        line-height: 1.7;
+        margin: 0 auto 14px;
+        max-width: 520px;
+      }
+
+      .cofre-reward-extra {
+        color: #ffd84a;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 14px;
+      }
+
+      #cofre-helmet-preview {
+        display: flex;
+        justify-content: center;
+        margin: 8px 0 14px;
+      }
+
+      #cofre-helmet-preview img {
+        width: 150px;
+        height: 150px;
+        image-rendering: pixelated;
+      }
+
+      #popup-feedback {
+        z-index: 10000000 !important;
+      }
+
+      @media (max-width: 520px) {
+        #cofre-marte-modal {
+          width: min(96vw, 430px);
+        }
+
+        .cofre-dialog-visual {
+          height: 200px;
+        }
+
+        .cofre-dialog-line {
+          font-size: 12px;
+          min-height: 72px;
+        }
+
+        .cofre-code-box {
+          width: 31px;
+          height: 38px;
+          font-size: 13px;
+        }
+
+        .cofre-code-separator {
+          font-size: 19px;
+        }
+
+        .cofre-btn {
+          min-width: 112px;
+          min-height: 38px;
+          font-size: 10px;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function ensureCofreMarteUI() {
+    if (document.getElementById("cofre-marte-overlay")) return;
+
+    ensureCofreMarteStyles();
+
+    const overlay = document.createElement("div");
+    overlay.id = "cofre-marte-overlay";
+
+    overlay.innerHTML = `
+      <div id="cofre-marte-modal">
+        <div id="cofre-marte-header">
+          <div id="cofre-marte-title">COFRE ANTIGUO</div>
+          <button id="cofre-marte-close" type="button">X</button>
+        </div>
+        <div id="cofre-marte-body"></div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closeBtn = overlay.querySelector("#cofre-marte-close");
+
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      cerrarCofreSecretoMarte();
+    });
+
+    closeBtn.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") return;
+      e.preventDefault();
+      cerrarCofreSecretoMarte();
+    }, { passive: false });
+
+    overlay.addEventListener("pointerdown", (e) => {
+      if (e.target === overlay) {
+        e.preventDefault();
+        cerrarCofreSecretoMarte();
+      }
+    }, { passive: false });
+  }
+
+  function crearEstadoInicialCofre() {
+    const saved = getCofreSavedState();
+
+    return {
+      stage: "intro",
+      introIndex: 0,
+      postCodeIndex: 0,
+      finalIndex: 0,
+      typedCode: "",
+      rewardClaimed: !!saved.rewardClaimed
+    };
+  }
+
+  function abrirCofreSecretoMarte() {
+    ensureCofreMarteUI();
+
+    cofreMarteState = crearEstadoInicialCofre();
+
+    const overlay = document.getElementById("cofre-marte-overlay");
+    if (overlay) overlay.style.display = "flex";
+
+    if (typeof playtockSound === "function") playtockSound();
+
+    renderCofreMarte();
+  }
+
+  function cerrarCofreSecretoMarte() {
+    const overlay = document.getElementById("cofre-marte-overlay");
+    if (overlay) overlay.style.display = "none";
+
+    cofreMarteState = null;
+
+    if (typeof playtockSound === "function") playtockSound();
+  }
+
+  function renderCofreMarte() {
+    if (!cofreMarteState) return;
+
+    const body = document.getElementById("cofre-marte-body");
+    const title = document.getElementById("cofre-marte-title");
+
+    if (!body || !title) return;
+
+    if (cofreMarteState.stage === "intro") {
+      title.textContent = "COFRE ANTIGUO";
+
+      renderCofreDialogStage(body, {
+        imageSrc: COFRE_MARTE_CONFIG.imagenCofre,
+        line: COFRE_INTRO_DIALOGOS[cofreMarteState.introIndex],
+        showPrev: cofreMarteState.introIndex > 0,
+        showNext: cofreMarteState.introIndex < COFRE_INTRO_DIALOGOS.length - 1,
+        finalLabel: "Visualizar panel alienígena",
+        onPrev: cofreIntroPrev,
+        onNext: cofreIntroNext,
+        onFinal: abrirPanelCodigoCofre
+      });
+
+      return;
+    }
+
+    if (cofreMarteState.stage === "code") {
+      title.textContent = "PANEL ALIENÍGENA";
+      renderCofreCodeStage(body);
+      return;
+    }
+
+    if (cofreMarteState.stage === "postCode") {
+      title.textContent = "SECUENCIA DESBLOQUEADA";
+
+      renderCofreDialogStage(body, {
+        imageSrc: COFRE_MARTE_CONFIG.imagenCofre,
+        line: COFRE_POST_CODIGO_DIALOGOS[cofreMarteState.postCodeIndex],
+        showPrev: cofreMarteState.postCodeIndex > 0,
+        showNext: cofreMarteState.postCodeIndex < COFRE_POST_CODIGO_DIALOGOS.length - 1,
+        finalLabel: "Escudriñar secuencia antigua",
+        onPrev: cofrePostCodePrev,
+        onNext: cofrePostCodeNext,
+        onFinal: abrirSecuenciaAntiguaDesdeCofre
+      });
+
+      return;
+    }
+
+    if (cofreMarteState.stage === "finalDialog") {
+      title.textContent = "REVELACIÓN";
+
+      renderCofreDialogStage(body, {
+        imageSrc: COFRE_MARTE_CONFIG.imagenCofre,
+        line: COFRE_FINAL_DIALOGOS[cofreMarteState.finalIndex],
+        showPrev: cofreMarteState.finalIndex > 0,
+        showNext: cofreMarteState.finalIndex < COFRE_FINAL_DIALOGOS.length - 1,
+        finalLabel: cofreMarteState.rewardClaimed ? "Cerrar" : "Ver recompensa",
+        onPrev: cofreFinalPrev,
+        onNext: cofreFinalNext,
+        onFinal: cofreMarteState.rewardClaimed ? cerrarCofreSecretoMarte : abrirRecompensaCofre
+      });
+
+      return;
+    }
+
+    if (cofreMarteState.stage === "reward") {
+      title.textContent = "RECOMPENSA";
+      renderCofreReward(body);
+      return;
+    }
+  }
+
+  function renderCofreDialogStage(container, config) {
+    container.innerHTML = `
+      <div class="cofre-dialog-visual">
+        <img src="${escapeHtmlCofre(config.imageSrc)}" alt="Cofre antiguo">
+      </div>
+
+      <div class="cofre-dialog-line">
+        ${escapeHtmlCofre(config.line || "...")}
+      </div>
+
+      <div class="cofre-dialog-actions"></div>
+    `;
+
+    const actions = container.querySelector(".cofre-dialog-actions");
+
+    if (config.showPrev) {
+      const btnPrev = document.createElement("button");
+      btnPrev.className = "cofre-btn";
+      btnPrev.type = "button";
+      btnPrev.textContent = "Anterior";
+      btnPrev.addEventListener("click", () => {
+        if (typeof playtockSound === "function") playtockSound();
+        config.onPrev?.();
+      });
+      actions.appendChild(btnPrev);
+    }
+
+    if (config.showNext) {
+      const btnNext = document.createElement("button");
+      btnNext.className = "cofre-btn";
+      btnNext.type = "button";
+      btnNext.textContent = "Siguiente";
+      btnNext.addEventListener("click", () => {
+        if (typeof playtockSound === "function") playtockSound();
+        config.onNext?.();
+      });
+      actions.appendChild(btnNext);
+    } else {
+      const btnFinal = document.createElement("button");
+      btnFinal.className = "cofre-btn";
+      btnFinal.type = "button";
+      btnFinal.textContent = config.finalLabel || "Continuar";
+      btnFinal.addEventListener("click", () => {
+        if (typeof playtockSound === "function") playtockSound();
+        config.onFinal?.();
+      });
+      actions.appendChild(btnFinal);
+    }
+  }
+
+  function cofreIntroPrev() {
+    if (!cofreMarteState) return;
+    cofreMarteState.introIndex = Math.max(0, cofreMarteState.introIndex - 1);
+    renderCofreMarte();
+  }
+
+  function cofreIntroNext() {
+    if (!cofreMarteState) return;
+    cofreMarteState.introIndex = Math.min(
+      COFRE_INTRO_DIALOGOS.length - 1,
+      cofreMarteState.introIndex + 1
+    );
+    renderCofreMarte();
+  }
+
+  function abrirPanelCodigoCofre() {
+    if (!cofreMarteState) return;
+    cofreMarteState.stage = "code";
+    renderCofreMarte();
+  }
+
+  function renderCofreCodeStage(container) {
+    const value = normalizeCodeInput(cofreMarteState.typedCode);
+    const g1 = value.slice(0, 6);
+    const g2 = value.slice(6, 7);
+    const g3 = value.slice(7, 8);
+
+    container.innerHTML = `
+      <div class="cofre-panel-box">
+        <div class="cofre-panel-title">Visualizar panel alienígena</div>
+
+        <div class="cofre-panel-sub">
+          Este panel requiere un código secreto. Ingresa la secuencia correcta.
+        </div>
+
+        <div class="cofre-code-wrap">
+          <div class="cofre-code-segments">
+            <div class="cofre-code-group" id="cofre-code-group-1"></div>
+            <div class="cofre-code-separator">:</div>
+            <div class="cofre-code-group" id="cofre-code-group-2"></div>
+            <div class="cofre-code-separator">-</div>
+            <div class="cofre-code-group" id="cofre-code-group-3"></div>
+          </div>
+
+          <input
+            id="cofre-code-real-input"
+            class="cofre-code-real-input"
+            type="text"
+            inputmode="text"
+            maxlength="12"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Digite código encriptado"
+          />
+
+          <div class="cofre-dialog-actions">
+            <button class="cofre-btn" type="button" id="cofre-code-back-btn">Anterior</button>
+            <button class="cofre-btn" type="button" id="cofre-code-confirm-btn">Confirmar código</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    function fillGroup(el, count, chars) {
+      for (let i = 0; i < count; i++) {
+        const box = document.createElement("div");
+        box.className = "cofre-code-box";
+        box.textContent = chars[i] || "";
+        el.appendChild(box);
+      }
+    }
+
+    fillGroup(container.querySelector("#cofre-code-group-1"), 6, g1);
+    fillGroup(container.querySelector("#cofre-code-group-2"), 1, g2);
+    fillGroup(container.querySelector("#cofre-code-group-3"), 1, g3);
+
+    const input = container.querySelector("#cofre-code-real-input");
+    input.value = cofreMarteState.typedCode || "";
+
+    input.addEventListener("input", () => {
+      cofreMarteState.typedCode = input.value;
+
+      const cursorEnd = input.value.length;
+
+      renderCofreMarte();
+
+      setTimeout(() => {
+        const ref = document.getElementById("cofre-code-real-input");
+        if (ref) {
+          ref.focus();
+          ref.setSelectionRange(cursorEnd, cursorEnd);
+        }
+      }, 0);
+    });
+
+    container.querySelector("#cofre-code-back-btn").addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      cofreMarteState.stage = "intro";
+      cofreMarteState.introIndex = COFRE_INTRO_DIALOGOS.length - 1;
+      renderCofreMarte();
+    });
+
+    container.querySelector("#cofre-code-confirm-btn").addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      const normalized = normalizeCodeInput(cofreMarteState.typedCode);
+
+      if (normalized !== COFRE_MARTE_CONFIG.codigoSecretoNormalizado) {
+        if (typeof playerrorSound === "function") playerrorSound();
+
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Código incorrecto",
+            message: "La secuencia no coincide con el panel alienígena.",
+            type: "warning",
+            duration: 3200
+          });
+        } else {
+          alert("Código incorrecto.");
+        }
+
+        return;
+      }
+
+      if (typeof playgoodSound === "function") playgoodSound();
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Código confirmado",
+          message: "La secuencia alienígena fue aceptada.",
+          type: "success",
+          duration: 2400
+        });
+      }
+
+      cofreMarteState.stage = "postCode";
+      cofreMarteState.postCodeIndex = 0;
+      renderCofreMarte();
+    });
+
+    setTimeout(() => {
+      const ref = document.getElementById("cofre-code-real-input");
+      if (ref) ref.focus();
+    }, 0);
+  }
+
+  function cofrePostCodePrev() {
+    if (!cofreMarteState) return;
+    cofreMarteState.postCodeIndex = Math.max(0, cofreMarteState.postCodeIndex - 1);
+    renderCofreMarte();
+  }
+
+  function cofrePostCodeNext() {
+    if (!cofreMarteState) return;
+    cofreMarteState.postCodeIndex = Math.min(
+      COFRE_POST_CODIGO_DIALOGOS.length - 1,
+      cofreMarteState.postCodeIndex + 1
+    );
+    renderCofreMarte();
+  }
+
+  function abrirSecuenciaAntiguaDesdeCofre() {
+    cerrarCofreSecretoMarte();
+
+    if (typeof openInterfas === "function") {
+      openInterfas("novedades");
+
+      setTimeout(() => {
+        abrirSecuenciaAntiguaEnNovedades();
+      }, 60);
+    } else {
+      alert("Abre el panel de Novedades para continuar la secuencia antigua.");
+    }
+  }
+
+  function abrirSecuenciaAntiguaEnNovedades() {
+    const panel = document.getElementById("container-interfas");
+    if (!panel) return;
+
+    panel.dataset.panel = "novedades";
+
+    const titleEl = panel.querySelector(".ui-title");
+    const bodyEl = panel.querySelector(".ui-body");
+
+    if (titleEl) titleEl.textContent = "Nuevas funciones";
+    if (!bodyEl) return;
+
+    secuenciaAntiguaSeleccionadas = [];
+    secuenciaAntiguaPalabras = crearPoolSecuenciaAntigua();
+
+    bodyEl.innerHTML = buildSecuenciaAntiguaHTML();
+
+    initSecuenciaAntiguaEventos();
+  }
+
+  function buildSecuenciaAntiguaHTML() {
+    const seleccionadasHTML = secuenciaAntiguaSeleccionadas.length
+      ? secuenciaAntiguaSeleccionadas.map((word, index) => `
+        <button
+          class="secuencia-antigua-chip selected"
+          type="button"
+          data-remove-word-index="${index}"
+          data-selected-word-index="${index}"
+          title="Arrastra para ordenar. Toque rápido para devolver."
+        >
+          ${escapeHtmlCofre(word.text)}
+        </button>
+      `).join("")
+      : `<div class="secuencia-antigua-empty">Toca las palabras correctas para ordenar la secuencia antigua...</div>`;
+
+    const palabrasHTML = secuenciaAntiguaPalabras.map((word, index) => `
+    <button
+      class="secuencia-antigua-chip ${word.selected ? "disabled" : ""}"
+      type="button"
+      data-secuencia-word-index="${index}"
+      ${word.selected ? "disabled" : ""}
+    >
+      ${escapeHtmlCofre(word.text)}
+    </button>
+  `).join("");
+
+    return `
+    <style>
+      .secuencia-antigua-root {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        color: #ffffff;
+        font-family: arcade, monospace;
+      }
+
+      .secuencia-antigua-title {
+        color: #00ffcc;
+        font-size: 15px;
+        text-transform: uppercase;
+        line-height: 1.4;
+      }
+
+      .secuencia-antigua-text {
+        color: #d8ffff;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .secuencia-antigua-selected {
+        border: 2px solid #00ffcc;
+        background: #010b0c;
+        min-height: 110px;
+        padding: 8px;
+        display: flex;
+        align-items: flex-start;
+        align-content: flex-start;
+        flex-wrap: wrap;
+        gap: 7px;
+        box-sizing: border-box;
+      }
+
+      .secuencia-antigua-empty {
+        color: rgba(255,255,255,.72);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .secuencia-antigua-pool {
+        border: 2px solid #00ffcc;
+        background:
+          repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,204,.035) 0px,
+            rgba(0,255,204,.035) 1px,
+            transparent 2px,
+            transparent 6px
+          ),
+          #020706;
+        max-height: 300px;
+        overflow: auto;
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        box-sizing: border-box;
+      }
+
+      .secuencia-antigua-chip {
+        border: 2px solid #00ffcc;
+        background: #001c18;
+        color: #ffffff;
+        font-family: arcade, monospace;
+        font-size: 10px;
+        padding: 7px 8px;
+        cursor: pointer;
+        line-height: 1;
+      }
+
+      .secuencia-antigua-chip.selected {
+        background: #06322d;
+        color: #ffffff;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        position: relative;
+      }
+
+      .secuencia-antigua-chip.selected.drag-origin {
+        opacity: .35;
+        transform: scale(.96);
+      }
+
+      .secuencia-antigua-chip.selected.drag-over-left {
+        box-shadow:
+          -6px 0 0 #ffd84a,
+          0 0 10px rgba(0,255,204,.45);
+      }
+
+      .secuencia-antigua-chip.selected.drag-over-right {
+        box-shadow:
+          6px 0 0 #ffd84a,
+          0 0 10px rgba(0,255,204,.45);
+      }
+
+      .secuencia-antigua-chip.disabled {
+        opacity: .28;
+        cursor: not-allowed;
+      }
+
+      .secuencia-antigua-drag-ghost {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10000001;
+        pointer-events: none;
+        border: 2px solid #ffd84a;
+        background: #06322d;
+        color: #ffffff;
+        font-family: arcade, monospace;
+        font-size: 10px;
+        padding: 7px 8px;
+        line-height: 1;
+        box-shadow:
+          0 0 12px rgba(255,216,74,.55),
+          0 0 18px rgba(0,255,204,.35);
+        transform: translate(-9999px, -9999px);
+      }
+
+      .secuencia-antigua-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .secuencia-antigua-btn {
+        border: 2px solid #00ffcc;
+        background: #001c18;
+        color: #ffffff;
+        font-family: arcade, monospace;
+        font-size: 11px;
+        padding: 10px 12px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 520px) {
+        .secuencia-antigua-pool {
+          max-height: 240px;
+        }
+
+        .secuencia-antigua-chip {
+          font-size: 9px;
+          padding: 6px 7px;
+        }
+
+        .secuencia-antigua-drag-ghost {
+          font-size: 9px;
+          padding: 6px 7px;
+        }
+      }
+    </style>
+
+    <div class="secuencia-antigua-root">
+      <div class="secuencia-antigua-title">Escudriñar secuencia antigua</div>
+
+      <div class="secuencia-antigua-text">
+        Ordena las palabras correctas hasta formar la secuencia antigua.
+        Puedes tocar rápido una palabra de arriba para devolverla,
+        o arrastrarla para cambiarla de lugar.
+      </div>
+
+      <div class="secuencia-antigua-selected" id="secuencia-antigua-selected">
+        ${seleccionadasHTML}
+      </div>
+
+      <div class="secuencia-antigua-pool" id="secuencia-antigua-pool">
+        ${palabrasHTML}
+      </div>
+
+      <div class="secuencia-antigua-actions">
+        <button class="secuencia-antigua-btn" type="button" id="secuencia-antigua-reset">
+          Reiniciar
+        </button>
+
+        <button class="secuencia-antigua-btn" type="button" id="secuencia-antigua-confirm">
+          Confirmar secuencia
+        </button>
+      </div>
+    </div>
+  `;
+  }
+
+  function rerenderSecuenciaAntigua() {
+    const bodyEl = document.querySelector("#container-interfas .ui-body");
+    if (!bodyEl) return;
+
+    bodyEl.innerHTML = buildSecuenciaAntiguaHTML();
+    initSecuenciaAntiguaEventos();
+  }
+
+  function initSecuenciaAntiguaEventos() {
+    const bodyEl = document.querySelector("#container-interfas .ui-body");
+    if (!bodyEl) return;
+
+    bodyEl.querySelectorAll("[data-secuencia-word-index]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.secuenciaWordIndex);
+        const word = secuenciaAntiguaPalabras[index];
+
+        if (!word || word.selected) return;
+
+        if (typeof playtockSound === "function") playtockSound();
+
+        word.selected = true;
+        secuenciaAntiguaSeleccionadas.push(word);
+
+        rerenderSecuenciaAntigua();
+      });
+    });
+
+    bodyEl.querySelectorAll("[data-remove-word-index]").forEach(btn => {
+      btn.addEventListener("pointerdown", iniciarArrastreSecuenciaAntigua, { passive: false });
+    });
+
+    const resetBtn = bodyEl.querySelector("#secuencia-antigua-reset");
+    const confirmBtn = bodyEl.querySelector("#secuencia-antigua-confirm");
+
+    resetBtn?.addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      secuenciaAntiguaSeleccionadas = [];
+      secuenciaAntiguaPalabras.forEach(w => {
+        w.selected = false;
+      });
+
+      rerenderSecuenciaAntigua();
+    });
+
+    confirmBtn?.addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      const seleccion = secuenciaAntiguaSeleccionadas.map(w => w.text);
+
+      const correcta =
+        seleccion.length === SECUENCIA_ANTIGUA_OBJETIVO.length &&
+        seleccion.every((txt, i) => txt === SECUENCIA_ANTIGUA_OBJETIVO[i]);
+
+      if (!correcta) {
+        if (typeof playerrorSound === "function") playerrorSound();
+
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Secuencia incorrecta",
+            message: "La secuencia antigua no coincide. Revisa el orden de las palabras.",
+            type: "warning",
+            duration: 4200
+          });
+        } else {
+          alert("Secuencia incorrecta.");
+        }
+
+        return;
+      }
+
+      if (typeof playgoodSound === "function") playgoodSound();
+
+      if (typeof closeInterfas === "function") {
+        closeInterfas();
+      }
+
+      ensureCofreMarteUI();
+
+      cofreMarteState = crearEstadoInicialCofre();
+      cofreMarteState.stage = "finalDialog";
+      cofreMarteState.finalIndex = 0;
+
+      const overlay = document.getElementById("cofre-marte-overlay");
+      if (overlay) overlay.style.display = "flex";
+
+      renderCofreMarte();
+    });
+  }
+
+  /* =========================================================
+     ARRASTRE REAL PARA REORDENAR PALABRAS SELECCIONADAS
+     Funciona en PC y celular con pointer events.
+  ========================================================= */
+
+  let secuenciaAntiguaDrag = {
+    active: false,
+    moved: false,
+    pointerId: null,
+    fromIndex: -1,
+    overIndex: -1,
+    insertSide: "right",
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+    currentY: 0,
+    originEl: null,
+    ghostEl: null
+  };
+
+  const SECUENCIA_DRAG_THRESHOLD = 8;
+
+  function iniciarArrastreSecuenciaAntigua(e) {
+    const btn = e.currentTarget;
+    if (!btn) return;
+
+    const index = Number(btn.dataset.removeWordIndex);
+    if (!Number.isInteger(index)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    secuenciaAntiguaDrag.active = true;
+    secuenciaAntiguaDrag.moved = false;
+    secuenciaAntiguaDrag.pointerId = e.pointerId;
+    secuenciaAntiguaDrag.fromIndex = index;
+    secuenciaAntiguaDrag.overIndex = index;
+    secuenciaAntiguaDrag.insertSide = "right";
+    secuenciaAntiguaDrag.startX = e.clientX;
+    secuenciaAntiguaDrag.startY = e.clientY;
+    secuenciaAntiguaDrag.currentX = e.clientX;
+    secuenciaAntiguaDrag.currentY = e.clientY;
+    secuenciaAntiguaDrag.originEl = btn;
+    secuenciaAntiguaDrag.ghostEl = null;
+
+    try {
+      btn.setPointerCapture(e.pointerId);
+    } catch (_) { }
+
+    document.addEventListener("pointermove", moverArrastreSecuenciaAntigua, { passive: false });
+    document.addEventListener("pointerup", soltarArrastreSecuenciaAntigua, { passive: false });
+    document.addEventListener("pointercancel", cancelarArrastreSecuenciaAntigua, { passive: false });
+  }
+
+  function moverArrastreSecuenciaAntigua(e) {
+    if (!secuenciaAntiguaDrag.active) return;
+    if (e.pointerId !== secuenciaAntiguaDrag.pointerId) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    secuenciaAntiguaDrag.currentX = e.clientX;
+    secuenciaAntiguaDrag.currentY = e.clientY;
+
+    const dx = e.clientX - secuenciaAntiguaDrag.startX;
+    const dy = e.clientY - secuenciaAntiguaDrag.startY;
+    const dist = Math.hypot(dx, dy);
+
+    if (!secuenciaAntiguaDrag.moved && dist >= SECUENCIA_DRAG_THRESHOLD) {
+      secuenciaAntiguaDrag.moved = true;
+      crearGhostSecuenciaAntigua();
+      secuenciaAntiguaDrag.originEl?.classList.add("drag-origin");
+    }
+
+    if (!secuenciaAntiguaDrag.moved) return;
+
+    moverGhostSecuenciaAntigua(e.clientX, e.clientY);
+    actualizarDestinoArrastreSecuenciaAntigua(e.clientX, e.clientY);
+  }
+
+  function soltarArrastreSecuenciaAntigua(e) {
+    if (!secuenciaAntiguaDrag.active) return;
+    if (e.pointerId !== secuenciaAntiguaDrag.pointerId) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const wasMoved = secuenciaAntiguaDrag.moved;
+    const fromIndex = secuenciaAntiguaDrag.fromIndex;
+    const overIndex = secuenciaAntiguaDrag.overIndex;
+    const insertSide = secuenciaAntiguaDrag.insertSide;
+
+    limpiarVisualArrastreSecuenciaAntigua();
+
+    if (!wasMoved) {
+      devolverPalabraSeleccionadaSecuenciaAntigua(fromIndex);
+      resetArrastreSecuenciaAntigua();
+      return;
+    }
+
+    moverPalabraSecuenciaAntiguaPorDrop(fromIndex, overIndex, insertSide);
+    resetArrastreSecuenciaAntigua();
+  }
+
+  function cancelarArrastreSecuenciaAntigua(e) {
+    if (!secuenciaAntiguaDrag.active) return;
+
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+
+    limpiarVisualArrastreSecuenciaAntigua();
+    resetArrastreSecuenciaAntigua();
+  }
+
+  function crearGhostSecuenciaAntigua() {
+    const origin = secuenciaAntiguaDrag.originEl;
+    if (!origin) return;
+
+    const ghost = document.createElement("div");
+    ghost.className = "secuencia-antigua-drag-ghost";
+    ghost.textContent = origin.textContent.trim();
+
+    document.body.appendChild(ghost);
+
+    secuenciaAntiguaDrag.ghostEl = ghost;
+
+    moverGhostSecuenciaAntigua(
+      secuenciaAntiguaDrag.currentX,
+      secuenciaAntiguaDrag.currentY
+    );
+  }
+
+  function moverGhostSecuenciaAntigua(clientX, clientY) {
+    const ghost = secuenciaAntiguaDrag.ghostEl;
+    if (!ghost) return;
+
+    ghost.style.transform = `translate(${clientX + 10}px, ${clientY + 10}px)`;
+  }
+
+  function actualizarDestinoArrastreSecuenciaAntigua(clientX, clientY) {
+    limpiarIndicadoresDropSecuenciaAntigua();
+
+    const ghost = secuenciaAntiguaDrag.ghostEl;
+
+    if (ghost) {
+      ghost.style.display = "none";
+    }
+
+    let el = null;
+
+    try {
+      el = document.elementFromPoint(clientX, clientY);
+    } catch (_) {
+      el = null;
+    }
+
+    if (ghost) {
+      ghost.style.display = "";
+    }
+
+    const chip = el?.closest?.("[data-remove-word-index]");
+
+    if (!chip) {
+      secuenciaAntiguaDrag.overIndex = secuenciaAntiguaDrag.fromIndex;
+      secuenciaAntiguaDrag.insertSide = "right";
+      return;
+    }
+
+    const overIndex = Number(chip.dataset.removeWordIndex);
+    if (!Number.isInteger(overIndex)) return;
+
+    const rect = chip.getBoundingClientRect();
+    const mitad = rect.left + rect.width / 2;
+    const side = clientX < mitad ? "left" : "right";
+
+    secuenciaAntiguaDrag.overIndex = overIndex;
+    secuenciaAntiguaDrag.insertSide = side;
+
+    chip.classList.add(side === "left" ? "drag-over-left" : "drag-over-right");
+  }
+
+  function limpiarIndicadoresDropSecuenciaAntigua() {
+    document
+      .querySelectorAll(".secuencia-antigua-chip.drag-over-left, .secuencia-antigua-chip.drag-over-right")
+      .forEach(el => {
+        el.classList.remove("drag-over-left", "drag-over-right");
+      });
+  }
+
+  function limpiarVisualArrastreSecuenciaAntigua() {
+    limpiarIndicadoresDropSecuenciaAntigua();
+
+    if (secuenciaAntiguaDrag.originEl) {
+      secuenciaAntiguaDrag.originEl.classList.remove("drag-origin");
+    }
+
+    if (secuenciaAntiguaDrag.ghostEl && secuenciaAntiguaDrag.ghostEl.parentNode) {
+      secuenciaAntiguaDrag.ghostEl.parentNode.removeChild(secuenciaAntiguaDrag.ghostEl);
+    }
+
+    document.removeEventListener("pointermove", moverArrastreSecuenciaAntigua);
+    document.removeEventListener("pointerup", soltarArrastreSecuenciaAntigua);
+    document.removeEventListener("pointercancel", cancelarArrastreSecuenciaAntigua);
+  }
+
+  function resetArrastreSecuenciaAntigua() {
+    secuenciaAntiguaDrag.active = false;
+    secuenciaAntiguaDrag.moved = false;
+    secuenciaAntiguaDrag.pointerId = null;
+    secuenciaAntiguaDrag.fromIndex = -1;
+    secuenciaAntiguaDrag.overIndex = -1;
+    secuenciaAntiguaDrag.insertSide = "right";
+    secuenciaAntiguaDrag.startX = 0;
+    secuenciaAntiguaDrag.startY = 0;
+    secuenciaAntiguaDrag.currentX = 0;
+    secuenciaAntiguaDrag.currentY = 0;
+    secuenciaAntiguaDrag.originEl = null;
+    secuenciaAntiguaDrag.ghostEl = null;
+  }
+
+  function devolverPalabraSeleccionadaSecuenciaAntigua(index) {
+    const i = Number(index);
+    if (!Number.isInteger(i)) return;
+
+    const word = secuenciaAntiguaSeleccionadas[i];
+    if (!word) return;
+
+    if (typeof playtockSound === "function") playtockSound();
+
+    word.selected = false;
+    secuenciaAntiguaSeleccionadas.splice(i, 1);
+
+    rerenderSecuenciaAntigua();
+  }
+
+  function moverPalabraSecuenciaAntiguaPorDrop(fromIndex, overIndex, insertSide) {
+    const from = Number(fromIndex);
+    const over = Number(overIndex);
+
+    if (!Number.isInteger(from) || !Number.isInteger(over)) return;
+    if (from < 0 || from >= secuenciaAntiguaSeleccionadas.length) return;
+    if (over < 0 || over >= secuenciaAntiguaSeleccionadas.length) return;
+
+    let targetIndex = over;
+
+    if (insertSide === "right") {
+      targetIndex = over + 1;
+    }
+
+    if (from < targetIndex) {
+      targetIndex -= 1;
+    }
+
+    if (targetIndex < 0) targetIndex = 0;
+
+    if (targetIndex > secuenciaAntiguaSeleccionadas.length - 1) {
+      targetIndex = secuenciaAntiguaSeleccionadas.length - 1;
+    }
+
+    if (from === targetIndex) {
+      rerenderSecuenciaAntigua();
+      return;
+    }
+
+    const [word] = secuenciaAntiguaSeleccionadas.splice(from, 1);
+    secuenciaAntiguaSeleccionadas.splice(targetIndex, 0, word);
+
+    if (typeof playtockSound === "function") playtockSound();
+
+    rerenderSecuenciaAntigua();
+  }
+
+  function cofreFinalPrev() {
+    if (!cofreMarteState) return;
+
+    cofreMarteState.finalIndex = Math.max(
+      0,
+      cofreMarteState.finalIndex - 1
+    );
+
+    renderCofreMarte();
+  }
+
+  function cofreFinalNext() {
+    if (!cofreMarteState) return;
+
+    cofreMarteState.finalIndex = Math.min(
+      COFRE_FINAL_DIALOGOS.length - 1,
+      cofreMarteState.finalIndex + 1
+    );
+
+    renderCofreMarte();
+  }
+
+  function abrirRecompensaCofre() {
+    if (!cofreMarteState) return;
+    cofreMarteState.stage = "reward";
+    renderCofreMarte();
+  }
+
+  function renderCofreReward(container) {
+    const helmetDataUrl = generarCascoEspiritualPixelArt();
+
+    container.innerHTML = `
+      <div class="cofre-reward-card">
+        <div class="cofre-reward-title">
+          Has ganado un aliado<br>
+          Armadura antigua
+        </div>
+
+        <div id="cofre-helmet-preview">
+          <img src="${helmetDataUrl}" alt="Casco espiritual">
+        </div>
+
+        <div class="cofre-reward-desc">
+          Esta armadura contiene un remanente del espíritu
+          del Dios del todo dispuesto a ayudar a los que
+          tienen un gran propósito para este mundo.
+        </div>
+
+        <div class="cofre-reward-extra">
+          También has ganado<br>
+          +${COFRE_MARTE_CONFIG.recompensaCosmonedas} cosmonedas<br>
+          +${COFRE_MARTE_CONFIG.recompensaIQ} IQ
+        </div>
+
+        <div class="cofre-dialog-actions">
+          <button class="cofre-btn" type="button" id="cofre-reward-back-btn">Anterior</button>
+          <button class="cofre-btn" type="button" id="cofre-reward-accept-btn">
+            ${cofreMarteState.rewardClaimed ? "Cerrar" : "Aceptar recompensa"}
+          </button>
+        </div>
+      </div>
+    `;
+
+    container.querySelector("#cofre-reward-back-btn").addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      cofreMarteState.stage = "finalDialog";
+      cofreMarteState.finalIndex = COFRE_FINAL_DIALOGOS.length - 1;
+      renderCofreMarte();
+    });
+
+    container.querySelector("#cofre-reward-accept-btn").addEventListener("click", async () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      if (cofreMarteState.rewardClaimed) {
+        cerrarCofreSecretoMarte();
+        return;
+      }
+
+      await entregarRecompensaCofreMarte();
+    });
+  }
+
+  async function entregarRecompensaCofreMarte() {
+    if (!cofreMarteState) return;
+
+    const saved = getCofreSavedState();
+
+    if (saved.rewardClaimed) {
+      cofreMarteState.rewardClaimed = true;
+      cerrarCofreSecretoMarte();
+      return;
+    }
+
+    try {
+      if (typeof playendSound === "function") {
+        playendSound();
+      } else if (typeof playgoodSound === "function") {
+        playgoodSound();
+      }
+      if (typeof cosmonedas !== "undefined") {
+        cosmonedas += Number(COFRE_MARTE_CONFIG.recompensaCosmonedas || 0);
+      }
+
+      if (typeof IQuser !== "undefined") {
+        IQuser += Number(COFRE_MARTE_CONFIG.recompensaIQ || 0);
+      }
+
+      if (
+        typeof enviarCosmonedasAlServidor === "function" &&
+        typeof ajaxurl !== "undefined" &&
+        ajaxurl
+      ) {
+        enviarCosmonedasAlServidor(Number(COFRE_MARTE_CONFIG.recompensaCosmonedas || 0));
+      } else {
+        console.warn("Servidor WordPress no disponible todavía. Recompensa aplicada solo en modo local.");
+      }
+
+      /*Sincronizar base de datos wordpress*/
+      /*--//Sincronizar wordpress(Inicio)--*/
+      /*
+        Guardar aquí en WordPress:
+        - cofre_marte_11345_completado: true
+        - aliado_armadura_antigua: true
+        - global_script_aliado_armadura: COFRE_MARTE_CONFIG.aliadoScriptSrc
+        - iq_total_actual: IQuser
+        - cosmonedas_total_actual: cosmonedas
+        - iq_ganado: COFRE_MARTE_CONFIG.recompensaIQ
+        - cosmonedas_ganadas: COFRE_MARTE_CONFIG.recompensaCosmonedas
+      
+        Recomendado:
+        No guardes solo “+250”.
+        Guarda también el total final de cosmonedas e IQ para evitar diferencias
+        entre frontend y base de datos.
+      */
+      /*--//Sincronizar wordpress(Fin)--*/
+
+      saveCofreState({
+        rewardClaimed: true
+      });
+
+      cofreMarteState.rewardClaimed = true;
+
+      await desbloquearAliadoArmaduraAntigua();
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Recompensa obtenida",
+          message: "Has ganado el aliado Armadura antigua, 250 cosmonedas y 25 IQ.",
+          type: "success",
+          duration: 5000
+        });
+      } else {
+        alert("Has ganado el aliado Armadura antigua, 50 cosmonedas y 25 IQ.");
+      }
+
+      cerrarCofreSecretoMarte();
+    } catch (error) {
+      console.error("Error entregando recompensa del cofre:", error);
+
+      if (typeof showPopupFeedback === "function") {
+        showPopupFeedback({
+          title: "Error",
+          message: "No se pudo entregar la recompensa correctamente.",
+          type: "warning",
+          duration: 4000
+        });
+      }
+    }
+  }
+
+  async function desbloquearAliadoArmaduraAntigua() {
+    window.enyAliadoArmaduraAntiguaActivado = true;
+
+    try {
+      localStorage.setItem(ALIADO_ARMADURA_STORAGE_KEY, "1");
+    } catch (_) { }
+
+    const moduleId = COFRE_MARTE_CONFIG.aliadoModuleId;
+
+    if (window.enyGlobalModules?.loaded?.[moduleId]) {
+      const modulo = window.enyGlobalModules.loaded[moduleId];
+      const estado = window.enyGlobalModules.state?.[moduleId];
+
+      if (modulo?.onInit && estado) {
+        modulo.onInit();
+      }
+
+      return true;
+    }
+
+    const already = Array.from(document.scripts).some(script =>
+      script.src.includes("globalScripts/aliado.js")
+    );
+
+    if (already) {
+      return true;
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = COFRE_MARTE_CONFIG.aliadoScriptSrc;
+      script.async = true;
+      script.dataset.aliadoArmadura = "1";
+
+      script.onload = () => {
+        const moduleId = COFRE_MARTE_CONFIG.aliadoModuleId;
+        const modulo = window.enyGlobalModules?.loaded?.[moduleId];
+        const estado = window.enyGlobalModules?.state?.[moduleId];
+
+        if (modulo?.onInit && estado) {
+          modulo.onInit();
+        }
+
+        resolve(true);
+      };
+
+      script.onerror = (err) => {
+        console.warn("No se pudo cargar aliado.js:", COFRE_MARTE_CONFIG.aliadoScriptSrc);
+        reject(err);
+      };
+
+      document.body.appendChild(script);
+    });
+  }
+
+  /*
+    =========================================================
+    GLOBAL SCRIPT - LLAMAR AL INICIAR EL JUEGO
+    =========================================================
+
+    Cuando luego cargues el progreso real desde WordPress,
+    llama esta función:
+
+    window.verificarAliadoArmaduraAntiguaAutoCarga();
+
+    Así el aliado se carga si el jugador ya lo ganó.
+  */
+  window.verificarAliadoArmaduraAntiguaAutoCarga = async function () {
+    const unlockedLocal = localStorage.getItem(ALIADO_ARMADURA_STORAGE_KEY) === "1";
+
+    /*
+      WORDPRESS_SYNC LECTURA:
+      Aquí puedes reemplazar unlockedLocal por el dato real de WordPress.
+      Ejemplo:
+      const unlockedDesdeWP = userProgress.aliado_armadura_antigua === true;
+    */
+
+    if (!unlockedLocal) return;
+
+    window.enyAliadoArmaduraAntiguaActivado = true;
+
+    try {
+      await desbloquearAliadoArmaduraAntigua();
+    } catch (e) {
+      console.warn("No se pudo autocargar el aliado Armadura antigua:", e);
+    }
+  };
+
+  function generarCascoEspiritualPixelArt() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 96;
+    canvas.height = 96;
+
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+
+    const px = 4;
+
+    const C = {
+      t1: "#f1f5f8",
+      t2: "#aeb8c1",
+      t3: "#7b8794",
+      t4: "#4c5764",
+      glow1: "#00f7ff",
+      glow2: "#7c5cff"
+    };
+
+    ctx.clearRect(0, 0, 96, 96);
+
+    const g = ctx.createRadialGradient(48, 34, 4, 48, 34, 34);
+    g.addColorStop(0, "rgba(0,255,255,.38)");
+    g.addColorStop(.6, "rgba(124,92,255,.18)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 96, 96);
+
+    function fill(pxX, pxY, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(pxX * px, pxY * px, w * px, h * px);
+    }
+
+    fill(8, 6, 8, 1, C.t1);
+    fill(7, 7, 10, 1, C.t1);
+    fill(6, 8, 12, 1, C.t2);
+    fill(5, 9, 14, 1, C.t2);
+    fill(5, 10, 14, 1, C.t2);
+    fill(4, 11, 16, 1, C.t2);
+    fill(4, 12, 16, 1, C.t3);
+
+    fill(4, 13, 3, 1, C.t3);
+    fill(17, 13, 3, 1, C.t3);
+
+    fill(4, 14, 2, 2, C.t4);
+    fill(18, 14, 2, 2, C.t4);
+
+    fill(6, 14, 2, 4, C.t3);
+    fill(16, 14, 2, 4, C.t3);
+
+    fill(8, 15, 8, 1, C.t2);
+    fill(8, 16, 8, 1, C.t2);
+    fill(8, 17, 8, 1, C.t3);
+    fill(9, 18, 6, 1, C.t3);
+    fill(10, 19, 4, 1, C.t4);
+
+    fill(9, 13, 6, 5, C.glow1);
+    fill(10, 14, 4, 3, "#dfffff");
+    fill(11, 12, 2, 1, C.glow2);
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,255,255,.75)";
+    ctx.shadowBlur = 14;
+    ctx.strokeStyle = "rgba(0,255,255,.42)";
+    ctx.strokeRect(25, 20, 46, 48);
+    ctx.restore();
+
+    return canvas.toDataURL("image/png");
+  }
+
+  window.abrirCofreSecretoMarte = abrirCofreSecretoMarte;
+})();

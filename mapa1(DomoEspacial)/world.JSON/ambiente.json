@@ -4904,8 +4904,8 @@
   {
     "zona_id": "bloque_ambiente_11345",
     "color": null,
-    "tipo": "visual",
-    "funcion": null,
+    "tipo": "visual cliqueable",
+    "funcion": "abrirCofreSecretoMarte",
     "x": 4841,
     "y": 3699,
     "w": 112,
