@@ -3919,6 +3919,7 @@ const GLOBAL_SCRIPTS = [
   "../globalScripts/metacam.js",
   "../globalScripts/interruptorOscuridad.js",
   //"../globalScripts/timerOscuridad15s.js"
+  "../globalScripts/spiritual-mark-01.js",
 ];
 
 window.enyGlobalModules = {

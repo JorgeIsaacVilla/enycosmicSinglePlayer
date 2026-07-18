@@ -8,6 +8,7 @@
   const MODULE_ID = "spiritual_mark_01";
   const SPRITE_SRC = "https://enycosmicplayer.vercel.app/assets/avatares/armaduras/spirit-armon-1.svg";
 
+
   const FRAME_W = 64;
   const FRAME_H = 64;
   const TOTAL_FRAMES = 4;
@@ -18,16 +19,15 @@
   const MOVE_SPEED = 1.8;
   const SNAP_DISTANCE = 2;
 
-  const ATTACK_DAMAGE = 12;
-  const ATTACK_RANGE = 76;
+  const ATTACK_DAMAGE = 8;
+  const ATTACK_RANGE = 180;
   const CHASE_RANGE = 420;
-  const ATTACK_COOLDOWN_MS = 780;
+  const ATTACK_COOLDOWN_MS = 650;
 
-  const SLASH_LIFE_MS = 150;
-  const SLASH_REACH = 62;
-  const SLASH_KNOCKBACK = 30;
-  const SPIRITUAL_SWORD_COLOR = "#eaf7ff";
-  const SPIRITUAL_SWORD_GLOW = "#bfefff";
+  const SHOT_SPEED = 5.5;
+  const SHOT_SIZE = 10;
+  const SHOT_LIFE_MS = 1400;
+  const SHOT_KNOCKBACK = 32;
 
   const AVOIDANCE_STEP = 26;
   const AVOIDANCE_DIAGONAL_STEP = 18;
@@ -39,11 +39,11 @@
   const ALLY_BAR_W = 42;
   const ALLY_BAR_H = 6;
 
-  const SwordSound = new Audio("https://enycosmicplayer.vercel.app/assets/song/efect/espada.mp3");
+  const LazerSound = new Audio("https://enycosmicplayer.vercel.app/assets/song/efect/lazer.mp3");
 
-  function playSpiritualSwordSound() {
-    const s = SwordSound.cloneNode();
-    s.volume = typeof efectVolumen !== "undefined" ? efectVolumen : 0.8;
+  function playLazerSound() {
+    const s = LazerSound.cloneNode();
+    s.volume = efectVolumen;
     s.play().catch(() => { });
   }
 
@@ -59,11 +59,7 @@
       targetX: null,
       targetY: null,
       attackCooldown: 0,
-      slashes: [],
-      attackAnimTimer: 0,
-      attackAnimMax: 220,
-      attackLungeX: 0,
-      attackLungeY: 0,
+      shots: [],
 
       avoidanceSide: 1,
       avoidanceLockMs: 0,
@@ -220,7 +216,7 @@
 
     state.alive = false;
     state.hp = 0;
-    state.slashes.length = 0;
+    state.shots.length = 0;
     window.enyAllyTarget = null;
 
     if (typeof window.crearTextoDanio === "function") {
@@ -369,44 +365,6 @@
   }
 
   function animar(state, dt, moving) {
-    if (state.attackAnimTimer > 0) {
-      state.attackAnimTimer = Math.max(0, state.attackAnimTimer - dt);
-
-      const progreso = 1 - (state.attackAnimTimer / state.attackAnimMax);
-
-      if (progreso < 0.25) {
-        state.frame = 1;
-      } else if (progreso < 0.65) {
-        state.frame = 2;
-      } else {
-        state.frame = 3;
-      }
-
-      const fuerza = Math.sin(progreso * Math.PI) * 8;
-
-      state.attackLungeX = 0;
-      state.attackLungeY = 0;
-
-      if (state.facing === "up") {
-        state.attackLungeY = -fuerza;
-      } else if (state.facing === "down") {
-        state.attackLungeY = fuerza;
-      } else if (state.facing === "left") {
-        state.attackLungeX = -fuerza;
-      } else if (state.facing === "right") {
-        state.attackLungeX = fuerza;
-      }
-
-      if (state.attackAnimTimer <= 0) {
-        state.attackLungeX = 0;
-        state.attackLungeY = 0;
-        state.frame = 0;
-        state.frameTimer = 0;
-      }
-
-      return;
-    }
-
     if (moving) {
       state.frameTimer += dt;
 
@@ -504,33 +462,7 @@
     return false;
   }
 
-  function getSlashDirection(facing) {
-    switch (facing) {
-      case "up": return { x: 0, y: -1, angle: -Math.PI / 2 };
-      case "down": return { x: 0, y: 1, angle: Math.PI / 2 };
-      case "left": return { x: -1, y: 0, angle: Math.PI };
-      case "right": return { x: 1, y: 0, angle: 0 };
-      default: return { x: 0, y: 1, angle: Math.PI / 2 };
-    }
-  }
-
-  function slashHitsEnemy(originX, originY, dir, enemy) {
-    if (!enemy) return false;
-    if ((enemy.puntos_de_vida ?? 0) <= 0) return false;
-
-    const center = getEnemyCenter(enemy);
-
-    const dx = center.x - originX;
-    const dy = center.y - originY;
-
-    const forward = dx * dir.x + dy * dir.y;
-    if (forward < 0 || forward > SLASH_REACH + center.radius) return false;
-
-    const lateral = Math.abs(dx * -dir.y + dy * dir.x);
-    return lateral <= 34 + center.radius * 0.35;
-  }
-
-  function slashAtEnemy(state, enemy) {
+  function shootAtEnemy(state, enemy) {
     if (!enemy) return false;
     if (state.attackCooldown > 0) return false;
 
@@ -539,86 +471,149 @@
 
     const dx = enemyCenter.x - allyCenter.x;
     const dy = enemyCenter.y - allyCenter.y;
+    const len = Math.hypot(dx, dy) || 1;
 
-    updateFacingFromVector(state, dx, dy);
-
-    const dir = getSlashDirection(state.facing);
-
-    const originX = allyCenter.x + dir.x * 18;
-    const originY = allyCenter.y + dir.y * 18;
-
-    state.slashes.push({
-      x: originX,
-      y: originY,
-      dirX: dir.x,
-      dirY: dir.y,
-      angle: dir.angle,
-      life: SLASH_LIFE_MS,
-      maxLife: SLASH_LIFE_MS,
+    state.shots.push({
+      x: allyCenter.x,
+      y: allyCenter.y,
+      vx: (dx / len) * SHOT_SPEED,
+      vy: (dy / len) * SHOT_SPEED,
+      life: SHOT_LIFE_MS,
       damage: ATTACK_DAMAGE
     });
 
     state.attackCooldown = ATTACK_COOLDOWN_MS;
-    state.attackAnimTimer = state.attackAnimMax;
-    state.attackLungeX = 0;
-    state.attackLungeY = 0;
-
-    playSpiritualSwordSound();
-
-    const enemies = window.enemigos || [];
-
-    for (const target of enemies) {
-      if (!slashHitsEnemy(originX, originY, dir, target)) continue;
-
-      target.puntos_de_vida = Math.max(
-        0,
-        Number(target.puntos_de_vida || 0) - ATTACK_DAMAGE
-      );
-
-      if (typeof window.crearTextoDanio === "function") {
-        window.crearTextoDanio(
-          target.x + ((target.w || 64) / 2),
-          target.y - 10,
-          "-" + ATTACK_DAMAGE,
-          SPIRITUAL_SWORD_COLOR,
-          SPIRITUAL_SWORD_GLOW
-        );
-      }
-
-      const pushX = dir.x * SLASH_KNOCKBACK;
-      const pushY = dir.y * SLASH_KNOCKBACK;
-
-      const bridge = window.enyGameBridge;
-
-      if (bridge?.moveEntityWithCollision) {
-        bridge.moveEntityWithCollision(
-          target,
-          target.x + pushX,
-          target.y + pushY,
-          target.w || 64,
-          target.h || 64
-        );
-      } else {
-        target.x += pushX;
-        target.y += pushY;
-      }
-
-      if (target.puntos_de_vida <= 0 && bridge?.killEnemyWithEffects) {
-        bridge.killEnemyWithEffects(target);
-      }
-    }
-
+    playLazerSound()
     return true;
   }
 
-  function updateSlashes(state, dt) {
-    for (let i = state.slashes.length - 1; i >= 0; i--) {
-      const slash = state.slashes[i];
+  function updateShots(state, dt, enemiesList = []) {
+    const bridge = window.enyGameBridge;
+    const enemies = Array.isArray(enemiesList) && enemiesList.length
+      ? enemiesList
+      : (window.enemigos || []);
 
-      slash.life -= dt;
+    for (let i = state.shots.length - 1; i >= 0; i--) {
+      const shot = state.shots[i];
 
-      if (slash.life <= 0) {
-        state.slashes.splice(i, 1);
+      shot.life -= dt;
+      if (shot.life <= 0) {
+        state.shots.splice(i, 1);
+        continue;
+      }
+
+      const totalDx = shot.vx;
+      const totalDy = shot.vy;
+
+      const steps = Math.max(1, Math.ceil(Math.max(Math.abs(totalDx), Math.abs(totalDy)) / 4));
+      const stepDx = totalDx / steps;
+      const stepDy = totalDy / steps;
+
+      let removeShot = false;
+
+      for (let s = 0; s < steps; s++) {
+        const nextX = shot.x + stepDx;
+        const nextY = shot.y + stepDy;
+
+        const golpeoArcilla = bridge?.damageClayBlock?.(
+          nextX - SHOT_SIZE / 2,
+          nextY - SHOT_SIZE / 2,
+          SHOT_SIZE,
+          SHOT_SIZE,
+          shot.damage,
+          nextX,
+          nextY
+        );
+
+        if (golpeoArcilla) {
+          removeShot = true;
+          break;
+        }
+
+        const golpeoAmbiente = bridge?.projectileHitsEnvironment?.(
+          nextX - SHOT_SIZE / 2,
+          nextY - SHOT_SIZE / 2,
+          SHOT_SIZE,
+          SHOT_SIZE
+        );
+
+        if (golpeoAmbiente) {
+          removeShot = true;
+          break;
+        }
+
+        shot.x = nextX;
+        shot.y = nextY;
+
+        let hitEnemy = null;
+
+        for (const enemy of enemies) {
+          if (!enemy) continue;
+          if ((enemy.puntos_de_vida ?? 0) <= 0) continue;
+
+          const ex = enemy.x;
+          const ey = enemy.y;
+          const ew = enemy.w || 64;
+          const eh = enemy.h || 64;
+
+          const hit =
+            shot.x >= ex &&
+            shot.x <= ex + ew &&
+            shot.y >= ey &&
+            shot.y <= ey + eh;
+
+          if (hit) {
+            hitEnemy = enemy;
+            break;
+          }
+        }
+
+        if (hitEnemy) {
+          hitEnemy.puntos_de_vida = Math.max(
+            0,
+            Number(hitEnemy.puntos_de_vida || 0) - shot.damage
+          );
+
+          if (typeof window.crearTextoDanio === "function") {
+            window.crearTextoDanio(
+              hitEnemy.x + ((hitEnemy.w || 64) / 2),
+              hitEnemy.y - 10,
+              "-" + shot.damage,
+              "#00ffcc",
+              "#00ffcc"
+            );
+          }
+
+          const len = Math.hypot(shot.vx, shot.vy) || 1;
+          const pushX = (shot.vx / len) * SHOT_KNOCKBACK;
+          const pushY = (shot.vy / len) * SHOT_KNOCKBACK;
+
+          if (bridge?.moveEntityWithCollision) {
+            bridge.moveEntityWithCollision(
+              hitEnemy,
+              hitEnemy.x + pushX,
+              hitEnemy.y + pushY,
+              hitEnemy.w || 64,
+              hitEnemy.h || 64
+            );
+          } else {
+            hitEnemy.x += pushX;
+            hitEnemy.y += pushY;
+          }
+
+          if (hitEnemy.puntos_de_vida <= 0) {
+            if (bridge?.killEnemyWithEffects) {
+              bridge.killEnemyWithEffects(hitEnemy);
+            }
+          }
+
+          removeShot = true;
+          break;
+        }
+      }
+
+      if (removeShot) {
+        state.shots.splice(i, 1);
       }
     }
   }
@@ -657,7 +652,7 @@
     }
 
     if (!state.alive) {
-      state.slashes.length = 0;
+      state.shots.length = 0;
       return;
     }
 
@@ -698,7 +693,7 @@
       const realAttackRange = ATTACK_RANGE + enemyCenter.radius;
 
       if (distEnemy <= realAttackRange) {
-        slashAtEnemy(state, enemy);
+        shootAtEnemy(state, enemy);
         moving = false;
       } else {
         const safeDist = Math.max(1, distEnemy);
@@ -726,8 +721,8 @@
       }
     }
 
-    updateSlashes(state, dt);
-    animar(state, dt, moving);
+    updateShots(state, dt, enemigos);
+    animar(state, dt, moving || state.attackCooldown > ATTACK_COOLDOWN_MS - 120);
   }
 
   function drawLifeBar(ctx, state) {
@@ -824,66 +819,21 @@
       ctx.drawImage(
         state.img,
         sx, sy, FRAME_W, FRAME_H,
-        state.posX + (state.attackLungeX || 0),
-        state.posY + (state.attackLungeY || 0),
-        drawW,
-        drawH
+        state.posX, state.posY, drawW, drawH
       );
     } else {
       ctx.fillStyle = "red";
       ctx.fillRect(state.posX, state.posY, 30, 30);
     }
 
-    for (const slash of state.slashes) {
-      const progreso = 1 - (slash.life / slash.maxLife);
-      const alpha = Math.max(0, slash.life / slash.maxLife);
-      const alcance = SLASH_REACH * (0.72 + progreso * 0.28);
-      const apertura = 0.85;
-
+    for (const shot of state.shots) {
       ctx.save();
-      ctx.translate(slash.x, slash.y);
-      ctx.rotate(slash.angle);
-      ctx.globalAlpha = alpha;
-
-      ctx.strokeStyle = SPIRITUAL_SWORD_COLOR;
-      ctx.lineWidth = 6;
-      ctx.shadowColor = SPIRITUAL_SWORD_GLOW;
-      ctx.shadowBlur = 18;
-
+      ctx.fillStyle = "#00ffcc";
+      ctx.shadowColor = "#00ffcc";
+      ctx.shadowBlur = 10;
       ctx.beginPath();
-      ctx.arc(
-        0,
-        0,
-        alcance,
-        -apertura,
-        apertura
-      );
-      ctx.stroke();
-
-      ctx.globalAlpha = alpha * 0.45;
-      ctx.lineWidth = 12;
-      ctx.beginPath();
-      ctx.arc(
-        0,
-        0,
-        alcance * 0.92,
-        -apertura * 0.82,
-        apertura * 0.82
-      );
-      ctx.stroke();
-
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = SPIRITUAL_SWORD_COLOR;
-      ctx.shadowColor = SPIRITUAL_SWORD_GLOW;
-      ctx.shadowBlur = 14;
-
-      ctx.beginPath();
-      ctx.moveTo(10, -5);
-      ctx.lineTo(alcance + 8, 0);
-      ctx.lineTo(10, 5);
-      ctx.closePath();
+      ctx.arc(shot.x, shot.y, SHOT_SIZE / 2, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.restore();
     }
 
