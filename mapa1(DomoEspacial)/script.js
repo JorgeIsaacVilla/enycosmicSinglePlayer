@@ -26899,23 +26899,20 @@ function resetPlayerProfile() {
 
 (function () {
   const COFRE_MARTE_STORAGE_KEY = "eny_cofre_marte_11345_v2";
-  const ALIADO_ARMADURA_STORAGE_KEY = "eny_aliado_armadura_antigua_unlocked";
+  const ALIADO_ARMADURA_STORAGE_KEY = "eny_spiritual_mark_01_unlocked";
 
   const COFRE_MARTE_CONFIG = {
     titulo: "COFRE ANTIGUO",
     imagenCofre: "../assets/spriteAmbiente/cofreSecreto.svg",
 
-    // El jugador escribe sal121:5-7.
-    // Internamente validamos sin signos:
-    // sal121:5-7 → SAL12157
     codigoSecretoNormalizado: "SAL12157",
 
     recompensaIQ: 25,
     recompensaCosmonedas: 250,
 
-    // Ajusta esta ruta si tu aliado.js vive en otra carpeta.
-    aliadoScriptSrc: "../globalScripts/aliado.js",
-    aliadoModuleId: "aliado_reptiliano_test"
+    // GlobalScript entregado por el Cofre Antiguo
+    aliadoScriptSrc: "../globalScripts/spiritual-mark-01.js",
+    aliadoModuleId: "spiritual_mark_01"
   };
 
   const COFRE_INTRO_DIALOGOS = [
@@ -26942,16 +26939,20 @@ function resetPlayerProfile() {
     "Al parecer una parte del espíritu del Dios del todo se encuentra en esa armadura.",
     "¿Y me va a ayudar en mi aventura para protegerme?"
   ];
-
+  /*
+    const SECUENCIA_ANTIGUA_OBJETIVO = [
+      "JEHOVÁ", "ES", "TU", "GUARDADOR",
+      "JEHOVÁ", "ES", "TU", "SOMBRA",
+      "A", "TU", "MANO", "DERECHA",
+      "EL", "SOL", "NO", "TE", "FATIGARÁ",
+      "DE", "DÍA",
+      "NI", "LA", "LUNA", "DE", "NOCHE",
+      "JEHOVÁ", "TE", "GUARDARÁ", "DE", "TODO", "MAL",
+      "ÉL", "GUARDARÁ", "TU", "ALMA"
+    ];
+    */
   const SECUENCIA_ANTIGUA_OBJETIVO = [
-    "JEHOVÁ", "ES", "TU", "GUARDADOR",
-    "JEHOVÁ", "ES", "TU", "SOMBRA",
-    "A", "TU", "MANO", "DERECHA",
-    "EL", "SOL", "NO", "TE", "FATIGARÁ",
-    "DE", "DÍA",
-    "NI", "LA", "LUNA", "DE", "NOCHE",
-    "JEHOVÁ", "TE", "GUARDARÁ", "DE", "TODO", "MAL",
-    "ÉL", "GUARDARÁ", "TU", "ALMA"
+    "JEHOVÁ"
   ];
 
   const SECUENCIA_ANTIGUA_RELLENO = [
@@ -27022,18 +27023,18 @@ function resetPlayerProfile() {
   }
 
   function getCofreSavedState() {
-    try {
-      const raw = localStorage.getItem(COFRE_MARTE_STORAGE_KEY);
-      if (!raw) return { rewardClaimed: false };
+    return { rewardClaimed: false };
+  }
 
-      const data = JSON.parse(raw);
-
-      return {
-        rewardClaimed: !!data.rewardClaimed
-      };
-    } catch (_) {
-      return { rewardClaimed: false };
-    }
+  function saveCofreState(data) {
+    /*
+      COFRE ANTIGUO:
+      No guardamos rewardClaimed en localStorage.
+  
+      Intención de diseño:
+      Si el aliado/armadura espiritual muere o se rompe,
+      el jugador puede volver al cofre y recuperarlo otra vez.
+    */
   }
 
   function saveCofreState(data) {
@@ -28400,9 +28401,9 @@ function resetPlayerProfile() {
 
         <div class="cofre-dialog-actions">
           <button class="cofre-btn" type="button" id="cofre-reward-back-btn">Anterior</button>
-          <button class="cofre-btn" type="button" id="cofre-reward-accept-btn">
-            ${cofreMarteState.rewardClaimed ? "Cerrar" : "Aceptar recompensa"}
-          </button>
+<button class="cofre-btn" type="button" id="cofre-reward-accept-btn">
+  Aceptar recompensa
+</button>
         </div>
       </div>
     `;
@@ -28418,11 +28419,6 @@ function resetPlayerProfile() {
     container.querySelector("#cofre-reward-accept-btn").addEventListener("click", async () => {
       if (typeof playtockSound === "function") playtockSound();
 
-      if (cofreMarteState.rewardClaimed) {
-        cerrarCofreSecretoMarte();
-        return;
-      }
-
       await entregarRecompensaCofreMarte();
     });
   }
@@ -28430,20 +28426,13 @@ function resetPlayerProfile() {
   async function entregarRecompensaCofreMarte() {
     if (!cofreMarteState) return;
 
-    const saved = getCofreSavedState();
-
-    if (saved.rewardClaimed) {
-      cofreMarteState.rewardClaimed = true;
-      cerrarCofreSecretoMarte();
-      return;
-    }
-
     try {
       if (typeof playendSound === "function") {
         playendSound();
       } else if (typeof playgoodSound === "function") {
         playgoodSound();
       }
+
       if (typeof cosmonedas !== "undefined") {
         cosmonedas += Number(COFRE_MARTE_CONFIG.recompensaCosmonedas || 0);
       }
@@ -28465,39 +28454,44 @@ function resetPlayerProfile() {
       /*Sincronizar base de datos wordpress*/
       /*--//Sincronizar wordpress(Inicio)--*/
       /*
-        Guardar aquí en WordPress:
-        - cofre_marte_11345_completado: true
-        - aliado_armadura_antigua: true
-        - global_script_aliado_armadura: COFRE_MARTE_CONFIG.aliadoScriptSrc
+        PENDIENTE WORDPRESS - COFRE ANTIGUO / MARTE
+  
+        Este cofre NO debe bloquearse permanentemente.
+  
+        Intención:
+        - El jugador puede volver al cofre si la armadura espiritual/aliado muere.
+        - WordPress deberá guardar el estado actual del aliado, no solo si el cofre fue usado una vez.
+  
+        Guardar en el futuro:
+        - cofre_marte_11345_descubierto: true
+        - spiritual_mark_01_desbloqueado: true
+        - spiritual_mark_01_estado: "activo" / "caido" / "roto"
+        - spiritual_mark_01_hp_actual
+        - spiritual_mark_01_hp_max
+        - globalScript_id: "spiritual_mark_01"
+        - globalScript_src: COFRE_MARTE_CONFIG.aliadoScriptSrc
         - iq_total_actual: IQuser
         - cosmonedas_total_actual: cosmonedas
-        - iq_ganado: COFRE_MARTE_CONFIG.recompensaIQ
-        - cosmonedas_ganadas: COFRE_MARTE_CONFIG.recompensaCosmonedas
-      
-        Recomendado:
-        No guardes solo “+250”.
-        Guarda también el total final de cosmonedas e IQ para evitar diferencias
-        entre frontend y base de datos.
+        - iq_ganado_por_recuperacion: COFRE_MARTE_CONFIG.recompensaIQ
+        - cosmonedas_ganadas_por_recuperacion: COFRE_MARTE_CONFIG.recompensaCosmonedas
+  
+        Nota:
+        Más adelante podemos decidir si la primera apertura da IQ/cosmonedas
+        y las siguientes solo restauran la armadura.
       */
       /*--//Sincronizar wordpress(Fin)--*/
-
-      saveCofreState({
-        rewardClaimed: true
-      });
-
-      cofreMarteState.rewardClaimed = true;
 
       await desbloquearAliadoArmaduraAntigua();
 
       if (typeof showPopupFeedback === "function") {
         showPopupFeedback({
           title: "Recompensa obtenida",
-          message: "Has ganado el aliado Armadura antigua, 250 cosmonedas y 25 IQ.",
+          message: "Has recuperado la armadura espiritual, 250 cosmonedas y 25 IQ.",
           type: "success",
           duration: 5000
         });
       } else {
-        alert("Has ganado el aliado Armadura antigua, 50 cosmonedas y 25 IQ.");
+        alert("Has recuperado la armadura espiritual, 250 cosmonedas y 25 IQ.");
       }
 
       cerrarCofreSecretoMarte();
@@ -28516,7 +28510,7 @@ function resetPlayerProfile() {
   }
 
   async function desbloquearAliadoArmaduraAntigua() {
-    window.enyAliadoArmaduraAntiguaActivado = true;
+    window.enySpiritualMark01Activado = true;
 
     try {
       localStorage.setItem(ALIADO_ARMADURA_STORAGE_KEY, "1");
@@ -28536,7 +28530,7 @@ function resetPlayerProfile() {
     }
 
     const already = Array.from(document.scripts).some(script =>
-      script.src.includes("globalScripts/aliado.js")
+      script.src.includes("globalScripts/spiritual-mark-01.js")
     );
 
     if (already) {
@@ -28562,7 +28556,7 @@ function resetPlayerProfile() {
       };
 
       script.onerror = (err) => {
-        console.warn("No se pudo cargar aliado.js:", COFRE_MARTE_CONFIG.aliadoScriptSrc);
+        console.warn("No se pudo cargar spiritual-mark-01.js:", COFRE_MARTE_CONFIG.aliadoScriptSrc);
         reject(err);
       };
 
@@ -28594,7 +28588,7 @@ function resetPlayerProfile() {
 
     if (!unlockedLocal) return;
 
-    window.enyAliadoArmaduraAntiguaActivado = true;
+    window.enySpiritualMark01Activado = true;
 
     try {
       await desbloquearAliadoArmaduraAntigua();

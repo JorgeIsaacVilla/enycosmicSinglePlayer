@@ -1,0 +1,58 @@
+  const resetBtn = bodyEl.querySelector("#secuencia-antigua-reset");
+    const confirmBtn = bodyEl.querySelector("#secuencia-antigua-confirm");
+
+    resetBtn?.addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      secuenciaAntiguaSeleccionadas = [];
+      secuenciaAntiguaPalabras.forEach(w => {
+        w.selected = false;
+      });
+
+      rerenderSecuenciaAntigua();
+    });
+
+    confirmBtn?.addEventListener("click", () => {
+      if (typeof playtockSound === "function") playtockSound();
+
+      const seleccion = secuenciaAntiguaSeleccionadas.map(w => w.text);
+
+      const correcta =
+        seleccion.length === SECUENCIA_ANTIGUA_OBJETIVO.length &&
+        seleccion.every((txt, i) => txt === SECUENCIA_ANTIGUA_OBJETIVO[i]);
+
+      if (!correcta) {
+        if (typeof playerrorSound === "function") playerrorSound();
+
+        if (typeof showPopupFeedback === "function") {
+          showPopupFeedback({
+            title: "Secuencia incorrecta",
+            message: "La secuencia antigua no coincide. Revisa el orden de las palabras.",
+            type: "warning",
+            duration: 4200
+          });
+        } else {
+          alert("Secuencia incorrecta.");
+        }
+
+        return;
+      }
+
+      if (typeof playgoodSound === "function") playgoodSound();
+
+      if (typeof closeInterfas === "function") {
+        closeInterfas();
+      }
+
+      ensureCofreMarteUI();
+
+      cofreMarteState = crearEstadoInicialCofre();
+      cofreMarteState.stage = "finalDialog";
+      cofreMarteState.finalIndex = 0;
+
+      const overlay = document.getElementById("cofre-marte-overlay");
+      if (overlay) overlay.style.display = "flex";
+
+      renderCofreMarte();
+    });
+  }
