@@ -26910,6 +26910,9 @@ function resetPlayerProfile() {
     recompensaIQ: 25,
     recompensaCosmonedas: 250,
 
+    recompensaRepetidaIQ: 3,
+    recompensaRepetidaCosmonedas: 15,
+
     // GlobalScript entregado por el Cofre Antiguo
     aliadoScriptSrc: "../globalScripts/spiritual-mark-01.js",
     aliadoModuleId: "spiritual_mark_01"
@@ -26918,61 +26921,64 @@ function resetPlayerProfile() {
   const COFRE_INTRO_DIALOGOS = [
     "Veamos...",
     "Es un cofre muy antiguo.",
-    "Pero al parecer tiene tecnología de punta...",
-    "Oh, mira. Un panel secreto..."
+    "wow..!! Tiene tecnologia que nunca he visto...",
+    "De donde será?",
+    "Oh, mira. Un panel...",
+    "Tengo que poner una clave..."
   ];
 
   const COFRE_POST_CODIGO_DIALOGOS = [
-    "¿Qué? ¿La Biblia?",
-    "¿Qué tiene que ver el libro más antiguo del mundo con todo esto?",
-    "Me pregunto qué dirá en ese versículo.",
+    "¿Qué? ¿La Biblia está involucrada en esto?",
+    "¿Qué tiene que ver el Salmo 121: 5-7 con todo esto?",
+    "Me pregunto qué dirá en ese texto de la biblia?",
     "Creo que tendré ahora que buscar una Biblia e investigar un poco.",
-    "Espera... hay algo más."
+    "Espera... hay algo más.",
+    "Al parecer el panel está resiviendo algun tipo de señal BINARIA ¿en forma de microhondas?",
+    "Lo conectaré a mi computadora para ver si la IA puede decifrar el codigo."
   ];
 
   const COFRE_FINAL_DIALOGOS = [
-    "¿Conque hay un Dios del todo en esta historia?",
-    "¿Será ese tal Mesías un ser de otro mundo?",
+    "¿Conque hay un supuesto Dios involucrado en todo esto?",
+    "Quien será ese Dios al que se refiere la biblia",
+    "Será un ser de otro mundo, que estúbo en algun momento en contacto con la sivilizaco+on antigua?",
+    "¿Será... que ese tal Mesías un ser de otro mundo?",
     "Tendré que investigar un poco más sobre esa historia.",
     "Espera... es una armadura.",
-    "En la antigüedad le dirían una armadura espiritual muy antigua.",
-    "Al parecer una parte del espíritu del Dios del todo se encuentra en esa armadura.",
-    "¿Y me va a ayudar en mi aventura para protegerme?"
-  ];
-  /*
-    const SECUENCIA_ANTIGUA_OBJETIVO = [
-      "JEHOVÁ", "ES", "TU", "GUARDADOR",
-      "JEHOVÁ", "ES", "TU", "SOMBRA",
-      "A", "TU", "MANO", "DERECHA",
-      "EL", "SOL", "NO", "TE", "FATIGARÁ",
-      "DE", "DÍA",
-      "NI", "LA", "LUNA", "DE", "NOCHE",
-      "JEHOVÁ", "TE", "GUARDARÁ", "DE", "TODO", "MAL",
-      "ÉL", "GUARDARÁ", "TU", "ALMA"
-    ];
-    */
-  const SECUENCIA_ANTIGUA_OBJETIVO = [
-    "JEHOVÁ"
+    "hay un escrito antiguo que dice...",
+    "Esta armadura tiene un minusculo fragmento del poder del Dios del todo...",
+    "Para proteger en el mundo fisico a aquel que es digno..."
   ];
 
+  const SECUENCIA_ANTIGUA_OBJETIVO = [
+    "JEHOVÁ", "ES", "TU", "GUARDADOR",
+    "JEHOVÁ", "ES", "TU", "SOMBRA",
+    "A", "TU", "MANO", "DERECHA",
+    "EL", "SOL", "NO", "TE", "FATIGARÁ",
+    "DE", "DÍA",
+    "NI", "LA", "LUNA", "DE", "NOCHE",
+    "JEHOVÁ", "TE", "GUARDARÁ", "DE", "TODO", "MAL",
+    "ÉL", "GUARDARÁ", "TU", "ALMA"
+  ];
+
+
   const SECUENCIA_ANTIGUA_RELLENO = [
-    "MARTE", "ORIGEN", "CÓDIGO", "PUERTA", "ARCILLA", "CIELO",
-    "NÚCLEO", "ASTRO", "CLAVE", "SISTEMA", "MISTERIO", "PANEL",
-    "ALIENÍGENA", "MAPA", "COFRE", "SECRETO", "TECNOLOGÍA", "ANTIGUO",
-    "LUZ", "SOMBRA", "RUTA", "METAFÓN", "METACÁMARA", "ALGORITMO",
-    "ENERGÍA", "SEÑAL", "PLANETA", "ÓRBITA", "GRAVEDAD", "TEMPLO",
-    "LIBRO", "HISTORIA", "VERSÍCULO", "INVESTIGAR", "ARMADURA", "ESPÍRITU",
+    "MARTE", "ORIGEN", "PUENTE", "PUERTA", "BARRO", "CIELO",
+    "NÚCLEO", "CORAZÓN", "PROMESA", "SISTEMA", "MISTERIO", "AMOR",
+    "PERSONA", "LUGAR", "METAL", "FUEGO", "ANTIGUO",
+    "LUZ", "RUTA", "SECRETOS",
+    "ENERGÍA", "SEÑAL", "PLANETA", "GUARDADO", "PECADO", "TEMPLO",
+    "LIBRO", "HISTORIA", "TRADICIÓN", "MUERTE", "ARMADURA", "ESPÍRITU",
     "MISIÓN", "AVENTURA", "PROTEGER", "PROPÓSITO", "MUNDO", "REMANENTE",
-    "ESCUDO", "CASCO", "PLATA", "NEÓN", "GUÍA", "FUERZA",
-    "GUARDIA", "VIDA", "NOCHE", "DÍA", "ALMA", "FARO",
-    "CAMINO", "MENSAJE", "LECTURA", "SABIDURÍA", "REY", "SALMO",
-    "PROMESA", "PACTO", "CREACIÓN", "TIERRA", "LUNA", "SOL",
-    "ESTRELLA", "GALAXIA", "COSMOS", "NAVE", "BASE", "CUEVA",
-    "ROCA", "MINERAL", "RUNA", "PANTALLA", "ENIGMA", "BÚSQUEDA",
-    "HALLAZGO", "MEMORIA", "ARCHIVO", "MÓDULO", "ZONA", "RANGO",
-    "SECUENCIA", "DESCIFRAR", "PALABRA", "ORDEN", "CLARO", "OCULTO",
-    "FUTURO", "PASADO", "VIEJO", "NUEVO", "PODER", "AYUDA",
-    "ALIADO", "RECOMPENSA", "IQ", "COSMONEDA", "AVATAR", "JUGADOR"
+    "ESCUDO", "CASCO", "PLATA", "FORTALEZA", "GUÍA", "FUERZA",
+    "GUARDIA", "VIDA", "FARO",
+    "CAMINO", "MENSAJE", "GLORIA", "SABIDURÍA", "REY", "PACTO",
+    "CREACIÓN", "TIERRA", "ESTRELLA", "LEVANTA", "COSMOS", "MI",
+    "CABEZA", "MONTE", "ROCA", "MINERAL", "RUNA", "PANTALLA",
+    "ENIGMA", "BÚSQUEDA", "HALLAZGO", "MEMORIA", "ARCHIVO",
+    "CASTILLO", "ZONA", "SECUENCIA", "DESCIFRAR", "PALABRA",
+    "ORDEN", "CLARO", "OCULTO", "FUTURO", "PASADO", "NUEVO",
+    "PODER", "AYUDA", "ALIADO", "RECOMPENSA", "COSMONEDA",
+    "ETERNA", "SERÁ"
   ];
 
   let cofreMarteState = null;
@@ -27489,7 +27495,7 @@ function resetPlayerProfile() {
         line: COFRE_POST_CODIGO_DIALOGOS[cofreMarteState.postCodeIndex],
         showPrev: cofreMarteState.postCodeIndex > 0,
         showNext: cofreMarteState.postCodeIndex < COFRE_POST_CODIGO_DIALOGOS.length - 1,
-        finalLabel: "Escudriñar secuencia antigua",
+        finalLabel: "Analizando cifrado binario...",
         onPrev: cofrePostCodePrev,
         onNext: cofrePostCodeNext,
         onFinal: abrirSecuenciaAntiguaDesdeCofre
@@ -27953,13 +27959,11 @@ function resetPlayerProfile() {
     </style>
 
     <div class="secuencia-antigua-root">
-      <div class="secuencia-antigua-title">Escudriñar secuencia antigua</div>
+      <div class="secuencia-antigua-title">Analizando cifrado binario...</div>
 
-      <div class="secuencia-antigua-text">
-        Ordena las palabras correctas hasta formar la secuencia antigua.
-        Puedes tocar rápido una palabra de arriba para devolverla,
-        o arrastrarla para cambiarla de lugar.
-      </div>
+<div class="secuencia-antigua-text">
+  La IA logró descifrar parte de las señales binarias que llegaban al cofre en forma de microondas, pero las palabras siguen fuera de orden. Tal vez la respuesta esté en organizarlas como aparecen en la Biblia.
+</div>
 
       <div class="secuencia-antigua-selected" id="secuencia-antigua-selected">
         ${seleccionadasHTML}
@@ -28376,37 +28380,61 @@ function resetPlayerProfile() {
   function renderCofreReward(container) {
     const helmetDataUrl = generarCascoEspiritualPixelArt();
 
-    container.innerHTML = `
-      <div class="cofre-reward-card">
-        <div class="cofre-reward-title">
-          Has ganado un aliado<br>
-          Armadura antigua
-        </div>
+    const yaTieneArmadura =
+      localStorage.getItem(ALIADO_ARMADURA_STORAGE_KEY) === "1";
 
-        <div id="cofre-helmet-preview">
-          <img src="${helmetDataUrl}" alt="Casco espiritual">
-        </div>
+    const recompensaCosmonedas = yaTieneArmadura
+      ? COFRE_MARTE_CONFIG.recompensaRepetidaCosmonedas
+      : COFRE_MARTE_CONFIG.recompensaCosmonedas;
 
-        <div class="cofre-reward-desc">
-          Esta armadura contiene un remanente del espíritu
-          del Dios del todo dispuesto a ayudar a los que
-          tienen un gran propósito para este mundo.
-        </div>
+    const recompensaIQ = yaTieneArmadura
+      ? COFRE_MARTE_CONFIG.recompensaRepetidaIQ
+      : COFRE_MARTE_CONFIG.recompensaIQ;
 
-        <div class="cofre-reward-extra">
-          También has ganado<br>
-          +${COFRE_MARTE_CONFIG.recompensaCosmonedas} cosmonedas<br>
-          +${COFRE_MARTE_CONFIG.recompensaIQ} IQ
-        </div>
+    const tituloRecompensa = yaTieneArmadura
+      ? "Curiosidad recompensada"
+      : "Has ganado un aliado<br>Armadura antigua";
 
-        <div class="cofre-dialog-actions">
-          <button class="cofre-btn" type="button" id="cofre-reward-back-btn">Anterior</button>
-<button class="cofre-btn" type="button" id="cofre-reward-accept-btn">
-  Aceptar recompensa
-</button>
-        </div>
-      </div>
+    const descripcionRecompensa = yaTieneArmadura
+      ? `
+      Volviste a ordenar las palabras antiguas.
+      El cofre no entregó una nueva armadura,
+      pero reconoció tu curiosidad.
+    `
+      : `
+      Esta armadura contiene un remanente del espíritu
+      del Dios del todo dispuesto a ayudar a los que
+      tienen un gran propósito para este mundo.
     `;
+
+    container.innerHTML = `
+    <div class="cofre-reward-card">
+      <div class="cofre-reward-title">
+        ${tituloRecompensa}
+      </div>
+
+      <div id="cofre-helmet-preview">
+        <img src="${helmetDataUrl}" alt="Casco espiritual">
+      </div>
+
+      <div class="cofre-reward-desc">
+        ${descripcionRecompensa}
+      </div>
+
+      <div class="cofre-reward-extra">
+        También has ganado<br>
+        +${recompensaCosmonedas} cosmonedas<br>
+        +${recompensaIQ} IQ
+      </div>
+
+      <div class="cofre-dialog-actions">
+        <button class="cofre-btn" type="button" id="cofre-reward-back-btn">Anterior</button>
+        <button class="cofre-btn" type="button" id="cofre-reward-accept-btn">
+          Aceptar recompensa
+        </button>
+      </div>
+    </div>
+  `;
 
     container.querySelector("#cofre-reward-back-btn").addEventListener("click", () => {
       if (typeof playtockSound === "function") playtockSound();
@@ -28426,6 +28454,17 @@ function resetPlayerProfile() {
   async function entregarRecompensaCofreMarte() {
     if (!cofreMarteState) return;
 
+    const yaTieneArmadura =
+      localStorage.getItem(ALIADO_ARMADURA_STORAGE_KEY) === "1";
+
+    const recompensaCosmonedas = yaTieneArmadura
+      ? COFRE_MARTE_CONFIG.recompensaRepetidaCosmonedas
+      : COFRE_MARTE_CONFIG.recompensaCosmonedas;
+
+    const recompensaIQ = yaTieneArmadura
+      ? COFRE_MARTE_CONFIG.recompensaRepetidaIQ
+      : COFRE_MARTE_CONFIG.recompensaIQ;
+
     try {
       if (typeof playendSound === "function") {
         playendSound();
@@ -28434,11 +28473,11 @@ function resetPlayerProfile() {
       }
 
       if (typeof cosmonedas !== "undefined") {
-        cosmonedas += Number(COFRE_MARTE_CONFIG.recompensaCosmonedas || 0);
+        cosmonedas += Number(recompensaCosmonedas || 0);
       }
 
       if (typeof IQuser !== "undefined") {
-        IQuser += Number(COFRE_MARTE_CONFIG.recompensaIQ || 0);
+        IQuser += Number(recompensaIQ || 0);
       }
 
       if (
@@ -28446,7 +28485,7 @@ function resetPlayerProfile() {
         typeof ajaxurl !== "undefined" &&
         ajaxurl
       ) {
-        enviarCosmonedasAlServidor(Number(COFRE_MARTE_CONFIG.recompensaCosmonedas || 0));
+        enviarCosmonedasAlServidor(Number(recompensaCosmonedas || 0));
       } else {
         console.warn("Servidor WordPress no disponible todavía. Recompensa aplicada solo en modo local.");
       }
@@ -28454,44 +28493,77 @@ function resetPlayerProfile() {
       /*Sincronizar base de datos wordpress*/
       /*--//Sincronizar wordpress(Inicio)--*/
       /*
-        PENDIENTE WORDPRESS - COFRE ANTIGUO / MARTE
-  
-        Este cofre NO debe bloquearse permanentemente.
-  
+        PENDIENTE WORDPRESS / SQL - COFRE ANTIGUO / MARTE
+      
+        Este cofre puede repetirse como experiencia de aprendizaje,
+        pero NO debe entregar la recompensa grande más de una vez.
+      
         Intención:
-        - El jugador puede volver al cofre si la armadura espiritual/aliado muere.
-        - WordPress deberá guardar el estado actual del aliado, no solo si el cofre fue usado una vez.
-  
-        Guardar en el futuro:
+        - Primera vez:
+          - Desbloquea el globalScript spiritual_mark_01.
+          - Entrega +250 cosmonedas.
+          - Entrega +25 IQ.
+      
+        - Repeticiones:
+          - NO vuelve a desbloquear el globalScript si el usuario ya lo tiene.
+          - NO vuelve a entregar la armadura.
+          - Entrega solo recompensa de curiosidad:
+            - +15 cosmonedas.
+            - +3 IQ.
+      
+        En WordPress / SQL, antes de entregar recompensa consultar:
+        - user_id
+        - globalScript_id = "spiritual_mark_01"
+        - spiritual_mark_01_desbloqueado = true / false
+      
+        Si spiritual_mark_01_desbloqueado === true:
+        - recompensa_tipo = "curiosidad"
+        - iq_ganado = COFRE_MARTE_CONFIG.recompensaRepetidaIQ
+        - cosmonedas_ganadas = COFRE_MARTE_CONFIG.recompensaRepetidaCosmonedas
+      
+        Si spiritual_mark_01_desbloqueado === false:
+        - recompensa_tipo = "primera_vez"
+        - desbloquear globalScript_id = "spiritual_mark_01"
+        - guardar globalScript_src = COFRE_MARTE_CONFIG.aliadoScriptSrc
+        - iq_ganado = COFRE_MARTE_CONFIG.recompensaIQ
+        - cosmonedas_ganadas = COFRE_MARTE_CONFIG.recompensaCosmonedas
+      
+        Guardar también:
         - cofre_marte_11345_descubierto: true
-        - spiritual_mark_01_desbloqueado: true
-        - spiritual_mark_01_estado: "activo" / "caido" / "roto"
+        - spiritual_mark_01_estado: "activo" / "agotado" / "roto"
         - spiritual_mark_01_hp_actual
         - spiritual_mark_01_hp_max
-        - globalScript_id: "spiritual_mark_01"
-        - globalScript_src: COFRE_MARTE_CONFIG.aliadoScriptSrc
         - iq_total_actual: IQuser
         - cosmonedas_total_actual: cosmonedas
-        - iq_ganado_por_recuperacion: COFRE_MARTE_CONFIG.recompensaIQ
-        - cosmonedas_ganadas_por_recuperacion: COFRE_MARTE_CONFIG.recompensaCosmonedas
-  
+      
         Nota:
-        Más adelante podemos decidir si la primera apertura da IQ/cosmonedas
-        y las siguientes solo restauran la armadura.
+        El estado del aliado y el desbloqueo del globalScript son cosas distintas.
+        El jugador puede tener el globalScript desbloqueado aunque el poder espiritual
+        del aliado esté agotado.
       */
       /*--//Sincronizar wordpress(Fin)--*/
 
-      await desbloquearAliadoArmaduraAntigua();
+      if (!yaTieneArmadura) {
+        await desbloquearAliadoArmaduraAntigua();
+      }
 
       if (typeof showPopupFeedback === "function") {
         showPopupFeedback({
-          title: "Recompensa obtenida",
-          message: "Has recuperado la armadura espiritual, 250 cosmonedas y 25 IQ.",
+          title: yaTieneArmadura
+            ? "Curiosidad recompensada"
+            : "Recompensa obtenida",
+          message: yaTieneArmadura
+            ? `Volviste a interpretar las palabras antiguas. Has ganado ${recompensaCosmonedas} cosmonedas y ${recompensaIQ} IQ.`
+            : `Has ganado el aliado Armadura antigua, ${recompensaCosmonedas} cosmonedas y ${recompensaIQ} IQ.`,
           type: "success",
           duration: 5000
         });
       } else {
-        alert("Has recuperado la armadura espiritual, 250 cosmonedas y 25 IQ.");
+        alert(
+          yaTieneArmadura
+            ? `Has ganado ${recompensaCosmonedas} cosmonedas y ${recompensaIQ} IQ.`
+            : `Has ganado el aliado Armadura antigua, ${recompensaCosmonedas} cosmonedas y ${recompensaIQ} IQ.`
+        );
       }
 
       cerrarCofreSecretoMarte();

@@ -3915,7 +3915,7 @@ function wrapText(ctx, text, maxWidth) {
 
 const GLOBAL_SCRIPTS = [
   //"../globalScripts/linterna.js",
-  //"../globalScripts/aliado.js",
+  "../globalScripts/aliado.js",
   "../globalScripts/metacam.js",
   "../globalScripts/interruptorOscuridad.js",
   //"../globalScripts/timerOscuridad15s.js"

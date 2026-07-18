@@ -2,7 +2,7 @@
 //tomar como base para tener varios aliados - evaluar si se puede en ese mapa hacer que los enemigos ataquen a los aliados
 
 
-//versión 1.0.9 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca. esta versión ya reproduce el sprite del aliado de manera correcta, aunque se reinicie el juego
+//versión 1.0.10 - aliado recibe daños, muere y muestra popup, pero no lo ven los enemigos ni ataca. esta versión ya reproduce el sprite del aliado de manera correcta, aunque se reinicie el juego. eSTA VERSIÓN ATACA CON ESPADA
 
 (function () {
   const MODULE_ID = "spiritual_mark_01";
@@ -227,7 +227,7 @@
       window.crearTextoDanio(
         state.posX + 32,
         state.posY - 14,
-        "ALIADO CAIDO",
+        "ALIADO MUERTO",
         "#ff5a5a",
         "#ff0000"
       );
@@ -236,8 +236,8 @@
     console.log("El aliado ha muerto");
 
     showAliadoPopupFeedback({
-      title: "Aliado caído",
-      message: "Tu aliado ha muerto.",
+      title: "Poder espiritual agotado",
+      message: "El antiguo pacto no responde. Vuelve al lugar donde la protección fue nombrada.",
       type: "warning",
       duration: 5000
     });
