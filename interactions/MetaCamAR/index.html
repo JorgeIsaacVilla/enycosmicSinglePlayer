@@ -57,25 +57,22 @@
 
 #ar-canvas {
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
   z-index: 2 !important;
   pointer-events: none !important;
+  display: block !important;
+  /* El tamaño y la posición se calculan desde JS para conservar
+     exactamente la misma relación de aspecto que el video. */
 }
 
 video,
 #arjs-video {
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: cover !important;
   z-index: 1 !important;
   margin: 0 !important;
   padding: 0 !important;
+  object-fit: fill !important;
+  /* JS aplica un recorte tipo cover usando dimensiones reales,
+     sin estirar ni el video ni la capa WebGL. */
 }
 
 body > canvas:not(#ar-canvas) {

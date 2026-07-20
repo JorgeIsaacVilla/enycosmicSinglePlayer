@@ -95,14 +95,9 @@ function init() {
     renderer.setClearColor(0x000000, 0);
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.outputEncoding = THREE.sRGBEncoding;
 
     renderer.domElement.style.position = "fixed";
-    renderer.domElement.style.top = "0";
-    renderer.domElement.style.left = "0";
-    renderer.domElement.style.width = "100vw";
-    renderer.domElement.style.height = "100vh";
     renderer.domElement.style.zIndex = "2";
     renderer.domElement.style.pointerEvents = "none";
 
@@ -110,33 +105,67 @@ function init() {
 
     arToolkitSource = new THREEx.ArToolkitSource({
         sourceType: "webcam",
-        sourceWidth: 1280,
-        sourceHeight: 720,
-        displayWidth: window.innerWidth,
-        displayHeight: window.innerHeight
+
+        // Se usa la misma relación 4:3 que el canvas de detección.
+        // Esto ayuda a evitar diferencias de proporción entre
+        // la cámara usada para detectar y la proyección AR.
+        sourceWidth: 640,
+        sourceHeight: 480
     });
 
     arToolkitSource.init(function () {
-        setTimeout(onResize, 500);
-        setTimeout(onResize, 1000);
+        const video = arToolkitSource.domElement;
+
+        // Ajustamos varias veces porque algunos móviles tardan
+        // en informar la resolución real de la cámara.
+        onResize();
+
+        setTimeout(onResize, 300);
+        setTimeout(onResize, 800);
         setTimeout(onResize, 1500);
+
+        if (video) {
+            video.addEventListener(
+                "loadedmetadata",
+                onResize,
+                { once: true }
+            );
+
+            video.addEventListener(
+                "canplay",
+                onResize,
+                { once: true }
+            );
+        }
     });
 
-    window.addEventListener("resize", onResize);
-    window.addEventListener("orientationchange", function () {
-        setTimeout(onResize, 500);
-    });
+    window.addEventListener(
+        "resize",
+        onResize
+    );
+
+    window.addEventListener(
+        "orientationchange",
+        function () {
+            setTimeout(onResize, 150);
+            setTimeout(onResize, 500);
+        }
+    );
 
     arToolkitContext = new THREEx.ArToolkitContext({
         cameraParametersUrl: "./repo/camera_para.dat",
         detectionMode: "mono",
+
         canvasWidth: 640,
         canvasHeight: 480,
+
         maxDetectionRate: 30
     });
 
     arToolkitContext.init(function () {
-        camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+        camera.projectionMatrix.copy(
+            arToolkitContext.getProjectionMatrix()
+        );
     });
 
     crearLuces();
@@ -144,14 +173,32 @@ function init() {
 }
 
 function crearLuces() {
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x222244, 1.25);
+    const hemiLight = new THREE.HemisphereLight(
+        0xffffff,
+        0x222244,
+        1.25
+    );
+
     scene.add(hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    dirLight.position.set(1, 3, 2);
+    const dirLight = new THREE.DirectionalLight(
+        0xffffff,
+        1.4
+    );
+
+    dirLight.position.set(
+        1,
+        3,
+        2
+    );
+
     scene.add(dirLight);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+    const ambientLight = new THREE.AmbientLight(
+        0xffffff,
+        0.65
+    );
+
     scene.add(ambientLight);
 }
 
@@ -160,23 +207,32 @@ function crearTarjetasEspecialidad() {
 
     tarjetasEspecialidad.forEach((tarjeta) => {
         const markerRoot = new THREE.Group();
+
         markerRoot.name = tarjeta.id;
         markerRoot.visible = false;
 
         scene.add(markerRoot);
+
         markerRoots.push(markerRoot);
 
-        new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-            type: "pattern",
-            patternUrl: tarjeta.patternUrl,
-            patternRatio: 3
-        });
+        new THREEx.ArMarkerControls(
+            arToolkitContext,
+            markerRoot,
+            {
+                type: "pattern",
+                patternUrl: tarjeta.patternUrl,
+                patternRatio: 3
+            }
+        );
 
         loader.load(
             tarjeta.glbUrl,
+
             function (gltf) {
                 const anchor = new THREE.Group();
-                anchor.name = `${tarjeta.id}_anchor`;
+
+                anchor.name =
+                    `${tarjeta.id}_anchor`;
 
                 anchor.position.set(
                     tarjeta.x || 0,
@@ -186,16 +242,32 @@ function crearTarjetasEspecialidad() {
 
                 const model = gltf.scene;
 
-                model.scale.set(tarjeta.scale, tarjeta.scale, tarjeta.scale);
-                model.position.set(0, 0, 0);
+                // Escala uniforme.
+                // Nunca modificamos X, Y o Z por separado.
+                model.scale.set(
+                    tarjeta.scale,
+                    tarjeta.scale,
+                    tarjeta.scale
+                );
+
+                model.position.set(
+                    0,
+                    0,
+                    0
+                );
+
                 model.rotation.x = 0;
 
                 prepararModelo(model);
 
                 anchor.add(model);
 
-                const brillo = crearBrilloRetroCosmico(tarjeta);
-                brillo.visible = tarjeta.brilloActivo === true;
+                const brillo =
+                    crearBrilloRetroCosmico(tarjeta);
+
+                brillo.visible =
+                    tarjeta.brilloActivo === true;
+
                 anchor.add(brillo);
 
                 markerRoot.add(anchor);
@@ -208,20 +280,34 @@ function crearTarjetasEspecialidad() {
                     brillo
                 });
 
-                if (gltf.animations && gltf.animations.length > 0) {
-                    const mixer = new THREE.AnimationMixer(model);
+                if (
+                    gltf.animations &&
+                    gltf.animations.length > 0
+                ) {
+                    const mixer =
+                        new THREE.AnimationMixer(model);
 
-                    gltf.animations.forEach((clip) => {
-                        const action = mixer.clipAction(clip);
-                        action.play();
-                    });
+                    gltf.animations.forEach(
+                        (clip) => {
+                            const action =
+                                mixer.clipAction(clip);
+
+                            action.play();
+                        }
+                    );
 
                     mixers.push(mixer);
                 }
             },
+
             undefined,
+
             function (error) {
-                console.error("No se pudo cargar el modelo:", tarjeta.glbUrl, error);
+                console.error(
+                    "No se pudo cargar el modelo:",
+                    tarjeta.glbUrl,
+                    error
+                );
             }
         );
     });
@@ -235,54 +321,125 @@ function prepararModelo(model) {
         child.receiveShadow = false;
 
         if (child.material) {
-            child.material.side = THREE.DoubleSide;
-            child.material.needsUpdate = true;
+            child.material.side =
+                THREE.DoubleSide;
+
+            child.material.needsUpdate =
+                true;
         }
     });
 }
 
 function crearTexturaRetro(tipo = "star") {
-    const canvas = document.createElement("canvas");
+    const canvas =
+        document.createElement("canvas");
+
     canvas.width = 96;
     canvas.height = 96;
 
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, 96, 96);
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.clearRect(
+        0,
+        0,
+        96,
+        96
+    );
 
     if (tipo === "star") {
         ctx.fillStyle = "#ffffff";
 
         ctx.beginPath();
-        ctx.arc(48, 48, 9, 0, Math.PI * 2);
+
+        ctx.arc(
+            48,
+            48,
+            9,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
 
         ctx.globalAlpha = 0.75;
-        ctx.fillRect(45, 18, 6, 60);
-        ctx.fillRect(18, 45, 60, 6);
+
+        ctx.fillRect(
+            45,
+            18,
+            6,
+            60
+        );
+
+        ctx.fillRect(
+            18,
+            45,
+            60,
+            6
+        );
 
         ctx.globalAlpha = 0.45;
-        ctx.fillRect(38, 38, 20, 20);
+
+        ctx.fillRect(
+            38,
+            38,
+            20,
+            20
+        );
     }
 
     if (tipo === "comet") {
         ctx.fillStyle = "#ffffff";
 
         ctx.globalAlpha = 0.4;
+
         ctx.beginPath();
-        ctx.moveTo(8, 50);
-        ctx.lineTo(48, 34);
-        ctx.lineTo(42, 62);
+
+        ctx.moveTo(
+            8,
+            50
+        );
+
+        ctx.lineTo(
+            48,
+            34
+        );
+
+        ctx.lineTo(
+            42,
+            62
+        );
+
         ctx.closePath();
+
         ctx.fill();
 
         ctx.globalAlpha = 0.9;
+
         ctx.beginPath();
-        ctx.arc(62, 48, 14, 0, Math.PI * 2);
+
+        ctx.arc(
+            62,
+            48,
+            14,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
 
         ctx.globalAlpha = 1;
+
         ctx.beginPath();
-        ctx.arc(66, 44, 4, 0, Math.PI * 2);
+
+        ctx.arc(
+            66,
+            44,
+            4,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
     }
 
@@ -292,62 +449,136 @@ function crearTexturaRetro(tipo = "star") {
         ctx.lineWidth = 5;
 
         ctx.globalAlpha = 0.85;
+
         ctx.beginPath();
-        ctx.ellipse(48, 50, 30, 13, -0.35, 0, Math.PI * 2);
+
+        ctx.ellipse(
+            48,
+            50,
+            30,
+            13,
+            -0.35,
+            0,
+            Math.PI * 2
+        );
+
         ctx.stroke();
 
         ctx.globalAlpha = 0.9;
+
         ctx.beginPath();
-        ctx.arc(48, 48, 15, 0, Math.PI * 2);
+
+        ctx.arc(
+            48,
+            48,
+            15,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
 
         ctx.globalAlpha = 0.9;
+
         ctx.beginPath();
-        ctx.arc(74, 38, 4, 0, Math.PI * 2);
+
+        ctx.arc(
+            74,
+            38,
+            4,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
     }
 
-    const texture = new THREE.CanvasTexture(canvas);
+    const texture =
+        new THREE.CanvasTexture(canvas);
+
     texture.needsUpdate = true;
-    texture.magFilter = THREE.LinearFilter;
-    texture.minFilter = THREE.LinearFilter;
+
+    texture.magFilter =
+        THREE.LinearFilter;
+
+    texture.minFilter =
+        THREE.LinearFilter;
 
     return texture;
 }
 
 function crearBrilloRetroCosmico(tarjeta) {
-    const grupo = new THREE.Group();
-    grupo.name = `${tarjeta.id}_retro_cosmic_fx`;
+    const grupo =
+        new THREE.Group();
 
-    const color = tarjeta.colorBrillo || 0xffffff;
-    const radioBase = tarjeta.radioDestello || 0.85;
-    const tamBase = tarjeta.tamañoDestello || 0.06;
-    const cantidad = tarjeta.cantidadDestellos || 8;
+    grupo.name =
+        `${tarjeta.id}_retro_cosmic_fx`;
 
-    const texturaStar = crearTexturaRetro("star");
-    const texturaComet = crearTexturaRetro("comet");
-    const texturaPlanet = crearTexturaRetro("planet");
+    const color =
+        tarjeta.colorBrillo || 0xffffff;
 
-    const totalStars = Math.max(5, Math.round(cantidad * 0.75));
+    const radioBase =
+        tarjeta.radioDestello || 0.85;
+
+    const tamBase =
+        tarjeta.tamañoDestello || 0.06;
+
+    const cantidad =
+        tarjeta.cantidadDestellos || 8;
+
+    const texturaStar =
+        crearTexturaRetro("star");
+
+    const texturaComet =
+        crearTexturaRetro("comet");
+
+    const texturaPlanet =
+        crearTexturaRetro("planet");
+
+    const totalStars =
+        Math.max(
+            5,
+            Math.round(cantidad * 0.75)
+        );
+
     const totalComets = 2;
+
     const totalPlanets = 1;
 
-    for (let i = 0; i < totalStars; i++) {
-        const material = new THREE.SpriteMaterial({
-            map: texturaStar,
-            color,
-            transparent: true,
-            opacity: 0.9,
-            depthWrite: false,
-            depthTest: false,
-            blending: THREE.AdditiveBlending
-        });
+    for (
+        let i = 0;
+        i < totalStars;
+        i++
+    ) {
+        const material =
+            new THREE.SpriteMaterial({
+                map: texturaStar,
+                color,
+                transparent: true,
+                opacity: 0.9,
+                depthWrite: false,
+                depthTest: false,
+                blending:
+                    THREE.AdditiveBlending
+            });
 
-        const sprite = new THREE.Sprite(material);
+        const sprite =
+            new THREE.Sprite(material);
 
-        const angulo = (i / totalStars) * Math.PI * 2;
-        const radio = radioBase + (i % 3) * 0.12;
-        const altura = 0.16 + (i % 4) * 0.18;
+        const angulo =
+            (i / totalStars) *
+            Math.PI *
+            2;
+
+        const radio =
+            radioBase +
+            (i % 3) *
+            0.12;
+
+        const altura =
+            0.16 +
+            (i % 4) *
+            0.18;
 
         sprite.position.set(
             Math.cos(angulo) * radio,
@@ -355,88 +586,177 @@ function crearBrilloRetroCosmico(tarjeta) {
             Math.sin(angulo) * radio
         );
 
-        const escala = tamBase * (0.55 + (i % 3) * 0.2);
-        sprite.scale.set(escala, escala, escala);
+        const escala =
+            tamBase *
+            (
+                0.55 +
+                (i % 3) *
+                0.2
+            );
+
+        sprite.scale.set(
+            escala,
+            escala,
+            escala
+        );
 
         sprite.userData = {
             tipo: "star",
             baseAngle: angulo,
             radius: radio,
             baseY: altura,
-            amplitude: 0.025 + (i % 2) * 0.02,
-            speed: 0.18 + (i % 4) * 0.05,
-            twinkle: 2.1 + (i % 3) * 0.45,
-            phase: i * 0.8,
-            baseScale: escala
+
+            amplitude:
+                0.025 +
+                (i % 2) *
+                0.02,
+
+            speed:
+                0.18 +
+                (i % 4) *
+                0.05,
+
+            twinkle:
+                2.1 +
+                (i % 3) *
+                0.45,
+
+            phase:
+                i *
+                0.8,
+
+            baseScale:
+                escala
         };
 
         grupo.add(sprite);
     }
 
-    for (let i = 0; i < totalComets; i++) {
-        const material = new THREE.SpriteMaterial({
-            map: texturaComet,
-            color,
-            transparent: true,
-            opacity: 0.85,
-            depthWrite: false,
-            depthTest: false,
-            blending: THREE.AdditiveBlending
-        });
+    for (
+        let i = 0;
+        i < totalComets;
+        i++
+    ) {
+        const material =
+            new THREE.SpriteMaterial({
+                map: texturaComet,
+                color,
+                transparent: true,
+                opacity: 0.85,
+                depthWrite: false,
+                depthTest: false,
+                blending:
+                    THREE.AdditiveBlending
+            });
 
-        const sprite = new THREE.Sprite(material);
+        const sprite =
+            new THREE.Sprite(material);
 
-        const angulo = i === 0 ? 0.75 : 3.85;
-        const radio = radioBase * (1.08 + i * 0.14);
-        const altura = 0.42 + i * 0.28;
+        const angulo =
+            i === 0
+                ? 0.75
+                : 3.85;
+
+        const radio =
+            radioBase *
+            (
+                1.08 +
+                i *
+                0.14
+            );
+
+        const altura =
+            0.42 +
+            i *
+            0.28;
 
         sprite.position.set(
-            Math.cos(angulo) * radio,
+            Math.cos(angulo) *
+            radio,
             altura,
-            Math.sin(angulo) * radio
+            Math.sin(angulo) *
+            radio
         );
 
-        const escala = tamBase * 1.45;
-        sprite.scale.set(escala, escala, escala);
+        const escala =
+            tamBase *
+            1.45;
+
+        sprite.scale.set(
+            escala,
+            escala,
+            escala
+        );
 
         sprite.userData = {
             tipo: "comet",
             baseAngle: angulo,
             radius: radio,
             baseY: altura,
-            speed: 0.45 + i * 0.12,
-            phase: i * 1.2,
-            baseScale: escala
+
+            speed:
+                0.45 +
+                i *
+                0.12,
+
+            phase:
+                i *
+                1.2,
+
+            baseScale:
+                escala
         };
 
         grupo.add(sprite);
     }
 
-    for (let i = 0; i < totalPlanets; i++) {
-        const material = new THREE.SpriteMaterial({
-            map: texturaPlanet,
-            color,
-            transparent: true,
-            opacity: 0.65,
-            depthWrite: false,
-            depthTest: false,
-            blending: THREE.AdditiveBlending
-        });
+    for (
+        let i = 0;
+        i < totalPlanets;
+        i++
+    ) {
+        const material =
+            new THREE.SpriteMaterial({
+                map: texturaPlanet,
+                color,
+                transparent: true,
+                opacity: 0.65,
+                depthWrite: false,
+                depthTest: false,
+                blending:
+                    THREE.AdditiveBlending
+            });
 
-        const sprite = new THREE.Sprite(material);
+        const sprite =
+            new THREE.Sprite(material);
 
-        const angulo = 2.35;
-        const radio = radioBase * 0.72;
-        const altura = 0.32;
+        const angulo =
+            2.35;
+
+        const radio =
+            radioBase *
+            0.72;
+
+        const altura =
+            0.32;
 
         sprite.position.set(
-            Math.cos(angulo) * radio,
+            Math.cos(angulo) *
+            radio,
             altura,
-            Math.sin(angulo) * radio
+            Math.sin(angulo) *
+            radio
         );
 
-        const escala = tamBase * 1.25;
-        sprite.scale.set(escala, escala, escala);
+        const escala =
+            tamBase *
+            1.25;
+
+        sprite.scale.set(
+            escala,
+            escala,
+            escala
+        );
 
         sprite.userData = {
             tipo: "planet",
@@ -454,117 +774,488 @@ function crearBrilloRetroCosmico(tarjeta) {
     return grupo;
 }
 
-function animarBrilloPixelArt(brillo, tiempo, tarjeta) {
-    const intensidad = tarjeta.intensidadBrillo || 1.15;
+function animarBrilloPixelArt(
+    brillo,
+    tiempo,
+    tarjeta
+) {
+    const intensidad =
+        tarjeta.intensidadBrillo ||
+        1.15;
 
-    brillo.children.forEach((item) => {
-        const d = item.userData;
+    brillo.children.forEach(
+        (item) => {
+            const d =
+                item.userData;
 
-        if (d.tipo === "star") {
-            const orbit = d.baseAngle + tiempo * d.speed;
-            const pulso = Math.sin(tiempo * d.twinkle + d.phase);
+            if (
+                d.tipo ===
+                "star"
+            ) {
+                const orbit =
+                    d.baseAngle +
+                    tiempo *
+                    d.speed;
 
-            item.position.x = Math.cos(orbit) * d.radius;
-            item.position.z = Math.sin(orbit) * d.radius;
-            item.position.y = d.baseY + Math.sin(tiempo * 1.1 + d.phase) * d.amplitude;
+                const pulso =
+                    Math.sin(
+                        tiempo *
+                        d.twinkle +
+                        d.phase
+                    );
 
-            const glow = 0.45 + Math.max(0, pulso) * 0.55;
-            const scale = d.baseScale * (0.9 + Math.max(0, pulso) * intensidad);
+                item.position.x =
+                    Math.cos(orbit) *
+                    d.radius;
 
-            item.material.opacity = glow;
-            item.scale.set(scale, scale, scale);
+                item.position.z =
+                    Math.sin(orbit) *
+                    d.radius;
+
+                item.position.y =
+                    d.baseY +
+                    Math.sin(
+                        tiempo *
+                        1.1 +
+                        d.phase
+                    ) *
+                    d.amplitude;
+
+                const glow =
+                    0.45 +
+                    Math.max(
+                        0,
+                        pulso
+                    ) *
+                    0.55;
+
+                const scale =
+                    d.baseScale *
+                    (
+                        0.9 +
+                        Math.max(
+                            0,
+                            pulso
+                        ) *
+                        intensidad
+                    );
+
+                item.material.opacity =
+                    glow;
+
+                item.scale.set(
+                    scale,
+                    scale,
+                    scale
+                );
+            }
+
+            if (
+                d.tipo ===
+                "comet"
+            ) {
+                const orbit =
+                    d.baseAngle +
+                    tiempo *
+                    d.speed;
+
+                const trailPulse =
+                    Math.sin(
+                        tiempo *
+                        1.8 +
+                        d.phase
+                    );
+
+                item.position.x =
+                    Math.cos(orbit) *
+                    d.radius;
+
+                item.position.z =
+                    Math.sin(orbit) *
+                    d.radius;
+
+                item.position.y =
+                    d.baseY +
+                    Math.sin(
+                        tiempo *
+                        1.2 +
+                        d.phase
+                    ) *
+                    0.04;
+
+                const scale =
+                    d.baseScale *
+                    (
+                        0.95 +
+                        Math.max(
+                            0,
+                            trailPulse
+                        ) *
+                        0.25
+                    );
+
+                item.scale.set(
+                    scale,
+                    scale,
+                    scale
+                );
+
+                item.material.opacity =
+                    0.55 +
+                    Math.max(
+                        0,
+                        trailPulse
+                    ) *
+                    0.35;
+
+                item.material.rotation =
+                    -orbit;
+            }
+
+            if (
+                d.tipo ===
+                "planet"
+            ) {
+                const orbit =
+                    d.baseAngle -
+                    tiempo *
+                    d.speed;
+
+                const pulse =
+                    Math.sin(
+                        tiempo *
+                        1.1 +
+                        d.phase
+                    );
+
+                item.position.x =
+                    Math.cos(orbit) *
+                    d.radius;
+
+                item.position.z =
+                    Math.sin(orbit) *
+                    d.radius;
+
+                item.position.y =
+                    d.baseY +
+                    Math.cos(
+                        tiempo *
+                        0.8 +
+                        d.phase
+                    ) *
+                    0.03;
+
+                const scale =
+                    d.baseScale *
+                    (
+                        1 +
+                        Math.max(
+                            0,
+                            pulse
+                        ) *
+                        0.15
+                    );
+
+                item.scale.set(
+                    scale,
+                    scale,
+                    scale
+                );
+
+                item.material.opacity =
+                    0.42 +
+                    Math.max(
+                        0,
+                        pulse
+                    ) *
+                    0.22;
+
+                item.material.rotation =
+                    orbit *
+                    0.15;
+            }
         }
-
-        if (d.tipo === "comet") {
-            const orbit = d.baseAngle + tiempo * d.speed;
-            const trailPulse = Math.sin(tiempo * 1.8 + d.phase);
-
-            item.position.x = Math.cos(orbit) * d.radius;
-            item.position.z = Math.sin(orbit) * d.radius;
-            item.position.y = d.baseY + Math.sin(tiempo * 1.2 + d.phase) * 0.04;
-
-            const scale = d.baseScale * (0.95 + Math.max(0, trailPulse) * 0.25);
-            item.scale.set(scale, scale, scale);
-
-            item.material.opacity = 0.55 + Math.max(0, trailPulse) * 0.35;
-            item.material.rotation = -orbit;
-        }
-
-        if (d.tipo === "planet") {
-            const orbit = d.baseAngle - tiempo * d.speed;
-            const pulse = Math.sin(tiempo * 1.1 + d.phase);
-
-            item.position.x = Math.cos(orbit) * d.radius;
-            item.position.z = Math.sin(orbit) * d.radius;
-            item.position.y = d.baseY + Math.cos(tiempo * 0.8 + d.phase) * 0.03;
-
-            const scale = d.baseScale * (1 + Math.max(0, pulse) * 0.15);
-            item.scale.set(scale, scale, scale);
-
-            item.material.opacity = 0.42 + Math.max(0, pulse) * 0.22;
-            item.material.rotation = orbit * 0.15;
-        }
-    });
+    );
 }
 
+/*
+==================================================
+CORRECCIÓN PRINCIPAL PARA MÓVILES
+==================================================
+
+En la versión anterior:
+
+- el video se forzaba a 100vw x 100vh
+- el canvas WebGL también se forzaba a 100vw x 100vh
+- pero la cámara podía tener otra proporción
+
+Eso podía provocar que el render 3D se viera
+más alto o más ancho dependiendo del móvil.
+
+Ahora calculamos manualmente un comportamiento
+tipo "cover".
+
+La cámara y el canvas WebGL reciben EXACTAMENTE:
+
+- el mismo ancho
+- el mismo alto
+- la misma posición
+- el mismo recorte
+
+Por eso el GLB conserva su proporción.
+*/
+
 function onResize() {
-    if (!arToolkitSource) return;
+    if (
+        !arToolkitSource ||
+        !renderer
+    ) {
+        return;
+    }
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
+    const viewportWidth =
+        window.innerWidth;
 
-    arToolkitSource.onResize();
+    const viewportHeight =
+        window.innerHeight;
 
-    renderer.setPixelRatio(pixelRatio);
-    renderer.setSize(width, height);
+    const pixelRatio =
+        Math.min(
+            window.devicePixelRatio ||
+            1,
+            1.5
+        );
 
-    renderer.domElement.style.position = "fixed";
-    renderer.domElement.style.top = "0";
-    renderer.domElement.style.left = "0";
-    renderer.domElement.style.width = "100vw";
-    renderer.domElement.style.height = "100vh";
-    renderer.domElement.style.zIndex = "2";
-    renderer.domElement.style.pointerEvents = "none";
+    const video =
+        arToolkitSource.domElement ||
+        document.querySelector(
+            "video"
+        );
 
-    const video = document.querySelector("video");
+    /*
+    Intentamos obtener la resolución REAL
+    de la cámara.
+
+    Algunos móviles todavía no la tienen
+    disponible al iniciar, por eso usamos
+    temporalmente 640x480.
+    */
+
+    const sourceWidth =
+        video &&
+            video.videoWidth
+            ? video.videoWidth
+            : 640;
+
+    const sourceHeight =
+        video &&
+            video.videoHeight
+            ? video.videoHeight
+            : 480;
+
+    const sourceAspect =
+        sourceWidth /
+        sourceHeight;
+
+    const viewportAspect =
+        viewportWidth /
+        viewportHeight;
+
+    /*
+    Calculamos COVER manualmente.
+
+    No deformamos nada.
+
+    Simplemente hacemos el video y el canvas
+    un poco más grandes que la pantalla
+    cuando sea necesario.
+
+    El sobrante queda recortado.
+    */
+
+    let displayWidth;
+    let displayHeight;
+
+    if (
+        viewportAspect >
+        sourceAspect
+    ) {
+        displayWidth =
+            viewportWidth;
+
+        displayHeight =
+            viewportWidth /
+            sourceAspect;
+    } else {
+        displayHeight =
+            viewportHeight;
+
+        displayWidth =
+            viewportHeight *
+            sourceAspect;
+    }
+
+    /*
+    Centramos ambos elementos.
+    */
+
+    const left =
+        (
+            viewportWidth -
+            displayWidth
+        ) /
+        2;
+
+    const top =
+        (
+            viewportHeight -
+            displayHeight
+        ) /
+        2;
+
+    /*
+    THREE.JS
+    */
+
+    renderer.setPixelRatio(
+        pixelRatio
+    );
+
+    renderer.setSize(
+        Math.round(
+            displayWidth
+        ),
+        Math.round(
+            displayHeight
+        ),
+        false
+    );
+
+    const canvas =
+        renderer.domElement;
+
+    canvas.style.position =
+        "fixed";
+
+    canvas.style.left =
+        `${left}px`;
+
+    canvas.style.top =
+        `${top}px`;
+
+    canvas.style.width =
+        `${displayWidth}px`;
+
+    canvas.style.height =
+        `${displayHeight}px`;
+
+    canvas.style.zIndex =
+        "2";
+
+    canvas.style.pointerEvents =
+        "none";
+
+    /*
+    VIDEO DE LA CÁMARA
+
+    Recibe exactamente el mismo rectángulo
+    que el canvas WebGL.
+    */
 
     if (video) {
-        video.style.position = "fixed";
-        video.style.top = "0";
-        video.style.left = "0";
-        video.style.width = "100vw";
-        video.style.height = "100vh";
-        video.style.objectFit = "cover";
-        video.style.zIndex = "1";
-        video.style.margin = "0";
-        video.style.padding = "0";
-        video.style.transform = "none";
+        video.style.position =
+            "fixed";
+
+        video.style.left =
+            `${left}px`;
+
+        video.style.top =
+            `${top}px`;
+
+        video.style.width =
+            `${displayWidth}px`;
+
+        video.style.height =
+            `${displayHeight}px`;
+
+        /*
+        Usamos fill porque ya calculamos
+        nosotros mismos las proporciones.
+
+        El video NO se deforma porque
+        displayWidth y displayHeight
+        mantienen sourceAspect.
+        */
+
+        video.style.objectFit =
+            "fill";
+
+        video.style.zIndex =
+            "1";
+
+        video.style.margin =
+            "0";
+
+        video.style.padding =
+            "0";
+
+        video.style.transform =
+            "none";
     }
+
+    /*
+    El canvas interno de AR.js se utiliza
+    únicamente para detectar el marcador.
+
+    No necesitamos mostrarlo ni adaptarlo
+    visualmente a la pantalla.
+    */
 
     if (
         arToolkitContext &&
-        arToolkitContext.arController !== null
+        arToolkitContext.arController
     ) {
-        arToolkitSource.copySizeTo(arToolkitContext.arController.canvas);
-
-        arToolkitContext.arController.canvas.style.display = "none";
+        arToolkitContext
+            .arController
+            .canvas
+            .style
+            .display =
+            "none";
     }
 }
 
 function update() {
-    if (!arToolkitSource || arToolkitSource.ready === false) return;
-    if (!arToolkitContext) return;
+    if (
+        !arToolkitSource ||
+        arToolkitSource.ready ===
+        false
+    ) {
+        return;
+    }
 
-    arToolkitContext.update(arToolkitSource.domElement);
+    if (!arToolkitContext) {
+        return;
+    }
+
+    arToolkitContext.update(
+        arToolkitSource.domElement
+    );
 }
 
 function render() {
-    renderer.render(scene, camera);
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
-function actualizarTextoPixelArt(markerActivo) {
-    const info = document.getElementById("info");
+function actualizarTextoPixelArt(
+    markerActivo
+) {
+    const info =
+        document.getElementById(
+            "info"
+        );
 
     if (markerActivo) {
         info.innerHTML = `
@@ -582,39 +1273,82 @@ function actualizarTextoPixelArt(markerActivo) {
 }
 
 function animate() {
-    requestAnimationFrame(animate);
+    requestAnimationFrame(
+        animate
+    );
 
-    const delta = clock.getDelta();
-    const tiempo = clock.elapsedTime;
+    const delta =
+        clock.getDelta();
+
+    const tiempo =
+        clock.elapsedTime;
 
     update();
 
-    mixers.forEach((mixer) => {
-        mixer.update(delta);
-    });
-
-    let markerActivo = null;
-
-    objetosAR.forEach((objeto) => {
-        const { tarjeta, markerRoot, anchor, brillo } = objeto;
-
-        if (!markerRoot.visible) return;
-
-        markerActivo = tarjeta.nombre;
-
-        if (tarjeta.rotacionActiva === true) {
-            anchor.rotation.y += tarjeta.velocidadRotacion || 0.01;
+    mixers.forEach(
+        (mixer) => {
+            mixer.update(
+                delta
+            );
         }
+    );
 
-        if (tarjeta.brilloActivo === true) {
-            brillo.visible = true;
-            animarBrilloPixelArt(brillo, tiempo, tarjeta);
-        } else {
-            brillo.visible = false;
+    let markerActivo =
+        null;
+
+    objetosAR.forEach(
+        (objeto) => {
+            const {
+                tarjeta,
+                markerRoot,
+                anchor,
+                brillo
+            } =
+                objeto;
+
+            if (
+                !markerRoot.visible
+            ) {
+                return;
+            }
+
+            markerActivo =
+                tarjeta.nombre;
+
+            if (
+                tarjeta
+                    .rotacionActiva ===
+                true
+            ) {
+                anchor.rotation.y +=
+                    tarjeta
+                        .velocidadRotacion ||
+                    0.01;
+            }
+
+            if (
+                tarjeta
+                    .brilloActivo ===
+                true
+            ) {
+                brillo.visible =
+                    true;
+
+                animarBrilloPixelArt(
+                    brillo,
+                    tiempo,
+                    tarjeta
+                );
+            } else {
+                brillo.visible =
+                    false;
+            }
         }
-    });
+    );
 
-    actualizarTextoPixelArt(markerActivo);
+    actualizarTextoPixelArt(
+        markerActivo
+    );
 
     render();
 }
