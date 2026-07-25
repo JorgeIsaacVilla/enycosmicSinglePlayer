@@ -20825,6 +20825,209 @@ function openAccesoNoAutorizadoPopup() {
 window.openAccesoNoAutorizadoPopup = openAccesoNoAutorizadoPopup;
 
 const RETRO_PC_DOCS_CONFIG = {
+  mapaSolarEncriptado: {
+    osTitle: "Centro de control",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Mapa del sistema solar",
+    statusText: "Mapa cargado con errores de cifrado",
+    sections: [
+      {
+        type: "title",
+        text: "ARCHIVO DE NAVEGACIÓN: SISTEMA SOLAR"
+      },
+      {
+        type: "subtitle",
+        text: "Acceso parcial detectado"
+      },
+      {
+        type: "paragraph",
+        text: "El mapa del sistema solar está bloqueado por sistema corrupto. Verificar el código fuente."
+      },
+      {
+        type: "paragraph",
+        text: "Solo se ha recuperado una visualización parcial del archivo. El resto del contenido permanece encriptado."
+      },
+      {
+        type: "encrypted_solar_map",
+        title: "Mapa solar encriptado",
+        alienLines: [
+          "𐓘⟟⌇⏁⟒⋔⏃ ⌇⍜⌰⏃⍀ :: ⟒⋏☊⍀⟟⌿⏁⏃⎅⍜",
+          "⋔⏃⌿⏃ ⏚⌰⍜⍾⎍⟒⏃⎅⍜ :: ☊⌰⏃⎐⟒ ⍀⟒⍾⎍⟒⍀⟟⎅⏃",
+          "⌿⍀⍜⏁⍜☊⍜⌰⍜ ⋏⍜ ⌰⟒⟟⏚⌰⟒",
+          "⏁⍀⏃⋏⌇⋔⟟⌇⟟⍜⋏ ⍀⟒⌇⏁⍀⟟⋏☌⟟⎅⏃"
+        ]
+      }
+    ]
+  },
+  matlogArchivo: {
+    osTitle: "Centro de control",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Archivo histórico - Algoritmo de Matlog",
+    statusText: "Archivo de conocimiento cargado correctamente",
+    content: [
+      "ARCHIVO HISTÓRICO: ALGORITMO DE MATLOG",
+      "",
+      "",
+      "Los algoritmos de conocimiento son tarjetas con conocimiento encriptado. Solo pocas personas pueden comprenderlos y, al hacerlo, abren su mente a una forma distinta de interpretar el universo.",
+      "",
+      "El Algoritmo de Matlog es considerado uno de los primeros grandes pilares del conocimiento encriptado.",
+      "",
+      "Matlog fue un científico brillante. Algunos dicen que fue incluso más brillante que Albert Einstein.",
+      "",
+      "Durante sus investigaciones, Matlog descubrió la existencia de una raza alienígena. Gracias a su alto nivel de IQ, logró comprender rápidamente su lenguaje, sus gestos y parte de sus planes para el mundo.",
+      "",
+      "Al descubrir que esta raza buscaba tomar el control del planeta para establecerse en un sistema solar habitable, Matlog decidió intervenir.",
+      "",
+      "Tomó parte del conocimiento de origen alienígena y destruyó gran parte de su fuente original, evitando que ese poder quedara completamente disponible para quienes pudieran usarlo contra la humanidad.",
+      "",
+      "El conocimiento que logró conservar fue escondido dentro de una tarjeta llamada Algoritmo de Conocimiento de Matlog.",
+      "",
+      "Este algoritmo contiene un conocimiento profundo, difícil de comprender para la mente humana común. Por esta razón, Matlog creó especialidades derivadas a partir de ese algoritmo.",
+      "",
+      "Las especialidades permiten que los exploradores accedan a fragmentos útiles del conocimiento sin exponerse al peso completo de la información original.",
+      "",
+      "REGISTRO DEL SISTEMA:",
+      "Estado del algoritmo: encriptado.",
+      "Nivel de comprensión requerido: extremo.",
+      "Riesgo de uso incorrecto: alto.",
+      "Pista asociada: el conocimiento no fue destruido por completo; fue dividido."
+    ]
+  },
+
+  hackerArchivo: {
+    osTitle: "Centro de control",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Archivo histórico - Algoritmo Hacker",
+    statusText: "Archivo de sistema cargado correctamente",
+    content: [
+      "ARCHIVO HISTÓRICO: ALGORITMO HACKER",
+      "",
+      "",
+      "El Algoritmo Hacker es una tarjeta de origen y creador desconocido.",
+      "",
+      "Se dice que, en los inicios de la computación, uno de los participantes del proyecto de las primeras computadoras desarrolló una forma avanzada de comprender el lenguaje máquina.",
+      "",
+      "Este conocimiento no trataba solamente de usar una computadora, sino de escuchar su estructura más primitiva: sus impulsos, sus órdenes básicas, sus ciclos lógicos y sus rutas internas.",
+      "",
+      "El creador del algoritmo no estaba convencido de que las patentes pudieran proteger su descubrimiento. Temía que otros replicaran su invento, lo deformaran o lo convirtieran en una herramienta de control.",
+      "",
+      "Por esa razón, tomó el conocimiento y lo encriptó dentro de una tarjeta que sería reconocida como uno de los primeros algoritmos de conocimiento tecnológico.",
+      "",
+      "El Algoritmo Hacker permite comprender el software desde el lenguaje primitivo de las máquinas.",
+      "",
+      "Quien logra interpretar este algoritmo puede leer rutas cerradas, detectar patrones ocultos, abrir sistemas bloqueados y entender la lógica interna de estructuras digitales antiguas o avanzadas.",
+      "",
+      "Sin embargo, el algoritmo no responde bien a la fuerza bruta. Sus puertas solo se abren cuando el usuario entiende el patrón correcto.",
+      "",
+      "REGISTRO DEL SISTEMA:",
+      "Estado del algoritmo: cifrado.",
+      "Nivel de comprensión requerido: avanzado.",
+      "Riesgo de uso incorrecto: crítico.",
+      "Pista asociada: no rompas la puerta; entiende la cerradura."
+    ]
+  },
+
+  teslaArchivo: {
+    osTitle: "Centro de control",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Archivo histórico - Algoritmo de Tesla",
+    statusText: "Archivo energético cargado correctamente",
+    content: [
+      "ARCHIVO HISTÓRICO: ALGORITMO DE TESLA",
+      "",
+      "",
+      "Nikola Tesla fue un ingeniero electromecánico con un sorprendente nivel de IQ.",
+      "",
+      "Hace mucho tiempo creó un propagador de ondas de microondas con la potencia suficiente para enviar señales fuera del sistema solar.",
+      "",
+      "Durante una prueba de dicho aparato, Tesla envió una señal que fue respondida con una serie binaria.",
+      "",
+      "La señal no parecía provenir de una fuente terrestre. Tesla transcribió el mensaje y comenzó a descifrarlo hasta encontrar una ecuación oculta dentro del código.",
+      "",
+      "Esa ecuación mejoró sus prototipos de generación de energía y abrió la posibilidad de desarrollar máquinas de gravedad invertida y sistemas de protolevitación.",
+      "",
+      "El conocimiento obtenido también permitió comprender nuevas formas de transmisión energética, incluyendo principios relacionados con electricidad inalámbrica y fuentes de energía de alto rendimiento.",
+      "",
+      "Un día, sus competidores irrumpieron en su laboratorio mientras realizaba estudios y pruebas, robando gran parte de su investigación.",
+      "",
+      "Tesla sabía que, si ese código binario y su ecuación caían en manos equivocadas, podrían utilizarse para crear tecnología peligrosa para la humanidad.",
+      "",
+      "Por eso tomó el conocimiento más importante y lo encriptó en una tarjeta llamada Algoritmo de Tesla.",
+      "",
+      "Este algoritmo permite comprender el flujo de la energía a nivel micro, mega y macro, y puede abrir el camino hacia fuentes de energía masivas, limpias y de alto rendimiento.",
+      "",
+      "REGISTRO DEL SISTEMA:",
+      "Estado del algoritmo: encriptado.",
+      "Nivel de comprensión requerido: extremo.",
+      "Riesgo de uso incorrecto: masivo.",
+    ]
+  },
+  domoEspacial: {
+    osTitle: "Centro de control",
+    wordWindowTitle: "WordPad.exe",
+    documentTitle: "Archivo técnico - Domo Espacial",
+    statusText: "Archivo del domo cargado correctamente",
+    sections: [
+      {
+        type: "title",
+        text: "ARCHIVO TÉCNICO: DOMO ESPACIAL"
+      },
+
+      {
+        type: "paragraph",
+        text: "El Domo Espacial es un terrario aeroespacial compuesto por múltiples sistemas cerrados de soporte vital."
+      },
+      {
+        type: "paragraph",
+        text: "Actualmente funciona con 1086 ciclos naturales desarrollados de manera artificial. Estos ciclos permiten sostener vida humana, animal y vegetal en condiciones controladas fuera de la superficie terrestre."
+      },
+      {
+        type: "paragraph",
+        text: "El domo se encuentra ubicado en la estratosfera terrestre. Para alcanzar esa altura, fue impulsado mediante cinco aeroturbinas ultrapotentes, diseñadas para generar un empuje vertical suave, estable y progresivo hasta la zona requerida."
+      },
+      {
+        type: "image",
+        src: "https://enycosmicplayer.vercel.app/assets/backgrounds/domo.webp",
+        alt: "Domo Espacial"
+      },
+      {
+        type: "paragraph",
+        text: "Su estructura principal conserva un árbol natural de aproximadamente 300 metros de altura. Este árbol está conectado bioneuronalmente a los demás circuitos vegetales del domo, permitiendo que el ecosistema responda como una sola red viva."
+      },
+      {
+        type: "paragraph",
+        text: "La función principal del árbol es filtrar, interpretar y redistribuir la energía nucleoenergética almacenada en el núcleo del Domo Espacial. Esta conexión permite que los ciclos de las plantas, la temperatura interna y la estabilidad del ecosistema respondan como parte de un mismo organismo vivo."
+      },
+      {
+        type: "paragraph",
+        text: "Desde el núcleo del domo se regulan procesos nucleoenergéticos controlados, capaces de alimentar el ciclo vital de las plantas, estabilizar la energía térmica del ecosistema y sostener las reacciones necesarias para imitar condiciones de gravedad mediante la generación controlada de energía negativa."
+      },
+      {
+        type: "paragraph",
+        text: "Gracias a este sistema, el Domo Espacial puede sostener pruebas de alto impacto, investigaciones de gran complejidad y condiciones estables para la supervivencia y el mantenimiento de la vida aeroespacial."
+      },
+      {
+        type: "paragraph",
+        text: "El Domo Espacial cuenta con cinco pisos principales, incluyendo la superficie superior del domo. Cada nivel cumple una función específica dentro del equilibrio estructural, biológico y energético del sistema."
+      },
+      {
+        type: "paragraph",
+        text: "Debajo de estos cinco pisos se encuentra el sexto bloque: el Laboratorio Nucleoenergético. Este sector contiene los sistemas críticos que hacen posible el funcionamiento general del domo y mantiene la estabilidad energética necesaria para la vida en su interior."
+      },
+      {
+        type: "paragraph",
+        text: "Por su vital relevancia para la supervivencia de todos los habitantes del domo, el acceso al Laboratorio Nucleoenergético está restringido. Solo pueden ingresar personas autorizadas por el sistema central y por la dirección ejecutiva principal."
+      },
+      {
+        type: "subtitle",
+        text: "AUTOR DE LA OBRA, CONSTRUCCIÓN Y MANTENIMIENTO"
+      },
+      {
+        type: "paragraph",
+        text: "Director Ejecutivo Principal Jorge Isaac."
+      }
+    ]
+  },
   investigacionLunar: {
     osTitle: "Terminal de investigación",
     wordWindowTitle: "WordPad.exe",
@@ -22187,6 +22390,10 @@ function createRetroDocElement(section) {
     img.src = section.src || "";
     img.alt = section.alt || "Imagen";
     return img;
+
+  }
+  if (section.type === "encrypted_solar_map") {
+    return buildRetroEncryptedSolarMap(section);
   }
 
   if (section.type === "table") {
@@ -22400,6 +22607,270 @@ function drawRetroChart(canvas, chart) {
   });
 }
 
+function buildRetroEncryptedSolarMap(section = {}) {
+  const wrap = document.createElement("div");
+  wrap.style.margin = "12px 0";
+  wrap.style.border = "2px inset #c0c0c0";
+  wrap.style.background = "#e9e9e9";
+  wrap.style.padding = "8px";
+
+  const title = document.createElement("div");
+  title.textContent = section.title || "Mapa encriptado";
+  title.style.fontWeight = "bold";
+  title.style.fontSize = "12px";
+  title.style.marginBottom = "8px";
+  title.style.color = "#111";
+  wrap.appendChild(title);
+
+  const alienBox = document.createElement("div");
+  alienBox.style.background = "#031b17";
+  alienBox.style.border = "1px solid #0e8d78";
+  alienBox.style.padding = "8px";
+  alienBox.style.marginBottom = "8px";
+  alienBox.style.color = "#6fffe1";
+  alienBox.style.fontSize = "10px";
+  alienBox.style.lineHeight = "1.45";
+  alienBox.style.fontFamily = "'Courier New', monospace";
+  alienBox.style.textShadow = "0 0 4px rgba(0,255,204,.35)";
+  alienBox.textContent = Array.isArray(section.alienLines)
+    ? section.alienLines.join("\n")
+    : "⟒⋏☊⍀⟟⌿⏁⏃⎅⍜";
+  wrap.appendChild(alienBox);
+
+  const canvasWrap = document.createElement("div");
+  canvasWrap.style.background = "#000";
+  canvasWrap.style.border = "1px solid #666";
+  canvasWrap.style.padding = "6px";
+  canvasWrap.style.marginBottom = "8px";
+  canvasWrap.style.overflow = "hidden";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 520;
+  canvas.height = 320;
+  canvas.style.display = "block";
+  canvas.style.width = "100%";
+  canvas.style.maxWidth = "100%";
+  canvas.style.height = "auto";
+  canvas.style.background = "#020907";
+
+  canvasWrap.appendChild(canvas);
+  wrap.appendChild(canvasWrap);
+
+  const notice = document.createElement("div");
+  notice.textContent = "Estado: visualización parcial ilegible.";
+  notice.style.fontSize = "11px";
+  notice.style.color = "#333";
+  notice.style.marginBottom = "8px";
+  wrap.appendChild(notice);
+
+  const controls = document.createElement("div");
+  controls.style.display = "flex";
+  controls.style.flexWrap = "wrap";
+  controls.style.gap = "6px";
+  controls.style.alignItems = "center";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Digite clave de desencriptación";
+  input.style.flex = "1 1 220px";
+  input.style.minWidth = "220px";
+  input.style.padding = "6px 8px";
+  input.style.fontSize = "12px";
+  input.style.border = "2px inset #c0c0c0";
+  input.style.background = "#fff";
+  input.style.color = "#111";
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "Validar clave";
+  button.style.padding = "6px 10px";
+  button.style.fontSize = "12px";
+  button.style.border = "2px outset #c0c0c0";
+  button.style.background = "#dcdcdc";
+  button.style.cursor = "pointer";
+
+  const status = document.createElement("div");
+  status.textContent = "Sin autorización.";
+  status.style.width = "100%";
+  status.style.fontSize = "11px";
+  status.style.color = "#7a1111";
+  status.style.marginTop = "4px";
+
+  controls.appendChild(input);
+  controls.appendChild(button);
+  controls.appendChild(status);
+  wrap.appendChild(controls);
+
+  drawEncryptedSolarMap(canvas);
+
+  button.addEventListener("click", () => {
+    if (typeof playtockSound === "function") playtockSound();
+
+    const clave = String(input.value || "").trim();
+
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    status.textContent = clave
+      ? "Clave incorrecta. El mapa permanece encriptado."
+      : "Debes ingresar una clave de desencriptación.";
+    status.style.color = "#7a1111";
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Acceso no autorizado",
+        message: clave
+          ? "Clave incorrecta. El mapa del sistema solar sigue bloqueado."
+          : "Debes ingresar una clave para intentar desencriptar el archivo.",
+        type: "warning",
+        duration: 3600
+      });
+    }
+  });
+
+  setTimeout(() => {
+    drawEncryptedSolarMap(canvas);
+  }, 30);
+
+  return wrap;
+}
+
+function drawEncryptedSolarMap(canvas) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const allShapes = [
+    ...TABLERO_ECUACIONES_BASE,
+    ...TABLERO_ECUACIONES_PLANETAS
+  ];
+
+  const xMin = -18;
+  const xMax = 18;
+  const yMin = -16;
+  const yMax = 12;
+
+  function mapX(x) {
+    return ((x - xMin) / (xMax - xMin)) * w;
+  }
+
+  function mapY(y) {
+    return h - ((y - yMin) / (yMax - yMin)) * h;
+  }
+
+  ctx.clearRect(0, 0, w, h);
+
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, "#06110f");
+  bg.addColorStop(1, "#010403");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  for (let i = 0; i < 80; i++) {
+    const sx = Math.random() * w;
+    const sy = Math.random() * h;
+    const sr = Math.random() * 1.7 + 0.3;
+    ctx.fillStyle = `rgba(180,255,240,${Math.random() * 0.28})`;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.strokeStyle = "rgba(0,255,204,.22)";
+  for (let i = 0; i < 9; i++) {
+    const y = (h / 10) * (i + 1);
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y + Math.sin(i) * 5);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.filter = "blur(1.3px)";
+  ctx.globalAlpha = 0.9;
+
+  allShapes.forEach(eq => {
+    ctx.strokeStyle = eq.color || "#7fffd4";
+    ctx.fillStyle = eq.color || "#7fffd4";
+    ctx.lineWidth = 1.3;
+
+    if (eq.tipo === "circle") {
+      const cx = mapX(eq.x);
+      const cy = mapY(eq.y);
+      const radiusPx = Math.abs(mapX(eq.x + eq.r) - mapX(eq.x));
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    if (eq.tipo === "ellipse") {
+      const cx = mapX(eq.x);
+      const cy = mapY(eq.y);
+      const rx = Math.abs(mapX(eq.x + eq.rx) - mapX(eq.x));
+      const ry = Math.abs(mapY(eq.y + eq.ry) - mapY(eq.y));
+
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    if (eq.tipo === "vertical") {
+      const x = mapX(eq.x);
+      ctx.strokeStyle = "rgba(255,40,80,.85)";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+
+    if (eq.tipo === "horizontal") {
+      const y = mapY(eq.y);
+      ctx.strokeStyle = "rgba(255,40,80,.85)";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+  });
+
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.10;
+  ctx.fillStyle = "#00ffcc";
+  ctx.font = "bold 18px monospace";
+  ctx.fillText("⌇⍜⌰⏃⍀ ⋔⏃⌿", 22, 32);
+  ctx.fillText("⟒⋏☊⍀⟟⌿⏁⏃⎅⍜", w - 170, h - 20);
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(0,255,204,.25)";
+  ctx.setLineDash([3, 4]);
+  ctx.strokeRect(6, 6, w - 12, h - 12);
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = "rgba(0,0,0,.20)";
+  for (let i = 0; i < h; i += 4) {
+    ctx.fillRect(0, i, w, 1);
+  }
+  ctx.restore();
+}
+
 function openRetroPCDocument(configKey) {
   const config = RETRO_PC_DOCS_CONFIG[configKey];
   if (!config) return;
@@ -22488,8 +22959,24 @@ function openRetroPCDocument(configKey) {
   }, { passive: false });
 }
 
+window.openComputadorMatlog = function () {
+  openRetroPCDocument("matlogArchivo");
+};
+
+window.openComputadorHacker = function () {
+  openRetroPCDocument("hackerArchivo");
+};
+
+window.openComputadorTesla = function () {
+  openRetroPCDocument("teslaArchivo");
+};
+
 window.openComputadorInvestigacionLunar = function () {
   openRetroPCDocument("investigacionLunar");
+};
+
+window.openComputadorMapaSolarEncriptado = function () {
+  openMapaSolarEncriptadoView();
 };
 
 window.openComputadorEcuacionesGraficas = function () {
@@ -22499,6 +22986,764 @@ window.openComputadorEcuacionesGraficas = function () {
 window.openComputadorQuimicaDestilador = function () {
   openRetroPCDocument("quimicaDestilador");
 };
+
+window.openComputadorDomoEspacial = function () {
+  openRetroPCDocument("domoEspacial");
+};
+
+// ======================================================
+// MAPA DEL SISTEMA SOLAR ENCRIPTADO
+// Vista distinta a Office / estilo mapa encriptado
+// bloque_ambiente_11343
+// ======================================================
+
+const MAPA_SOLAR_ENCRIPTADO_CONFIG = {
+  alienLines: [
+    "𐓘⌇⟟⌇⏁⟒⋔⏃ ⌇⍜⌰⏃⍀ :: ⟒⋏☊⍀⟟⌿⏁⏃⎅⍜",
+    "⌰⟒⊬⟒⋏⎅⏃ ⋏⍜ ⌰⟒⟟⏚⌰⟒ :: ☊⌰⏃⎐⟒ ⍀⟒⍾⎍⟒⍀⟟⎅⏃",
+    "⋔⏃⌿⏃ ⌿⏃⍀☊⟟⏃⌰ :: ⏃☊☊⟒⌇⍜ ⍀⟒⌇⏁⍀⟟⋏☌⟟⎅⍜",
+    "⌇⟟⌇⏁⟒⋔⏃ ☊⍜⍀⍀⎍⌿⏁⍜ :: ⎐⟒⍀⟟⎎⟟☊⏃⍀ ☊⍜⎅⟟☌⍜",
+    "⏁⍀⏃⋏⌇⋔⟟⌇⟟⍜⋏ ⏃⌰⟟⟒⋏⟟☌⟒⋏⏃ ⏃☊⏁⟟⎐⏃"
+  ],
+  state: {
+    zoom: 1
+  }
+};
+
+let mapaSolarEncryptedResizeHandler = null;
+
+function ensureMapaSolarEncriptadoStyles() {
+  if (document.getElementById("mapa-solar-encriptado-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "mapa-solar-encriptado-styles";
+  style.textContent = `
+    #mapa-solar-encriptado-overlay{
+      position:fixed;
+      inset:0;
+      z-index:999999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.82);
+      backdrop-filter:blur(4px);
+      padding:18px;
+      box-sizing:border-box;
+    }
+
+    #mapa-solar-encriptado-window{
+      width:min(1180px, 96vw);
+      height:min(760px, 92vh);
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      background:linear-gradient(180deg, rgba(3,20,18,.96), rgba(2,10,10,.98));
+      border:1px solid rgba(0,255,204,.34);
+      box-shadow:
+        0 0 0 1px rgba(0,255,204,.12) inset,
+        0 0 28px rgba(0,255,204,.12),
+        0 0 120px rgba(0,0,0,.55);
+      overflow:hidden;
+      border-radius:14px;
+      position:relative;
+    }
+
+    #mapa-solar-encriptado-titlebar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      background:linear-gradient(90deg, rgba(0,255,204,.15), rgba(120,255,235,.05));
+      border-bottom:1px solid rgba(0,255,204,.2);
+      color:#dff;
+    }
+
+    #mapa-solar-encriptado-title-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    #mapa-solar-encriptado-led{
+      width:11px;
+      height:11px;
+      border-radius:50%;
+      background:#00ffcc;
+      box-shadow:0 0 12px rgba(0,255,204,.9);
+      flex:0 0 auto;
+    }
+
+    #mapa-solar-encriptado-title{
+      font-size:14px;
+      font-weight:bold;
+      letter-spacing:.03em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    #mapa-solar-encriptado-close{
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      min-width:38px;
+      height:34px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:16px;
+    }
+
+    #mapa-solar-encriptado-topbar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      padding:12px 14px 0;
+    }
+
+    #mapa-solar-encriptado-search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-height:42px;
+      border:1px solid rgba(0,255,204,.18);
+      background:rgba(255,255,255,.04);
+      border-radius:999px;
+      padding:0 14px;
+      color:#bffdf4;
+      font-size:13px;
+      overflow:hidden;
+    }
+
+    #mapa-solar-encriptado-search-icon{
+      opacity:.8;
+      font-size:15px;
+      flex:0 0 auto;
+    }
+
+    #mapa-solar-encriptado-search-text{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    #mapa-solar-encriptado-badge{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:180px;
+      padding:0 14px;
+      min-height:42px;
+      border-radius:999px;
+      border:1px solid rgba(255,68,68,.24);
+      background:rgba(255,68,68,.08);
+      color:#ff7676;
+      font-size:12px;
+      text-align:center;
+    }
+
+    #mapa-solar-encriptado-main{
+      min-height:0;
+      position:relative;
+      padding:12px 14px 14px;
+    }
+
+    #mapa-solar-encriptado-viewport{
+      width:100%;
+      height:100%;
+      min-height:320px;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+      background:#020908;
+      border:1px solid rgba(0,255,204,.16);
+      box-shadow:0 0 0 1px rgba(0,255,204,.08) inset;
+    }
+
+    #mapa-solar-encriptado-canvas{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      image-rendering:pixelated;
+      image-rendering:crisp-edges;
+    }
+
+    #mapa-solar-encriptado-floating-ui{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+
+    .mapa-solar-encriptado-chip{
+      position:absolute;
+      background:rgba(0,0,0,.46);
+      border:1px solid rgba(0,255,204,.18);
+      color:#c8fff8;
+      border-radius:10px;
+      padding:8px 10px;
+      backdrop-filter:blur(3px);
+      box-shadow:0 0 12px rgba(0,0,0,.22);
+      pointer-events:auto;
+    }
+
+    #mapa-solar-encriptado-zoom{
+      left:12px;
+      top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:8px;
+    }
+
+    #mapa-solar-encriptado-zoom button{
+      width:36px;
+      height:36px;
+      border:none;
+      border-radius:8px;
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      cursor:pointer;
+      font-size:18px;
+    }
+
+    #mapa-solar-encriptado-alien-box{
+      right:14px;
+      top:14px;
+      width:min(320px, calc(100% - 80px));
+      font-size:11px;
+      line-height:1.45;
+      color:#7dffe8;
+      text-shadow:0 0 6px rgba(0,255,204,.24);
+      white-space:pre-line;
+    }
+
+    #mapa-solar-encriptado-decrypt{
+      left:14px;
+      right:14px;
+      bottom:14px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:12px;
+    }
+
+    #mapa-solar-encriptado-decrypt-left{
+      min-width:0;
+      display:grid;
+      gap:8px;
+    }
+
+    #mapa-solar-encriptado-decrypt-label{
+      font-size:12px;
+      color:#bffdf4;
+    }
+
+    #mapa-solar-encriptado-decrypt-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      min-width:0;
+    }
+
+    #mapa-solar-encriptado-key{
+      min-width:0;
+      width:100%;
+      box-sizing:border-box;
+      border-radius:10px;
+      border:1px solid rgba(0,255,204,.18);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      padding:12px 14px;
+      outline:none;
+      font-size:13px;
+    }
+
+    #mapa-solar-encriptado-submit{
+      border:none;
+      border-radius:10px;
+      padding:0 18px;
+      min-height:44px;
+      background:linear-gradient(180deg, rgba(0,255,204,.2), rgba(0,255,204,.1));
+      color:#eaffff;
+      cursor:pointer;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    #mapa-solar-encriptado-status{
+      font-size:11px;
+      color:#ff8484;
+      min-height:15px;
+    }
+
+    #mapa-solar-encriptado-watermark{
+      text-align:right;
+      font-size:11px;
+      color:rgba(201,255,246,.82);
+      white-space:nowrap;
+      align-self:end;
+    }
+
+@media (max-width: 900px){
+  #mapa-solar-encriptado-overlay{
+    padding:0;
+    align-items:stretch;
+    justify-content:stretch;
+    overflow:hidden;
+  }
+
+  #mapa-solar-encriptado-window{
+    width:100%;
+    height:100dvh;
+    max-width:100%;
+    max-height:100dvh;
+    border-radius:0;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-titlebar{
+    padding:10px 12px;
+    min-width:0;
+  }
+
+  #mapa-solar-encriptado-title-left{
+    min-width:0;
+  }
+
+  #mapa-solar-encriptado-title{
+    min-width:0;
+    max-width:calc(100vw - 80px);
+    font-size:12px;
+  }
+
+  #mapa-solar-encriptado-topbar{
+    grid-template-columns:1fr;
+    padding:10px 12px 0;
+    min-width:0;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-search,
+  #mapa-solar-encriptado-badge{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-search-text{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  #mapa-solar-encriptado-main{
+    padding:10px 12px 12px;
+    min-width:0;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-viewport{
+    width:100%;
+    min-width:0;
+    min-height:0;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-alien-box{
+    left:12px;
+    right:12px;
+    top:12px;
+    width:auto;
+    max-width:none;
+    box-sizing:border-box;
+    font-size:9px;
+  }
+
+  #mapa-solar-encriptado-decrypt{
+    left:12px;
+    right:12px;
+    bottom:12px;
+    width:auto;
+    grid-template-columns:1fr;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-decrypt-row{
+    grid-template-columns:1fr;
+    min-width:0;
+  }
+
+  #mapa-solar-encriptado-key,
+  #mapa-solar-encriptado-submit{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+
+  #mapa-solar-encriptado-watermark{
+    text-align:left;
+    white-space:normal;
+  }
+}
+  `;
+  document.head.appendChild(style);
+}
+
+function closeMapaSolarEncriptadoView() {
+  const overlay = document.getElementById("mapa-solar-encriptado-overlay");
+  if (overlay) overlay.remove();
+
+  if (mapaSolarEncryptedResizeHandler) {
+    window.removeEventListener("resize", mapaSolarEncryptedResizeHandler);
+    mapaSolarEncryptedResizeHandler = null;
+  }
+}
+
+function openMapaSolarEncriptadoView() {
+  ensureMapaSolarEncriptadoStyles();
+  closeMapaSolarEncriptadoView();
+
+  const overlay = document.createElement("div");
+  overlay.id = "mapa-solar-encriptado-overlay";
+
+  overlay.innerHTML = `
+    <div id="mapa-solar-encriptado-window">
+      <div id="mapa-solar-encriptado-titlebar">
+        <div id="mapa-solar-encriptado-title-left">
+          <div id="mapa-solar-encriptado-led"></div>
+          <div id="mapa-solar-encriptado-title">Mapa del sistema solar :: acceso parcial</div>
+        </div>
+        <button id="mapa-solar-encriptado-close" type="button">✕</button>
+      </div>
+
+      <div id="mapa-solar-encriptado-topbar">
+        <div id="mapa-solar-encriptado-search">
+          <div id="mapa-solar-encriptado-search-icon">⌕</div>
+          <div id="mapa-solar-encriptado-search-text">Sistema solar / archivo dañado / lectura incompleta</div>
+        </div>
+        <div id="mapa-solar-encriptado-badge">Sistema corrupto · contenido ilegible</div>
+      </div>
+
+      <div id="mapa-solar-encriptado-main">
+        <div id="mapa-solar-encriptado-viewport">
+          <canvas id="mapa-solar-encriptado-canvas"></canvas>
+
+          <div id="mapa-solar-encriptado-floating-ui">
+            <div id="mapa-solar-encriptado-zoom" class="mapa-solar-encriptado-chip">
+              <button id="mapa-solar-encriptado-zoom-in" type="button">+</button>
+              <button id="mapa-solar-encriptado-zoom-out" type="button">−</button>
+            </div>
+
+            <div id="mapa-solar-encriptado-alien-box" class="mapa-solar-encriptado-chip">
+${MAPA_SOLAR_ENCRIPTADO_CONFIG.alienLines.join("\n")}
+            </div>
+
+            <div id="mapa-solar-encriptado-decrypt" class="mapa-solar-encriptado-chip">
+              <div id="mapa-solar-encriptado-decrypt-left">
+                <div id="mapa-solar-encriptado-decrypt-label">
+                  Introduce una clave de desencriptación para intentar interpretar el archivo.
+                </div>
+                <div id="mapa-solar-encriptado-decrypt-row">
+                  <input
+                    id="mapa-solar-encriptado-key"
+                    type="text"
+                    placeholder="Digite clave de desencriptación"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button id="mapa-solar-encriptado-submit" type="button">Intentar acceso</button>
+                </div>
+                <div id="mapa-solar-encriptado-status">Esperando credenciales...</div>
+              </div>
+              <div id="mapa-solar-encriptado-watermark">Enycosmic Stellar Maps · acceso restringido</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const canvas = document.getElementById("mapa-solar-encriptado-canvas");
+  const btnClose = document.getElementById("mapa-solar-encriptado-close");
+  const btnZoomIn = document.getElementById("mapa-solar-encriptado-zoom-in");
+  const btnZoomOut = document.getElementById("mapa-solar-encriptado-zoom-out");
+  const btnSubmit = document.getElementById("mapa-solar-encriptado-submit");
+  const inputKey = document.getElementById("mapa-solar-encriptado-key");
+  const status = document.getElementById("mapa-solar-encriptado-status");
+
+  function renderNow() {
+    drawMapaSolarEncriptadoGoogleLike(canvas, MAPA_SOLAR_ENCRIPTADO_CONFIG.state.zoom);
+  }
+
+  renderNow();
+
+  mapaSolarEncryptedResizeHandler = () => {
+    renderNow();
+  };
+  window.addEventListener("resize", mapaSolarEncryptedResizeHandler);
+
+  btnClose?.addEventListener("click", () => {
+    if (typeof playtockSound === "function") playtockSound();
+    closeMapaSolarEncriptadoView();
+  });
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target === overlay) {
+      e.preventDefault();
+      if (typeof playtockSound === "function") playtockSound();
+      closeMapaSolarEncriptadoView();
+    }
+  }, { passive: false });
+
+  btnZoomIn?.addEventListener("click", () => {
+    if (typeof playtockSound === "function") playtockSound();
+    MAPA_SOLAR_ENCRIPTADO_CONFIG.state.zoom = Math.min(4, MAPA_SOLAR_ENCRIPTADO_CONFIG.state.zoom + 0.25);
+    renderNow();
+  });
+
+  btnZoomOut?.addEventListener("click", () => {
+    if (typeof playtockSound === "function") playtockSound();
+    MAPA_SOLAR_ENCRIPTADO_CONFIG.state.zoom = Math.max(0.7, MAPA_SOLAR_ENCRIPTADO_CONFIG.state.zoom - 0.25);
+    renderNow();
+  });
+
+  function intentarDesencriptacion() {
+    if (typeof playtockSound === "function") playtockSound();
+
+    const clave = String(inputKey?.value || "").trim();
+
+    if (typeof playerrorSound === "function") playerrorSound();
+
+    if (!clave) {
+      status.textContent = "Debes introducir una clave de desencriptación.";
+    } else {
+      status.textContent = "Clave incorrecta. El mapa continúa encriptado.";
+    }
+
+    status.style.color = "#ff8c8c";
+
+    if (typeof showPopupFeedback === "function") {
+      showPopupFeedback({
+        title: "Acceso no autorizado",
+        message: !clave
+          ? "Debes introducir una clave para intentar acceder al archivo."
+          : "Clave incorrecta. El mapa del sistema solar sigue bloqueado.",
+        type: "warning",
+        duration: 3600
+      });
+    }
+  }
+
+  btnSubmit?.addEventListener("click", intentarDesencriptacion);
+  inputKey?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      intentarDesencriptacion();
+    }
+  });
+}
+
+function getMapaSolarShapesSinEjes() {
+  return [
+    ...TABLERO_ECUACIONES_BASE.filter(eq => eq.id !== "ec18" && eq.id !== "f"),
+    ...TABLERO_ECUACIONES_PLANETAS
+  ];
+}
+
+function drawMapaSolarEncriptadoGoogleLike(canvas, zoom = 1) {
+  if (!canvas) return;
+
+  const viewport = canvas.parentElement;
+  const width = Math.max(320, Math.floor(viewport?.clientWidth || 900));
+  const height = Math.max(260, Math.floor(viewport?.clientHeight || 520));
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const off = document.createElement("canvas");
+  off.width = 56;
+  off.height = 34;
+
+  const octx = off.getContext("2d");
+  if (!octx) return;
+
+  const w = off.width;
+  const h = off.height;
+
+  const centerX = 2;
+  const centerY = -2;
+  const rangeX = 36 / zoom;
+  const rangeY = 26 / zoom;
+
+  const xMin = centerX - rangeX / 2;
+  const xMax = centerX + rangeX / 2;
+  const yMin = centerY - rangeY / 2;
+  const yMax = centerY + rangeY / 2;
+
+  function mapX(x) {
+    return ((x - xMin) / (xMax - xMin)) * w;
+  }
+
+  function mapY(y) {
+    return h - ((y - yMin) / (yMax - yMin)) * h;
+  }
+
+  octx.clearRect(0, 0, w, h);
+
+  const bg = octx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, "#04110e");
+  bg.addColorStop(0.55, "#03100d");
+  bg.addColorStop(1, "#010404");
+  octx.fillStyle = bg;
+  octx.fillRect(0, 0, w, h);
+
+  for (let i = 0; i < 70; i++) {
+    const sx = Math.random() * w;
+    const sy = Math.random() * h;
+    const sr = Math.random() * 1.4 + 0.3;
+    octx.fillStyle = `rgba(180,255,244,${Math.random() * 0.18})`;
+    octx.beginPath();
+    octx.arc(sx, sy, sr, 0, Math.PI * 2);
+    octx.fill();
+  }
+
+  octx.save();
+  octx.strokeStyle = "rgba(90,255,220,.08)";
+  octx.lineWidth = 1;
+  for (let gx = 0; gx < w; gx += 26) {
+    octx.beginPath();
+    octx.moveTo(gx, 0);
+    octx.lineTo(gx, h);
+    octx.stroke();
+  }
+  for (let gy = 0; gy < h; gy += 26) {
+    octx.beginPath();
+    octx.moveTo(0, gy);
+    octx.lineTo(w, gy);
+    octx.stroke();
+  }
+  octx.restore();
+
+  const shapes = getMapaSolarShapesSinEjes();
+
+  shapes.forEach(eq => {
+    octx.save();
+
+    if (eq.id === "ec1") {
+      const cx = mapX(eq.x);
+      const cy = mapY(eq.y);
+      const r = Math.max(4, Math.abs(mapX(eq.x + eq.r) - mapX(eq.x)));
+
+      const glow = octx.createRadialGradient(cx, cy, 1, cx, cy, r * 2.8);
+      glow.addColorStop(0, "rgba(255,245,120,0.95)");
+      glow.addColorStop(0.35, "rgba(255,232,95,0.55)");
+      glow.addColorStop(1, "rgba(255,232,95,0)");
+
+      octx.fillStyle = glow;
+      octx.beginPath();
+      octx.arc(cx, cy, r * 2.8, 0, Math.PI * 2);
+      octx.fill();
+
+      octx.fillStyle = "#e9ff73";
+      octx.beginPath();
+      octx.arc(cx, cy, r, 0, Math.PI * 2);
+      octx.fill();
+
+      octx.restore();
+      return;
+    }
+
+    octx.strokeStyle = eq.color || "#7bffe8";
+    octx.fillStyle = eq.color || "#7bffe8";
+    octx.lineWidth = 1.2;
+    octx.globalAlpha = 0.88;
+
+    if (eq.tipo === "circle") {
+      const cx = mapX(eq.x);
+      const cy = mapY(eq.y);
+      const radiusPx = Math.max(1.2, Math.abs(mapX(eq.x + eq.r) - mapX(eq.x)));
+
+      octx.beginPath();
+      octx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+      octx.fill();
+
+      octx.globalAlpha = 0.28;
+      octx.beginPath();
+      octx.arc(cx, cy, radiusPx + 1.5, 0, Math.PI * 2);
+      octx.stroke();
+    }
+
+    if (eq.tipo === "ellipse") {
+      const cx = mapX(eq.x);
+      const cy = mapY(eq.y);
+      const rx = Math.max(2, Math.abs(mapX(eq.x + eq.rx) - mapX(eq.x)));
+      const ry = Math.max(1, Math.abs(mapY(eq.y + eq.ry) - mapY(eq.y)));
+
+      octx.globalAlpha = 0.5;
+      octx.beginPath();
+      octx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      octx.stroke();
+    }
+
+    octx.restore();
+  });
+
+  octx.save();
+  octx.globalAlpha = 0.18;
+  octx.fillStyle = "#63ffe8";
+  octx.font = "bold 10px monospace";
+  octx.fillText("⌇⍜⌰⏃⍀", 8, 14);
+  octx.fillText("⟒⋏☊⍀⟟⌿⏁⏃⎅⍜", w - 74, h - 8);
+  octx.restore();
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(off, 0, 0, width, height);
+
+  ctx.save();
+  ctx.fillStyle = "rgba(0,0,0,.18)";
+  for (let y = 0; y < height; y += 4) {
+    ctx.fillRect(0, y, width, 1);
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(0,255,204,.13)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(8, 8, width - 16, height - 16);
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = "rgba(0,255,204,.06)";
+  ctx.font = "bold 28px monospace";
+  ctx.fillText("MAPA CORRUPTO", 24, 40);
+  ctx.font = "bold 16px monospace";
+  ctx.fillText("LECTURA PARCIAL · SISTEMA SOLAR", 24, 64);
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,80,80,.22)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 12; i++) {
+    const yy = (height / 12) * i + ((i % 2) ? 3 : -3);
+    ctx.beginPath();
+    ctx.moveTo(0, yy);
+    ctx.lineTo(width, yy);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 // ======================================================
 // SISTEMA EXTERNO REUTILIZABLE DE DIÁLOGOS DE OBJETOS
 // No modifica el sistema original del juego
